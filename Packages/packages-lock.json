@@ -9,6 +9,13 @@
       },
       "hash": "0a98b387a92cf9f1f47012fc46d4cf33576e5916"
     },
+    "com.ppvylk.project_ci_animation": {
+      "version": "https://github.com/Proceline/com.ppvylk.project_ci_animation.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "fa30f23bd0c21ca3371e653e9af6cc6347397906"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.6",
       "depth": 0,
