@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using UnityEngine;
 
 namespace ProjectCI.TacticTool
 {
     public class FormulaCalculator
     {
-        public static float CalculateFormula(FormulaDefinition formula, Dictionary<AttributeType, float> attributeValues)
+        public static float CalculateFormula(FormulaDefinition formula, IDictionary<AttributeType, int> attributeValues)
         {
             if (formula == null || formula.FormulaNodes.Count == 0)
                 return 0f;
@@ -19,9 +20,9 @@ namespace ProjectCI.TacticTool
                 switch (node.Type)
                 {
                     case FormulaNode.NodeType.Attribute:
-                        if (attributeValues.TryGetValue(node.AttributeType, out float value))
+                        if (attributeValues.TryGetValue(node.AttributeType, out int value))
                         {
-                            stack.Push(value);
+                            stack.Push((float)value);
                         }
                         else
                         {
@@ -39,7 +40,7 @@ namespace ProjectCI.TacticTool
 
                         float b = stack.Pop();
                         float a = stack.Pop();
-                        float result = CalculateOperation(a, b, node.OperatorSymbol);
+                        float result = Mathf.Floor(CalculateOperation(a, b, node.OperatorSymbol));
                         stack.Push(result);
                         break;
                 }

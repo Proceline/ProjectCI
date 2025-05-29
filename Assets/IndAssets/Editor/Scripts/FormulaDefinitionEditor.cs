@@ -15,7 +15,7 @@ namespace ProjectCI.TacticTool.Editor
         private string[] attributeTypeNames;
         private string newOperatorSymbol = "+";
         private float newConstantValue = 0f;
-        private Dictionary<AttributeType, float> testValues = new Dictionary<AttributeType, float>();
+        private Dictionary<AttributeType, int> testValues = new Dictionary<AttributeType, int>();
         private Vector2 testAreaScrollPosition;
 
         private void OnEnable()
@@ -102,10 +102,10 @@ namespace ProjectCI.TacticTool.Editor
                 foreach (var attrType in usedAttributes)
                 {
                     if (!testValues.ContainsKey(attrType))
-                        testValues[attrType] = 0f;
+                        testValues[attrType] = 0;
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField($"Test Value for [{attrType.Value}]:", GUILayout.Width(150));
-                    testValues[attrType] = EditorGUILayout.FloatField(testValues[attrType]);
+                    testValues[attrType] = EditorGUILayout.IntField(testValues[attrType]);
                     EditorGUILayout.EndHorizontal();
                 }
                 EditorGUILayout.EndScrollView();
