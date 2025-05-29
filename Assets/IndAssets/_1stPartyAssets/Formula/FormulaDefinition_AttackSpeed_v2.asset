@@ -10,13 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_MagicAttack
+  m_Name: FormulaDefinition_AttackSpeed_v2
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 13
+    value: 14
   formulaNodes:
   - type: 0
     attributeType:
-      value: 2
+      value: 4
     operatorSymbol: 
+    constantValue: 0
+  - type: 0
+    attributeType:
+      value: 16
+    operatorSymbol: 
+    constantValue: 0
+  - type: 0
+    attributeType:
+      value: 17
+    operatorSymbol: 
+    constantValue: 0
+  - type: 1
+    attributeType:
+      value: 17
+    operatorSymbol: '-'
+    constantValue: 0
+  - type: 1
+    attributeType:
+      value: 17
+    operatorSymbol: '-'
     constantValue: 0

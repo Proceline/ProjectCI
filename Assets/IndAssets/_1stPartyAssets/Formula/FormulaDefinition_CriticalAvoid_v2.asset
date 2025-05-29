@@ -10,13 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_AttackSpeed
+  m_Name: FormulaDefinition_CriticalAvoid_v2
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 14
+    value: 22
   formulaNodes:
   - type: 0
     attributeType:
-      value: 4
+      value: 23
     operatorSymbol: 
+    constantValue: 0
+  - type: 0
+    attributeType:
+      value: 5
+    operatorSymbol: +
+    constantValue: 0
+  - type: 1
+    attributeType:
+      value: 5
+    operatorSymbol: +
     constantValue: 0

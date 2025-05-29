@@ -22,9 +22,19 @@ MonoBehaviour:
   - Defense
   - Resistance
   - Charm
-  - Critical
-  - Accuracy
-  - Avoid
-  - PhysicAttack
-  - MagicAttack
-  - AttackSpeed
+  - CRTical
+  - ACCuracy
+  - AVOid
+  - PATtack
+  - MATtack
+  - ATSpeed
+  - _weaponMight
+  - _weaponWeight
+  - Build
+  - _weaponHit
+  - _weaponCritical
+  - _weaponDodge
+  - CHAccuracy
+  - CAVoid
+  - _weaponResilience
+  - _skillCharm

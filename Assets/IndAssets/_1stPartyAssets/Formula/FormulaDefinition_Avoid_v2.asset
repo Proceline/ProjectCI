@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_Accuracy
+  m_Name: FormulaDefinition_Avoid_v2
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 10
+    value: 11
   formulaNodes:
   - type: 0
     attributeType:
-      value: 3
+      value: 4
     operatorSymbol: 
     constantValue: 0
   - type: 2
@@ -48,5 +48,15 @@ MonoBehaviour:
   - type: 1
     attributeType:
       value: 5
+    operatorSymbol: +
+    constantValue: 2
+  - type: 0
+    attributeType:
+      value: 20
+    operatorSymbol: +
+    constantValue: 2
+  - type: 1
+    attributeType:
+      value: 21
     operatorSymbol: +
     constantValue: 2
