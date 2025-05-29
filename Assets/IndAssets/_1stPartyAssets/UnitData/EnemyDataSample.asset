@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ea21104062b944b8bb569553a27a2d, type: 3}
+  m_Name: EnemyDataSample
+  m_EditorClassIdentifier: 
+  m_UnitName: TestEnemy
+  m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.GridUnit
+  originalAttributes:
+  - m_AttributeType:
+      value: 0
+    m_Value: 0
+  - m_AttributeType:
+      value: 1
+    m_Value: 0
+  - m_AttributeType:
+      value: 2
+    m_Value: 0
+  - m_AttributeType:
+      value: 3
+    m_Value: 0
+  - m_AttributeType:
+      value: 4
+    m_Value: 0
+  - m_AttributeType:
+      value: 5
+    m_Value: 0
+  - m_AttributeType:
+      value: 6
+    m_Value: 0
+  - m_AttributeType:
+      value: 7
+    m_Value: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 0
+  m_TravelSound: {fileID: 0}
+  m_DamagedSound: {fileID: 0}
+  m_HealSound: {fileID: 8300000, guid: cb3c61d10d8afb446ac224c24b4dfe8a, type: 3}
+  m_DeathSound: {fileID: 0}
+  m_bLookAtTargets: 1
+  m_bIsFlying: 0
+  m_HeightOffset: 0
+  m_MovementShape: {fileID: 11400000, guid: 8e507bc5180987744934293604bd252e, type: 2}
+  m_SpawnOnHeal: []
+  m_MovementPoints: 5
+  m_AbilityPoints: 5
+  m_Health: 100

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8e0279e33a25a94f834f49e1769c1d6, type: 3}
+  m_Name: AnimationSupportAsset_Sword
+  m_EditorClassIdentifier: 
+  defaultAnimationClipInfos:
+  - {fileID: 11400000, guid: 3810cff6cc4fb69498578bc76f7107ef, type: 2}
+  - {fileID: 11400000, guid: 93ab449eeda9b1b41b9d5dfd4e3f314f, type: 2}
+  - {fileID: 11400000, guid: 09b359b6af5bed04e8ebaadd3a0e676f, type: 2}
+  - {fileID: 11400000, guid: e22f0e80ccde3e44792fb11f5cef6b1b, type: 2}
+  - {fileID: 11400000, guid: 5e602d18bb685bd4ca46cfc7304ce442, type: 2}
+  - {fileID: 11400000, guid: 8374d6630cc12b749bd6a20d20751895, type: 2}

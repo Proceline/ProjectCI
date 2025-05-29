@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f7bce3a39aac934dac39fc13686ab41, type: 3}
+  m_Name: InputActionManager
+  m_EditorClassIdentifier: 
+  m_GridMoveAction: {fileID: 0}
+  m_GridRotateAction: {fileID: 0}
+  m_GridZoomAction: {fileID: 0}
+  m_SelectUnitAction: {fileID: 5818305435515509230, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_CancelAction: {fileID: 7419589125502536833, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_ConfirmAction: {fileID: 5818305435515509230, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_SkillAction: {fileID: 5288821545172317899, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_EndTurnAction: {fileID: 5358266349280481378, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_MenuAction: {fileID: -8622356409974750604, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_UnitInfoAction: {fileID: 5801467576363486104, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
