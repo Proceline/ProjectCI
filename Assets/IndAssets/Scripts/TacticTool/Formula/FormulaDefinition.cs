@@ -15,6 +15,10 @@ namespace ProjectCI.TacticTool
         private List<FormulaNode> formulaNodes = new List<FormulaNode>();  // List of formula nodes
         public IReadOnlyList<FormulaNode> FormulaNodes => formulaNodes;
 
+        [SerializeField]
+        private bool preventNegativeSubResult = true;  // Whether to prevent negative sub-results
+        public bool PreventNegativeSubResult => preventNegativeSubResult;
+
         // Add a new node to the formula
         public void AddNode(FormulaNode node)
         {

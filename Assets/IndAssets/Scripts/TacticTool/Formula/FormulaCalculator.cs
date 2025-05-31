@@ -40,8 +40,15 @@ namespace ProjectCI.TacticTool
 
                         float b = stack.Pop();
                         float a = stack.Pop();
-                        float result = Mathf.Floor(CalculateOperation(a, b, node.OperatorSymbol));
-                        stack.Push(result);
+                        float result = CalculateOperation(a, b, node.OperatorSymbol);
+                        
+                        // If preventNegativeSubResult is enabled, ensure the result is not negative
+                        if (formula.PreventNegativeSubResult)
+                        {
+                            result = Mathf.Max(0, result);
+                        }
+                        
+                        stack.Push(Mathf.Floor(result));
                         break;
                 }
             }

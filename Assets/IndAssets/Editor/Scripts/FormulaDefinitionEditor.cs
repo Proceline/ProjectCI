@@ -11,6 +11,7 @@ namespace ProjectCI.TacticTool.Editor
     {
         private SerializedProperty targetAttributeProperty;
         private SerializedProperty formulaNodesProperty;
+        private SerializedProperty preventNegativeSubResultProperty;
         private AttributeTypeDefinition attributeTypeDefinition;
         private string[] attributeTypeNames;
         private string newOperatorSymbol = "+";
@@ -22,6 +23,7 @@ namespace ProjectCI.TacticTool.Editor
         {
             targetAttributeProperty = serializedObject.FindProperty("targetAttribute");
             formulaNodesProperty = serializedObject.FindProperty("formulaNodes");
+            preventNegativeSubResultProperty = serializedObject.FindProperty("preventNegativeSubResult");
             LoadAttributeTypeDefinition();
         }
 
@@ -52,6 +54,10 @@ namespace ProjectCI.TacticTool.Editor
 
             // Draw target attribute selector
             EditorGUILayout.PropertyField(targetAttributeProperty, new GUIContent("Target Attribute"));
+
+            // Draw prevent negative sub-result toggle
+            EditorGUILayout.PropertyField(preventNegativeSubResultProperty, new GUIContent("Prevent Negative Sub-Results", 
+                "If enabled, any sub-calculation that results in a negative number will be treated as 0"));
 
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Formula Nodes", EditorStyles.boldLabel);
