@@ -3,7 +3,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
 using ProjectCI_Animation.Runtime;
-using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -11,6 +10,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public class PvMnBattleGeneralUnit : GridPawnUnit
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
+        [SerializeField] private FormulaCollection _formulaCollection;
+
+        private void SetFormulaCollection(FormulaCollection formulaCollection)
+        {
+            RuntimeAttributes = new FormulaAttributeContainer(formulaCollection);
+            SimulatedAttributes = new FormulaAttributeContainer(formulaCollection);
+        }
 
         /// <summary>
         /// Called in Package, do not delete
@@ -18,8 +24,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void Initalize()
         {
             base.Initalize();
-            RuntimeAttributes = new FormulaAttributeContainer();
-            SimulatedAttributes = new FormulaAttributeContainer();
+            
+            if (_formulaCollection != null)
+            {
+                SetFormulaCollection(_formulaCollection);
+            }
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
             if (_animationManager)

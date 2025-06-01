@@ -3,6 +3,8 @@ using ProjectCI.CoreSystem.Runtime.Units.Interfaces;
 using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.TacticTool.Formula.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -20,6 +22,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public SoUnitData UnitData => unitData;
         public List<UnitAbilityCore> UnitAbilities => unitAbilities;
+
+        [SerializeField]
+        private AttributeValuePair[] m_ExtraAttributes;
 
         /// <summary>
         /// Gets the unique identifier of the object
@@ -54,6 +59,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void CleanUp()
         {
             // Implement cleanup logic if needed
+        }
+
+        public void SetExtraAttributes(UnitAttributeContainer attributeContainer)
+        {
+            foreach (var attribute in m_ExtraAttributes)
+            {
+                attributeContainer.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
+            }
         }
     }
 } 

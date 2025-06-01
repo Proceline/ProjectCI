@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ea21104062b944b8bb569553a27a2d, type: 3}
   m_Name: SoChar_Guojia_Dorothea
   m_EditorClassIdentifier: 
-  m_UnitName: TestName
+  m_UnitName: Guojia
   m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.GridUnit
   originalAttributes:
   - m_AttributeType:

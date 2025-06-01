@@ -10,12 +10,19 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         private readonly FormulaAttributeDictionary _formulaAttributeDictionary;
         private Dictionary<AttributeType, FormulaDefinition> _attributesFormulaMap = new();
 
-        public FormulaAttributeContainer()
+        public FormulaAttributeContainer(FormulaCollection formulaCollection)
         {
             _formulaAttributeDictionary = new FormulaAttributeDictionary(this);
+            if (formulaCollection != null)
+            {
+                foreach (var formulaDefinition in formulaCollection.Formulas)
+                {
+                    SetFormulaAttribute(formulaDefinition);
+                }
+            }
         }
 
-        public void SetFormulaAttribute(FormulaDefinition formulaDefinition)
+        private void SetFormulaAttribute(FormulaDefinition formulaDefinition)
         {
             if (!_attributesFormulaMap.ContainsKey(formulaDefinition.TargetAttribute))
             {

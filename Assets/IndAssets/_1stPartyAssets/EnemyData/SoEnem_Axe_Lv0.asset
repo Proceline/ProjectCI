@@ -51,6 +51,10 @@ MonoBehaviour:
       value: 8
     m_Value: 0
     m_GainValue: 0
+  - m_AttributeType:
+      value: 17
+    m_Value: 3
+    m_GainValue: 0
   m_TravelSound: {fileID: 0}
   m_DamagedSound: {fileID: 0}
   m_HealSound: {fileID: 8300000, guid: cb3c61d10d8afb446ac224c24b4dfe8a, type: 3}

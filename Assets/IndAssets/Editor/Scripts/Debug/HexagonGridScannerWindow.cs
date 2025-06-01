@@ -172,9 +172,15 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
                         pawnDetectLayerMask
                     );
 
-                    unit.SetUnitData(sceneUnit.UnitData);
+                    sceneUnit.SetExtraAttributes(unit.RuntimeAttributes);
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
+                }
+
+                var hoverPawnInfos = GameObject.FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);
+                if (hoverPawnInfos.Length > 0)
+                {
+                    hoverPawnInfos[0].Initialize();
                 }
                 
                 battleManager.Initialize();
