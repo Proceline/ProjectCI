@@ -5,17 +5,21 @@ using System;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
+using ProjectCI.TacticTool.Formula.Concrete;
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public class PvMnBattleGeneralUnit : GridPawnUnit
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
 
+        /// <summary>
+        /// Called in Package, do not delete
+        /// </summary>
         public override void Initalize()
         {
             base.Initalize();
-            RuntimeAttributes = new UnitAttributeContainer();
-            SimulatedAttributes = new UnitAttributeContainer();
+            RuntimeAttributes = new FormulaAttributeContainer();
+            SimulatedAttributes = new FormulaAttributeContainer();
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
             if (_animationManager)
@@ -71,7 +75,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             RuntimeAttributes.Health.SetValue(unitData.m_Health, unitData.m_Health);
             foreach (var attribute in unitData.originalAttributes)
             {
-                RuntimeAttributes.SetBaseAttribute(attribute.m_AttributeType, attribute.m_Value);
+                RuntimeAttributes.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
             }
         }
 

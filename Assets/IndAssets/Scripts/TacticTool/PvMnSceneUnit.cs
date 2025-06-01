@@ -9,6 +9,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public class PvMnSceneUnit : MonoBehaviour, ISceneUnit
     {
         [SerializeField]
+        private bool m_IsFriendly;
+        public bool IsFriendly => m_IsFriendly;
+
+        [SerializeField]
         protected SoUnitData unitData;
 
         [SerializeField]

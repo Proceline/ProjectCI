@@ -32,9 +32,6 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
         private int detectMaxResults = 10;
 
         [SerializeField]
-        private SoUnitData friendlyUnitData;
-
-        [SerializeField]
         private AbilityListUIElementBase abilityListUIPrefab;
 
         [SerializeField]
@@ -80,8 +77,7 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
             // Battle Manager 参数
             EditorGUILayout.LabelField("Battle Manager Parameters", EditorStyles.boldLabel);
             battleManagerPrefab = EditorGUILayout.ObjectField("Battle Manager Prefab", battleManagerPrefab, typeof(TacticBattleManager), true) as TacticBattleManager;
-            friendlyUnitData = EditorGUILayout.ObjectField("Friendly Unit Data", friendlyUnitData, typeof(SoUnitData), true) as SoUnitData;
-
+            
             string[] pawnLayerNames = InternalEditorUtility.layers;
             int testMaskValue = pawnDetectLayerMask.value;
             testMaskValue = EditorGUILayout.MaskField("Layer Mask", testMaskValue, pawnLayerNames);
@@ -162,7 +158,7 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 
                 foreach (var sceneUnit in sceneUnits)
                 {
-                    BattleTeam team = (sceneUnit.UnitData == friendlyUnitData) 
+                    BattleTeam team = sceneUnit.IsFriendly
                         ? BattleTeam.Friendly 
                         : BattleTeam.Hostile;
 
@@ -175,7 +171,8 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
                         1, 
                         pawnDetectLayerMask
                     );
-                    
+
+                    unit.SetUnitData(sceneUnit.UnitData);
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
                 }
