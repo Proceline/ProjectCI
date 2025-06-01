@@ -40,3 +40,4 @@ MonoBehaviour:
       value: 17
     operatorSymbol: '-'
     constantValue: 0
+  preventNegativeSubResult: 1
