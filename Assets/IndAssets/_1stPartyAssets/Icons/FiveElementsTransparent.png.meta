@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1538c5afb130f444784879ec5163389d
+guid: 9c900846c14e5f0498c175ec5bc51b02
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AllIconsAttribute_Attack
+      name: FiveElements_Jin
       rect:
         serializedVersion: 2
-        x: 58
-        y: 706
-        width: 253
-        height: 263
+        x: 33
+        y: 577
+        width: 302
+        height: 254
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,20 +112,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9adab72afdbeb3042a022e4ed74b3d9c
-      internalID: -1140453347
+      spriteID: 52047cb75bc8d9643ac2fd6caac5aa77
+      internalID: 577399825
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AllIconsAttribute_Magic
+      name: FiveElements_Mu
       rect:
         serializedVersion: 2
-        x: 377
-        y: 684
-        width: 257
-        height: 290
+        x: 383
+        y: 549
+        width: 258
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,20 +134,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c84b273ede7185c4c8ce7f9fb315c8c2
-      internalID: -149152826
+      spriteID: fd46e92fde8dd4448bb88d12c7340868
+      internalID: -1786542982
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AllIconsAttribute_ASpeed
+      name: FiveElements_Fire
       rect:
         serializedVersion: 2
-        x: 701
-        y: 689
-        width: 252
-        height: 279
+        x: 699
+        y: 551
+        width: 282
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95c73b3abed79b24c870b1a740e2c296
-      internalID: 648988630
+      spriteID: 106995a6eca72d14e96c475a6f5c2431
+      internalID: -1640926125
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AllIconsAttribute_Shield
+      name: FiveElements_Water
       rect:
         serializedVersion: 2
-        x: 63
-        y: 396
-        width: 253
-        height: 258
+        x: 219
+        y: 221
+        width: 246
+        height: 296
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,20 +178,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e8ba6299326611d41956333e473ac5d1
-      internalID: -1509785740
+      spriteID: c6bf5cf87ce84004997200670e2c7692
+      internalID: 1180849870
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AllIconsAttribute_Resist
+      name: FiveElements_Tu
       rect:
         serializedVersion: 2
-        x: 390
-        y: 394
-        width: 239
-        height: 259
+        x: 517
+        y: 235
+        width: 346
+        height: 244
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,96 +200,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd5a89b1ad3098c438cdb80923d53381
-      internalID: -1121079802
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AllIconsAttribute_Hit
-      rect:
-        serializedVersion: 2
-        x: 685
-        y: 399
-        width: 281
-        height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7325e72ea768c3a42983c966093830a5
-      internalID: -1244866637
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AllIconsAttribute_Critical
-      rect:
-        serializedVersion: 2
-        x: 51
-        y: 93
-        width: 257
-        height: 262
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0d04d4b84c4b9754cae02e5bc50dc525
-      internalID: 1813024148
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AllIconsAttribute_Dodge
-      rect:
-        serializedVersion: 2
-        x: 355
-        y: 89
-        width: 270
-        height: 261
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 147f1e4d58d274c4892f4f4b02bf123a
-      internalID: -982961584
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AllIconsAttribute_CritDodge
-      rect:
-        serializedVersion: 2
-        x: 685
-        y: 94
-        width: 260
-        height: 256
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dfd6ef0ca7bc4564c8dc9c9d6f06a33e
-      internalID: 1216125753
+      spriteID: 96d54b52ecadc2e4b84ba189eb0e6e24
+      internalID: -1154712326
       vertices: []
       indices: 
       edges: []
@@ -298,7 +210,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b27cad84c3884854399dd972c8ce4307
+    spriteID: 0bb35355064484647b32755725386d4c
     internalID: 0
     vertices: []
     indices: 
@@ -308,15 +220,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      AllIconsAttribute_ASpeed: 648988630
-      AllIconsAttribute_Attack: -1140453347
-      AllIconsAttribute_CritDodge: 1216125753
-      AllIconsAttribute_Critical: 1813024148
-      AllIconsAttribute_Dodge: -982961584
-      AllIconsAttribute_Hit: -1244866637
-      AllIconsAttribute_Magic: -149152826
-      AllIconsAttribute_Resist: -1121079802
-      AllIconsAttribute_Shield: -1509785740
+      FiveElements_Fire: -1640926125
+      FiveElements_Jin: 577399825
+      FiveElements_Mu: -1786542982
+      FiveElements_Tu: -1154712326
+      FiveElements_Water: 1180849870
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
