@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using UnityEngine;
 

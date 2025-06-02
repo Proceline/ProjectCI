@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
@@ -10,35 +8,27 @@ using ProjectCI.CoreSystem.Runtime.Attributes;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
-
     public class PvUIHoverPawnInfo : MonoBehaviour
     {
         public GameObject m_ScreenObject;
 
-        [SerializeField]
-        private AttributeType m_PhysicalAttackAttribute;
+        [SerializeField] private Text m_NameText;
+        [SerializeField] private Text m_HitpointText;
+        [SerializeField] private Slider m_HitpointSlider;
 
-        [SerializeField]
-        private AttributeType m_MagicAttackAttribute;
-
-        [SerializeField]
-        private AttributeType[] m_AttributesToDisplay;
-        
-        [SerializeField]
-        private Text m_AttackValueText;
-
-        [SerializeField]
-        private Text[] m_AttributeValueTexts;
+        [SerializeField] private AttributeType m_PhysicalAttackAttribute;
+        [SerializeField] private AttributeType m_MagicAttackAttribute;
+        [SerializeField] private AttributeType[] m_AttributesToDisplay;
+        [SerializeField] private Text m_AttackValueText;
+        [SerializeField] private Text[] m_AttributeValueTexts;
 
         protected GridPawnUnit m_CurrUnit = null;
-
         private bool bEnabled = true;
-
         private bool _bInitialized = false;
 
         public void Initialize()
         {
-            if(_bInitialized)
+            if (_bInitialized)
                 return;
 
             _bInitialized = true;
@@ -49,7 +39,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnDestroy()
         {
-            if(_bInitialized)
+            if (_bInitialized)
             {
                 TacticBattleManager.Get().OnUnitHover.RemoveListener(HandleUnitHover);
                 TacticBattleManager.Get().OnTeamWon.RemoveListener(HandleGameDone);
@@ -58,23 +48,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected virtual void HandleUnitHover(GridPawnUnit InUnit)
         {
-            if ( m_CurrUnit )
+            if (m_CurrUnit)
             {
                 BattleHealth hpComp = m_CurrUnit.GetComponent<BattleHealth>();
-                if ( hpComp )
+                if (hpComp)
                 {
-                    hpComp.OnHealthPreDepleted.RemoveListener( HandleUnitDeath );
+                    hpComp.OnHealthPreDepleted.RemoveListener(HandleUnitDeath);
                 }
             }
 
             m_CurrUnit = InUnit;
 
-            if ( m_CurrUnit )
+            if (m_CurrUnit)
             {
                 BattleHealth hpComp = m_CurrUnit.GetComponent<BattleHealth>();
-                if ( hpComp )
+                if (hpComp)
                 {
-                    hpComp.OnHealthPreDepleted.AddListener( HandleUnitDeath );
+                    hpComp.OnHealthPreDepleted.AddListener(HandleUnitDeath);
                 }
             }
 
@@ -88,7 +78,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected void SetupScreen()
         {
-            if(m_CurrUnit && bEnabled)
+            if (m_CurrUnit && bEnabled)
             {
                 m_ScreenObject.SetActive(true);
                 UpdateViewInfo();
@@ -101,8 +91,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected virtual void UpdateViewInfo()
         {
-            if(m_CurrUnit)
+            if (m_CurrUnit)
             {
+                m_NameText.text = m_CurrUnit.GetUnitData().m_UnitName;
+                m_HitpointText.text = m_CurrUnit.RuntimeAttributes.Health.CurrentValue.ToString() 
+                    + "/" + m_CurrUnit.RuntimeAttributes.Health.MaxValue.ToString();
+                m_HitpointSlider.maxValue = m_CurrUnit.RuntimeAttributes.Health.MaxValue;
+                m_HitpointSlider.value = m_CurrUnit.RuntimeAttributes.Health.CurrentValue;
+
                 m_AttackValueText.text = m_CurrUnit.RuntimeAttributes.GetAttributeValue(m_PhysicalAttackAttribute).ToString();
                 for (int i = 0; i < m_AttributesToDisplay.Length; i++)
                 {

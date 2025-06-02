@@ -5,15 +5,16 @@ using System;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
+using ProjectCI.CoreSystem.Runtime.Services;
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public class PvMnBattleGeneralUnit : GridPawnUnit
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
-        [SerializeField] private FormulaCollection _formulaCollection;
 
-        private void SetFormulaCollection(FormulaCollection formulaCollection)
+        private void SetFormulaCollection()
         {
+            FormulaCollection formulaCollection = ServiceLocator.Get<FormulaCollection>();
             RuntimeAttributes = new FormulaAttributeContainer(formulaCollection);
             SimulatedAttributes = new FormulaAttributeContainer(formulaCollection);
         }
@@ -24,11 +25,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void Initalize()
         {
             base.Initalize();
-            
-            if (_formulaCollection != null)
-            {
-                SetFormulaCollection(_formulaCollection);
-            }
+            SetFormulaCollection();
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
             if (_animationManager)
@@ -81,10 +78,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void SetUnitData(SoUnitData unitData)
         {
             base.SetUnitData(unitData);
-            RuntimeAttributes.Health.SetValue(unitData.m_Health, unitData.m_Health);
+
             foreach (var attribute in unitData.originalAttributes)
             {
                 RuntimeAttributes.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
+            }
+
+            FormulaCollection formulaCollection = ServiceLocator.Get<FormulaCollection>();
+            if (formulaCollection != null)
+            {
+                int hitPoint = RuntimeAttributes.GetAttributeValue(formulaCollection.HealthAttributeType);
+                RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
+            }
+            else
+            {
+                RuntimeAttributes.Health.SetValue(unitData.m_Health, unitData.m_Health);
             }
         }
 
