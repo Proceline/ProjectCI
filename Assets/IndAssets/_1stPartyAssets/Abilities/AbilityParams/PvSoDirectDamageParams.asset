@@ -13,10 +13,7 @@ MonoBehaviour:
   m_Name: PvSoDirectDamageParams
   m_EditorClassIdentifier: 
   m_Damage: 50
-  m_bMagicalDamage: 0
   attackerAttribute:
-    value: 0
+    value: 12
   defenderAttribute:
-    value: 0
-  damageType:
-    value: 0
+    value: 6

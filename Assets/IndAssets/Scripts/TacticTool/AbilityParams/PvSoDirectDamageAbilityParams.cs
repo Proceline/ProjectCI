@@ -10,30 +10,26 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "PvSoDirectDamageParams", menuName = "ProjectCI Tools/Ability/Parameters/PvSoDirectDamageParams")]
     public class PvSoDirectDamageAbilityParams : AbilityParamBase
     {
+        // TODO: This will affect player's attack might
         public int m_Damage;
-        public bool m_bMagicalDamage;
 
         public AttributeType attackerAttribute;
         public AttributeType defenderAttribute;
 
-        public AttributeType damageType;
-
         public override string GetAbilityInfo()
         {
-            return "Damage" + (m_bMagicalDamage ? "(Magical)" : "") + " " + m_Damage.ToString();
+            // TODO: Description
+            return base.GetAbilityInfo();
         }
 
         public override void Execute(string abilityId, UnitAttributeContainer FromContainer, string FromUnitId,
             UnitAttributeContainer ToContainer, string ToUnitId, LevelCellBase ToCell, List<CommandResult> results)
         {
             int beforeHealth = ToContainer.Health.CurrentValue;
-            int damage = m_Damage;
-            if (m_bMagicalDamage)
-            {
-                damage = FromContainer.GetAttributeValue(attackerAttribute);
-            }
+            int damage = FromContainer.GetAttributeValue(attackerAttribute);
             
-            int deltaDamage = damage;
+            int deltaDamage = 
+                Mathf.Max(damage - ToContainer.GetAttributeValue(defenderAttribute), 0);
 
             ToContainer.Health.ModifyValue(-deltaDamage);
             int afterHealth = ToContainer.Health.CurrentValue;
