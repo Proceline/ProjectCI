@@ -12,6 +12,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         public GameObject m_ScreenObject;
 
+        [SerializeField] private Image m_AttackTypeIcon;
+        [SerializeField] private Sprite m_PhysicalSprite;
+        [SerializeField] private Sprite m_MagicSprite;
+
         [SerializeField] private Text m_NameText;
         [SerializeField] private Text m_HitpointText;
         [SerializeField] private Slider m_HitpointSlider;
