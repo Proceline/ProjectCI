@@ -178,9 +178,9 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
                 }
 
                 var hoverPawnInfos = GameObject.FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);
-                if (hoverPawnInfos.Length > 0)
+                foreach (var hoverPawnInfo in hoverPawnInfos)
                 {
-                    hoverPawnInfos[0].Initialize();
+                    hoverPawnInfo.Initialize();
                 }
                 
                 battleManager.Initialize();

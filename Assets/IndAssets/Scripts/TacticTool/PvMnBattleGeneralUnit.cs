@@ -105,7 +105,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected override void HandleTraversePreFinished()
         {
-            
+            m_CurrentMovementPoints = 0;
+            OnMovementPostComplete.Invoke();
         }
 
         private void Kill()

@@ -7,10 +7,11 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
 using UnityEngine.InputSystem;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
-using System.Collections;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.CoreSystem.Runtime.Attributes;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -21,6 +22,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly Dictionary<string, UnitAbilityCore> m_AbilityIdToAbility = new();
 
         GameObject m_CurrentHoverObject;
+
+        [SerializeField]
+        private AttributeType m_AbilitySpeedAttributeType;
 
         GridPawnUnit SelectedUnit = null;
 
@@ -271,18 +275,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             UnitAbilityCore ability = InUnit.GetEquippedAbility();
             UnitAbilityCore targetAbility = InTargetUnit.GetEquippedAbility();
+
+            int abilitySpeed = InUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
+            int targetAbilitySpeed = InTargetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             
             List<CommandResult> results = new List<CommandResult>();
-            if(ability)
+            if (ability)
             {
                 m_AbilityIdToAbility.TryAdd(ability.GetAbilityId(InUnit.ID), ability);
                 HandleAbilityParam(ability, InUnit, InTargetUnit);
             }
-            if(targetAbility)
+
+            if (targetAbility && ability.IsAbilityCounterAllowed())
             {
                 m_AbilityIdToAbility.TryAdd(targetAbility.GetAbilityId(InTargetUnit.ID), targetAbility);
                 HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
             }
+
+            if (abilitySpeed >= targetAbilitySpeed)
+            {
+                HandleAbilityParam(ability, InUnit, InTargetUnit);
+            }
+            else if (targetAbilitySpeed > abilitySpeed)
+            {
+                HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
+            }
+
             return results;
 
             void HandleAbilityParam(UnitAbilityCore ability, GridPawnUnit InCaster, GridPawnUnit InTarget)

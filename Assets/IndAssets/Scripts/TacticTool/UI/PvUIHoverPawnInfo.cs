@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -12,21 +13,24 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         public GameObject m_ScreenObject;
 
-        [SerializeField] private Image m_AttackTypeIcon;
-        [SerializeField] private Sprite m_PhysicalSprite;
-        [SerializeField] private Sprite m_MagicSprite;
+        [SerializeField] protected Image m_AttackTypeIcon;
+        [SerializeField] protected Sprite m_PhysicalSprite;
+        [SerializeField] protected Sprite m_MagicSprite;
 
-        [SerializeField] private Text m_NameText;
-        [SerializeField] private Text m_HitpointText;
-        [SerializeField] private Slider m_HitpointSlider;
+        [SerializeField] protected Text m_NameText;
+        [SerializeField] protected Text m_HitpointText;
+        [SerializeField] protected Slider m_HitpointSlider;
 
-        [SerializeField] private AttributeType m_PhysicalAttackAttribute;
-        [SerializeField] private AttributeType m_MagicAttackAttribute;
-        [SerializeField] private AttributeType[] m_AttributesToDisplay;
-        [SerializeField] private Text m_AttackValueText;
-        [SerializeField] private Text[] m_AttributeValueTexts;
+        [SerializeField] protected AttributeType m_PhysicalAttackAttribute;
+        [SerializeField] protected AttributeType m_MagicAttackAttribute;
+        [SerializeField] protected AttributeType[] m_AttributesToDisplay;
+        [SerializeField] protected Text m_AttackValueText;
+        [SerializeField] protected Text[] m_AttributeValueTexts;
+        [SerializeField] protected UnityEvent<GridPawnUnit> m_OnUnitSelected;
 
         protected GridPawnUnit m_CurrUnit = null;
+        public bool bIsSelectedEnabled = false;
+
         private bool bEnabled = true;
         private bool _bInitialized = false;
 
@@ -37,16 +41,63 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _bInitialized = true;
             SetupScreen();
-            TacticBattleManager.Get().OnUnitHover.AddListener(HandleUnitHover);
-            TacticBattleManager.Get().OnTeamWon.AddListener(HandleGameDone);
+            TacticBattleManager battleManager = TacticBattleManager.Get();
+            if (battleManager)
+            {
+                battleManager.OnUnitHover.AddListener(HandleUnitHover);
+                if (bIsSelectedEnabled)
+                {
+                    battleManager.OnUnitSelected.AddListener(HandleUnitSelected);
+                }
+                battleManager.OnTeamWon.AddListener(HandleGameDone);
+            }
         }
 
         private void OnDestroy()
         {
             if (_bInitialized)
             {
-                TacticBattleManager.Get().OnUnitHover.RemoveListener(HandleUnitHover);
-                TacticBattleManager.Get().OnTeamWon.RemoveListener(HandleGameDone);
+                TacticBattleManager battleManager = TacticBattleManager.Get();
+                if (battleManager)
+                {
+                    battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
+                    if (bIsSelectedEnabled)
+                    {
+                        battleManager.OnUnitSelected.RemoveListener(HandleUnitSelected);
+                    }
+                    battleManager.OnTeamWon.RemoveListener(HandleGameDone);
+                }
+            }
+        }
+
+        protected void HandleUnitSelected(GridPawnUnit InUnit)
+        {
+            TacticBattleManager battleManager = TacticBattleManager.Get();
+            if (InUnit)
+            {
+                HandleUnitHover(InUnit);
+                battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
+            }
+            else
+            {
+                m_ScreenObject.SetActive(false);
+                battleManager.OnUnitHover.AddListener(HandleUnitHover);
+            }
+
+            m_OnUnitSelected.Invoke(InUnit);
+        }
+
+        public void OnEnableExtraUIHoverPanel(GridPawnUnit InUnit)
+        {
+            if (InUnit)
+            {
+                bEnabled = true;
+                m_ScreenObject.SetActive(true);
+            }
+            else
+            {
+                bEnabled = false;
+                m_ScreenObject.SetActive(false);
             }
         }
 
