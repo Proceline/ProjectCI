@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ec66185db545d249b3bdcd4b92bfc97, type: 3}
   m_Name: _FormulaCollection
   m_EditorClassIdentifier: 
+  m_HealthAttributeType:
+    value: 0
+  m_MovementAttributeType:
+    value: 26
   m_Formulas:
   - {fileID: 11400000, guid: 9a3111b6e6664b84d8dc1aff1933cb2a, type: 2}
+  - {fileID: 11400000, guid: ad1be90382b90604387acc661f3afab2, type: 2}
   - {fileID: 11400000, guid: 90fa463937ffccf4d872dd84f1b734db, type: 2}
   - {fileID: 11400000, guid: 8f1a460943352834498f92266e07ca10, type: 2}
   - {fileID: 11400000, guid: 00f928664ae703c47a226865b5f52aee, type: 2}

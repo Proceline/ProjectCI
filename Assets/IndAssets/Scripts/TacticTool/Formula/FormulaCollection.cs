@@ -12,11 +12,14 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         private AttributeType m_HealthAttributeType;
 
         [SerializeField]
+        private AttributeType m_MovementAttributeType;
+        [SerializeField]
         private FormulaDefinition[] m_Formulas;
 
         public FormulaDefinition[] Formulas => m_Formulas;
 
         public AttributeType HealthAttributeType => m_HealthAttributeType;
+        public AttributeType MovementAttributeType => m_MovementAttributeType;
 
         public void Initialize()
         {

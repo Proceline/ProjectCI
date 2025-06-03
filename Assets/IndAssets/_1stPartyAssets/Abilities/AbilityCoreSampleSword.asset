@@ -18,7 +18,7 @@ MonoBehaviour:
   m_ActionPointCost: 0
   m_bAllowBlocked: 0
   m_EffectedTeam: 2
-  m_EffectedType: 1
+  m_EffectedType: 0
   m_AbilityShape: {fileID: 11400000, guid: 405df59af8961ce4592c016ad1fe05a7, type: 2}
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
@@ -28,3 +28,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
   m_Ailments: []
   m_Animation: {fileID: 11400000, guid: c23855095a0892e43b96bdda97214bed, type: 2}
+  audioOnStart: {fileID: 0}
+  audioOnExecute: {fileID: 0}
+  m_StaminaCost: 0

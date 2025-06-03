@@ -39,3 +39,4 @@ MonoBehaviour:
   - _weaponResilience
   - _skillCharm
   - _range
+  - _movement

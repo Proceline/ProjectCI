@@ -2704,6 +2704,8 @@ MonoBehaviour:
   - value: 9
   - value: 11
   - value: 22
+  - value: 21
+  - value: 26
   m_AttackValueText: {fileID: 894541673923597073}
   m_AttributeValueTexts:
   - {fileID: 1904562081182034209}
@@ -2713,6 +2715,8 @@ MonoBehaviour:
   - {fileID: 4778451534073340494}
   - {fileID: 4974691446916045409}
   - {fileID: 241921535219342178}
+  - {fileID: 1996870352334802308}
+  - {fileID: 8511643870202604267}
 --- !u!1 &8392268994655731931
 GameObject:
   m_ObjectHideFlags: 0

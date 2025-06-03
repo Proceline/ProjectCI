@@ -11,12 +11,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public class PvMnBattleGeneralUnit : GridPawnUnit
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
+        [NonSerialized] private FormulaCollection _formulaCollection;
+        private FormulaCollection FormulaCollection => _formulaCollection ?? (_formulaCollection = ServiceLocator.Get<FormulaCollection>());
 
         private void SetFormulaCollection()
         {
-            FormulaCollection formulaCollection = ServiceLocator.Get<FormulaCollection>();
-            RuntimeAttributes = new FormulaAttributeContainer(formulaCollection);
-            SimulatedAttributes = new FormulaAttributeContainer(formulaCollection);
+            RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection);
+            SimulatedAttributes = new FormulaAttributeContainer(FormulaCollection);
         }
 
         /// <summary>
@@ -84,16 +85,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RuntimeAttributes.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
             }
 
-            FormulaCollection formulaCollection = ServiceLocator.Get<FormulaCollection>();
-            if (formulaCollection != null)
+            if (FormulaCollection != null)
             {
-                int hitPoint = RuntimeAttributes.GetAttributeValue(formulaCollection.HealthAttributeType);
+                int hitPoint = RuntimeAttributes.GetAttributeValue(FormulaCollection.HealthAttributeType);
                 RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
             }
             else
             {
-                RuntimeAttributes.Health.SetValue(unitData.m_Health, unitData.m_Health);
+                RuntimeAttributes.Health.SetValue(10, 10);
             }
+        }
+
+        public override void HandleTurnStarted()
+        {
+            m_CurrentAbilityPoints = 1;
+            m_CurrentMovementPoints = 
+                RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
+        }
+
+        protected override void HandleTraversePreFinished()
+        {
+            
         }
 
         private void Kill()
