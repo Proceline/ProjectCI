@@ -26,6 +26,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private AttributeType m_AbilitySpeedAttributeType;
 
+        [SerializeField]
+        private int m_DoubleAttackSpeedThreshold = 5;
+
         GridPawnUnit SelectedUnit = null;
 
         protected override void StartGame()
@@ -216,7 +219,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             List<Action<GridPawnUnit, LevelCellBase>> lastReactions = new();
             foreach (CommandResult result in results)
             {
-                if (m_AbilityIdToAbility.TryGetValue(result.ResultId, out UnitAbilityCore ability))
+                if (m_AbilityIdToAbility.TryGetValue(result.AbilityId, out UnitAbilityCore ability))
                 {
                     if (lastAimCell == null)
                     {
@@ -292,11 +295,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
             }
 
-            if (abilitySpeed >= targetAbilitySpeed)
+            if (abilitySpeed + 10 >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold)
             {
                 HandleAbilityParam(ability, InUnit, InTargetUnit);
             }
-            else if (targetAbilitySpeed > abilitySpeed)
+            else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold)
             {
                 HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
             }
@@ -305,6 +308,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             void HandleAbilityParam(UnitAbilityCore ability, GridPawnUnit InCaster, GridPawnUnit InTarget)
             {
+                string resultId = Guid.NewGuid().ToString();
                 foreach (AbilityParamBase param in ability.GetParameters())
                 {
                     string casterId = InCaster.ID;
@@ -312,7 +316,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     // TODO: Unit assignment to Dictionary should be done in the BattleManager
                     m_UnitIdToBattleUnit.TryAdd(casterId, InCaster);
                     m_UnitIdToBattleUnit.TryAdd(targetId, InTarget);
-                    param.Execute(ability.GetAbilityId(casterId), InCaster.RuntimeAttributes, casterId, 
+                    param.Execute(resultId, ability.GetAbilityId(casterId), InCaster.RuntimeAttributes, casterId, 
                         InTarget.RuntimeAttributes, targetId, InTarget.GetCell(), results);
                 }
             }

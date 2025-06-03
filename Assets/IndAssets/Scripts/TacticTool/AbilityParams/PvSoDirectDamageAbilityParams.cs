@@ -22,7 +22,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return base.GetAbilityInfo();
         }
 
-        public override void Execute(string abilityId, UnitAttributeContainer FromContainer, string FromUnitId,
+        public override void Execute(string resultId,string abilityId, UnitAttributeContainer FromContainer, string FromUnitId,
             UnitAttributeContainer ToContainer, string ToUnitId, LevelCellBase ToCell, List<CommandResult> results)
         {
             int beforeHealth = ToContainer.Health.CurrentValue;
@@ -38,7 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 results.Add(new CommandDamageResult
                 {
-                    ResultId = abilityId,
+                    ResultId = resultId,
                     AbilityId = abilityId,
                     OwnerId = FromUnitId,
                     TargetCellIndex = ToCell.GetIndex(),
