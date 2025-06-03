@@ -12,6 +12,7 @@ using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -281,27 +282,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             int abilitySpeed = InUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             int targetAbilitySpeed = InTargetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
-            
-            List<CommandResult> results = new List<CommandResult>();
-            if (ability)
-            {
-                m_AbilityIdToAbility.TryAdd(ability.GetAbilityId(InUnit.ID), ability);
-                HandleAbilityParam(ability, InUnit, InTargetUnit);
-            }
-
-            if (targetAbility && ability.IsAbilityCounterAllowed())
-            {
-                m_AbilityIdToAbility.TryAdd(targetAbility.GetAbilityId(InTargetUnit.ID), targetAbility);
-                HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
-            }
-
+            FollowUpCondition followUpCondition = FollowUpCondition.None;
             if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold)
             {
-                HandleAbilityParam(ability, InUnit, InTargetUnit);
+                followUpCondition = FollowUpCondition.InitiativeFollowUp;
             }
             else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold)
             {
-                HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
+                followUpCondition = FollowUpCondition.CounterFollowUp;
+            }
+
+            List<CommandResult> results = new List<CommandResult>();
+            List<CombatActionContext> combatActionContextList = ability.CreateCombatActionContextList(followUpCondition);
+
+            foreach (CombatActionContext combatActionContext in combatActionContextList)
+            {
+                var combatAbility = combatActionContext.IsVictim ? targetAbility : ability;
+                var caster = combatActionContext.IsVictim ? InTargetUnit : InUnit;
+                var victim = combatActionContext.IsVictim ? InUnit : InTargetUnit;
+                if (combatAbility)
+                {
+                    m_AbilityIdToAbility.TryAdd(combatAbility.GetAbilityId(caster.ID), combatAbility);
+                    HandleAbilityParam(combatAbility, caster, victim);
+                }
             }
 
             return results;
