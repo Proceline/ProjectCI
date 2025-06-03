@@ -15,4 +15,6 @@ MonoBehaviour:
   m_StartingTeam: 1
   m_GameplayData:
     bShowHitAnimOnMove: 0
-  cancelAction: {fileID: 7419589125502536833, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  m_AbilitySpeedAttributeType:
+    value: 14
+  m_DoubleAttackSpeedThreshold: 5

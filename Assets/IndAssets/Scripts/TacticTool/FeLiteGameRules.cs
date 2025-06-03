@@ -295,7 +295,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 HandleAbilityParam(targetAbility, InTargetUnit, InUnit);
             }
 
-            if (abilitySpeed + 10 >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold)
+            if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold)
             {
                 HandleAbilityParam(ability, InUnit, InTargetUnit);
             }
