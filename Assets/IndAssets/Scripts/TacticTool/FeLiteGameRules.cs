@@ -280,20 +280,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             UnitAbilityCore ability = InUnit.GetEquippedAbility();
             UnitAbilityCore targetAbility = InTargetUnit.GetEquippedAbility();
 
+            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(InTargetUnit);
+            bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(InUnit.GetCell());
+
             int abilitySpeed = InUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             int targetAbilitySpeed = InTargetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             FollowUpCondition followUpCondition = FollowUpCondition.None;
-            if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold)
+            if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold && ability.IsAbilityFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.InitiativeFollowUp;
             }
-            else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold)
+            else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold && targetAbility.IsAbilityFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.CounterFollowUp;
             }
 
             List<CommandResult> results = new List<CommandResult>();
-            List<CombatActionContext> combatActionContextList = ability.CreateCombatActionContextList(followUpCondition);
+            List<CombatActionContext> combatActionContextList = ability.CreateCombatActionContextList(bIsTargetAbilityAbleToCounter, followUpCondition);
 
             foreach (CombatActionContext combatActionContext in combatActionContextList)
             {
