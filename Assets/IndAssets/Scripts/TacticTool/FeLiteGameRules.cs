@@ -37,6 +37,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             m_CurrentTeam = m_StartingTeam;
             m_TurnNumber = 0;
             m_UnitIdToBattleUnit.Clear();
+            m_AbilityIdToAbility.Clear();
+            
+            var units = GameObject.FindObjectsByType<GridPawnUnit>(FindObjectsSortMode.None);
+            foreach (var unit in units)
+            {
+                unit.GenerateNewID();
+                if (m_UnitIdToBattleUnit.TryAdd(unit.ID, unit))
+                {
+                    foreach (var ability in unit.GetAbilities())
+                    {
+                        ability.GenerateNewID();
+                        m_AbilityIdToAbility.Add(ability.ID, ability);
+                    }
+                }
+            }
 
             TacticBattleManager.HandleGameStarted();
 
@@ -305,7 +320,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var victim = combatActionContext.IsVictim ? InUnit : InTargetUnit;
                 if (combatAbility)
                 {
-                    m_AbilityIdToAbility.TryAdd(combatAbility.GetAbilityId(caster.ID), combatAbility);
                     HandleAbilityParam(combatAbility, caster, victim);
                 }
             }
@@ -319,10 +333,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 {
                     string casterId = InCaster.ID;
                     string targetId = InTarget.ID;
-                    // TODO: Unit assignment to Dictionary should be done in the BattleManager
-                    m_UnitIdToBattleUnit.TryAdd(casterId, InCaster);
-                    m_UnitIdToBattleUnit.TryAdd(targetId, InTarget);
-                    param.Execute(resultId, ability.GetAbilityId(casterId), InCaster.RuntimeAttributes, casterId, 
+                    param.Execute(resultId, ability.ID, InCaster.RuntimeAttributes, casterId, 
                         InTarget.RuntimeAttributes, targetId, InTarget.GetCell(), results);
                 }
             }
