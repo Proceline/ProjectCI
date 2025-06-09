@@ -171,6 +171,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
+            if (InPlayerUnit.IsDead() || InPlayerUnit.GetCurrentMovementPoints() <= 0)
+            {
+                return;
+            }
+
             BattleTeam currTeam = GetCurrentTeam();
             if(currTeam == InPlayerUnit.GetTeam())
             {
@@ -344,6 +349,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             UnselectUnit();
         }
 
+        /// <summary>
+        /// Add up extended function during cancel action applied
+        /// </summary>
+        /// <param name="context"></param>
         public override void CancelActionExtension(InputAction.CallbackContext context)
         {
             if (TacticBattleManager.IsActionBeingPerformed())
@@ -356,6 +365,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 UnitBattleState currentState = SelectedUnit.GetCurrentState();
                 if (currentState == UnitBattleState.UsingAbility)
                 {
+                    // TODO: Should be back to original position before moving
                     SelectedUnit.SetupMovement();
                 }
                 else if (currentState == UnitBattleState.Moving)

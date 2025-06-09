@@ -13,7 +13,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
         public static bool IsAbilityFollowUpAllowed(this UnitAbilityCore abilityCore)
         {
-            return true;
+            if (abilityCore.additionalParameters.Length < 1)
+            {
+                return true;
+            }
+            return abilityCore.additionalParameters[0] == 0;
         }
 
         public static bool IsInitiativeMandatoryFollowUp(this UnitAbilityCore abilityCore)

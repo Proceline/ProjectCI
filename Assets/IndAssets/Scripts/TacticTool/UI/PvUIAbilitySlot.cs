@@ -75,6 +75,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if(_abilityData && Owner)
                 {
                     Owner.HandleAbilitySelected(m_Index);
+                    PvUIAbilityListGroup.OnAbilitySelected?.Invoke(Owner, _abilityData);
                 }
             }
         }

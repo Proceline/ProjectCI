@@ -20,6 +20,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             SimulatedAttributes = new FormulaAttributeContainer(FormulaCollection);
         }
 
+        public override void GenerateNewID()
+        {
+            ID = Guid.NewGuid().ToString();
+        }
+
         /// <summary>
         /// Called in Package, do not delete
         /// </summary>

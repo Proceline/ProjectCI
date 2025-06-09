@@ -30,4 +30,4 @@ MonoBehaviour:
   m_Animation: {fileID: 11400000, guid: c23855095a0892e43b96bdda97214bed, type: 2}
   audioOnStart: {fileID: 0}
   audioOnExecute: {fileID: 0}
-  m_StaminaCost: 0
+  additionalParameters: 00000000
