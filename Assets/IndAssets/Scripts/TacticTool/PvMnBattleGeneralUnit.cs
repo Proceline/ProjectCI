@@ -7,15 +7,32 @@ using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.Utilities.Runtime.Events;
+
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
-    public class PvMnBattleGeneralUnit : GridPawnUnit
+    public class PvMnBattleGeneralUnit : GridPawnUnit, IEventOwner
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
         [NonSerialized] private FormulaCollection _formulaCollection;
         private FormulaCollection FormulaCollection => _formulaCollection ?? (_formulaCollection = ServiceLocator.Get<FormulaCollection>());
 
         private readonly Stack<UnitBattleState> _unitStates = new();
+        
+        private PvSoUnitBattleStateEvent _battleStateEvent;
+
+        private PvSoUnitBattleStateEvent BattleStateEvent
+        {
+            get
+            {
+                if (!_battleStateEvent)
+                {
+                    _battleStateEvent = ServiceLocator.Get<PvSoUnitBattleStateEvent>();
+                }
+
+                return _battleStateEvent;
+            }
+        }
 
         private void SetFormulaCollection()
         {
@@ -27,6 +44,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             ID = Guid.NewGuid().ToString();
         }
+
+        public string EventIdentifier => ID;
 
         /// <summary>
         /// Called in Package, do not delete
@@ -117,16 +136,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void AddState(UnitBattleState state)
         {
             _unitStates.Push(state);
+            BattleStateEvent.Raise(this, state, UnitStateBehaviour.Adding);
         }
 
         public override void RemoveLastState()
         {
-            _unitStates.Pop();
+            var state = _unitStates.Pop();
+            BattleStateEvent.Raise(this, state, UnitStateBehaviour.Popping);
         }
 
         public override void ClearStates()
         {
             _unitStates.Clear();
+            BattleStateEvent.Raise(this, UnitBattleState.Idle, UnitStateBehaviour.Clear);
         }
 
         public override void HandleTurnStarted()
