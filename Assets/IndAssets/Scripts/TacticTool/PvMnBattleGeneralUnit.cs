@@ -2,6 +2,7 @@ using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
+using System.Collections.Generic;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
@@ -13,6 +14,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized] private UnitAnimationManager _animationManager;
         [NonSerialized] private FormulaCollection _formulaCollection;
         private FormulaCollection FormulaCollection => _formulaCollection ?? (_formulaCollection = ServiceLocator.Get<FormulaCollection>());
+
+        private readonly Stack<UnitBattleState> _unitStates = new();
 
         private void SetFormulaCollection()
         {
@@ -99,6 +102,31 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 RuntimeAttributes.Health.SetValue(10, 10);
             }
+        }
+
+        public override UnitBattleState GetCurrentState()
+        {
+            if (_unitStates.TryPeek(out var result))
+            {
+                return result;
+            }
+
+            return UnitBattleState.Idle;
+        }
+
+        public override void AddState(UnitBattleState state)
+        {
+            _unitStates.Push(state);
+        }
+
+        public override void RemoveLastState()
+        {
+            _unitStates.Pop();
+        }
+
+        public override void ClearStates()
+        {
+            _unitStates.Clear();
         }
 
         public override void HandleTurnStarted()

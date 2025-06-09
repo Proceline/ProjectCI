@@ -21,7 +21,13 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b9e079612e52b8355ada7791652772c316ed3c5a"
+      "hash": "37d8e0a5c57e5ca516d124d91c4603b42bebd3b9"
+    },
+    "com.ppvylk.project_ci_utilities": {
+      "version": "file:com.ppvylk.project_ci_utilities",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
