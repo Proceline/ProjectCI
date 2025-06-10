@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ServicesListBeforeSceneLoad:
   - {fileID: 11400000, guid: cd0d657ce42bfbd48b2d25b6d44f8e18, type: 2}
+  - {fileID: 11400000, guid: 280ad2952b1111848ba1cf6a14bfd886, type: 2}
+  - {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}

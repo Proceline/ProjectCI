@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using UnityEngine.UI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GUI;
+using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -13,38 +15,36 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     /// </summary>
     public class PvUIAbilityListGroup : AbilityListUIElementBase
     {
-        enum EAbilityListState
-        {
-            None,
-            AbilitiesEnabled,
-            AbilityTargeting
-        }
-
         [NonSerialized]
         private ToggleGroup m_ToggleGroup;
-
-        private Stack<EAbilityListState> _statesStack = new Stack<EAbilityListState>();
-        internal static Action<AbilityListUIElementBase, UnitAbilityCore> OnAbilitySelected;
+        private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
+        private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
         public override void InitializeUI(Camera InUICamera)
         {
             base.InitializeUI(InUICamera);
+            _selectEventLocator.Service.RegisterCallback(HandleUnitSelected);
 
+            
             if (!m_ToggleGroup)
             {
                 m_ToggleGroup = gameObject.AddComponent<ToggleGroup>();
                 m_ToggleGroup.allowSwitchOff = false;
 
             }
+            
+            _stateEventLocator.Service.RegisterCallback(RespondToSelectedUnitState);
         }
 
-        private EAbilityListState GetCurrentState()
+        protected void OnDestroy()
         {
-            if (_statesStack.Count > 0)
-            {
-                return _statesStack.Peek();
-            }
-            return EAbilityListState.None;
+            _stateEventLocator.Service.UnregisterCallback(RespondToSelectedUnitState);
+            _selectEventLocator.Service.UnregisterCallback(HandleUnitSelected);
+        }
+
+        private void HandleUnitSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
+        {
+            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.GridPawnUnit : null);
         }
 
         protected override void HandleUnitPostSelected(bool bIsSelected)
@@ -57,14 +57,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             uiContainer.gameObject.SetActive(false);
             if (bIsSelected)
             {
-                m_SelectedUnit.BindToOnMovementPostCompleted(ShowAbilitiesPostMovement);
-                OnAbilitySelected += OnAbilityTargetingStarted;
+                m_SelectedUnit.BindToOnMovementPostCompleted(ShowAbilitiesPanel);
             }
             else
             {
-                _statesStack.Clear();
-                m_SelectedUnit.UnBindFromOnMovementPostCompleted(ShowAbilitiesPostMovement);
-                OnAbilitySelected -= OnAbilityTargetingStarted;
+                m_SelectedUnit.UnBindFromOnMovementPostCompleted(ShowAbilitiesPanel);
             }
         }
 
@@ -86,36 +83,42 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             m_ToggleGroup.UnregisterToggle(toggle);
         }
 
-        private void ShowAbilitiesPostMovement()
+        private void ShowAbilitiesPanel()
         {
-            if (GetCurrentState() == EAbilityListState.None)
+            switch (m_SelectedUnit.GetCurrentState())
             {
-                _statesStack.Push(EAbilityListState.AbilitiesEnabled);
-                RespondToStateChange(GetCurrentState());
+                case UnitBattleState.Idle:
+                case UnitBattleState.Moving:
+                case UnitBattleState.MovingProgress:
+                    _stateEventLocator.Service.Raise(m_SelectedUnit as IEventOwner, UnitBattleState.UsingAbility,
+                        UnitStateBehaviour.Adding);
+                    break;
+
             }
         }
 
-        private void OnAbilityTargetingStarted(AbilityListUIElementBase abilityListUIElementBase, UnitAbilityCore unitAbilityCore)
+        private void RespondToSelectedUnitState(IEventOwner eventOwner, UnitStateEventParam parameter)
         {
-            if (abilityListUIElementBase != this)
+            if (!m_SelectedUnit)
             {
                 return;
             }
-            _statesStack.Push(EAbilityListState.AbilityTargeting);
-            RespondToStateChange(GetCurrentState());
-        }
-
-        private void RespondToStateChange(EAbilityListState state)
-        {
-            switch (state)
+            
+            if (m_SelectedUnit.ID == eventOwner.EventIdentifier)
             {
-                case EAbilityListState.AbilitiesEnabled:
+                if (parameter is
+                    {
+                        battleState: UnitBattleState.UsingAbility,
+                        behaviour: UnitStateBehaviour.Adding or UnitStateBehaviour.Emphasis
+                    })
+                {
                     uiContainer.transform.position = m_SelectedUnit.transform.position;
                     uiContainer.gameObject.SetActive(true);
-                    break;
-                case EAbilityListState.AbilityTargeting:
+                }
+                else
+                {
                     uiContainer.gameObject.SetActive(false);
-                    break;
+                }
             }
         }
     }

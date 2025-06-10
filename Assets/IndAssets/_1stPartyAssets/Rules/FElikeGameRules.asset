@@ -18,3 +18,4 @@ MonoBehaviour:
   m_AbilitySpeedAttributeType:
     value: 14
   m_DoubleAttackSpeedThreshold: 5
+  _selectUnitEvent: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}

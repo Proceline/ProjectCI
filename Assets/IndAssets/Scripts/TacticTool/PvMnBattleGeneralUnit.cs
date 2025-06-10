@@ -18,21 +18,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private FormulaCollection FormulaCollection => _formulaCollection ?? (_formulaCollection = ServiceLocator.Get<FormulaCollection>());
 
         private readonly Stack<UnitBattleState> _unitStates = new();
-        
-        private PvSoUnitBattleStateEvent _battleStateEvent;
 
-        private PvSoUnitBattleStateEvent BattleStateEvent
-        {
-            get
-            {
-                if (!_battleStateEvent)
-                {
-                    _battleStateEvent = ServiceLocator.Get<PvSoUnitBattleStateEvent>();
-                }
-
-                return _battleStateEvent;
-            }
-        }
+        private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
+        private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
         private void SetFormulaCollection()
         {
@@ -54,6 +42,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             base.Initalize();
             SetFormulaCollection();
+            _stateEventLocator.Service.RegisterCallback(AdjustState);
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
             if (_animationManager)
@@ -62,6 +51,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 OnPreMovementAnimRequired += PlayMovementAnimation;
                 OnPreHitAnimRequired += PlayHitAnimation;
             }
+            
+            _selectEventLocator.Service.RegisterCallback(RespondOnManagerSelectUnit);
         }
 
         public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
@@ -79,6 +70,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected override void DestroyObj()
         {
+            _stateEventLocator.Service.UnregisterCallback(AdjustState);
+            _selectEventLocator.Service.UnregisterCallback(RespondOnManagerSelectUnit);
+            
             if (_animationManager)
             {
                 OnPreStandIdleAnimRequired -= PlayIdleAnimation;
@@ -122,6 +116,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RuntimeAttributes.Health.SetValue(10, 10);
             }
         }
+        
+        protected override bool SetupAbility(UnitAbilityCore ability)
+        {
+            if (base.SetupAbility(ability) && GetCurrentState() == UnitBattleState.UsingAbility)
+            {
+                AddState(UnitBattleState.AbilityTargeting);
+                
+                // TODO: Use Event to Handle this
+                TacticBattleManager.Get().UpdateHoverCells();
+                return true;
+            }
+
+            return false;
+        }
 
         public override UnitBattleState GetCurrentState()
         {
@@ -133,22 +141,43 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return UnitBattleState.Idle;
         }
 
+        private void AdjustState(IEventOwner unit, UnitStateEventParam transport)
+        {
+            if (unit.EventIdentifier != EventIdentifier)
+                return;
+            
+            switch (transport.behaviour)
+            {
+                case UnitStateBehaviour.Clear:
+                    _unitStates.Clear();
+                    break;
+                case UnitStateBehaviour.Adding:
+                    _unitStates.Push(transport.battleState);
+                    break;
+                case UnitStateBehaviour.Popping:
+                    if (_unitStates.TryPop(out var result))
+                    {
+                        var currentState = GetCurrentState();
+                        _stateEventLocator.Service.Raise(this, currentState, UnitStateBehaviour.Emphasis);
+                    }
+                    break;
+            }
+        }
+
         public override void AddState(UnitBattleState state)
         {
-            _unitStates.Push(state);
-            BattleStateEvent.Raise(this, state, UnitStateBehaviour.Adding);
+            _stateEventLocator.Service.Raise(this, state, UnitStateBehaviour.Adding);
         }
 
         public override void RemoveLastState()
         {
-            var state = _unitStates.Pop();
-            BattleStateEvent.Raise(this, state, UnitStateBehaviour.Popping);
+            var currentState = GetCurrentState();
+            _stateEventLocator.Service.Raise(this, currentState, UnitStateBehaviour.Popping);
         }
 
         public override void ClearStates()
         {
-            _unitStates.Clear();
-            BattleStateEvent.Raise(this, UnitBattleState.Idle, UnitStateBehaviour.Clear);
+            _stateEventLocator.Service.Raise(this, UnitBattleState.Idle, UnitStateBehaviour.Clear);
         }
 
         public override void HandleTurnStarted()
@@ -196,6 +225,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             else
             {
                 DestroyObj();
+            }
+        }
+
+        private void RespondOnManagerSelectUnit(IEventOwner owner, UnitSelectEventParam selectInfo)
+        {
+            if (selectInfo.GridPawnUnit == null || selectInfo.Behaviour == UnitSelectBehaviour.Deselect)
+            {
+                CleanUp();
             }
         }
     }

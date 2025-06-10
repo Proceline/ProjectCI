@@ -17,13 +17,14 @@ namespace ProjectCI.Utilities.Runtime.Events
     {
         Clear,
         Adding,
-        Popping
+        Popping,
+        Emphasis
     }
     
     [CreateAssetMenu(fileName = "UnitState Event", menuName = "ProjectCI Utilities/Events/UnitBattleState Event")]
     public class PvSoUnitBattleStateEvent : SoUnityEventBase<UnitStateEventParam>, IService
     {
-        public void Raise(PvMnBattleGeneralUnit unit, UnitBattleState pureValue, UnitStateBehaviour action)
+        public void Raise(IEventOwner unit, UnitBattleState pureValue, UnitStateBehaviour action)
         {
             Raise(unit, new UnitStateEventParam { battleState = pureValue, behaviour = action });
         }

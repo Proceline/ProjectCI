@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -27,6 +29,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] protected Text m_AttackValueText;
         [SerializeField] protected Text[] m_AttributeValueTexts;
         [SerializeField] protected UnityEvent<GridPawnUnit> m_OnUnitSelected;
+        
+        private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
+
 
         protected GridPawnUnit m_CurrUnit = null;
         public bool bIsSelectedEnabled = false;
@@ -45,11 +50,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (battleManager)
             {
                 battleManager.OnUnitHover.AddListener(HandleUnitHover);
-                if (bIsSelectedEnabled)
-                {
-                    battleManager.OnUnitSelected.AddListener(HandleUnitSelected);
-                }
                 battleManager.OnTeamWon.AddListener(HandleGameDone);
+            }
+            
+            if (bIsSelectedEnabled)
+            {
+                _selectEventLocator.Service.RegisterCallback(HandleUnitSelected);
             }
         }
 
@@ -61,16 +67,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if (battleManager)
                 {
                     battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
-                    if (bIsSelectedEnabled)
-                    {
-                        battleManager.OnUnitSelected.RemoveListener(HandleUnitSelected);
-                    }
                     battleManager.OnTeamWon.RemoveListener(HandleGameDone);
+                }
+                
+                if (bIsSelectedEnabled)
+                {
+                    _selectEventLocator.Service.UnregisterCallback(HandleUnitSelected);
                 }
             }
         }
 
-        protected void HandleUnitSelected(GridPawnUnit InUnit)
+        private void HandleUnitSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
+        {
+            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.GridPawnUnit : null);
+        }
+        
+        private void HandleUnitSelected(GridPawnUnit InUnit)
         {
             TacticBattleManager battleManager = TacticBattleManager.Get();
             if (InUnit)
