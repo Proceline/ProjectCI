@@ -20,9 +20,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
         private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
-        public override void InitializeUI(Camera InUICamera)
+        public override void InitializeUI(Camera inUICamera)
         {
-            base.InitializeUI(InUICamera);
+            base.InitializeUI(inUICamera);
             _selectEventLocator.Service.RegisterCallback(HandleUnitSelected);
 
             
@@ -47,23 +47,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.GridPawnUnit : null);
         }
 
-        protected override void HandleUnitPostSelected(bool bIsSelected)
-        {
-            if (!m_SelectedUnit)
-            {
-                return;
-            }
-            
-            uiContainer.gameObject.SetActive(false);
-            if (bIsSelected)
-            {
-                m_SelectedUnit.BindToOnMovementPostCompleted(ShowAbilitiesPanel);
-            }
-            else
-            {
-                m_SelectedUnit.UnBindFromOnMovementPostCompleted(ShowAbilitiesPanel);
-            }
-        }
+        protected override void HandleUnitPostSelected(bool bIsSelected) =>
+            uiContainer.gameObject.SetActive(bIsSelected);
+        
 
         protected override void SetupAbilitySlot(SlotDataUIElementBase slot, 
             UnitAbilityCore ability, int InIndex)
@@ -81,20 +67,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             var toggle = slot.GetComponent<Toggle>();
             m_ToggleGroup.UnregisterToggle(toggle);
-        }
-
-        private void ShowAbilitiesPanel()
-        {
-            switch (m_SelectedUnit.GetCurrentState())
-            {
-                case UnitBattleState.Idle:
-                case UnitBattleState.Moving:
-                case UnitBattleState.MovingProgress:
-                    _stateEventLocator.Service.Raise(m_SelectedUnit as IEventOwner, UnitBattleState.UsingAbility,
-                        UnitStateBehaviour.Adding);
-                    break;
-
-            }
         }
 
         private void RespondToSelectedUnitState(IEventOwner eventOwner, UnitStateEventParam parameter)

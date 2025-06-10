@@ -35,7 +35,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private GridPawnUnit _selectedUnit = null;
 
         [SerializeField] 
-        private PvSoUnitSelectEvent _selectUnitEvent;
+        private PvSoUnitSelectEvent selectUnitEvent;
+
+        [SerializeField] 
+        private PvSoTurnViewEndEvent turnViewEndEvent;
+
+        [SerializeField] 
+        private PvSoTurnLogicEndEvent turnLogicEndEvent;
 
         protected override void StartGame()
         {
@@ -61,26 +67,73 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             TacticBattleManager.HandleGameStarted();
 
             BeginTeamTurn(m_CurrentTeam);
+            
+            // TODO: Add Unregister
+            selectUnitEvent.RegisterCallback(SelectUnitWithParam);
+        }
+        
+        public override void HandlePlayerSelected(GridPawnUnit inPlayerUnit)
+        {
+            if (TacticBattleManager.IsActionBeingPerformed())
+            {
+                return;
+            }
+
+            if (inPlayerUnit.IsDead() || inPlayerUnit.GetCurrentMovementPoints() <= 0)
+            {
+                return;
+            }
+
+            BattleTeam currTeam = GetCurrentTeam();
+            if(currTeam == inPlayerUnit.GetTeam())
+            {
+                if(_selectedUnit)
+                {
+                    if(_selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
+                    {
+                        return;
+                    }
+
+                    selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
+                }
+
+                if (inPlayerUnit)
+                {
+                    selectUnitEvent.Raise(inPlayerUnit, UnitSelectBehaviour.Select);
+                }
+
+                UpdateSelectedHoverObject();
+            }
         }
 
-        private void DeselectUnitByRules()
+        private void SelectUnitWithParam(IEventOwner owner, UnitSelectEventParam selectParam)
         {
-            if (_selectedUnit)
+            if (selectParam.Behaviour == UnitSelectBehaviour.Select)
             {
+                _selectedUnit = selectParam.GridPawnUnit;
+                _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
+                _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
+            }
+            else
+            {
+                if (!_selectedUnit || _selectedUnit != selectParam.GridPawnUnit)
+                {
+                    return;
+                }
+            
                 _selectedUnit.UnBindFromOnMovementPostCompleted(UpdateSelectedHoverObject);
+                _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterMove);
                 
-                _selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
                 _selectedUnit = null;
                 UpdateSelectedHoverObject();
-
                 TacticBattleManager.Get().UpdateHoverCells();
             }
         }
 
-        void SetupTeam(BattleTeam InTeam)
+        void SetupTeam(BattleTeam inTeam)
         {
-            List<GridPawnUnit> Units = TacticBattleManager.GetUnitsOnTeam(InTeam);
-            foreach (GridPawnUnit unit in Units)
+            List<GridPawnUnit> units = TacticBattleManager.GetUnitsOnTeam(inTeam);
+            foreach (GridPawnUnit unit in units)
             {
                 unit.HandleTurnStarted();
             }
@@ -91,7 +144,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return m_CurrentHoverObject != null;
         }
 
-        void UpdateSelectedHoverObject()
+        private void UpdateSelectedHoverObject()
         {
             if (m_CurrentHoverObject)
             {
@@ -104,6 +157,24 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if (hoverObj)
                 {
                     m_CurrentHoverObject = Instantiate(hoverObj, _selectedUnit.GetCell().GetAllignPos(_selectedUnit), hoverObj.transform.rotation);
+                }
+            }
+        }
+
+        private void UpdatePlayerStateAfterMove()
+        {
+            if (_selectedUnit != null)
+            {
+                if (_selectedUnit.GetCurrentState() is UnitBattleState.Moving or UnitBattleState.MovingProgress)
+                {
+                    if (_selectedUnit.GetCurrentAbilityPoints() > 0)
+                    {
+                        _selectedUnit.AddState(UnitBattleState.UsingAbility);
+                    }
+                    else
+                    {
+                        _selectedUnit.ClearStates();
+                    }
                 }
             }
         }
@@ -133,7 +204,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void BeginTeamTurn(BattleTeam InTeam)
         {
-            DeselectUnitByRules();
+            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             SetupTeam(InTeam);
             
             AilmentHandlerUtils.HandleTurnStart(InTeam);
@@ -149,52 +220,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public override void EndTeamTurn(BattleTeam InTeam)
+        public override void EndTeamTurn(BattleTeam inTeam)
         {
-            AilmentHandlerUtils.HandleTurnEnd(InTeam);
+            AilmentHandlerUtils.HandleTurnEnd(inTeam);
         }
         
         public override void HandleEnemySelected(GridPawnUnit InEnemyUnit)
         {
             
-        }
-
-        public override void HandlePlayerSelected(GridPawnUnit InPlayerUnit)
-        {
-            if (TacticBattleManager.IsActionBeingPerformed())
-            {
-                return;
-            }
-
-            if (InPlayerUnit.IsDead() || InPlayerUnit.GetCurrentMovementPoints() <= 0)
-            {
-                return;
-            }
-
-            BattleTeam currTeam = GetCurrentTeam();
-            if(currTeam == InPlayerUnit.GetTeam())
-            {
-                if(_selectedUnit)
-                {
-                    if(_selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
-                    {
-                        return;
-                    }
-
-                    DeselectUnitByRules();
-                }
-
-                _selectedUnit = InPlayerUnit;
-
-                if(_selectedUnit)
-                {
-                    _selectedUnit.SelectUnit();
-                    _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
-                    _selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Select);
-                }
-
-                UpdateSelectedHoverObject();
-            }
         }
 
         public override void HandleCellSelected(LevelCellBase InCell)
@@ -222,8 +255,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         {
                             List<CommandResult> results = 
                                 HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
+                            _selectedUnit.RemoveAbilityPoints(_selectedUnit.GetEquippedAbility().GetActionPointCost());
+                            turnLogicEndEvent.Raise();
 
                             // TODO: This should be responded through Broadcast
+                            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
                             HandleCommandResultsCoroutine(results);
                         }
                         break;
@@ -267,6 +303,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 await AnalyzeResult(lastResult);
             }
+            
+            turnViewEndEvent.Raise();
 
             void RefreshAimCell(CommandResult result)
             {
@@ -330,22 +368,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             return results;
 
-            void HandleAbilityParam(UnitAbilityCore ability, GridPawnUnit InCaster, GridPawnUnit InTarget)
+            void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target)
             {
                 string resultId = Guid.NewGuid().ToString();
                 foreach (AbilityParamBase param in ability.GetParameters())
                 {
-                    string casterId = InCaster.ID;
-                    string targetId = InTarget.ID;
-                    param.Execute(resultId, ability.ID, InCaster.RuntimeAttributes, casterId, 
-                        InTarget.RuntimeAttributes, targetId, InTarget.GetCell(), results);
+                    string casterId = caster.ID;
+                    string targetId = target.ID;
+                    param.Execute(resultId, inAbility.ID, caster.RuntimeAttributes, casterId, 
+                        target.RuntimeAttributes, targetId, target.GetCell(), results);
                 }
             }
         }
 
         public override void HandleTeamWon(BattleTeam InTeam)
         {
-            DeselectUnitByRules();
+            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
         }
 
         /// <summary>
@@ -372,7 +410,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         break;
                     case UnitBattleState.Moving:
                         // Deselect Event will be raised here
-                        DeselectUnitByRules();
+                        selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
                         break;
                 }
             }

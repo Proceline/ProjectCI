@@ -15,7 +15,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
         [NonSerialized] private FormulaCollection _formulaCollection;
-        private FormulaCollection FormulaCollection => _formulaCollection ?? (_formulaCollection = ServiceLocator.Get<FormulaCollection>());
+        private FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
 
         private readonly Stack<UnitBattleState> _unitStates = new();
 
@@ -53,6 +53,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
             
             _selectEventLocator.Service.RegisterCallback(RespondOnManagerSelectUnit);
+            OnMovementPostComplete.RemoveAllListeners();
+            OnMovementPostComplete.AddListener(() =>
+            {
+                m_CurrentMovementPoints = 0;
+            });
         }
 
         public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
@@ -178,6 +183,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void ClearStates()
         {
             _stateEventLocator.Service.Raise(this, UnitBattleState.Idle, UnitStateBehaviour.Clear);
+            ResetCells();
         }
 
         public override void HandleTurnStarted()
@@ -187,15 +193,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
         }
 
-        protected override void HandleTraversePreFinished()
+        protected override void HandleAbilityFinished()
         {
-            m_CurrentMovementPoints = 0;
-            OnMovementPostComplete.Invoke();
+            base.HandleAbilityFinished();
         }
 
         private void Kill()
         {
-            CleanUp();
+            ClearStates();
 
             if ( m_CurrentCell )
             {
@@ -232,7 +237,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (selectInfo.GridPawnUnit == null || selectInfo.Behaviour == UnitSelectBehaviour.Deselect)
             {
-                CleanUp();
+                ClearStates();
+            }
+
+            if (selectInfo.GridPawnUnit == this && selectInfo.Behaviour == UnitSelectBehaviour.Select)
+            {
+                SetupMovement();
             }
         }
     }

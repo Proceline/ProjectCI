@@ -82,12 +82,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.GridPawnUnit : null);
         }
         
-        private void HandleUnitSelected(GridPawnUnit InUnit)
+        private void HandleUnitSelected(GridPawnUnit inUnit)
         {
             TacticBattleManager battleManager = TacticBattleManager.Get();
-            if (InUnit)
+            if (inUnit)
             {
-                HandleUnitHover(InUnit);
+                HandleUnitHover(inUnit);
                 battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
             }
             else
@@ -96,7 +96,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 battleManager.OnUnitHover.AddListener(HandleUnitHover);
             }
 
-            m_OnUnitSelected.Invoke(InUnit);
+            m_OnUnitSelected.Invoke(inUnit);
         }
 
         public void OnEnableExtraUIHoverPanel(GridPawnUnit InUnit)
