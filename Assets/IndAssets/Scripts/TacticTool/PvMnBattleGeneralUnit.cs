@@ -38,9 +38,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <summary>
         /// Called in Package, do not delete
         /// </summary>
-        public override void Initalize()
+        public override void Initialize()
         {
-            base.Initalize();
+            base.Initialize();
             SetFormulaCollection();
             _stateEventLocator.Service.RegisterCallback(AdjustState);
 
