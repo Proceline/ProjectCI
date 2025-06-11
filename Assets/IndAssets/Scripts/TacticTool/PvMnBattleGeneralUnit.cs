@@ -7,6 +7,7 @@ using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -193,9 +194,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
         }
 
-        protected override void HandleAbilityFinished()
+        public override List<LevelCellBase> GetAllowedMovementCells()
         {
-            base.HandleAbilityFinished();
+            // TODO: Change BattleTeam type to enable cross enemy
+            return UnitData.m_MovementShape.GetCellList(this, GetCell(), m_CurrentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
         }
 
         private void Kill()
