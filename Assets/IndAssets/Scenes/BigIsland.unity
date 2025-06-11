@@ -17086,7 +17086,7 @@ MonoBehaviour:
     m_GainValue: 0
   - m_AttributeType:
       value: 26
-    m_Value: 5
+    m_Value: 2
     m_GainValue: 0
 --- !u!4 &498212257 stripped
 Transform:
