@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44ae598dce6cb924cbc3811e41364a12, type: 3}
+  m_Name: _BattlegroundMakerService
+  m_EditorClassIdentifier: 
+  hexWidth: 2
+  hexHeight: 2
+  gridWidth: 5
+  gridHeight: 5
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  pawnDetectLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  cellPalette: {fileID: 0}
+  battleManagerPrefab: {fileID: 0}
+  detectMaxResults: 10
+  abilityListUIPrefab: {fileID: 0}
+  resourceContainerPrefab: {fileID: 0}
+  gridCreatingRule:
+    m_PersistentCalls:
+      m_Calls: []

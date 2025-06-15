@@ -13,6 +13,7 @@ using System;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -42,6 +43,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField] 
         private PvSoTurnLogicEndEvent turnLogicEndEvent;
+
+        [SerializeField] 
+        private LayerMask[] layerMasksRuleList;
 
         protected override void StartGame()
         {
@@ -413,6 +417,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Create Cell according to Rules, used in Unity Event, don't delete this function
+        /// </summary>
+        /// <param name="hit">rayCast information</param>
+        /// <param name="keyIndex">Grid Cell Index</param>
+        /// <param name="grid">new created grid</param>
+        public void ApplyRuleOnCellCreating(RaycastHit hit, Vector2Int keyIndex, HexagonPresetGrid grid)
+        {
+            int layerFlagValue = Mathf.RoundToInt(Mathf.Pow(2, hit.collider.gameObject.layer));
+            if (layerFlagValue == layerMasksRuleList[0])
+            {
+                var cell = grid.GenerateCell(hit.point, keyIndex);
+                cell.Reset();
             }
         }
     }
