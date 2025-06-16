@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GUI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
+using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using Unity.VisualScripting;
@@ -42,6 +43,9 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         private GameObject resourceContainerPrefab;
 
         public UnityEvent<RaycastHit, Vector2Int, HexagonPresetGrid> gridCreatingRule;
+
+        [SerializeField] 
+        private PvSoAbilityEquipEvent abilityEquipEvent;
         
         public void ScanAndGenerateBattle(Vector3 centerPosition, Camera uiCamera)
         {
@@ -102,6 +106,8 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     sceneUnit.SetExtraAttributes(unit.RuntimeAttributes);
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
+                    var abilities = unit.GetAbilities();
+                    abilityEquipEvent.Raise(unit, abilities[0]);
                 }
 
                 var hoverPawnInfos = GameObject.FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);

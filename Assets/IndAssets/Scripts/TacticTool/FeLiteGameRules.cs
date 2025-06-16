@@ -32,11 +32,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private int m_DoubleAttackSpeedThreshold = 5;
 
-        [NonSerialized]
-        private GridPawnUnit _selectedUnit = null;
+        [NonSerialized] private GridPawnUnit _selectedUnit;
+        [NonSerialized] private UnitAbilityCore _selectedAbility;
 
         [SerializeField] 
         private PvSoUnitSelectEvent selectUnitEvent;
+
+        [SerializeField] 
+        private PvSoAbilitySelectEvent selectAbilityEventByPawn;
+
+        [SerializeField] 
+        private PvSoAbilitySelectEvent confirmAbilityEvent;
 
         [SerializeField] 
         private PvSoTurnViewEndEvent turnViewEndEvent;
@@ -74,6 +80,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             
             // TODO: Add Unregister
             selectUnitEvent.RegisterCallback(SelectUnitWithParam);
+            selectAbilityEventByPawn.RegisterCallback(SelectAbilityWithParam);
         }
         
         public override void HandlePlayerSelected(GridPawnUnit inPlayerUnit)
@@ -117,6 +124,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _selectedUnit = selectParam.GridPawnUnit;
                 _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
                 _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
+                _selectedAbility = null;
             }
             else
             {
@@ -131,6 +139,25 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _selectedUnit = null;
                 UpdateSelectedHoverObject();
                 TacticBattleManager.Get().UpdateHoverCells();
+            }
+        }
+        
+        private void SelectAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
+        {
+            if (_selectedUnit && _selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
+            {
+                var ability = selectParam.Ability;
+                if (_selectedUnit.GetAbilities().Contains(ability))
+                {
+                    _selectedAbility = ability;
+                    _selectedUnit.SetupAbility(ability);
+                    _selectedUnit.AddState(UnitBattleState.AbilityTargeting);
+                    
+                    // TODO: Use Event to Handle this
+                    TacticBattleManager.Get().UpdateHoverCells();
+                }
+                _selectedAbility = selectParam.Ability;
+                confirmAbilityEvent.Raise(ability);
             }
         }
 
@@ -198,14 +225,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return _selectedUnit;
         }
 
-        public override void HandleNumPressed(int InNumPressed)
-        {
-            if(_selectedUnit)
-            {
-                _selectedUnit.SetupAbility(InNumPressed - 1);
-            }
-        }
-
         public override void BeginTeamTurn(BattleTeam InTeam)
         {
             selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
@@ -234,6 +253,49 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             
         }
 
+        public override List<LevelCellBase> GetAbilityHoverCells(LevelCellBase InCell)
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException("ERROR: SelectedUnit or SelectedAbility is MISSING!");
+            }
+            
+            UnitAbilityCore ability = _selectedAbility;
+            if (!_selectedAbility)
+            {
+                Debug.LogError("ERROR: Cannot identify current Ability");
+                ability = _selectedUnit.GetCurrentAbility();
+            }
+
+            List<LevelCellBase> outCells = new();
+            
+            if (ability)
+            {
+                List<LevelCellBase> abilityCells = ability.GetAbilityCells(_selectedUnit);
+                List<LevelCellBase> effectedCells = ability.GetEffectedCells(_selectedUnit, InCell);
+
+                if (abilityCells.Contains(InCell))
+                {
+                    foreach (LevelCellBase currCell in effectedCells)
+                    {
+                        if (currCell)
+                        {
+                            BattleTeam effectedTeam =
+                                (currCell == InCell) ? ability.GetEffectedTeam() : BattleTeam.All;
+
+                            if (TacticBattleManager.CanCasterEffectTarget(_selectedUnit.GetCell(), currCell, effectedTeam,
+                                    ability.DoesAllowBlocked()))
+                            {
+                                outCells.Add(currCell);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return outCells;
+        }
+
         public override void HandleCellSelected(LevelCellBase InCell)
         {
             if (TacticBattleManager.IsActionBeingPerformed())
@@ -259,7 +321,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         {
                             List<CommandResult> results = 
                                 HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
-                            _selectedUnit.RemoveAbilityPoints(_selectedUnit.GetEquippedAbility().GetActionPointCost());
                             turnLogicEndEvent.Raise();
 
                             // TODO: This should be responded through Broadcast
@@ -338,8 +399,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private List<CommandResult> HandleAbilityCombatingLogic(GridPawnUnit InUnit, GridPawnUnit InTargetUnit)
         {
-            UnitAbilityCore ability = InUnit.GetEquippedAbility();
-            UnitAbilityCore targetAbility = InTargetUnit.GetEquippedAbility();
+            UnitAbilityCore ability = _selectedAbility? _selectedAbility : InUnit.GetCurrentAbility();
+            UnitAbilityCore targetAbility = InTargetUnit.GetCurrentAbility();
 
             List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(InTargetUnit);
             bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(InUnit.GetCell());

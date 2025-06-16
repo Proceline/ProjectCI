@@ -1,6 +1,7 @@
 using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GUI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,10 +15,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized]
         private UnitAbilityCore _abilityData;
 
-        private int m_Index;
-
         [SerializeField]
         private Text m_DisplayNameText;
+        
+        [SerializeField]
+        private GameObject equippedHintObject;
+
+        [SerializeField] 
+        private PvSoAbilitySelectEvent abilitySelectEvent;
+
+        [SerializeField] 
+        private PvSoAbilityEquipEvent abilityEquipEvent;
+
+        private void OnEnable()
+        {
+            abilityEquipEvent.RegisterCallback(ChangeEquipHintWhileEquipped);
+        }
+
+        private void OnDisable()
+        {
+            abilityEquipEvent.UnregisterCallback(ChangeEquipHintWhileEquipped);
+        }
 
         public override string DisplayName
         {
@@ -29,7 +47,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             m_Toggle.isOn = false;
             _abilityData = InAbility;
-            m_Index = InIndex;
             SetDisplayName();
             CheckAvailability();
             m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
@@ -74,9 +91,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 if(_abilityData && Owner)
                 {
-                    Owner.HandleAbilitySelected(m_Index);
+                    abilitySelectEvent.Raise(_abilityData);
                 }
             }
+        }
+
+        protected override void ForceHighlight(bool enable)
+        {
+            // m_Toggle.SetIsOnWithoutNotify(true);
+            equippedHintObject.SetActive(enable);
+        }
+        
+        
+        private void ChangeEquipHintWhileEquipped(IEventOwner owner, AbilitySelectEventParam selectParam)
+        {
+            equippedHintObject.SetActive(selectParam.Ability == _abilityData);
         }
     }
 } 

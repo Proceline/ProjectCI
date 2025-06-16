@@ -12,21 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ae598dce6cb924cbc3811e41364a12, type: 3}
   m_Name: _BattlegroundMakerService
   m_EditorClassIdentifier: 
-  hexWidth: 2
-  hexHeight: 2
-  gridWidth: 5
-  gridHeight: 5
+  hexWidth: 3
+  hexHeight: 3
+  gridWidth: 6
+  gridHeight: 6
   layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 72
   pawnDetectLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  cellPalette: {fileID: 0}
-  battleManagerPrefab: {fileID: 0}
+    m_Bits: 1
+  cellPalette: {fileID: 11400000, guid: 85129ad340742934ebfb3cbfc7d433e5, type: 2}
+  battleManagerPrefab: {fileID: 1352712205622167666, guid: 5821f100d73104740b501a66875c831c, type: 3}
   detectMaxResults: 10
-  abilityListUIPrefab: {fileID: 0}
-  resourceContainerPrefab: {fileID: 0}
+  abilityListUIPrefab: {fileID: 8298218092088027436, guid: 8a6c8ff1ff2adf840bbc35d127a36471, type: 3}
+  resourceContainerPrefab: {fileID: 6909603433851531995, guid: f455cd3e31fd9d046864be440a4b0357, type: 3}
   gridCreatingRule:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: ApplyRuleOnCellCreating
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  abilityEquipEvent: {fileID: 11400000, guid: 44cf1f5a2c700894f8ae93cc2d10ffbc, type: 2}

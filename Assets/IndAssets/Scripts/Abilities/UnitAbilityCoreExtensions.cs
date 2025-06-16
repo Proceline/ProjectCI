@@ -20,6 +20,16 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             return abilityCore.additionalParameters[0] == 0;
         }
 
+        public static bool IsAbilityAbleToEquip(this UnitAbilityCore abilityCore)
+        {
+            if (abilityCore.additionalParameters.Length < 2)
+            {
+                return true;
+            }
+            return abilityCore.additionalParameters[1] == 0;
+            
+        }
+
         public static bool IsInitiativeMandatoryFollowUp(this UnitAbilityCore abilityCore)
         {
             return false;

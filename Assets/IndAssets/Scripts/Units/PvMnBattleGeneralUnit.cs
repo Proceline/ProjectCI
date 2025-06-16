@@ -4,6 +4,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
 using System.Collections.Generic;
 using ProjectCI_Animation.Runtime;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
@@ -22,7 +23,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
         private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
-
+        private readonly ServiceLocator<PvSoAbilityEquipEvent> _abilityEquipEventLocator = new();
+        
+        
         private void SetFormulaCollection()
         {
             RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection);
@@ -44,6 +47,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             base.Initialize();
             SetFormulaCollection();
             _stateEventLocator.Service.RegisterCallback(AdjustState);
+            _abilityEquipEventLocator.Service.RegisterCallback(EquipAbilityWithParam);
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
             if (_animationManager)
@@ -78,6 +82,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             _stateEventLocator.Service.UnregisterCallback(AdjustState);
             _selectEventLocator.Service.UnregisterCallback(RespondOnManagerSelectUnit);
+            _abilityEquipEventLocator.Service.UnregisterCallback(EquipAbilityWithParam);
             
             if (_animationManager)
             {
@@ -122,19 +127,33 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RuntimeAttributes.Health.SetValue(10, 10);
             }
         }
-        
-        protected override bool SetupAbility(UnitAbilityCore ability)
+
+        public override void SetupAbility(UnitAbilityCore ability)
         {
-            if (base.SetupAbility(ability) && GetCurrentState() == UnitBattleState.UsingAbility)
+            ResetCells();
+            
+            if (ability)
             {
-                AddState(UnitBattleState.AbilityTargeting);
-                
-                // TODO: Use Event to Handle this
-                TacticBattleManager.Get().UpdateHoverCells();
-                return true;
+                List<LevelCellBase> editedAbilityCells = ability.Setup(this);
+                EditedCells.AddRange(editedAbilityCells);
             }
 
-            return false;
+            if (ability.IsAbilityAbleToEquip())
+            {
+                _abilityEquipEventLocator.Service.Raise(this, ability);
+            }
+            else
+            {
+                // TODO: Equip related weapon
+            }
+        }
+        
+        private void EquipAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
+        {
+            if (this == owner)
+            {
+                CurrentAbility = selectParam.Ability;
+            }
         }
 
         public override UnitBattleState GetCurrentState()

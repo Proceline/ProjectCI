@@ -19,5 +19,10 @@ MonoBehaviour:
     value: 14
   m_DoubleAttackSpeedThreshold: 5
   selectUnitEvent: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
+  selectAbilityEventByPawn: {fileID: 11400000, guid: 3096938b854dcb3418f46d871a1b3c5d, type: 2}
+  confirmAbilityEvent: {fileID: 11400000, guid: 341187e976bf59940a5bb773569a8202, type: 2}
   turnViewEndEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
   turnLogicEndEvent: {fileID: 11400000, guid: aa58336ff5926144380c17002c348436, type: 2}
+  layerMasksRuleList:
+  - serializedVersion: 2
+    m_Bits: 64
