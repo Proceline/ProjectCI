@@ -22,17 +22,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return base.GetAbilityInfo();
         }
 
-        public override void Execute(string resultId,string abilityId, UnitAttributeContainer FromContainer, string FromUnitId,
-            UnitAttributeContainer ToContainer, string ToUnitId, LevelCellBase ToCell, List<CommandResult> results)
+        public override void Execute(string resultId,string abilityId, UnitAttributeContainer fromContainer, string fromUnitId,
+            UnitAttributeContainer toContainer, string toUnitId, LevelCellBase toCell, List<CommandResult> results)
         {
-            int beforeHealth = ToContainer.Health.CurrentValue;
-            int damage = FromContainer.GetAttributeValue(attackerAttribute);
+            int beforeHealth = toContainer.Health.CurrentValue;
+            int damage = fromContainer.GetAttributeValue(attackerAttribute);
             
             int deltaDamage = 
-                Mathf.Max(damage - ToContainer.GetAttributeValue(defenderAttribute), 0);
+                Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
 
-            ToContainer.Health.ModifyValue(-deltaDamage);
-            int afterHealth = ToContainer.Health.CurrentValue;
+            toContainer.Health.ModifyValue(-deltaDamage);
+            int afterHealth = toContainer.Health.CurrentValue;
             
             if (results != null)
             {
@@ -40,8 +40,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 {
                     ResultId = resultId,
                     AbilityId = abilityId,
-                    OwnerId = FromUnitId,
-                    TargetCellIndex = ToCell.GetIndex(),
+                    OwnerId = fromUnitId,
+                    TargetCellIndex = toCell.GetIndex(),
                     BeforeValue = beforeHealth,
                     AfterValue = afterHealth,
                     CommandType = CommandDamageResult.TakeDamage,

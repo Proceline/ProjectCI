@@ -230,7 +230,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             SetupTeam(InTeam);
             
-            AilmentHandlerUtils.HandleTurnStart(InTeam);
+            StatusEffectUtils.HandleTurnStart(InTeam);
 
             if(InTeam == BattleTeam.Hostile)
             {
@@ -245,7 +245,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void EndTeamTurn(BattleTeam inTeam)
         {
-            AilmentHandlerUtils.HandleTurnEnd(inTeam);
+            StatusEffectUtils.HandleTurnEnd(inTeam);
         }
         
         public override void HandleEnemySelected(GridPawnUnit InEnemyUnit)
@@ -321,6 +321,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         {
                             List<CommandResult> results = 
                                 HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
+                            
                             turnLogicEndEvent.Raise();
 
                             // TODO: This should be responded through Broadcast
@@ -369,6 +370,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 await AnalyzeResult(lastResult);
             }
             
+            _selectedUnit.AddState(UnitBattleState.Finished);
             turnViewEndEvent.Raise();
 
             void RefreshAimCell(CommandResult result)
@@ -397,6 +399,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
+        /// <summary>
+        /// Used to apply abilities and end ability
+        /// </summary>
+        /// <param name="InUnit"></param>
+        /// <param name="InTargetUnit"></param>
+        /// <returns></returns>
         private List<CommandResult> HandleAbilityCombatingLogic(GridPawnUnit InUnit, GridPawnUnit InTargetUnit)
         {
             UnitAbilityCore ability = _selectedAbility? _selectedAbility : InUnit.GetCurrentAbility();

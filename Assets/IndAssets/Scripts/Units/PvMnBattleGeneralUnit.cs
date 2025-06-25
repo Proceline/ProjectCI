@@ -28,8 +28,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         private void SetFormulaCollection()
         {
-            RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection);
-            SimulatedAttributes = new FormulaAttributeContainer(FormulaCollection);
+            RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection, this);
+            SimulatedAttributes = new FormulaAttributeContainer(FormulaCollection, this);
         }
 
         public override void GenerateNewID()

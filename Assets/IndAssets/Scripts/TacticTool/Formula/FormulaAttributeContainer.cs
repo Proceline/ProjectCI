@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using UnityEngine;
 
 namespace ProjectCI.TacticTool.Formula.Concrete
@@ -8,9 +11,12 @@ namespace ProjectCI.TacticTool.Formula.Concrete
     public class FormulaAttributeContainer : UnitAttributeContainer
     {
         private readonly FormulaAttributeDictionary _formulaAttributeDictionary;
-        private Dictionary<AttributeType, FormulaDefinition> _attributesFormulaMap = new();
+        private readonly Dictionary<AttributeType, FormulaDefinition> _attributesFormulaMap = new();
+        private readonly IEventOwner _eventOwner;
 
-        public FormulaAttributeContainer(FormulaCollection formulaCollection)
+        private readonly ServiceLocator<PvSoModifiersManager> _modifierService = new();
+
+        public FormulaAttributeContainer(FormulaCollection formulaCollection, IEventOwner eventOwner)
         {
             _formulaAttributeDictionary = new FormulaAttributeDictionary(this);
             if (formulaCollection != null)
@@ -20,6 +26,8 @@ namespace ProjectCI.TacticTool.Formula.Concrete
                     SetFormulaAttribute(formulaDefinition);
                 }
             }
+
+            _eventOwner = eventOwner;
         }
 
         private void SetFormulaAttribute(FormulaDefinition formulaDefinition)
@@ -52,7 +60,8 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         {
             if (GeneralAttributes.ContainsKey(type))
             {
-                return base.GetAttributeValue(type);
+                float basicValue = base.GetAttributeValue(type);
+                return _modifierService.Service.GetModifiedValue(_eventOwner, type, basicValue);
             }
             else
             {
