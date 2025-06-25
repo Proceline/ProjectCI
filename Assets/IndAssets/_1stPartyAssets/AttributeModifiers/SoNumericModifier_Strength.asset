@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ee443841e387c4f97ccc2cd7887564, type: 3}
   m_Name: SoNumericModifier_Strength
   m_EditorClassIdentifier: 
+  collectedModifiers:
+    m_PersistentCalls:
+      m_Calls: []
