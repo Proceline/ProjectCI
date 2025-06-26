@@ -17,11 +17,11 @@
       "hash": "33e975dbd724da29e774be8f2493f87d593598a2"
     },
     "com.ppvylk.project_ci_core_system": {
-      "version": "https://github.com/Proceline/com.ppvylk.project_ci_core_system.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "4bc58b3be807b42ce47d053e27c9b5db1d4ceeda"
+        "version": "https://github.com/Proceline/com.ppvylk.project_ci_core_system.git",
+        "depth": 0,
+        "source": "git",
+        "dependencies": {},
+        "hash": "dec70dcd5144251bfefbef22c98a40394553d75c"
     },
     "com.ppvylk.project_ci_utilities": {
       "version": "file:com.ppvylk.project_ci_utilities",
