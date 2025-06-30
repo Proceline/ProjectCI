@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="149797c1-6a19-4ba3-8db0-fdb075038119" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectCI/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectCI/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/IndAssets/Scripts/TacticTool/Battleground/PvSoBattlegroundMaker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/IndAssets/Scripts/TacticTool/Battleground/PvSoBattlegroundMaker.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/IndAssets/Scripts/TacticTool/FeLiteGameRules.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/IndAssets/Scripts/TacticTool/FeLiteGameRules.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/IndAssets/Scripts/Units/PvMnBattleGeneralUnit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/IndAssets/Scripts/Units/PvMnBattleGeneralUnit.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.ppvylk.project_ci_utilities/Runtime/Scripts/SoEvents/IEventParameter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.ppvylk.project_ci_utilities/Runtime/Scripts/SoEvents/IEventParameter.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,7 +17,30 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Editor/Scripts/ModifiersManagerEditor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Events/PvSoAbilitySelectEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Services/PvSoModifiersManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@dec70dcd5144/Runtime/Scripts/TacticRpgTool/GridData/LevelCellBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@dec70dcd5144/Runtime/Scripts/TacticRpgTool/GridData/LevelGrids/LevelGridBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@f3fac7af1578/Runtime/UGUI/UI/Core/Toggle.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.ppvylk.project_ci_utilities/Runtime/Scripts/SoEvents/SoUnityEventBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/Attributes/AttributeTypeDefinitionEditor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/TacticRpgTool/CellWithStatusEffectEditor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/TacticRpgTool/StatusEffectEditor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/TacticRpgTool/UnitDataEditor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/Attributes/AttributeType.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/Attributes/AttributeTypeDefinition.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/Data/UnitAttributeContainer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/ServiceLocator/Core/ServiceContainer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Gameplay/AilmentSystem/CellStatusEffect.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Gameplay/AilmentSystem/StatusEffect.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Gameplay/AilmentSystem/StatusEffectContainer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Gameplay/AilmentSystem/StatusEffectUtils.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Unit/Abilities/UnitAbilityCore.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Unit/AbilityParams/AbilityParamBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Unit/AbilityParticle/AbilityParticle.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Unit/GridPawnUnit.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Runtime/Scripts/TacticRpgTool/Unit/SoUnitData.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -23,6 +53,10 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   },
@@ -82,6 +116,7 @@
       <updated>1748884110680</updated>
       <workItem from="1748884111813" duration="1000" />
       <workItem from="1749493465667" duration="80000" />
+      <workItem from="1751228952446" duration="3999000" />
     </task>
     <servers />
   </component>

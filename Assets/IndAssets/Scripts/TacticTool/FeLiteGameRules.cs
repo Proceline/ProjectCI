@@ -63,11 +63,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             var units = GameObject.FindObjectsByType<GridPawnUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
-                unit.GenerateNewID();
                 if (m_UnitIdToBattleUnit.TryAdd(unit.ID, unit))
                 {
                     foreach (var ability in unit.GetAbilities())
                     {
+                        // TODO: Consider whether initialize ID here
                         ability.GenerateNewID();
                         m_AbilityIdToAbility.Add(ability.ID, ability);
                     }
@@ -323,10 +323,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                                 HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
                             
                             turnLogicEndEvent.Raise();
-
-                            // TODO: This should be responded through Broadcast
-                            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
                             HandleCommandResultsCoroutine(results);
+                            
+                            // TODO: Logically end the action, might need some event
                         }
                         break;
                 }
@@ -371,6 +370,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
             
             _selectedUnit.AddState(UnitBattleState.Finished);
+            // TODO: This should be responded through Broadcast
+            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
+            
             turnViewEndEvent.Raise();
 
             void RefreshAimCell(CommandResult result)

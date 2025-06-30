@@ -150,7 +150,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         private void EquipAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
         {
-            if (this == owner)
+            if (owner.EventIdentifier == EventIdentifier)
             {
                 CurrentAbility = selectParam.Ability;
             }

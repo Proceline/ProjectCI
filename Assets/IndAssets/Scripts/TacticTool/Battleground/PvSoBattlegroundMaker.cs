@@ -102,7 +102,9 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                         1, 
                         pawnDetectLayerMask
                     );
-
+                    
+                    unit.GenerateNewID();
+                    
                     sceneUnit.SetExtraAttributes(unit.RuntimeAttributes);
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
