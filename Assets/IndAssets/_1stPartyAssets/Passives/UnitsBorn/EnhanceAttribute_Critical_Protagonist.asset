@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd7821446b9415a4b9db1728c5be6d61, type: 3}
+  m_Name: EnhanceAttribute_Critical_Protagonist
+  m_EditorClassIdentifier: 
+  passiveTiming: 0
+  targetAttribute:
+    value: 9
+  radius: 1
+  attributeModifier:
+    flatValue: 100
+    percentAddValue: 0
+  teamCondition: 1

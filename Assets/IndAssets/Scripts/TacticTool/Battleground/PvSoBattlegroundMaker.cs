@@ -104,6 +104,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     );
                     
                     unit.GenerateNewID();
+                    sceneUnit.UnitData.InitializeUnitDataToGridUnit(unit);
                     
                     sceneUnit.SetExtraAttributes(unit.RuntimeAttributes);
                     unit.AddComponent<PvMnBattleResourceContainer>();

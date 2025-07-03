@@ -46,7 +46,8 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         {
             if (_attributesFormulaMap.TryGetValue(type, out var formulaDefinition))
             {
-                return Mathf.FloorToInt(FormulaCalculator.CalculateFormula(formulaDefinition, _formulaAttributeDictionary));
+                float formulaBasicValue = FormulaCalculator.CalculateFormula(formulaDefinition, _formulaAttributeDictionary);
+                return _modifierService.Service.GetModifiedValue(_eventOwner, type, formulaBasicValue);
             }
             return 0;
         }

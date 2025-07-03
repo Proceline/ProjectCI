@@ -48,5 +48,8 @@ namespace ProjectCI.Utilities.Runtime.Events
         }
 
         public string EventIdentifier => nameof(PvSoUnitSelectEvent);
+        public bool IsGridObject => false;
+        public Vector3 Position => Vector3.zero;
+        public Vector2 GridPosition => Vector2.zero;
     }
 }

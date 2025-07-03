@@ -1,7 +1,12 @@
+using UnityEngine;
+
 namespace ProjectCI.Utilities.Runtime.Events
 {
     public interface IEventOwner
     {
-        public string EventIdentifier { get; }
+        string EventIdentifier { get; }
+        bool IsGridObject { get; }
+        Vector3 Position { get; }
+        Vector2 GridPosition { get; }
     }
 }

@@ -4,6 +4,7 @@ using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
 {
@@ -24,6 +25,32 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
 
         private static readonly ServiceLocator<PvSoModifiersManager> ModifierService = new();
 
+        public void RegisterModifier(AttributeType attributeType,
+            UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
+        {
+            if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))
+            {
+                modifier.RegisterModifier(modifierAction);
+            }
+            else
+            {
+                Debug.LogError($"Missing <AttributeType: {attributeType.Value}>");
+            }
+        }
+
+        public void UnregisterModifier(AttributeType attributeType,
+            UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
+        {
+            if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))
+            {
+                modifier.UnregisterModifier(modifierAction);
+            }
+            else
+            {
+                Debug.LogError($"Missing <AttributeType: {attributeType.Value}>");
+            }
+        }
+        
         public float GetModifiedValuePrecisely(IEventOwner owner, AttributeType attributeType, float inputValue)
         {
             if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))

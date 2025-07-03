@@ -33,5 +33,9 @@ namespace ProjectCI.Utilities.Runtime.Events
                 return _identifier;
             }
         }
+
+        public bool IsGridObject => false;
+        public Vector3 Position => Vector3.zero;
+        public Vector2 GridPosition => Vector2.zero;
     }
 }
