@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using UnityEngine;
 
@@ -22,9 +23,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return base.GetAbilityInfo();
         }
 
-        public override void Execute(string resultId,string abilityId, UnitAttributeContainer fromContainer, string fromUnitId,
-            UnitAttributeContainer toContainer, string toUnitId, LevelCellBase toCell, List<CommandResult> results)
+        public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit, GridPawnUnit toUnit, List<CommandResult> results)
         {
+            var toContainer = toUnit.RuntimeAttributes;
+            var fromContainer = fromUnit.RuntimeAttributes;
+            
             int beforeHealth = toContainer.Health.CurrentValue;
             int damage = fromContainer.GetAttributeValue(attackerAttribute);
             
@@ -39,12 +42,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 results.Add(new CommandDamageResult
                 {
                     ResultId = resultId,
-                    AbilityId = abilityId,
-                    OwnerId = fromUnitId,
-                    TargetCellIndex = toCell.GetIndex(),
+                    AbilityId = ability.ID,
+                    OwnerId = fromUnit.ID,
+                    TargetCellIndex = toUnit.GetCell().GetIndex(),
                     BeforeValue = beforeHealth,
                     AfterValue = afterHealth,
-                    CommandType = CommandDamageResult.TakeDamage,
+                    CommandType = CommandResult.TakeDamage,
                     Value = deltaDamage,
                     ExtraInfo = nameof(UnitAttributeContainer.Health)
                 });

@@ -448,10 +448,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 string resultId = Guid.NewGuid().ToString();
                 foreach (AbilityParamBase param in ability.GetParameters())
                 {
-                    string casterId = caster.ID;
-                    string targetId = target.ID;
-                    param.Execute(resultId, inAbility.ID, caster.RuntimeAttributes, casterId, 
-                        target.RuntimeAttributes, targetId, target.GetCell(), results);
+                    param.Execute(resultId, inAbility, caster, target, results);
                 }
             }
         }
