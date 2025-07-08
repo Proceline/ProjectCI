@@ -18,3 +18,7 @@ MonoBehaviour:
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     scriptableObjectInstance: {fileID: 11400000, guid: d54f4eda751cb604488f21be21acca4d, type: 2}
     lifetime: 1
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Modifiers.IFinalReceiveDamageModifier,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    scriptableObjectInstance: {fileID: 11400000, guid: 62ec9bd4f320c9f4eb581a026e1cb274, type: 2}
+    lifetime: 1

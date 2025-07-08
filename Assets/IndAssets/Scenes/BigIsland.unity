@@ -4792,7 +4792,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsFriendly: 1
-  unitData: {fileID: 11400000, guid: ed31a57944b673843a350f061ba66d67, type: 2}
+  unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: e50adca9ec0372b47a75ece74a58b633, type: 2}
   - {fileID: 11400000, guid: 2646534727b9e524aaf2cb01a0ade50f, type: 2}

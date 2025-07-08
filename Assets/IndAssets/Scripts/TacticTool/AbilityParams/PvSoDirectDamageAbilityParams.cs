@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
+using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.Utilities.Runtime.Modifiers;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -16,6 +19,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public AttributeType attackerAttribute;
         public AttributeType defenderAttribute;
+
+        [Inject, NonSerialized]
+        private IFinalReceiveDamageModifier _receiveDamageModifier;
+
+        protected IFinalReceiveDamageModifier ReceiveDamageModifier
+        {
+            get
+            {
+                if (_receiveDamageModifier == null)
+                {
+                    DIConfiguration.InjectFromConfiguration(this);
+                }
+
+                return _receiveDamageModifier;
+            }
+        }
 
         public override string GetAbilityInfo()
         {
@@ -34,7 +53,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             int deltaDamage = 
                 Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
 
-            toContainer.Health.ModifyValue(-deltaDamage);
+            int finalDeltaDamage = deltaDamage;
+            if (ReceiveDamageModifier != null && toUnit is IEventOwner damageReceiver)
+            {
+                finalDeltaDamage = ReceiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
+            }
+            toContainer.Health.ModifyValue(-finalDeltaDamage);
             int afterHealth = toContainer.Health.CurrentValue;
             
             if (results != null)
