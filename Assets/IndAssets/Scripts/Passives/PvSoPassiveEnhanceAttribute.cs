@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
@@ -29,14 +30,12 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         [SerializeField]
         private BattleTeam teamCondition;
-        
-        private readonly ServiceLocator<PvSoModifiersManager> _modifierService = new();
+
+        [Inject, NonSerialized] 
+        private PvSoModifiersManager _modifiersManager;
 
         private readonly Dictionary<string, UnityAction<IEventOwner, IAttributeModifierContainer>>
             _loadedModifierActions = new();
-        
-        [NonSerialized]
-        private PvSoModifiersManager _modifiersManager;
 
         protected PvSoModifiersManager ModifiersManager
         {
@@ -44,7 +43,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             {
                 if (_modifiersManager == null)
                 {
-                    _modifiersManager = _modifierService.Service;
+                    DIConfiguration.InjectFromConfiguration(this);
                 }
 
                 return _modifiersManager;

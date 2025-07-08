@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e502d178d99a344a8bf372eae3e12e2, type: 3}
+  m_Name: DIConfigurationManager
+  m_EditorClassIdentifier: 
+  serviceRegistrations: []
+  scriptableObjectRegistrations:
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Modifiers.Concrete.PvSoModifiersManager,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    scriptableObjectInstance: {fileID: 11400000, guid: d54f4eda751cb604488f21be21acca4d, type: 2}
+    lifetime: 1

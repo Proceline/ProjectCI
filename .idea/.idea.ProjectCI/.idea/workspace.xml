@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="149797c1-6a19-4ba3-8db0-fdb075038119" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/IndAssets/Scripts/Passives/PvSoPassiveBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/IndAssets/Scripts/Passives/PvSoPassiveBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectCI/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectCI/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,12 +16,13 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Editor/Scripts/ModifiersManagerEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Events/PvSoAbilitySelectEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Passives/PvSoPassiveEnhanceAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Services/PvSoModifiersManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@dec70dcd5144/Runtime/Scripts/TacticRpgTool/GridData/LevelCellBase.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@dec70dcd5144/Runtime/Scripts/TacticRpgTool/GridData/LevelGrids/LevelGridBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@9ccc2ac52b5a/Runtime/Scripts/TacticRpgTool/Unit/SoUnitData.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@f3fac7af1578/Runtime/UGUI/UI/Core/Toggle.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.ppvylk.project_ci_utilities/Runtime/Scripts/SoEvents/SoUnityEventBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/Attributes/AttributeTypeDefinitionEditor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/Attributes/AttributeTypePropertyDrawer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/TacticRpgTool/CellWithStatusEffectEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/TacticRpgTool/StatusEffectEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/TacticRpgTool/UnitDataEditor.cs" root0="SKIP_HIGHLIGHTING" />
@@ -114,6 +116,10 @@
       <workItem from="1749493465667" duration="80000" />
       <workItem from="1751228952446" duration="3999000" />
       <workItem from="1751353018546" duration="7219000" />
+      <workItem from="1751511248899" duration="9063000" />
+      <workItem from="1751829186533" duration="1409000" />
+      <workItem from="1751951938736" duration="89000" />
+      <workItem from="1751952045820" duration="1595000" />
     </task>
     <servers />
   </component>

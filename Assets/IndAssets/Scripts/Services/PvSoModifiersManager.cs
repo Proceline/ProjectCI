@@ -16,14 +16,12 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
     }
     
     [CreateAssetMenu(fileName = "PvSoModifiersManager", menuName = "ProjectCI Utilities/Modifiers/PvSoModifiersManager")]
-    public class PvSoModifiersManager : ScriptableObject, IService
+    public class PvSoModifiersManager : ScriptableObject
     {
         [SerializeField] private List<AttributeModifierPair> numericModifiers;
 
         private readonly IDictionary<AttributeType, SoNumericModifier> _modifiersDic =
             new Dictionary<AttributeType, SoNumericModifier>();
-
-        private static readonly ServiceLocator<PvSoModifiersManager> ModifierService = new();
 
         public void RegisterModifier(AttributeType attributeType,
             UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
@@ -80,17 +78,22 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
             }
         }
 
-        public void Initialize()
+        private void Initialize()
         {
             foreach (var attributePair in numericModifiers)
             {
                 _modifiersDic.Add(attributePair.attributeType, attributePair.modifier);
             }
         }
-
-        public void Cleanup()
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void OnGameLoadedBeforeScene()
         {
-            Dispose();
+            var allManagers = Resources.LoadAll<PvSoModifiersManager>("");
+            foreach (var soModifiersManager in allManagers)
+            {
+                soModifiersManager.Initialize();
+            }
         }
     }
 }
