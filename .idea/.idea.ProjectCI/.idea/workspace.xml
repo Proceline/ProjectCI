@@ -4,21 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="149797c1-6a19-4ba3-8db0-fdb075038119" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectCI/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectCI/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
-    </list>
+    <list default="true" id="149797c1-6a19-4ba3-8db0-fdb075038119" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/e83e80a612144d7eb13f7bfd5dd9c2886c00/31/e56d03c8/02000007pdb7.il" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5a41d6b7189842eca409fd0b1c3e3dcf17bf78/5a/367e60f2/IDictionary`2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Editor/Scripts/ModifiersManagerEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Events/PvSoAbilitySelectEvent.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Passives/PvSoPassiveEnhanceAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/IndAssets/Scripts/Services/PvSoModifiersManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@9ccc2ac52b5a/Runtime/Scripts/TacticRpgTool/Unit/SoUnitData.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@9a0c273afc8e/Editor/Scripts/TacticRpgTool/EditorUtils.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@9a0c273afc8e/Runtime/Scripts/DependencyInjection/DIConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.ppvylk.project_ci_core_system@9a0c273afc8e/Runtime/Scripts/DependencyInjection/DIExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@f3fac7af1578/Runtime/UGUI/UI/Core/Toggle.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.ppvylk.project_ci_utilities/Runtime/Scripts/SoEvents/SoUnityEventBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../ProjectCiCore/Packages/com.ppvylk.project_ci_core_system/Editor/Scripts/Attributes/AttributeTypeDefinitionEditor.cs" root0="SKIP_HIGHLIGHTING" />
@@ -120,6 +121,7 @@
       <workItem from="1751829186533" duration="1409000" />
       <workItem from="1751951938736" duration="89000" />
       <workItem from="1751952045820" duration="1595000" />
+      <workItem from="1751954169708" duration="3461000" />
     </task>
     <servers />
   </component>
