@@ -130,6 +130,54 @@
             ]
         },
         {
+            "name": "BattleUI",
+            "id": "efe4ff9d-e07d-44c6-9890-bae6856f10b5",
+            "actions": [
+                {
+                    "name": "ScrollOptionUp",
+                    "type": "Value",
+                    "id": "a3d77347-a37d-4145-8e09-374f0fd00244",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ScrollOptionDown",
+                    "type": "Value",
+                    "id": "16a53343-ace7-41d3-a96f-0f2971fbc242",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c8e91fbf-7de8-4186-85b3-cfd778bb4379",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollOptionUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "569ca26c-33d1-4e3c-9bcb-8f5611319211",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollOptionDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Navigation",
             "id": "4fc84fb0-a7e2-4fff-bed6-fc841a16140a",
             "actions": [
