@@ -20,9 +20,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
         private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
-        public override void InitializeUI(Camera inUICamera)
+        public override void InitializeUI()
         {
-            base.InitializeUI(inUICamera);
+            base.InitializeUI();
             _selectEventLocator.Service.RegisterCallback(HandleUnitSelected);
 
             
@@ -71,12 +71,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void RespondToSelectedUnitState(IEventOwner eventOwner, UnitStateEventParam parameter)
         {
-            if (!m_SelectedUnit)
+            if (!SelectedUnit)
             {
                 return;
             }
             
-            if (m_SelectedUnit.ID == eventOwner.EventIdentifier)
+            if (SelectedUnit.ID == eventOwner.EventIdentifier)
             {
                 if (parameter is
                     {
@@ -84,7 +84,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         behaviour: UnitStateBehaviour.Adding or UnitStateBehaviour.Emphasis
                     })
                 {
-                    uiContainer.transform.position = m_SelectedUnit.transform.position;
+                    uiContainer.transform.position = SelectedUnit.transform.position;
                     uiContainer.gameObject.SetActive(true);
                 }
                 else

@@ -96,7 +96,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        protected override void ForceHighlight(bool enable)
+        protected internal override void ForceHighlight(bool enable)
         {
             // m_Toggle.SetIsOnWithoutNotify(true);
             equippedHintObject.SetActive(enable);

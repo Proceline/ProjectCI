@@ -74,7 +74,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                 {
                     Debug.Log("Successfully created Battle Manager");
                     var abilityListUI = Instantiate(abilityListUIPrefab);
-                    abilityListUI.InitializeUI(uiCamera);
+                    abilityListUI.InitializeUI();
                 }
 
                 var sceneUnits = GridBattleUtils.ScanAreaForObjects<PvMnSceneUnit>(
