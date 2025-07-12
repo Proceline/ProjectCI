@@ -1,3 +1,4 @@
+using System;
 using ProjectCI.CoreSystem.Runtime.Battleground;
 using ProjectCI.CoreSystem.Runtime.Services;
 using UnityEngine;
@@ -14,9 +15,6 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 
         [SerializeField]
         private GameObject resourceContainerPrefab;
-
-        [SerializeField]
-        private Camera uiCamera;
 
         private readonly ServiceLocator<PvSoBattlegroundMaker> _battlegroundMaker = new();
 
@@ -46,7 +44,6 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("UI Prefabs", EditorStyles.boldLabel);
-            uiCamera = (Camera)EditorGUILayout.ObjectField("UI Camera", uiCamera, typeof(Camera), true);
             resourceContainerPrefab = (GameObject)EditorGUILayout.ObjectField("Resource Container Prefab", resourceContainerPrefab, typeof(GameObject), false);
 
             GUI.enabled = Application.isPlaying;
@@ -64,7 +61,16 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 
         private void ScanAndGenerateBattle()
         {
-            _battlegroundMaker.Service.ScanAndGenerateBattle(centerPosition, uiCamera);
+            var collectedObjects = GameObject.FindGameObjectsWithTag("UICamera");
+            if (collectedObjects.Length > 0)
+            {
+                Camera camera = collectedObjects[0].GetComponent<Camera>();
+                if (camera == null)
+                {
+                    throw new NullReferenceException("ERROR: UI Camera not defined in Scene!");
+                }
+                _battlegroundMaker.Service.ScanAndGenerateBattle(centerPosition, camera);
+            }
         }
     }
 } 

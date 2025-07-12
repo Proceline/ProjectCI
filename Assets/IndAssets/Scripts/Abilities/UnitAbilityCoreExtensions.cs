@@ -6,6 +6,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 {
     public static class UnitAbilityCoreExtensions
     {
+        /// <summary>
+        /// Whether the opponent will fight back after get targeted
+        /// </summary>
+        /// <param name="abilityCore"></param>
+        /// <returns></returns>
         public static bool IsAbilityCounterAllowed(this UnitAbilityCore abilityCore)
         {
             return abilityCore.DoesAllowBlocked();
