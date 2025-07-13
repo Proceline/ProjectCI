@@ -17,25 +17,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private Text m_DisplayNameText;
-        
-        [SerializeField]
-        private GameObject equippedHintObject;
+
+        [SerializeField] 
+        private Color[] selectedColors;
 
         [SerializeField] 
         private PvSoAbilitySelectEvent abilitySelectEvent;
-
-        [SerializeField] 
-        private PvSoAbilityEquipEvent abilityEquipEvent;
-
-        private void OnEnable()
-        {
-            abilityEquipEvent.RegisterCallback(ChangeEquipHintWhileEquipped);
-        }
-
-        private void OnDisable()
-        {
-            abilityEquipEvent.UnregisterCallback(ChangeEquipHintWhileEquipped);
-        }
 
         public override string DisplayName
         {
@@ -87,13 +74,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnToggleValueChanged(bool bIsOn)
         {
-            if(bIsOn)
+            if (bIsOn)
             {
-                if(_abilityData && Owner)
+                if (_abilityData && Owner)
                 {
                     abilitySelectEvent.Raise(_abilityData);
                 }
             }
+
+            m_DisplayNameText.color = bIsOn ? selectedColors[1] : selectedColors[0];
         }
 
         protected internal override void ForceHighlight(bool enable)
@@ -101,15 +90,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (enable)
             {
                 m_Toggle.SetIsOnWithoutNotify(true);
+                m_DisplayNameText.color = selectedColors[1];
             }
-
-            equippedHintObject.SetActive(enable);
-        }
-        
-        
-        private void ChangeEquipHintWhileEquipped(IEventOwner owner, AbilitySelectEventParam selectParam)
-        {
-            equippedHintObject.SetActive(selectParam.Ability == _abilityData);
         }
     }
 } 
