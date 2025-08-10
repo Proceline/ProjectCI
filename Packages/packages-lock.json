@@ -14,7 +14,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "33e975dbd724da29e774be8f2493f87d593598a2"
+      "hash": "7f44d5e24a1c2fb7d778203cb7734bf59d08480d"
     },
     "com.ppvylk.project_ci_core_system": {
       "version": "https://github.com/Proceline/com.ppvylk.project_ci_core_system.git",
