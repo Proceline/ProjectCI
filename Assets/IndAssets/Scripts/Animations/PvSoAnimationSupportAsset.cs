@@ -16,19 +16,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public int GetOriginalIndexByName(string animName)
             => _markedIndicesByNames.GetValueOrDefault(animName, -1);
 
+        private readonly Dictionary<string, int> _markedIndicesByNames = new();
         public string[] AdditionalIndexNames => _preloadNames ??= Enum.GetNames(typeof(AnimationPvCustomName));
-
         private string[] _preloadNames;
 
         internal PvCustomAnimationNamesList()
         {
             for (int i = 0; i < AdditionalIndexNames.Length; i++)
             {
-                _markedIndicesByNames.Add(AdditionalIndexNames[i], i + (int)AnimationIndexName.EndMarkDontUse);
+                _markedIndicesByNames.Add(AdditionalIndexNames[i], i);
             }
         }
-
-        private readonly Dictionary<string, int> _markedIndicesByNames = new();
     }
     
     [CreateAssetMenu(fileName = "PvSoAnimationSupportAsset", menuName = "ProjectCI Tools/Animations/PvSoAnimationSupportAsset")]
