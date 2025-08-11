@@ -27,7 +27,7 @@ MonoBehaviour:
   m_Params:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
   m_Ailments: []
-  m_Animation: {fileID: 11400000, guid: a676f675bf5716347a9b39415198f007, type: 2}
+  m_Animation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
   audioOnStart: {fileID: 0}
   audioOnExecute: {fileID: 0}
   additionalParameters: 0000000001000000
