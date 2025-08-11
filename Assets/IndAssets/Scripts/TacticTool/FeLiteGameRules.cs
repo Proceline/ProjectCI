@@ -32,7 +32,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private int m_DoubleAttackSpeedThreshold = 5;
 
-        [NonSerialized] private GridPawnUnit _selectedUnit;
+        [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
         [NonSerialized] private UnitAbilityCore _selectedAbility;
 
         [SerializeField] 
@@ -121,7 +121,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (selectParam.Behaviour == UnitSelectBehaviour.Select)
             {
-                _selectedUnit = selectParam.GridPawnUnit;
+                if (selectParam.GridPawnUnit is not PvMnBattleGeneralUnit battleUnit)
+                {
+                    return;
+                }
+
+                _selectedUnit = battleUnit;
                 _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
                 _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
                 _selectedAbility = null;
@@ -296,37 +301,39 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return outCells;
         }
 
-        public override void HandleCellSelected(LevelCellBase InCell)
+        public override void HandleCellSelected(LevelCellBase selectedCell)
         {
             if (TacticBattleManager.IsActionBeingPerformed())
             {
                 return;
             }
 
-            if(_selectedUnit)
+            if (_selectedUnit)
             {
                 UnitBattleState currentState = _selectedUnit.GetCurrentState();
 
                 switch (currentState)
                 {
                     case UnitBattleState.Moving:
-                        if (_selectedUnit.ExecuteMovement(InCell))
+                        if (_selectedUnit.ExecuteMovement(selectedCell))
                         {
                             _selectedUnit.AddState(UnitBattleState.MovingProgress);
                         }
+
                         break;
                     case UnitBattleState.AbilityTargeting:
-                        GridPawnUnit targetUnit = InCell.GetUnitOnCell();
-                        if(targetUnit)
+                        GridPawnUnit gridPawnUnit = selectedCell.GetUnitOnCell();
+                        if (gridPawnUnit && gridPawnUnit is PvMnBattleGeneralUnit targetUnit)
                         {
-                            List<CommandResult> results = 
+                            List<CommandResult> results =
                                 HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
-                            
+
                             turnLogicEndEvent.Raise();
                             HandleCommandResultsCoroutine(results);
-                            
+
                             // TODO: Logically end the action, might need some event
                         }
+
                         break;
                 }
             }
@@ -396,7 +403,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 if (m_AbilityIdToAbility.TryGetValue(result.AbilityId, out UnitAbilityCore ability))
                 {
-                    await lastOwner.ShowResult(ability, lastAimCell, lastReactions);
+                    // TODO: Handle IsAttacking if Required
+                    // UnityEvent onAbilityComplete = new UnityEvent();
+                    await ability.ApplyResult(lastOwner, lastAimCell, lastReactions, null);
                 }
             }
         }
@@ -404,19 +413,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <summary>
         /// Used to apply abilities and end ability
         /// </summary>
-        /// <param name="InUnit"></param>
-        /// <param name="InTargetUnit"></param>
+        /// <param name="abilityOwner"></param>
+        /// <param name="targetUnit"></param>
         /// <returns></returns>
-        private List<CommandResult> HandleAbilityCombatingLogic(GridPawnUnit InUnit, GridPawnUnit InTargetUnit)
+        private List<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
         {
-            UnitAbilityCore ability = _selectedAbility? _selectedAbility : InUnit.GetCurrentAbility();
-            UnitAbilityCore targetAbility = InTargetUnit.GetCurrentAbility();
+            UnitAbilityCore ability = _selectedAbility? _selectedAbility : abilityOwner.GetCurrentAbility();
+            UnitAbilityCore targetAbility = targetUnit.GetCurrentAbility();
 
-            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(InTargetUnit);
-            bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(InUnit.GetCell());
+            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(targetUnit);
+            bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());
 
-            int abilitySpeed = InUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
-            int targetAbilitySpeed = InTargetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
+            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
+            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             FollowUpCondition followUpCondition = FollowUpCondition.None;
             if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold && ability.IsAbilityFollowUpAllowed())
             {
@@ -433,8 +442,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             foreach (CombatActionContext combatActionContext in combatActionContextList)
             {
                 var combatAbility = combatActionContext.IsVictim ? targetAbility : ability;
-                var caster = combatActionContext.IsVictim ? InTargetUnit : InUnit;
-                var victim = combatActionContext.IsVictim ? InUnit : InTargetUnit;
+                var caster = combatActionContext.IsVictim ? targetUnit : abilityOwner;
+                var victim = combatActionContext.IsVictim ? abilityOwner : targetUnit;
                 if (combatAbility)
                 {
                     HandleAbilityParam(combatAbility, caster, victim);
