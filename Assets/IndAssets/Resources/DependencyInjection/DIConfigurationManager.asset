@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e502d178d99a344a8bf372eae3e12e2, type: 3}
   m_Name: DIConfigurationManager
   m_EditorClassIdentifier: 
-  serviceRegistrations: []
-  scriptableObjectRegistrations:
+  unityObjectRegistrations:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Modifiers.Concrete.PvSoModifiersManager,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    scriptableObjectInstance: {fileID: 11400000, guid: d54f4eda751cb604488f21be21acca4d, type: 2}
-    lifetime: 1
+    objectInstance: {fileID: 11400000, guid: d54f4eda751cb604488f21be21acca4d, type: 2}
   - serviceTypeName: ProjectCI.Utilities.Runtime.Modifiers.IFinalReceiveDamageModifier,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    scriptableObjectInstance: {fileID: 11400000, guid: 62ec9bd4f320c9f4eb581a026e1cb274, type: 2}
-    lifetime: 1
+    objectInstance: {fileID: 11400000, guid: 62ec9bd4f320c9f4eb581a026e1cb274, type: 2}
