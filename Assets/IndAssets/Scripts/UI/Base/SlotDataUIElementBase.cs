@@ -3,34 +3,20 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.GUI
 {
-    public class SlotDataUIElementBase : MonoBehaviour
+    public abstract class SlotDataUIElementBase : MonoBehaviour
     {
         protected AbilityListUIElementBase Owner { get; private set; }
         public virtual string DisplayName { get; set; }
 
-        public void SetOwner(AbilityListUIElementBase InListUIElem)
+        public void SetOwner(AbilityListUIElementBase inListUIElem)
         {
-            Owner = InListUIElem;
+            Owner = inListUIElem;
         }
 
-        public virtual void SetAbility(UnitAbilityCore InAbility, int InIndex)
-        {
-            // Do nothing
-        }
+        public abstract void SetAbility(UnitAbilityCore inAbility, int inIndex);
 
-        public virtual void ClearAbility()
-        {
-            // Do nothing
-        }
+        public abstract void ClearAbility();
 
-        public virtual void OnHover()
-        {
-            // Do nothing
-        }
-        
-        protected internal virtual void ForceHighlight(bool enabled)
-        {
-            
-        }
+        protected internal abstract void ForceHighlight(bool isEnabled);
     }
 }

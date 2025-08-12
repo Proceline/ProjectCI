@@ -3,8 +3,8 @@ using ProjectCI.CoreSystem.Runtime.Units.Interfaces;
 using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.TacticTool.Formula.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -18,10 +18,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         protected SoUnitData unitData;
 
         [SerializeField]
-        protected List<UnitAbilityCore> unitAbilities;
+        protected List<PvSoUnitAbility> unitAbilities;
 
         public SoUnitData UnitData => unitData;
-        public List<UnitAbilityCore> UnitAbilities => unitAbilities;
+        public List<PvSoUnitAbility> UnitAbilities => unitAbilities;
 
         [SerializeField]
         private AttributeValuePair[] m_ExtraAttributes;

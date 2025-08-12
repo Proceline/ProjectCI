@@ -451,7 +451,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 165352000283889404}
-  - component: {fileID: 8298218092088027436}
+  - component: {fileID: -5087607498180030379}
   m_Layer: 0
   m_Name: AbilityUI
   m_TagString: Untagged
@@ -475,7 +475,7 @@ Transform:
   - {fileID: 3724346089906459314}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8298218092088027436
+--- !u!114 &-5087607498180030379
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -484,12 +484,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6909603433851531995}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d883a53e12a10f4680c4c01542fdff4, type: 3}
+  m_Script: {fileID: 11500000, guid: f45aa48f123064642845ce7898cdc3ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiContainer: {fileID: 819950788048656091}
-  listContainer: {fileID: 4662410574845790978}
-  abilityUIElementPrefab: {fileID: 6269839008220414059, guid: f52dbce6044946142a581e9f8722ed40, type: 3}
+  containerView: {fileID: 819950788048656091}
+  abilitiesContainerView: {fileID: 4662410574845790978}
+  visibleAtBeginning: 0
+  worldSpaceView: 0
+  worldSpaceOffset: {x: 0, y: 0, z: 0}
+  slotPrefab: {fileID: 5430301785834332559, guid: f52dbce6044946142a581e9f8722ed40, type: 3}
 --- !u!1 &7149022778072052207
 GameObject:
   m_ObjectHideFlags: 0

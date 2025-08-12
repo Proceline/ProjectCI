@@ -241,7 +241,7 @@ GameObject:
   m_Component:
   - component: {fileID: 752546020636971281}
   - component: {fileID: 2094738633060859874}
-  - component: {fileID: 6269839008220414059}
+  - component: {fileID: 5430301785834332559}
   m_Layer: 5
   m_Name: AbilityToggle
   m_TagString: Untagged
@@ -317,7 +317,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
---- !u!114 &6269839008220414059
+--- !u!114 &5430301785834332559
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -326,12 +326,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7094386288816169867}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a8329468d9f7044d92b551b4b61d4ac, type: 3}
+  m_Script: {fileID: 11500000, guid: d17c615ec546d6b4ab3d749023f0fd35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Toggle: {fileID: 2094738633060859874}
-  m_DisplayNameText: {fileID: 9074611029500644668}
-  selectedColors:
-  - {r: 0, g: 0, b: 0, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
+  toggle: {fileID: 2094738633060859874}
   abilitySelectEvent: {fileID: 11400000, guid: 3096938b854dcb3418f46d871a1b3c5d, type: 2}

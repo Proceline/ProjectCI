@@ -1,12 +1,12 @@
 using ProjectCI.CoreSystem.Runtime.Services;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
 namespace ProjectCI.Utilities.Runtime.Events
 {
     public class UnitSelectEventParam : IEventParameter
     {
-        public GridPawnUnit GridPawnUnit;
+        public PvMnBattleGeneralUnit Unit;
         public UnitSelectBehaviour Behaviour;
     }
 
@@ -21,9 +21,9 @@ namespace ProjectCI.Utilities.Runtime.Events
     {
         private readonly UnitSelectEventParam _unitSelectParam = new();
         
-        public void Raise(GridPawnUnit unit, UnitSelectBehaviour action)
+        public void Raise(PvMnBattleGeneralUnit unit, UnitSelectBehaviour action)
         {
-            _unitSelectParam.GridPawnUnit = unit;
+            _unitSelectParam.Unit = unit;
             _unitSelectParam.Behaviour = action;
             Raise(this, _unitSelectParam);
         }
@@ -40,7 +40,7 @@ namespace ProjectCI.Utilities.Runtime.Events
 
         public void Cleanup()
         {
-            _unitSelectParam.GridPawnUnit = null;
+            _unitSelectParam.Unit = null;
             _unitSelectParam.Behaviour = UnitSelectBehaviour.Deselect;
             ClearCallbacks();
         }

@@ -1,17 +1,16 @@
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
-using ProjectCI.CoreSystem.Runtime.Attributes;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
+namespace ProjectCI.Runtime.GUI.Battle
 {
     public class PvMnBattleResourceContainer : BattleHealth
     {
         [NonSerialized] private GameObject _healthBarInstance;
         [NonSerialized] private Slider _healthSlider;
 
-        public void Initialize(Camera InCamera, GameObject healthBarPrefab)
+        public void Initialize(Camera inCamera, GameObject healthBarPrefab)
         {
             if (healthBarPrefab != null)
             {
@@ -21,9 +20,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 // Get UI components
                 _healthSlider = _healthBarInstance.GetComponentInChildren<Slider>();
                 Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
-                canvas.worldCamera = InCamera;
+                canvas.worldCamera = inCamera;
                 
-                RotateHealthBarByCamera(InCamera);
+                RotateHealthBarByCamera(inCamera);
             }
         }
 
@@ -35,29 +34,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        private void RotateHealthBarByCamera(Camera InCamera)
+        private void RotateHealthBarByCamera(Camera inCamera)
         {
             if (_healthBarInstance != null)
             {
-                _healthBarInstance.transform.rotation = InCamera.transform.rotation;
+                _healthBarInstance.transform.rotation = inCamera.transform.rotation;
             }
         }
 
-        public override void SetHealth(int InHealth)
+        public override void SetHealth(int inHealth)
         {
-            if (_healthSlider.maxValue < InHealth)
+            if (_healthSlider.maxValue < inHealth)
             {
-                _healthSlider.maxValue = InHealth;
+                _healthSlider.maxValue = inHealth;
             }
-            _healthSlider.value = InHealth;
+            _healthSlider.value = inHealth;
         }
 
-        public override void SetMaxHealth(int InMaxHealth)
+        public override void SetMaxHealth(int maxHp)
         {
-            _healthSlider.maxValue = InMaxHealth;
+            _healthSlider.maxValue = maxHp;
         }
 
-        public override void ReceiveHealthDamage(int InDamage)
+        public override void ReceiveHealthDamage(int damage)
         {
 
         }

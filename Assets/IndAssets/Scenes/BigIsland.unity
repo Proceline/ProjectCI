@@ -4794,8 +4794,7 @@ MonoBehaviour:
   m_IsFriendly: 1
   unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   unitAbilities:
-  - {fileID: 11400000, guid: e50adca9ec0372b47a75ece74a58b633, type: 2}
-  - {fileID: 11400000, guid: 2646534727b9e524aaf2cb01a0ade50f, type: 2}
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   m_ExtraAttributes:
   - m_AttributeType:
       value: 15
@@ -16902,8 +16901,7 @@ MonoBehaviour:
   m_IsFriendly: 1
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
   unitAbilities:
-  - {fileID: 11400000, guid: e50adca9ec0372b47a75ece74a58b633, type: 2}
-  - {fileID: 11400000, guid: aa9036990a02d8b4882a879c4d37c00c, type: 2}
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   m_ExtraAttributes:
   - m_AttributeType:
       value: 15
@@ -35770,7 +35768,7 @@ MonoBehaviour:
   m_IsFriendly: 0
   unitData: {fileID: 11400000, guid: c4e443c2858f5054899aac03e65ee8dd, type: 2}
   unitAbilities:
-  - {fileID: 11400000, guid: 746bb361628a22f46a20c4788a9ff385, type: 2}
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   m_ExtraAttributes:
   - m_AttributeType:
       value: 15

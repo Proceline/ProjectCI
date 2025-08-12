@@ -4,11 +4,13 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
 using System.Collections.Generic;
 using ProjectCI_Animation.Runtime;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -24,7 +26,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
         private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
         private readonly ServiceLocator<PvSoAbilityEquipEvent> _abilityEquipEventLocator = new();
-        
+
+        private readonly List<PvSoUnitAbility> _battleAbilities = new();
+        private (PvSoUnitAbility, PvSoUnitAbility) _currentAbility;
+
+        public PvSoUnitAbility EquippedAbility => _currentAbility.Item1;
+        public PvSoUnitAbility CastingAbility => _currentAbility.Item2;
         
         private void SetFormulaCollection()
         {
@@ -131,7 +138,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public override void SetupAbility(UnitAbilityCore ability)
+        public PvSoUnitAbility GetCurrentUnitAbility()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PvSoUnitAbility GetEquippedUnitAbility()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)
+        {
+            _battleAbilities.Clear();
+            foreach (var ability in abilities)
+            {
+                _battleAbilities.Add(ability);
+            }
+        }
+        
+        // TODO: Rewrite this
+        public void SetupAbility(PvSoUnitAbility ability)
         {
             ResetCells();
             
@@ -150,12 +177,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 // TODO: Equip related weapon
             }
         }
+
+        public List<PvSoUnitAbility> GetUsableAbilities()
+        {
+            return _battleAbilities;
+        }
         
         private void EquipAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
         {
             if (owner.EventIdentifier == EventIdentifier)
             {
-                CurrentAbility = selectParam.Ability;
+                var ability = selectParam.Ability;
+                _currentAbility.Item1 = ability;
+                _currentAbility.Item2 = ability;
             }
         }
 
@@ -211,7 +245,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void HandleTurnStarted()
         {
-            m_CurrentAbilityPoints = 1;
             m_CurrentMovementPoints = 
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
         }
@@ -257,14 +290,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
+        // TODO: Consider whether in this script
         private void RespondOnManagerSelectUnit(IEventOwner owner, UnitSelectEventParam selectInfo)
         {
-            if (selectInfo.GridPawnUnit == null || selectInfo.Behaviour == UnitSelectBehaviour.Deselect)
+            if (!selectInfo.Unit || selectInfo.Behaviour == UnitSelectBehaviour.Deselect)
             {
                 ClearStates();
             }
 
-            if (selectInfo.GridPawnUnit == this && selectInfo.Behaviour == UnitSelectBehaviour.Select)
+            if (selectInfo.Unit == this && selectInfo.Behaviour == UnitSelectBehaviour.Select)
             {
                 SetupMovement();
             }

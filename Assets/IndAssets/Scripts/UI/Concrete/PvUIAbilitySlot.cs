@@ -1,4 +1,5 @@
 using System;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GUI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
@@ -13,7 +14,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private Toggle m_Toggle;
 
         [NonSerialized]
-        private UnitAbilityCore _abilityData;
+        private PvSoUnitAbility _abilityData;
 
         [SerializeField]
         private Text m_DisplayNameText;
@@ -33,7 +34,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void SetAbility(UnitAbilityCore InAbility, int InIndex)
         {
             m_Toggle.isOn = false;
-            _abilityData = InAbility;
             SetDisplayName();
             CheckAvailability();
             m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
@@ -41,7 +41,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void ClearAbility()
         {
-            base.ClearAbility();
             m_Toggle.onValueChanged.RemoveListener(OnToggleValueChanged);
         }
 
@@ -67,11 +66,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             DisplayName = _abilityData.GetAbilityName();
         }
 
-        public override void OnHover()
-        {
-            base.OnHover();
-        }
-
         private void OnToggleValueChanged(bool bIsOn)
         {
             if (bIsOn)
@@ -85,9 +79,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             m_DisplayNameText.color = bIsOn ? selectedColors[1] : selectedColors[0];
         }
 
-        protected internal override void ForceHighlight(bool enable)
+        protected internal override void ForceHighlight(bool isEnabled)
         {
-            if (enable)
+            if (isEnabled)
             {
                 m_Toggle.SetIsOnWithoutNotify(true);
                 m_DisplayNameText.color = selectedColors[1];

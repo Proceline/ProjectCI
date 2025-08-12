@@ -1,10 +1,12 @@
+using System;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GUI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
+using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Events;
@@ -37,18 +39,26 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         private int detectMaxResults = 10;
 
         [SerializeField]
-        private AbilityListUIElementBase abilityListUIPrefab;
-
-        [SerializeField]
         private GameObject resourceContainerPrefab;
 
         public UnityEvent<RaycastHit, Vector2Int, HexagonPresetGrid> gridCreatingRule;
 
         [SerializeField] 
         private PvSoAbilityEquipEvent abilityEquipEvent;
+
+        [Inject]
+        private PvMnViewControlBattlePanel _battleViewControlPanel;
+
+        [NonSerialized] private bool _hasInjected;
         
         public void ScanAndGenerateBattle(Vector3 centerPosition, Camera uiCamera)
         {
+            if (!_hasInjected)
+            {
+                DIConfiguration.InjectFromConfiguration(this);
+                _hasInjected = true;
+            }
+            
             // 使用 GridBattleUtils 生成网格
             var levelGrid = GridBattleUtils.GenerateLevelGridFromGround(
                 centerPosition,
@@ -73,8 +83,8 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                 if (battleManager != null)
                 {
                     Debug.Log("Successfully created Battle Manager");
-                    var abilityListUI = Instantiate(abilityListUIPrefab);
-                    abilityListUI.InitializeUI();
+                    var abilityListUI = Instantiate(_battleViewControlPanel);
+                    abilityListUI.Setup();
                 }
 
                 var sceneUnits = GridBattleUtils.ScanAreaForObjects<PvMnSceneUnit>(
@@ -94,12 +104,12 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                         : BattleTeam.Hostile;
 
                     var unit = GridBattleUtils.ChangeUnitToBattleUnit<PvMnBattleGeneralUnit>(
-                        sceneUnit.gameObject, 
-                        levelGrid, 
-                        sceneUnit.UnitData, 
+                        sceneUnit.gameObject,
+                        levelGrid,
+                        sceneUnit.UnitData,
                         team,
-                        sceneUnit.UnitAbilities,
-                        1, 
+                        spawnedUnit => spawnedUnit.SetupAbilities(sceneUnit.UnitAbilities),
+                        1,
                         pawnDetectLayerMask
                     );
                     
@@ -109,11 +119,13 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     sceneUnit.SetExtraAttributes(unit.RuntimeAttributes);
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
-                    var abilities = unit.GetAbilities();
-                    abilityEquipEvent.Raise(unit, abilities[0]);
+                    
+                    // TODO: Consider if ability need to be assigned
+                    // var abilities = unit.GetAbilities();
+                    // abilityEquipEvent.Raise(unit, abilities[0]);
                 }
 
-                var hoverPawnInfos = GameObject.FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);
+                var hoverPawnInfos = FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);
                 foreach (var hoverPawnInfo in hoverPawnInfos)
                 {
                     hoverPawnInfo.Initialize();

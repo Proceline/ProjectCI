@@ -1,4 +1,5 @@
 using System;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace ProjectCI.Utilities.Runtime.Events
 {
     public class AbilitySelectEventParam : IEventParameter
     {
-        public UnitAbilityCore Ability;
+        public PvSoUnitAbility Ability;
     }
     
     [CreateAssetMenu(fileName = "AbilitySelect Event", menuName = "ProjectCI Utilities/Events/AbilitySelect Event")]
@@ -15,7 +16,7 @@ namespace ProjectCI.Utilities.Runtime.Events
         private readonly AbilitySelectEventParam _abilitySelectEventParam = new();
         [NonSerialized] private string _identifier = string.Empty;
         
-        public void Raise(UnitAbilityCore ability)
+        public void Raise(PvSoUnitAbility ability)
         {
             _abilitySelectEventParam.Ability = ability;
             Raise(this, _abilitySelectEventParam);

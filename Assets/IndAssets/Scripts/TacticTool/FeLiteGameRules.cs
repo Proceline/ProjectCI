@@ -10,6 +10,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
@@ -21,10 +22,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "NewGameRules", menuName = "ProjectCI Tools/GameRules/Create FeLiteGameRules", order = 1)]
     public class FeLiteGameRules : BattleGameRules
     {
-        private readonly Dictionary<string, GridPawnUnit> m_UnitIdToBattleUnit = new();
-        private readonly Dictionary<string, UnitAbilityCore> m_AbilityIdToAbility = new();
+        private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
+        private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
-        GameObject m_CurrentHoverObject;
+        private GameObject _currentHoverObject;
 
         [SerializeField]
         private AttributeType m_AbilitySpeedAttributeType;
@@ -33,7 +34,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private int m_DoubleAttackSpeedThreshold = 5;
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
-        [NonSerialized] private UnitAbilityCore _selectedAbility;
 
         [SerializeField] 
         private PvSoUnitSelectEvent selectUnitEvent;
@@ -57,19 +57,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             m_CurrentTeam = m_StartingTeam;
             m_TurnNumber = 0;
-            m_UnitIdToBattleUnit.Clear();
-            m_AbilityIdToAbility.Clear();
+            _unitIdToBattleUnitHash.Clear();
+            _abilityIdToAbilityHash.Clear();
             
-            var units = GameObject.FindObjectsByType<GridPawnUnit>(FindObjectsSortMode.None);
+            var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
-                if (m_UnitIdToBattleUnit.TryAdd(unit.ID, unit))
+                if (_unitIdToBattleUnitHash.TryAdd(unit.ID, unit))
                 {
-                    foreach (var ability in unit.GetAbilities())
+                    foreach (var ability in unit.GetUsableAbilities())
                     {
                         // TODO: Consider whether initialize ID here
                         ability.GenerateNewID();
-                        m_AbilityIdToAbility.Add(ability.ID, ability);
+                        _abilityIdToAbilityHash.Add(ability.ID, ability);
                     }
                 }
             }
@@ -83,20 +83,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             selectAbilityEventByPawn.RegisterCallback(SelectAbilityWithParam);
         }
         
-        public override void HandlePlayerSelected(GridPawnUnit inPlayerUnit)
+        public override void HandlePlayerSelected(GridPawnUnit selectedUnit)
         {
             if (TacticBattleManager.IsActionBeingPerformed())
             {
                 return;
             }
 
-            if (inPlayerUnit.IsDead() || inPlayerUnit.GetCurrentMovementPoints() <= 0)
+            if (selectedUnit.IsDead() || selectedUnit.GetCurrentMovementPoints() <= 0)
             {
                 return;
             }
 
             BattleTeam currTeam = GetCurrentTeam();
-            if(currTeam == inPlayerUnit.GetTeam())
+            if(currTeam == selectedUnit.GetTeam())
             {
                 if(_selectedUnit)
                 {
@@ -108,9 +108,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
                 }
 
-                if (inPlayerUnit)
+                if (selectedUnit is PvMnBattleGeneralUnit playableUnit)
                 {
-                    selectUnitEvent.Raise(inPlayerUnit, UnitSelectBehaviour.Select);
+                    selectUnitEvent.Raise(playableUnit, UnitSelectBehaviour.Select);
                 }
 
                 UpdateSelectedHoverObject();
@@ -121,19 +121,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (selectParam.Behaviour == UnitSelectBehaviour.Select)
             {
-                if (selectParam.GridPawnUnit is not PvMnBattleGeneralUnit battleUnit)
-                {
-                    return;
-                }
-
-                _selectedUnit = battleUnit;
+                _selectedUnit = selectParam.Unit;
                 _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
                 _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
-                _selectedAbility = null;
             }
             else
             {
-                if (!_selectedUnit || _selectedUnit != selectParam.GridPawnUnit)
+                if (!_selectedUnit || _selectedUnit != selectParam.Unit)
                 {
                     return;
                 }
@@ -147,22 +141,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
         
+        /// <summary>
+        /// This function will be triggered while selecting ability in UI
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="selectParam"></param>
         private void SelectAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
         {
             if (_selectedUnit && _selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
             {
                 var ability = selectParam.Ability;
-                if (_selectedUnit.GetAbilities().Contains(ability))
+                if (_selectedUnit.GetUsableAbilities().Contains(ability))
                 {
-                    _selectedAbility = ability;
+                    // TODO: Try to decouple this part
                     _selectedUnit.SetupAbility(ability);
                     _selectedUnit.AddState(UnitBattleState.AbilityTargeting);
                     
                     // TODO: Use Event to Handle this
                     TacticBattleManager.Get().UpdateHoverCells();
+                    
+                    // TODO: Check and Review this
+                    confirmAbilityEvent.Raise(ability);
                 }
-                _selectedAbility = selectParam.Ability;
-                confirmAbilityEvent.Raise(ability);
             }
         }
 
@@ -177,14 +177,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         bool IsHoverObjectSpawned()
         {
-            return m_CurrentHoverObject != null;
+            return _currentHoverObject != null;
         }
 
         private void UpdateSelectedHoverObject()
         {
-            if (m_CurrentHoverObject)
+            if (_currentHoverObject)
             {
-                Destroy(m_CurrentHoverObject);
+                Destroy(_currentHoverObject);
             }
 
             if (_selectedUnit && !_selectedUnit.IsDead())
@@ -192,25 +192,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 GameObject hoverObj = TacticBattleManager.GetSelectedHoverPrefab();
                 if (hoverObj)
                 {
-                    m_CurrentHoverObject = Instantiate(hoverObj, _selectedUnit.GetCell().GetAllignPos(_selectedUnit), hoverObj.transform.rotation);
+                    _currentHoverObject = Instantiate(hoverObj, _selectedUnit.GetCell().GetAllignPos(_selectedUnit), hoverObj.transform.rotation);
                 }
             }
         }
 
         private void UpdatePlayerStateAfterMove()
         {
-            if (_selectedUnit != null)
+            if (_selectedUnit)
             {
                 if (_selectedUnit.GetCurrentState() is UnitBattleState.Moving or UnitBattleState.MovingProgress)
                 {
-                    if (_selectedUnit.GetCurrentAbilityPoints() > 0)
-                    {
-                        _selectedUnit.AddState(UnitBattleState.UsingAbility);
-                    }
-                    else
-                    {
-                        _selectedUnit.ClearStates();
-                    }
+                    // TODO: Rewrite this part
+                    _selectedUnit.AddState(UnitBattleState.UsingAbility);
+                    // {
+                    //     _selectedUnit.ClearStates();
+                    // }
                 }
             }
         }
@@ -253,23 +250,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             StatusEffectUtils.HandleTurnEnd(inTeam);
         }
         
-        public override void HandleEnemySelected(GridPawnUnit InEnemyUnit)
+        public override void HandleEnemySelected(GridPawnUnit enemyUnit)
         {
             
         }
 
-        public override List<LevelCellBase> GetAbilityHoverCells(LevelCellBase InCell)
+        public override List<LevelCellBase> GetAbilityHoverCells(LevelCellBase cell)
         {
             if (!_selectedUnit)
             {
                 throw new NullReferenceException("ERROR: SelectedUnit or SelectedAbility is MISSING!");
             }
             
-            UnitAbilityCore ability = _selectedAbility;
-            if (!_selectedAbility)
+            UnitAbilityCore ability = _selectedUnit.GetCurrentUnitAbility();
+            if (!ability)
             {
-                Debug.LogError("ERROR: Cannot identify current Ability");
-                ability = _selectedUnit.GetCurrentAbility();
+                throw new NullReferenceException("ERROR: Cannot identify current Ability");
             }
 
             List<LevelCellBase> outCells = new();
@@ -277,16 +273,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (ability)
             {
                 List<LevelCellBase> abilityCells = ability.GetAbilityCells(_selectedUnit);
-                List<LevelCellBase> effectedCells = ability.GetEffectedCells(_selectedUnit, InCell);
+                List<LevelCellBase> effectedCells = ability.GetEffectedCells(_selectedUnit, cell);
 
-                if (abilityCells.Contains(InCell))
+                if (abilityCells.Contains(cell))
                 {
                     foreach (LevelCellBase currCell in effectedCells)
                     {
                         if (currCell)
                         {
                             BattleTeam effectedTeam =
-                                (currCell == InCell) ? ability.GetEffectedTeam() : BattleTeam.All;
+                                currCell == cell ? ability.GetEffectedTeam() : BattleTeam.All;
 
                             if (TacticBattleManager.CanCasterEffectTarget(_selectedUnit.GetCell(), currCell, effectedTeam,
                                     ability.DoesAllowBlocked()))
@@ -347,7 +343,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             List<Action<GridPawnUnit, LevelCellBase>> lastReactions = new();
             foreach (CommandResult result in results)
             {
-                if (m_AbilityIdToAbility.TryGetValue(result.AbilityId, out UnitAbilityCore ability))
+                if (_abilityIdToAbilityHash.TryGetValue(result.AbilityId, out PvSoUnitAbility ability))
                 {
                     if (lastAimCell == null)
                     {
@@ -393,7 +389,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             void RefreshOwner(CommandResult result)
             {
-                if (m_UnitIdToBattleUnit.TryGetValue(result.OwnerId, out GridPawnUnit owner))
+                if (_unitIdToBattleUnitHash.TryGetValue(result.OwnerId, out PvMnBattleGeneralUnit owner))
                 {
                     lastOwner = owner;
                 }
@@ -401,7 +397,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             async Awaitable AnalyzeResult(CommandResult result)
             {
-                if (m_AbilityIdToAbility.TryGetValue(result.AbilityId, out UnitAbilityCore ability))
+                if (_abilityIdToAbilityHash.TryGetValue(result.AbilityId, out PvSoUnitAbility ability))
                 {
                     // TODO: Handle IsAttacking if Required
                     // UnityEvent onAbilityComplete = new UnityEvent();
@@ -411,15 +407,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         /// <summary>
-        /// Used to apply abilities and end ability
+        /// 开始进行对峙,主要攻击角色将会对目标角色发起Ability,需要取到主要角色的CurrentAbility以及可能出现目标角色的反击EquippedAbility
         /// </summary>
-        /// <param name="abilityOwner"></param>
-        /// <param name="targetUnit"></param>
+        /// <param name="abilityOwner">发起进攻/辅助/行动的角色</param>
+        /// <param name="targetUnit">被标记的目标角色</param>
         /// <returns></returns>
         private List<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
         {
-            UnitAbilityCore ability = _selectedAbility? _selectedAbility : abilityOwner.GetCurrentAbility();
-            UnitAbilityCore targetAbility = targetUnit.GetCurrentAbility();
+            UnitAbilityCore ability = abilityOwner.GetCurrentUnitAbility();
+            UnitAbilityCore targetAbility = targetUnit.GetEquippedUnitAbility();
+
+            if (!ability || !targetAbility)
+            {
+                throw new NullReferenceException("ERROR: One of these two pawns missing ability!");
+            }
 
             List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(targetUnit);
             bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());

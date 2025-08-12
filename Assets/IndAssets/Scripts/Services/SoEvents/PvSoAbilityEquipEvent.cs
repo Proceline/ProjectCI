@@ -1,4 +1,4 @@
-using System;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
@@ -9,9 +9,8 @@ namespace ProjectCI.Utilities.Runtime.Events
     public class PvSoAbilityEquipEvent : SoUnityEventBase<AbilitySelectEventParam>, IService
     {
         private readonly AbilitySelectEventParam _abilitySelectEventParam = new();
-        [NonSerialized] private string _identifier = string.Empty;
         
-        public void Raise(GridPawnUnit unit, UnitAbilityCore ability)
+        public void Raise(GridPawnUnit unit, PvSoUnitAbility ability)
         {
             if (unit is IEventOwner owner)
             {
@@ -19,8 +18,6 @@ namespace ProjectCI.Utilities.Runtime.Events
                 Raise(owner, _abilitySelectEventParam);
             }
         }
-
-        public string EventIdentifier => nameof(PvSoAbilityEquipEvent);
 
         public void Dispose()
         {

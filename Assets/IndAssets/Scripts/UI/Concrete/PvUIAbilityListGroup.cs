@@ -44,7 +44,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void HandleUnitSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
         {
-            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.GridPawnUnit : null);
+            
         }
 
         protected override void HandleUnitPostSelected(bool bIsSelected) =>

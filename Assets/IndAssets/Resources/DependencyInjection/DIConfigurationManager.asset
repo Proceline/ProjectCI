@@ -19,3 +19,6 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Modifiers.IFinalReceiveDamageModifier,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 62ec9bd4f320c9f4eb581a026e1cb274, type: 2}
+  - serviceTypeName: ProjectCI.Runtime.GUI.Battle.PvMnViewControlBattlePanel, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 6909603433851531995, guid: 8a6c8ff1ff2adf840bbc35d127a36471, type: 3}

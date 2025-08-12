@@ -21,7 +21,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "fa64bd5a41923f15f73a58fd9f9a1d50617e15f1"
+      "hash": "7a9323d4442342ff5715bf522f6232ea74c08840"
     },
     "com.ppvylk.project_ci_utilities": {
       "version": "file:com.ppvylk.project_ci_utilities",

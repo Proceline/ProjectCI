@@ -79,7 +79,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void HandleUnitSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
         {
-            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.GridPawnUnit : null);
+            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.Unit : null);
         }
         
         private void HandleUnitSelected(GridPawnUnit inUnit)
