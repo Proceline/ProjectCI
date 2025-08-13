@@ -1,84 +1,53 @@
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using System;
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 {
     public static class UnitAbilityCoreExtensions
     {
-        /// <summary>
-        /// Whether the opponent will fight back after get targeted
-        /// </summary>
-        /// <param name="abilityCore"></param>
-        /// <returns></returns>
-        public static bool IsAbilityCounterAllowed(this UnitAbilityCore abilityCore)
+        public static async Awaitable ApplyResult(PvSoUnitAbility ability, GridPawnUnit casterUnit, LevelCellBase target,
+            List<Action<GridPawnUnit, LevelCellBase>> reacts, UnityEvent onNonLogicalComplete = null,
+            UnityEvent<GridPawnUnit> onCasterUnitStartAnim = null, UnityEvent<GridPawnUnit> onCasterUnitAfterExecute = null)
         {
-            return abilityCore.DoesAllowBlocked();
-        }
-
-        public static bool IsAbilityFollowUpAllowed(this UnitAbilityCore abilityCore)
-        {
-            if (abilityCore.additionalParameters.Length < 1)
+            if(ability.GetShape())
             {
-                return true;
+                casterUnit.LookAtCell(target);
+                TacticBattleManager.AddActionBeingPerformed();
+
+                UnitAbilityAnimation abilityAnimation = ability.abilityAnimation;
+                abilityAnimation?.PlayAnimation(casterUnit);
+                onCasterUnitStartAnim?.Invoke(casterUnit);
+
+                float firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
+                await Awaitable.WaitForSecondsAsync(firstExecuteTime);
+
+                onCasterUnitAfterExecute?.Invoke(casterUnit);
+                // TODO: Handle Audio
+                // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
+                // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
+
+                foreach (Action<GridPawnUnit, LevelCellBase> react in reacts)
+                {
+                    react?.Invoke(casterUnit, target);
+                }
+
+                if (abilityAnimation)
+                {
+                    float timeRemaining = abilityAnimation.GetAnimationLength() - firstExecuteTime;
+                    timeRemaining = Mathf.Max(0, timeRemaining);
+
+                    await Awaitable.WaitForSecondsAsync(timeRemaining);
+                }
+
+                TacticBattleManager.RemoveActionBeingPerformed();
             }
-            return abilityCore.additionalParameters[0] == 0;
-        }
 
-        public static bool IsAbilityAbleToEquip(this UnitAbilityCore abilityCore)
-        {
-            if (abilityCore.additionalParameters.Length < 2)
-            {
-                return true;
-            }
-            return abilityCore.additionalParameters[1] == 0;
-            
-        }
-
-        public static bool IsInitiativeMandatoryFollowUp(this UnitAbilityCore abilityCore)
-        {
-            return false;
-        }
-
-        public static List<CombatActionContext> CreateCombatActionContextList(this UnitAbilityCore abilityCore, bool bIsCounterReachable, FollowUpCondition followUpCondition)
-        {
-            List<CombatActionContext> combatActionContextList = new List<CombatActionContext>()
-            {
-                new CombatActionContext
-                {
-                    IsVictim = false,
-                    InitiativeType = InitiativeType.Initiative
-                }
-            };
-            if (abilityCore.IsAbilityCounterAllowed())
-            {
-                if (bIsCounterReachable)
-                {
-                    combatActionContextList.Add(new CombatActionContext
-                    {
-                        IsVictim = true,
-                        InitiativeType = InitiativeType.Counter
-                    });
-                }
-
-                if (followUpCondition == FollowUpCondition.CounterFollowUp && bIsCounterReachable)
-                {
-                    combatActionContextList.Add(new CombatActionContext
-                    {
-                        IsVictim = true,
-                        InitiativeType = InitiativeType.FollowUp
-                    });
-                }
-                else if (followUpCondition == FollowUpCondition.InitiativeFollowUp)
-                {
-                    combatActionContextList.Add(new CombatActionContext
-                    {
-                        IsVictim = false,
-                        InitiativeType = InitiativeType.FollowUp
-                    });
-                }
-            }
-            return combatActionContextList;
+            onNonLogicalComplete?.Invoke();
         }
     }
 }

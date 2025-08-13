@@ -27,5 +27,7 @@ MonoBehaviour:
   m_Params:
   - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   m_Ailments: []
-  abilityAnimation: {fileID: 0}
-  additionalParameters: 0000000001000000
+  isCounterAllowed: 1
+  isFollowUpAllowed: 1
+  isAbilityWeapon: 1
+  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}

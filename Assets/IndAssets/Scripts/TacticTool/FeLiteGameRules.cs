@@ -11,9 +11,9 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 
@@ -401,7 +401,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 {
                     // TODO: Handle IsAttacking if Required
                     // UnityEvent onAbilityComplete = new UnityEvent();
-                    await ability.ApplyResult(lastOwner, lastAimCell, lastReactions, null);
+                    await UnitAbilityCoreExtensions.ApplyResult(ability, lastOwner, lastAimCell, lastReactions, null);
                 }
             }
         }
@@ -414,8 +414,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <returns></returns>
         private List<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
         {
-            UnitAbilityCore ability = abilityOwner.GetCurrentUnitAbility();
-            UnitAbilityCore targetAbility = targetUnit.GetEquippedUnitAbility();
+            PvSoUnitAbility ability = abilityOwner.GetCurrentUnitAbility();
+            PvSoUnitAbility targetAbility = targetUnit.GetEquippedUnitAbility();
 
             if (!ability || !targetAbility)
             {
@@ -428,11 +428,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
             FollowUpCondition followUpCondition = FollowUpCondition.None;
-            if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold && ability.IsAbilityFollowUpAllowed())
+            if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold && ability.IsFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.InitiativeFollowUp;
             }
-            else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold && targetAbility.IsAbilityFollowUpAllowed())
+            else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold && targetAbility.IsFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.CounterFollowUp;
             }

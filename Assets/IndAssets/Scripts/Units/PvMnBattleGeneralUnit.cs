@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
@@ -30,8 +29,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
         private (PvSoUnitAbility, PvSoUnitAbility) _currentAbility;
 
-        public PvSoUnitAbility EquippedAbility => _currentAbility.Item1;
-        public PvSoUnitAbility CastingAbility => _currentAbility.Item2;
+        public PvSoUnitAbility EquippedAbility 
+            { get => _currentAbility.Item1; set => _currentAbility.Item1 = value; }
+        public PvSoUnitAbility CastingAbility 
+            { get => _currentAbility.Item2; set => _currentAbility.Item2 = value; }
         
         private void SetFormulaCollection()
         {
@@ -140,12 +141,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public PvSoUnitAbility GetCurrentUnitAbility()
         {
-            throw new NotImplementedException();
+            if (!CastingAbility)
+            {
+                CastingAbility = GetEquippedUnitAbility();
+            }
+            // TODO: Determine if CastingAbility fits EquippedAbility
+            return CastingAbility;
         }
 
         public PvSoUnitAbility GetEquippedUnitAbility()
         {
-            throw new NotImplementedException();
+            if (!EquippedAbility)
+            {
+                EquippedAbility = _battleAbilities.Find(ability => ability.IsAbilityWeapon());
+            }
+            return EquippedAbility;
         }
         
         public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)
@@ -168,7 +178,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 EditedCells.AddRange(editedAbilityCells);
             }
 
-            if (ability.IsAbilityAbleToEquip())
+            if (ability.IsAbilityWeapon())
             {
                 _abilityEquipEventLocator.Service.Raise(this, ability);
             }

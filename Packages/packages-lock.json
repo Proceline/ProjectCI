@@ -14,14 +14,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "6a441c2b607cf1557caf7443979d9eb86c823950"
+      "hash": "8d0ab339013775c9582156c6ab051ddf1413099f"
     },
     "com.ppvylk.project_ci_core_system": {
       "version": "https://github.com/Proceline/com.ppvylk.project_ci_core_system.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "7a9323d4442342ff5715bf522f6232ea74c08840"
+      "hash": "22d42f90e06361abc5f49a2f0561568284c5fd01"
     },
     "com.ppvylk.project_ci_utilities": {
       "version": "file:com.ppvylk.project_ci_utilities",
