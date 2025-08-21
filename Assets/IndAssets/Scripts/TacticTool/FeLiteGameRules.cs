@@ -504,7 +504,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="hit">rayCast information</param>
         /// <param name="keyIndex">Grid Cell Index</param>
         /// <param name="grid">new created grid</param>
-        public void ApplyRuleOnCellCreating(RaycastHit hit, Vector2Int keyIndex, HexagonPresetGrid grid)
+        public void ApplyRuleOnCellCreating(RaycastHit hit, Vector2Int keyIndex, LevelGridBase grid)
         {
             int layerFlagValue = Mathf.RoundToInt(Mathf.Pow(2, hit.collider.gameObject.layer));
             if (layerFlagValue == layerMasksRuleList[0])

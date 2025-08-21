@@ -41,7 +41,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         [SerializeField]
         private GameObject resourceContainerPrefab;
 
-        public UnityEvent<RaycastHit, Vector2Int, HexagonPresetGrid> gridCreatingRule;
+        public UnityEvent<RaycastHit, Vector2Int, LevelGridBase> gridCreatingRule;
 
         [SerializeField] 
         private PvSoAbilityEquipEvent abilityEquipEvent;
@@ -50,6 +50,8 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         private PvMnViewControlBattlePanel _battleViewControlPanel;
 
         [NonSerialized] private bool _hasInjected;
+
+        [NonSerialized] private SquarePresetGrid _levelGrid;
         
         public void ScanAndGenerateBattle(Vector3 centerPosition, Camera uiCamera)
         {
@@ -59,25 +61,25 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                 _hasInjected = true;
             }
             
-            // 使用 GridBattleUtils 生成网格
-            var levelGrid = GridBattleUtils.GenerateLevelGridFromGround(
+            GridBattleUtils.GenerateLevelGridFromGround(
                 centerPosition,
                 hexWidth,
                 hexHeight,
                 new Vector2Int(gridWidth, gridHeight),
                 layerMask,
                 cellPalette,
+                ref _levelGrid,
                 gridCreatingRule
             );
 
-            if (levelGrid != null)
+            if (_levelGrid)
             {
                 Debug.Log($"Successfully generated grid with {gridWidth * gridHeight} cells");
 
                 // 创建 Battle Manager
                 var battleManager = GridBattleUtils.CreateBattleManager(
                     battleManagerPrefab,
-                    levelGrid
+                    _levelGrid
                 );
 
                 if (battleManager != null)
@@ -105,7 +107,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
                     var unit = GridBattleUtils.ChangeUnitToBattleUnit<PvMnBattleGeneralUnit>(
                         sceneUnit.gameObject,
-                        levelGrid,
+                        _levelGrid,
                         sceneUnit.UnitData,
                         team,
                         spawnedUnit => spawnedUnit.SetupAbilities(sceneUnit.UnitAbilities),

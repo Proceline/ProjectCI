@@ -9,9 +9,9 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 {
     public class HexagonGridScannerWindow : EditorWindow
     {
-        private Vector3 centerPosition = new Vector3(-3, 10, 3);
+        private Vector3 _centerPosition = new Vector3(-3, 10, 3);
 
-        private LayerMask pawnDetectLayerMask = 0;
+        private LayerMask _pawnDetectLayerMask = 0;
 
         [SerializeField]
         private GameObject resourceContainerPrefab;
@@ -31,14 +31,14 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 
             // 扫描参数
             EditorGUILayout.LabelField("Scan Parameters", EditorStyles.boldLabel);
-            centerPosition = EditorGUILayout.Vector3Field("Center Position", centerPosition);
+            _centerPosition = EditorGUILayout.Vector3Field("Center Position", _centerPosition);
 
             EditorGUILayout.Space();
             
             string[] pawnLayerNames = InternalEditorUtility.layers;
-            int testMaskValue = pawnDetectLayerMask.value;
+            int testMaskValue = _pawnDetectLayerMask.value;
             testMaskValue = EditorGUILayout.MaskField("Layer Mask", testMaskValue, pawnLayerNames);
-            pawnDetectLayerMask.value = testMaskValue;
+            _pawnDetectLayerMask.value = testMaskValue;
 
             EditorGUILayout.Space();
 
@@ -69,7 +69,7 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
                 {
                     throw new NullReferenceException("ERROR: UI Camera not defined in Scene!");
                 }
-                _battlegroundMaker.Service.ScanAndGenerateBattle(centerPosition, camera);
+                _battlegroundMaker.Service.ScanAndGenerateBattle(_centerPosition, camera);
             }
         }
     }
