@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -25,6 +26,17 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
                 float firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
                 await Awaitable.WaitForSecondsAsync(firstExecuteTime);
+
+                if (ability.ProjectilePrefab)
+                {
+                    var projectile = PvMnProjectilePool.InstantiateProjectile(ability.ProjectilePrefab);
+                    projectile.Initialize(casterUnit.transform.position, target.transform.position);
+                    while (!projectile.IsProgressEnded)
+                    {
+                        await Awaitable.NextFrameAsync();
+                    }
+                    firstExecuteTime += projectile.ProgressDuration;
+                }
 
                 onCasterUnitAfterExecute?.Invoke(casterUnit);
                 // TODO: Handle Audio
