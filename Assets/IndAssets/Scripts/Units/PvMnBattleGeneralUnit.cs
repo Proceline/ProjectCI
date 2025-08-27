@@ -2,6 +2,7 @@ using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
@@ -28,6 +29,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
         private (PvSoUnitAbility, PvSoUnitAbility) _currentAbility;
+
+        private Coroutine _rotatingCoroutine;
 
         public PvSoUnitAbility EquippedAbility 
             { get => _currentAbility.Item1; set => _currentAbility.Item1 = value; }
@@ -72,7 +75,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             OnMovementPostComplete.RemoveAllListeners();
             OnMovementPostComplete.AddListener(() =>
             {
-                m_CurrentMovementPoints = 0;
+                CurrentMovementPoints = 0;
             });
         }
 
@@ -255,14 +258,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void HandleTurnStarted()
         {
-            m_CurrentMovementPoints = 
+            CurrentMovementPoints = 
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
         }
 
         public override List<LevelCellBase> GetAllowedMovementCells()
         {
             // TODO: Change BattleTeam type to enable cross enemy
-            return UnitData.m_MovementShape.GetCellList(this, GetCell(), m_CurrentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
+            return UnitData.m_MovementShape.GetCellList(this, GetCell(), CurrentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
         }
 
         private void Kill()
@@ -313,5 +316,56 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 SetupMovement();
             }
         }
+
+        #region Rotator
+        public override void LookAtCell(LevelCellBase targetCell)
+        {
+            if (targetCell && ShouldLookAtTargets())
+            {
+                if (_rotatingCoroutine != null)
+                {
+                    StopCoroutine(_rotatingCoroutine);
+                    _rotatingCoroutine = null;
+                }
+                _rotatingCoroutine = StartCoroutine(RotateTowards(GetCellLookAtPos(targetCell), 1000));
+            }
+        }
+
+        private IEnumerator RotateTowards(Vector3 targetPos, float speed)
+        {
+            Transform currentTrans = gameObject.transform;
+            Vector3 dir = targetPos - transform.position;
+            if (dir == Vector3.zero)
+            {
+                _rotatingCoroutine = null;
+                yield break;
+            }
+            Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+
+            while (Quaternion.Angle(currentTrans.rotation, targetRot) > 0.1f)
+            {
+                currentTrans.rotation = Quaternion.RotateTowards(
+                    currentTrans.rotation,
+                    targetRot,
+                    speed * Time.deltaTime
+                );
+
+                yield return Awaitable.NextFrameAsync();
+            }
+            
+            currentTrans.rotation = targetRot;
+            _rotatingCoroutine = null;
+        }
+
+        private Vector3 GetCellLookAtPos(LevelCellBase cell)
+        {
+            if (!cell) return Vector3.zero;
+            Vector3 position = cell.GetAllignPos(this);
+            position.y = gameObject.transform.position.y;
+
+            return position;
+
+        }
+        #endregion
     }
 } 
