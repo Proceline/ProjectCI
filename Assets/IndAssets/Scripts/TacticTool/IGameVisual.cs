@@ -10,5 +10,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         internal void OnVisualUpdate(PvSoUnitAbility ability, GridPawnUnit selectedUnit);
         public void ResetVisualStateCells();
         public void HighlightAbilityRange(PvSoUnitAbility ability, GridPawnUnit casterUnit);
+        public void ResetAndHighlightMovementRange(GridPawnUnit casterUnit);
     }
 }

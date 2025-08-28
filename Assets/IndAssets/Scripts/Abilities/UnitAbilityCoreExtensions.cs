@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
@@ -18,7 +17,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             if(ability.GetShape())
             {
                 casterUnit.LookAtCell(target);
-                TacticBattleManager.AddActionBeingPerformed();
+                // TODO: Need to have a lock
+                // TacticBattleManager.AddActionBeingPerformed();
 
                 UnitAbilityAnimation abilityAnimation = ability.abilityAnimation;
                 abilityAnimation?.PlayAnimation(casterUnit);
@@ -56,7 +56,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                     await Awaitable.WaitForSecondsAsync(timeRemaining);
                 }
 
-                TacticBattleManager.RemoveActionBeingPerformed();
+                // TODO: Need a end of lock
+                // TacticBattleManager.RemoveActionBeingPerformed();
             }
 
             onNonLogicalComplete?.Invoke();

@@ -46,12 +46,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _bInitialized = true;
             SetupScreen();
-            TacticBattleManager battleManager = TacticBattleManager.Get();
-            if (battleManager)
-            {
-                battleManager.OnUnitHover.AddListener(HandleUnitHover);
-                battleManager.OnTeamWon.AddListener(HandleGameDone);
-            }
+            
+            // TODO: Same todo as below
+            // TacticBattleManager battleManager = TacticBattleManager.Get();
+            // if (battleManager)
+            // {
+            //     battleManager.OnUnitHover.AddListener(HandleUnitHover);
+            //     battleManager.OnTeamWon.AddListener(HandleGameDone);
+            // }
             
             if (bIsSelectedEnabled)
             {
@@ -63,13 +65,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (_bInitialized)
             {
-                TacticBattleManager battleManager = TacticBattleManager.Get();
-                if (battleManager)
-                {
-                    battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
-                    battleManager.OnTeamWon.RemoveListener(HandleGameDone);
-                }
-                
                 if (bIsSelectedEnabled)
                 {
                     _selectEventLocator.Service.UnregisterCallback(HandleUnitSelected);
@@ -84,16 +79,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         private void HandleUnitSelected(GridPawnUnit inUnit)
         {
-            TacticBattleManager battleManager = TacticBattleManager.Get();
+            // TODO: Handle Hover
+            // TacticBattleManager battleManager = TacticBattleManager.Get();
             if (inUnit)
             {
                 HandleUnitHover(inUnit);
-                battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
+                // battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
             }
             else
             {
                 m_ScreenObject.SetActive(false);
-                battleManager.OnUnitHover.AddListener(HandleUnitHover);
+                // battleManager.OnUnitHover.AddListener(HandleUnitHover);
             }
 
             m_OnUnitSelected.Invoke(inUnit);
@@ -172,12 +168,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     m_AttributeValueTexts[i].text = m_CurrUnit.RuntimeAttributes.GetAttributeValue(m_AttributesToDisplay[i]).ToString();
                 }
             }
-        }
-
-        void HandleGameDone(BattleTeam InWinningTeam)
-        {
-            m_ScreenObject.SetActive(false);
-            bEnabled = false;
         }
     }
 }

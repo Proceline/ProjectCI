@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
+    
+    [CreateAssetMenu(fileName = "New Visual", menuName = "ProjectCI Tools/MVC/Visual", order = 1)]
     public class FeLiteGameVisual : ScriptableObject, IGameVisual
     {
         internal LevelCellBase CurrentHoverCell { get; private set; }

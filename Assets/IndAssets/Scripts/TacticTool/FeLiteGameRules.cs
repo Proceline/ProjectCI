@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
-using UnityEngine.InputSystem;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
@@ -17,6 +15,8 @@ using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -29,21 +29,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private GameObject _currentHoverObject;
 
         [SerializeField]
-        private AttributeType m_AbilitySpeedAttributeType;
-
-        [SerializeField]
-        private int m_DoubleAttackSpeedThreshold = 5;
+        private AttributeType abilitySpeedAttributeType;
+        private const int DoubleAttackSpeedThreshold = 5;
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
 
         [SerializeField] 
         private PvSoUnitSelectEvent selectUnitEvent;
-
-        [SerializeField] 
-        private PvSoAbilitySelectEvent selectAbilityEventByPawn;
-
-        [SerializeField] 
-        private PvSoAbilitySelectEvent confirmAbilityEvent;
 
         [SerializeField] 
         private PvSoTurnViewEndEvent turnViewEndEvent;
@@ -54,13 +46,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] 
         private LayerMask[] layerMasksRuleList;
 
-        [Inject] 
+        [Inject]
         private readonly IGameVisual _gameVisualManager;
+
+        [NonSerialized]
+        private bool _isInjected;
+
+        [SerializeField] 
+        private UnityEvent onGameStarted;
+        
+        [SerializeField] 
+        private UnityEvent onGameEnded;
 
         protected override void StartGame()
         {
-            m_CurrentTeam = m_StartingTeam;
-            m_TurnNumber = 0;
+            if (!_isInjected)
+            {
+                DIConfiguration.InjectFromConfiguration(this);
+                _isInjected = true;
+            }
+            
+            onGameStarted?.Invoke();
+
+            CurrentTeam = BattleTeam.Friendly;
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
             
@@ -80,22 +88,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             TacticBattleManager.HandleGameStarted();
 
-            BeginTeamTurn(m_CurrentTeam);
+            BeginTeamTurn(CurrentTeam);
         }
 
         public override void HandlePlayerSelected(GridPawnUnit selectedUnit)
         {
-            if (TacticBattleManager.IsActionBeingPerformed())
-            {
-                return;
-            }
-
+            // TODO: Consider Lock
             if (selectedUnit.IsDead() || selectedUnit.GetCurrentMovementPoints() <= 0)
             {
                 return;
             }
 
-            BattleTeam currTeam = GetCurrentTeam();
+            BattleTeam currTeam = CurrentTeam;
             if (currTeam != selectedUnit.GetTeam())
             {
                 return;
@@ -162,14 +166,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _selectedUnit.AddState(UnitBattleState.AbilityTargeting);
 
                 // TODO: Use Event to Handle this
-                TacticBattleManager.Get().UpdateHoverCells();
+                // TacticBattleManager.Get().UpdateHoverCells();
 
                 // TODO: Check and Review this
                 // confirmAbilityEvent.Raise(ability);
             }
         }
+        
+        public void PushStateToMovingStateOnSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
+        {
+            if (selectInfo.Unit && selectInfo.Behaviour == UnitSelectBehaviour.Deselect)
+            {
+                selectInfo.Unit.ClearStates();
+                _gameVisualManager.ResetVisualStateCells();
+            }
 
-        void SetupTeam(BattleTeam inTeam)
+            if (selectInfo.Unit && selectInfo.Behaviour == UnitSelectBehaviour.Select)
+            {
+                _gameVisualManager.ResetAndHighlightMovementRange(selectInfo.Unit);
+                selectInfo.Unit.AddState(UnitBattleState.Moving);
+            }
+        }
+
+        private void SetupTeam(BattleTeam inTeam)
         {
             List<GridPawnUnit> units = TacticBattleManager.GetUnitsOnTeam(inTeam);
             foreach (GridPawnUnit unit in units)
@@ -178,7 +197,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        bool IsHoverObjectSpawned()
+        private bool IsHoverObjectSpawned()
         {
             return _currentHoverObject != null;
         }
@@ -217,8 +236,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void Update()
         {
-            base.Update();
-
             if (!_selectedUnit && IsHoverObjectSpawned())
             {
                 UpdateSelectedHoverObject();
@@ -253,25 +270,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             SetupTeam(inTeam);
-            
+
             StatusEffectUtils.HandleTurnStart(inTeam);
 
-            if(inTeam == BattleTeam.Hostile)
+            if (inTeam == BattleTeam.Hostile)
             {
                 bool bIsHostileTeamAI = TacticBattleManager.IsTeamAI(BattleTeam.Hostile);
-                if(bIsHostileTeamAI)
+                if (bIsHostileTeamAI)
                 {
                     List<GridPawnUnit> aiUnits = TacticBattleManager.GetUnitsOnTeam(BattleTeam.Hostile);
-                    AStarAlgorithmUtils.RunAI(aiUnits, EndTurn);
+                    // AStarAlgorithmUtils.RunAI(aiUnits, EndTurn);
+                    // TODO: Run AI
                 }
             }
         }
 
-        public override void EndTeamTurn(BattleTeam inTeam)
-        {
-            StatusEffectUtils.HandleTurnEnd(inTeam);
-        }
-        
         public override void HandleEnemySelected(GridPawnUnit enemyUnit)
         {
             
@@ -279,10 +292,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void HandleCellSelected(LevelCellBase selectedCell)
         {
-            if (TacticBattleManager.IsActionBeingPerformed())
-            {
-                return;
-            }
+            // TODO: Handle Lock
 
             if (_selectedUnit)
             {
@@ -405,14 +415,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(targetUnit);
             bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());
 
-            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
-            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(m_AbilitySpeedAttributeType);
+            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
+            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
             FollowUpCondition followUpCondition = FollowUpCondition.None;
-            if (abilitySpeed >= targetAbilitySpeed + m_DoubleAttackSpeedThreshold && ability.IsFollowUpAllowed())
+            if (abilitySpeed >= targetAbilitySpeed + DoubleAttackSpeedThreshold && ability.IsFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.InitiativeFollowUp;
             }
-            else if (targetAbilitySpeed >= abilitySpeed + m_DoubleAttackSpeedThreshold && targetAbility.IsFollowUpAllowed())
+            else if (targetAbilitySpeed >= abilitySpeed + DoubleAttackSpeedThreshold && targetAbility.IsFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.CounterFollowUp;
             }
@@ -441,14 +451,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     param.Execute(resultId, inAbility, caster, target, results);
                 }
             }
-        }
-
-        /// <summary>
-        /// Add up extended function during cancel action applied
-        /// </summary>
-        /// <param name="context"></param>
-        public override void CancelActionExtension(InputAction.CallbackContext context)
-        {
         }
 
         /// <summary>

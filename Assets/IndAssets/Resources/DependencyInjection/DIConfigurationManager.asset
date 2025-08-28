@@ -22,3 +22,6 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Runtime.GUI.Battle.PvMnViewControlBattlePanel, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 6909603433851531995, guid: 8a6c8ff1ff2adf840bbc35d127a36471, type: 3}
+  - serviceTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.IGameVisual,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}

@@ -44,21 +44,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 686078385d6e23c4dbb30a07e7ea7cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputActionManager: {fileID: 11400000, guid: d4c9bff3a6bdb3a4594ecca0a2c913a9, type: 2}
   m_GameRules: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
   m_FogOfWar: {fileID: 0}
   m_CameraController: {fileID: 0}
   m_SelectedHoverObject: {fileID: 1434172941012088, guid: 78d12d2972f42de449e71211843b9d4f, type: 3}
-  m_WinConditions: []
-  m_SpawnOnStart: []
-  m_AddToSpawnedUnits: []
-  m_DeathParticles: []
-  OnTeamWon:
+  onCellPointed:
     m_PersistentCalls:
-      m_Calls: []
-  OnUnitSelected:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
+          Assembly-CSharp
+        m_MethodName: BeginHover
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onCellUnPointed:
     m_PersistentCalls:
-      m_Calls: []
-  OnUnitHover:
-    m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
+          Assembly-CSharp
+        m_MethodName: EndHover
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

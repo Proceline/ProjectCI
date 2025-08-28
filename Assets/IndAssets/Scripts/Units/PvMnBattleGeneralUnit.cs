@@ -24,7 +24,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly Stack<UnitBattleState> _unitStates = new();
 
         private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
-        private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
         private readonly ServiceLocator<PvSoAbilityEquipEvent> _abilityEquipEventLocator = new();
 
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
@@ -83,7 +82,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 OnPreHitAnimRequired += PlayHitAnimation;
             }
             
-            _selectEventLocator.Service.RegisterCallback(RespondOnManagerSelectUnit);
             OnMovementPostComplete.RemoveAllListeners();
             OnMovementPostComplete.AddListener(() =>
             {
@@ -104,10 +102,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        protected override void DestroyObj()
+        void OnDestroy()
         {
             _stateEventLocator.Service.UnregisterCallback(AdjustState);
-            _selectEventLocator.Service.UnregisterCallback(RespondOnManagerSelectUnit);
             
             if (_animationManager)
             {
@@ -115,7 +112,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 OnPreMovementAnimRequired -= PlayMovementAnimation;
                 OnPreHitAnimRequired -= PlayHitAnimation;
             }
-            base.DestroyObj();
         }
 
         private void PlayIdleAnimation()
@@ -224,7 +220,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void ClearStates()
         {
             _stateEventLocator.Service.Raise(this, UnitBattleState.Idle, UnitStateBehaviour.Clear);
-            ResetCells();
         }
 
         public override void HandleTurnStarted()
@@ -249,13 +244,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 m_CurrentCell = null;
             }
 
-            m_bIsDead = true;
+            // TODO: Handle isDead, m_bIsDead = true;
 
-            SetVisible( false );
-
+            SetVisible(false);
             CheckCellVisibility();
 
-            HandleDeath();
+            // TODO: HandleDeath();
 
             AudioClip clip = GetUnitData().m_DeathSound;
             if (clip)
@@ -263,31 +257,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 AudioPlayData audioData = new AudioPlayData(clip);
                 AudioHandler.PlayAudio(audioData, gameObject.transform.position);
             }
-
-            if (TacticBattleManager.IsActionBeingPerformed())
-            {
-                TacticBattleManager.BindToOnFinishedPerformedActions(DestroyObj);
-            }
-            else
-            {
-                DestroyObj();
-            }
         }
-
-        // TODO: Consider whether in this script
-        private void RespondOnManagerSelectUnit(IEventOwner owner, UnitSelectEventParam selectInfo)
-        {
-            if (!selectInfo.Unit || selectInfo.Behaviour == UnitSelectBehaviour.Deselect)
-            {
-                ClearStates();
-            }
-
-            if (selectInfo.Unit == this && selectInfo.Behaviour == UnitSelectBehaviour.Select)
-            {
-                SetupMovement();
-            }
-        }
-
+        
         #region Rotator
         public override void LookAtCell(LevelCellBase targetCell)
         {

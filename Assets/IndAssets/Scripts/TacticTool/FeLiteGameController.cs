@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
+    [CreateAssetMenu(fileName = "New Controller", menuName = "ProjectCI Tools/MVC/Controller", order = 1)]
     public class FeLiteGameController : ScriptableObject, IGameController
     {
         [SerializeField] private BattleGameRules gameRulesModel;
@@ -17,12 +18,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         public void RegisterControlActions()
         {
+            inputActionManager.EnableUnitControl();
             inputActionManager.BindConfirmAction(HandleConfirmAction);
         }
 
         public void UnregisterControlActions()
         {
             inputActionManager.UnbindConfirmAction(HandleConfirmAction);
+            inputActionManager.DisableUnitControl();
         }
 
         private void HandleConfirmAction(InputAction.CallbackContext context)
@@ -31,10 +34,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (gameVisual.CurrentHoverCell)
             {
                 GridObject objOnCell = currentHoverCell.GetObjectOnCell();
-                if (objOnCell)
-                {
-                    objOnCell.HandleBeingConfirmed();
-                }
+                // TODO: Handle Obj being confirmed
             }
 
             HandleCellClicked(currentHoverCell);
@@ -55,7 +55,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             GridPawnUnit standUnit = inCell.GetUnitOnCell();
             if (standUnit)
             {
-                BattleTeam currentTurnTeam = gameRulesModel.GetCurrentTeam();
+                BattleTeam currentTurnTeam = gameRulesModel.CurrentTeam;
                 BattleTeam unitsTeam = standUnit.GetTeam();
 
                 if (unitsTeam == currentTurnTeam)
