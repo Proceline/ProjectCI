@@ -28,14 +28,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly ServiceLocator<PvSoAbilityEquipEvent> _abilityEquipEventLocator = new();
 
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
-        private (PvSoUnitAbility, PvSoUnitAbility) _currentAbility;
+        
+        [NonSerialized]
+        private PvSoUnitAbility _currentAbility;
 
         private Coroutine _rotatingCoroutine;
 
-        public PvSoUnitAbility EquippedAbility 
-            { get => _currentAbility.Item1; set => _currentAbility.Item1 = value; }
-        public PvSoUnitAbility CastingAbility 
-            { get => _currentAbility.Item2; set => _currentAbility.Item2 = value; }
+        public PvSoUnitAbility EquippedAbility
+            // { get => _currentAbility.Item1; set => _currentAbility.Item1 = value; }
+        {
+            get
+            {
+                if (_currentAbility)
+                {
+                    return _currentAbility;
+                }
+
+                var firstWeaponAbility = _battleAbilities.Find(ability => ability.IsAbilityWeapon());
+                EquipAbility(firstWeaponAbility);
+                return _currentAbility;
+            }
+        }
         
         private void SetFormulaCollection()
         {
@@ -61,7 +74,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             base.Initialize();
             SetFormulaCollection();
             _stateEventLocator.Service.RegisterCallback(AdjustState);
-            _abilityEquipEventLocator.Service.RegisterCallback(EquipAbilityWithParam);
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
             if (_animationManager)
@@ -96,7 +108,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             _stateEventLocator.Service.UnregisterCallback(AdjustState);
             _selectEventLocator.Service.UnregisterCallback(RespondOnManagerSelectUnit);
-            _abilityEquipEventLocator.Service.UnregisterCallback(EquipAbilityWithParam);
             
             if (_animationManager)
             {
@@ -142,23 +153,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public PvSoUnitAbility GetCurrentUnitAbility()
+        public void EquipAbility(PvSoUnitAbility ability)
         {
-            if (!CastingAbility)
+            if (!ability.IsAbilityWeapon())
             {
-                CastingAbility = GetEquippedUnitAbility();
+                throw new Exception("ERROR: Ability is not a weapon to EQUIP!");
             }
-            // TODO: Determine if CastingAbility fits EquippedAbility
-            return CastingAbility;
-        }
-
-        public PvSoUnitAbility GetEquippedUnitAbility()
-        {
-            if (!EquippedAbility)
-            {
-                EquippedAbility = _battleAbilities.Find(ability => ability.IsAbilityWeapon());
-            }
-            return EquippedAbility;
+            _currentAbility = ability;
+            _abilityEquipEventLocator.Service.Raise(this, ability);
         }
         
         public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)
@@ -169,41 +171,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _battleAbilities.Add(ability);
             }
         }
-        
-        // TODO: Rewrite this
-        public void SetupAbility(PvSoUnitAbility ability)
-        {
-            ResetCells();
-            
-            if (ability)
-            {
-                List<LevelCellBase> editedAbilityCells = ability.Setup(this);
-                EditedCells.AddRange(editedAbilityCells);
-            }
-
-            if (ability.IsAbilityWeapon())
-            {
-                _abilityEquipEventLocator.Service.Raise(this, ability);
-            }
-            else
-            {
-                // TODO: Equip related weapon
-            }
-        }
 
         public List<PvSoUnitAbility> GetUsableAbilities()
         {
             return _battleAbilities;
-        }
-        
-        private void EquipAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
-        {
-            if (owner.EventIdentifier == EventIdentifier)
-            {
-                var ability = selectParam.Ability;
-                _currentAbility.Item1 = ability;
-                _currentAbility.Item2 = ability;
-            }
         }
 
         public override UnitBattleState GetCurrentState()

@@ -10,6 +10,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
@@ -53,6 +54,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] 
         private LayerMask[] layerMasksRuleList;
 
+        [Inject] 
+        private readonly IGameVisual _gameVisualManager;
+
         protected override void StartGame()
         {
             m_CurrentTeam = m_StartingTeam;
@@ -77,12 +81,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             TacticBattleManager.HandleGameStarted();
 
             BeginTeamTurn(m_CurrentTeam);
-            
-            // TODO: Add Unregister
-            selectUnitEvent.RegisterCallback(SelectUnitWithParam);
-            selectAbilityEventByPawn.RegisterCallback(SelectAbilityWithParam);
         }
-        
+
         public override void HandlePlayerSelected(GridPawnUnit selectedUnit)
         {
             if (TacticBattleManager.IsActionBeingPerformed())
@@ -96,73 +96,76 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             BattleTeam currTeam = GetCurrentTeam();
-            if(currTeam == selectedUnit.GetTeam())
+            if (currTeam != selectedUnit.GetTeam())
             {
-                if(_selectedUnit)
-                {
-                    if(_selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
-                    {
-                        return;
-                    }
-
-                    selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
-                }
-
-                if (selectedUnit is PvMnBattleGeneralUnit playableUnit)
-                {
-                    selectUnitEvent.Raise(playableUnit, UnitSelectBehaviour.Select);
-                }
-
-                UpdateSelectedHoverObject();
+                return;
             }
-        }
 
-        private void SelectUnitWithParam(IEventOwner owner, UnitSelectEventParam selectParam)
-        {
-            if (selectParam.Behaviour == UnitSelectBehaviour.Select)
+            if (_selectedUnit)
             {
-                _selectedUnit = selectParam.Unit;
-                _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
-                _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
-            }
-            else
-            {
-                if (!_selectedUnit || _selectedUnit != selectParam.Unit)
+                if (_selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
                 {
                     return;
                 }
+
+                SelectUnitWithBehaviour(_selectedUnit, UnitSelectBehaviour.Deselect);
+            }
+
+            if (selectedUnit is PvMnBattleGeneralUnit playableUnit)
+            {
+                SelectUnitWithBehaviour(playableUnit, UnitSelectBehaviour.Select);
+            }
+
+            UpdateSelectedHoverObject();
+        }
+
+        private void SelectUnitWithBehaviour(PvMnBattleGeneralUnit selectingUnit, UnitSelectBehaviour behaviour)
+        {
+            switch (behaviour)
+            {
+                case UnitSelectBehaviour.Select:
+                    
+                    _selectedUnit = selectingUnit;
+                    _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
+                    _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
             
-                _selectedUnit.UnBindFromOnMovementPostCompleted(UpdateSelectedHoverObject);
-                _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterMove);
+                    selectUnitEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
+                    break;
+                case UnitSelectBehaviour.Deselect:
+                    
+                    if (!_selectedUnit || _selectedUnit != selectingUnit)
+                    {
+                        return;
+                    }
+            
+                    _selectedUnit.UnBindFromOnMovementPostCompleted(UpdateSelectedHoverObject);
+                    _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterMove);
+                    
+                    selectUnitEvent.Raise(selectingUnit, UnitSelectBehaviour.Deselect);
                 
-                _selectedUnit = null;
-                UpdateSelectedHoverObject();
-                TacticBattleManager.Get().UpdateHoverCells();
+                    _selectedUnit = null;
+                    break;
             }
         }
-        
-        /// <summary>
-        /// This function will be triggered while selecting ability in UI
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="selectParam"></param>
-        private void SelectAbilityWithParam(IEventOwner owner, AbilitySelectEventParam selectParam)
+
+        public void PushStateToTargeting()
         {
             if (_selectedUnit && _selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
             {
-                var ability = selectParam.Ability;
-                if (_selectedUnit.GetUsableAbilities().Contains(ability))
+                var ability = _selectedUnit.EquippedAbility;
+                if (!_selectedUnit.GetUsableAbilities().Contains(ability))
                 {
-                    // TODO: Try to decouple this part
-                    _selectedUnit.SetupAbility(ability);
-                    _selectedUnit.AddState(UnitBattleState.AbilityTargeting);
-                    
-                    // TODO: Use Event to Handle this
-                    TacticBattleManager.Get().UpdateHoverCells();
-                    
-                    // TODO: Check and Review this
-                    confirmAbilityEvent.Raise(ability);
+                    throw new Exception("ERROR: This ability is not obtained by this Pawn by DEFAULT!");
                 }
+                _gameVisualManager.ResetVisualStateCells();
+                _gameVisualManager.HighlightAbilityRange(ability, _selectedUnit);
+                _selectedUnit.AddState(UnitBattleState.AbilityTargeting);
+
+                // TODO: Use Event to Handle this
+                TacticBattleManager.Get().UpdateHoverCells();
+
+                // TODO: Check and Review this
+                // confirmAbilityEvent.Raise(ability);
             }
         }
 
@@ -216,9 +219,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             base.Update();
 
-            if(!_selectedUnit && IsHoverObjectSpawned())
+            if (!_selectedUnit && IsHoverObjectSpawned())
             {
                 UpdateSelectedHoverObject();
+            }
+
+            if (_selectedUnit)
+            {
+                var unitState = _selectedUnit.GetCurrentState();
+                switch (unitState)
+                {
+                    case UnitBattleState.UsingAbility:
+                    case UnitBattleState.AbilityTargeting:
+                        _gameVisualManager.OnVisualUpdate(_selectedUnit.EquippedAbility, _selectedUnit);
+                        break;
+                    case UnitBattleState.Moving:
+                        _gameVisualManager.OnVisualUpdate(_selectedUnit);
+                        break;
+                }
+            }
+            else
+            {
+                _gameVisualManager.OnVisualUpdate();
             }
         }
 
@@ -227,20 +249,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return _selectedUnit;
         }
 
-        public override void BeginTeamTurn(BattleTeam InTeam)
+        public override void BeginTeamTurn(BattleTeam inTeam)
         {
             selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
-            SetupTeam(InTeam);
+            SetupTeam(inTeam);
             
-            StatusEffectUtils.HandleTurnStart(InTeam);
+            StatusEffectUtils.HandleTurnStart(inTeam);
 
-            if(InTeam == BattleTeam.Hostile)
+            if(inTeam == BattleTeam.Hostile)
             {
                 bool bIsHostileTeamAI = TacticBattleManager.IsTeamAI(BattleTeam.Hostile);
                 if(bIsHostileTeamAI)
                 {
-                    List<GridPawnUnit> AIUnits = TacticBattleManager.GetUnitsOnTeam(BattleTeam.Hostile);
-                    AStarAlgorithmUtils.RunAI(AIUnits, EndTurn);
+                    List<GridPawnUnit> aiUnits = TacticBattleManager.GetUnitsOnTeam(BattleTeam.Hostile);
+                    AStarAlgorithmUtils.RunAI(aiUnits, EndTurn);
                 }
             }
         }
@@ -253,48 +275,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void HandleEnemySelected(GridPawnUnit enemyUnit)
         {
             
-        }
-
-        public override List<LevelCellBase> GetAbilityHoverCells(LevelCellBase cell)
-        {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: SelectedUnit or SelectedAbility is MISSING!");
-            }
-            
-            UnitAbilityCore ability = _selectedUnit.GetCurrentUnitAbility();
-            if (!ability)
-            {
-                throw new NullReferenceException("ERROR: Cannot identify current Ability");
-            }
-
-            List<LevelCellBase> outCells = new();
-            
-            if (ability)
-            {
-                List<LevelCellBase> abilityCells = ability.GetAbilityCells(_selectedUnit);
-                List<LevelCellBase> effectedCells = ability.GetEffectedCells(_selectedUnit, cell);
-
-                if (abilityCells.Contains(cell))
-                {
-                    foreach (LevelCellBase currCell in effectedCells)
-                    {
-                        if (currCell)
-                        {
-                            BattleTeam effectedTeam =
-                                currCell == cell ? ability.GetEffectedTeam() : BattleTeam.All;
-
-                            if (TacticBattleManager.CanCasterEffectTarget(_selectedUnit.GetCell(), currCell, effectedTeam,
-                                    ability.DoesAllowBlocked()))
-                            {
-                                outCells.Add(currCell);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return outCells;
         }
 
         public override void HandleCellSelected(LevelCellBase selectedCell)
@@ -414,8 +394,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <returns></returns>
         private List<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
         {
-            PvSoUnitAbility ability = abilityOwner.GetCurrentUnitAbility();
-            PvSoUnitAbility targetAbility = targetUnit.GetEquippedUnitAbility();
+            PvSoUnitAbility ability = abilityOwner.EquippedAbility;
+            PvSoUnitAbility targetAbility = targetUnit.EquippedAbility;
 
             if (!ability || !targetAbility)
             {
@@ -463,39 +443,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public override void HandleTeamWon(BattleTeam InTeam)
-        {
-            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
-        }
-
         /// <summary>
         /// Add up extended function during cancel action applied
         /// </summary>
         /// <param name="context"></param>
         public override void CancelActionExtension(InputAction.CallbackContext context)
         {
-            if (TacticBattleManager.IsActionBeingPerformed())
-            {
-                return;
-            }
-
-            if (TacticBattleManager.IsPlaying() && _selectedUnit)
-            {
-                UnitBattleState currentState = _selectedUnit.GetCurrentState();
-                // Pop current state
-                _selectedUnit.RemoveLastState();
-                switch (currentState)
-                {
-                    case UnitBattleState.UsingAbility:
-                        // TODO: Should be back to original position before moving
-                        _selectedUnit.SetupMovement();
-                        break;
-                    case UnitBattleState.Moving:
-                        // Deselect Event will be raised here
-                        selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
-                        break;
-                }
-            }
         }
 
         /// <summary>
