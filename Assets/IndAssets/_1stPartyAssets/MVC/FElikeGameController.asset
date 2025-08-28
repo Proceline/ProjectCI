@@ -15,3 +15,57 @@ MonoBehaviour:
   gameRulesModel: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
   gameVisual: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
   inputActionManager: {fileID: 11400000, guid: d4c9bff3a6bdb3a4594ecca0a2c913a9, type: 2}
+  onCellSelectedFoTurnOwner:
+    inputActionReference: {fileID: 5395146128303671689, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+    onCellConfirmed:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+          m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+            Assembly-CSharp
+          m_MethodName: ApplyCellUnitToSelectedUnit
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onCellSelectedForMovement:
+    inputActionReference: {fileID: 3679770742838787993, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+    onCellConfirmed:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+          m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+            Assembly-CSharp
+          m_MethodName: ApplyMovementToCellForSelectedUnit
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onCellSelectedWhileTargeting:
+    inputActionReference: {fileID: 9056842429799081023, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+    onCellConfirmed:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+          m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+            Assembly-CSharp
+          m_MethodName: ApplyAbilityToTargetCell
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2

@@ -64,18 +64,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public void ResetAndHighlightMovementRange(GridPawnUnit casterUnit)
+        public bool ResetAndHighlightMovementRange(GridPawnUnit casterUnit)
         {
             if (casterUnit.IsMoving())
             {
-                return;
+                return false;
             }
-            
+
             ResetVisualStateCells();
-
-            casterUnit.AddState(UnitBattleState.Moving);
             List<LevelCellBase> allowedMovementCells = casterUnit.GetAllowedMovementCells();
-
             foreach (LevelCellBase cell in allowedMovementCells)
             {
                 if (cell && cell.IsVisible())
@@ -84,8 +81,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     TacticBattleManager.SetCellState(cell, CellState.eMovement);
                 }
             }
+
+            return true;
         }
-        
+
         private void UpdateHoverCells(GridPawnUnit selectedUnit)
         {
             if (!selectedUnit)
