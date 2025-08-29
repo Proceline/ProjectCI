@@ -55,12 +55,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             onCellSelectedFoTurnOwner.RegisterCellControl(gameVisual);
             onCellSelectedForMovement.RegisterCellControl(gameVisual);
+            onCellSelectedWhileTargeting.RegisterCellControl(gameVisual);
         }
 
         public void UnregisterControlActions()
         {
             onCellSelectedFoTurnOwner.UnregisterCellControl();
             onCellSelectedForMovement.UnregisterCellControl();
+            onCellSelectedWhileTargeting.UnregisterCellControl();
         }
 
         private void DisableAllConfirm()

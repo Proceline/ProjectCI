@@ -70,9 +70,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             // TODO: Handle Lock
 
-            if (!_selectedUnit || _selectedUnit.GetCurrentState() != UnitBattleState.AbilityTargeting)
+            if (!_selectedUnit)
             {
                 return;
+            }
+
+            var state = _selectedUnit.GetCurrentState();
+            if (state != UnitBattleState.AbilityTargeting && state != UnitBattleState.UsingAbility)
+            {
+                throw new Exception("State ERROR: Must during Ability Targeting");
             }
 
             GridPawnUnit gridPawnUnit = selectedCell.GetUnitOnCell();
