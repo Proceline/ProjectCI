@@ -15,21 +15,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         internal LevelCellBase CurrentHoverCell { get; private set; }
         private readonly List<LevelCellBase> _bufferedVisualStateCells = new();
         private readonly List<LevelCellBase> _hoveringCells = new();
-        
-        void IGameVisual.OnVisualUpdate()
-        {
-            UpdateHoverCells();
-        }
-        
-        void IGameVisual.OnVisualUpdate(PvSoUnitAbility ability, GridPawnUnit unit)
-        {
-            UpdateHoverCells(unit, ability);
-        }
-        
-        void IGameVisual.OnVisualUpdate(GridPawnUnit unit)
-        {
-            UpdateHoverCells(unit);
-        }
+
+        [NonSerialized] 
+        private GameObject _pawnVisualMark;
 
         public void ResetVisualStateCells()
         {
@@ -64,14 +52,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public bool ResetAndHighlightMovementRange(GridPawnUnit casterUnit)
+        public void HighlightMovementRange(GridPawnUnit casterUnit)
         {
-            if (casterUnit.IsMoving())
-            {
-                return false;
-            }
-
-            ResetVisualStateCells();
             List<LevelCellBase> allowedMovementCells = casterUnit.GetAllowedMovementCells();
             foreach (LevelCellBase cell in allowedMovementCells)
             {
@@ -81,48 +63,47 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     TacticBattleManager.SetCellState(cell, CellState.eMovement);
                 }
             }
-
-            return true;
         }
 
-        private void UpdateHoverCells(GridPawnUnit selectedUnit)
+        public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit)
         {
-            if (!selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: No Unit is selected!");
-            }
-
             CleanupHoverCells();
 
-            if (CurrentHoverCell)
+            if (!CurrentHoverCell)
             {
-                _hoveringCells.Add(CurrentHoverCell);
+                return;
+            }
+            // GridPawnUnit hoverUnit = CurrentHoverCell.GetUnitOnCell();
+            // TODO: Add Event if necessary
 
-                if (selectedUnit)
+            _hoveringCells.Add(CurrentHoverCell);
+            if (!selectedUnit)
+            {
+                RefreshHoveringVisualCells();
+                return;
+            }
+
+            List<LevelCellBase> allowedMovementCells = selectedUnit.GetAllowedMovementCells();
+
+            if (allowedMovementCells.Contains(CurrentHoverCell))
+            {
+                List<LevelCellBase> pathToCursor =
+                    selectedUnit.GetPathTo(CurrentHoverCell, allowedMovementCells);
+
+                foreach (LevelCellBase pathCell in pathToCursor)
                 {
-                    List<LevelCellBase> allowedMovementCells = selectedUnit.GetAllowedMovementCells();
-
-                    if (allowedMovementCells.Contains(CurrentHoverCell))
+                    if (pathCell && pathCell != CurrentHoverCell)
                     {
-                        List<LevelCellBase> pathToCursor =
-                            selectedUnit.GetPathTo(CurrentHoverCell, allowedMovementCells);
-
-                        foreach (LevelCellBase pathCell in pathToCursor)
-                        {
-                            if (pathCell && pathCell != CurrentHoverCell)
-                            {
-                                _hoveringCells.Add(pathCell);
-                                // if (allowedMovementCells.Contains(pathCell)) // Normally this won't happen
-                            }
-                        }
+                        _hoveringCells.Add(pathCell);
+                        // if (allowedMovementCells.Contains(pathCell)) // Normally this won't happen
                     }
                 }
-                
-                RefreshHoveringVisualCells();
             }
+
+            RefreshHoveringVisualCells();
         }
 
-        private void UpdateHoverCells(GridPawnUnit selectedUnit, PvSoUnitAbility ability)
+        public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit, PvSoUnitAbility ability)
         {
             if (!selectedUnit)
             {
@@ -140,20 +121,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RefreshHoveringVisualCells();
             }
         }
-        
-        private void UpdateHoverCells()
-        {
-            CleanupHoverCells();
-
-            if (CurrentHoverCell)
-            {
-                // GridPawnUnit hoverUnit = CurrentHoverCell.GetUnitOnCell();
-                // TODO: Add Event if necessary
-
-                _hoveringCells.Add(CurrentHoverCell);
-                RefreshHoveringVisualCells();
-            }
-        }
 
         private void RefreshHoveringVisualCells()
         {
@@ -168,7 +135,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void BeginHover(LevelCellBase cell)
         {
             CurrentHoverCell = cell;
-            UpdateHoverCells();
+            UpdateHoverCells(null);
         }
         
         public void EndHover(LevelCellBase cell)
@@ -227,5 +194,64 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
             }
         }
+        
+        #region MethodsCombo
+        public void ShowRangeWhileStateChanged(PvMnBattleGeneralUnit unit, UnitBattleState state)
+        {
+            switch (state)
+            {
+                case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
+                    var ability = unit.EquippedAbility;
+                    ResetVisualStateCells();
+                    HighlightAbilityRange(ability, unit);
+                    //TODO: Consider ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
+                    UpdateHoverCells(unit, ability);
+                    break;
+                case UnitBattleState.Finished:
+                    ResetVisualStateCells();
+                    break;
+                case UnitBattleState.Moving:
+                    ResetVisualStateCells();
+                    HighlightMovementRange(unit);
+                    break;
+                case UnitBattleState.MovingProgress:
+                    ResetVisualStateCells();
+                    break;
+                case UnitBattleState.Idle:
+                case UnitBattleState.AbilityConfirming:
+                default:
+                    // Empty
+                    break;
+            }
+        }
+        #endregion
+        
+        #region NonGrid Visual
+
+        public void ShowPawnMarker(PvMnBattleGeneralUnit selectedUnit)
+        {
+            if (!_pawnVisualMark)
+            {
+                GameObject markPrefab = TacticBattleManager.GetSelectedHoverPrefab();
+                _pawnVisualMark = Instantiate(markPrefab);
+            }
+
+            _pawnVisualMark.SetActive(false);
+
+            if (!selectedUnit) return;
+            _pawnVisualMark.transform.position = selectedUnit.GetCell().GetAllignPos(selectedUnit);
+            _pawnVisualMark.transform.SetParent(selectedUnit.transform);
+            _pawnVisualMark.SetActive(true);
+        }
+
+        public void HidePawnMarker()
+        {
+            if (!_pawnVisualMark) return;
+            _pawnVisualMark.SetActive(false);
+            _pawnVisualMark.transform.SetParent(null);
+        }
+
+        #endregion
     }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f907d59675f419e8cba8c4254205793, type: 3}
-  m_Name: FElikeGameController
+  m_Name: FelikeController
   m_EditorClassIdentifier: 
   gameRulesModel: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
   gameVisual: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}

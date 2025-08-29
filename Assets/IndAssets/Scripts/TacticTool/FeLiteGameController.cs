@@ -79,13 +79,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     onCellSelectedForMovement.InputAction.Enable();
                     break;
                 case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
                     onCellSelectedWhileTargeting.InputAction.Enable();
                     break;
                 case UnitBattleState.Finished:
                     onCellSelectedFoTurnOwner.InputAction.Enable();
                     break;
                 case UnitBattleState.MovingProgress:
-                case UnitBattleState.AbilityTargeting:
                 case UnitBattleState.Idle:
                 case UnitBattleState.AbilityConfirming:
                 default:

@@ -46,8 +46,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     PushStateAfterSelectUnit(playableUnit);
                 }
             }
-
-            UpdateSelectedHoverObject();
         }
 
         public void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
@@ -60,7 +58,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
             if (_selectedUnit.ExecuteMovement(targetCell))
             {
-                _gameVisualManager.ResetVisualStateCells();
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
             }
         }

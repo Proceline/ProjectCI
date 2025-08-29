@@ -8,7 +8,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
-using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
@@ -25,7 +24,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
         private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
-        private GameObject _currentHoverObject;
+        private GameObject _pawnMarkObject;
 
         [SerializeField]
         private AttributeType abilitySpeedAttributeType;
@@ -44,19 +43,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField] 
         private LayerMask[] layerMasksRuleList;
-
-        [Inject]
-        private readonly IGameVisual _gameVisualManager;
-
-        [NonSerialized]
-        private bool _isInjected;
-
+        
         [SerializeField] 
         private UnityEvent onGameStarted;
         
         [SerializeField] 
         private UnityEvent onGameEnded;
 
+        [Header("Update Support")]
+        [SerializeField] 
+        private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupport;
+
+        [SerializeField] 
+        private UnityEvent<PvMnBattleGeneralUnit, PvSoUnitAbility> onUpdateSupportWithAbility;
+
+        [Header("Select Support")]
+        [SerializeField] 
+        private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerSelectedPreview;
+        
+        [SerializeField] 
+        private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
+        
+        [Header("State Support")]
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
         public UnitBattleState CurrentBattleState =>
@@ -64,12 +72,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected override void StartGame()
         {
-            if (!_isInjected)
-            {
-                DIConfiguration.InjectFromConfiguration(this);
-                _isInjected = true;
-            }
-            
             onGameStarted?.Invoke();
 
             CurrentTeam = BattleTeam.Friendly;
@@ -114,53 +116,38 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             
             onStateChangedInModel?.Invoke(selectedUnit, state);
         }
-        
-        public void PushStateToTargeting()
-        {
-            if (_selectedUnit && _selectedUnit.GetCurrentState() == UnitBattleState.UsingAbility)
-            {
-                var ability = _selectedUnit.EquippedAbility;
-                if (!_selectedUnit.GetUsableAbilities().Contains(ability))
-                {
-                    throw new Exception("ERROR: This ability is not obtained by this Pawn by DEFAULT!");
-                }
-                _gameVisualManager.ResetVisualStateCells();
-                _gameVisualManager.HighlightAbilityRange(ability, _selectedUnit);
-                ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
-
-                // TODO: Use Event to Handle this
-                // TacticBattleManager.Get().UpdateHoverCells();
-
-                // TODO: Check and Review this
-                // confirmAbilityEvent.Raise(ability);
-            }
-        }
 
         private void PushStateAfterSelectUnit(PvMnBattleGeneralUnit selectingUnit)
         {
-            if (_gameVisualManager.ResetAndHighlightMovementRange(selectingUnit))
+            if (_selectedUnit)
             {
-                _selectedUnit = selectingUnit;
-                _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterMove);
-                _selectedUnit.BindToOnMovementPostCompleted(UpdateSelectedHoverObject);
-                
-                ChangeStateForSelectedUnit(UnitBattleState.Moving);
-                selectUnitEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
+                throw new Exception("ERROR: Must deselect unit first to Select next Unit!");
             }
+
+            if (selectingUnit.IsMoving())
+            {
+                Debug.LogWarning("Warning: Selected Unit is moving!");
+                return;
+            }
+
+            _selectedUnit = selectingUnit;
+            _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
+
+            ChangeStateForSelectedUnit(UnitBattleState.Moving);
+            onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
+            selectUnitEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
         }
 
         private void ClearStateAndDeselectUnit()
         {
-            // State changed
-            ChangeStateForSelectedUnit(UnitBattleState.Finished);
-            _gameVisualManager.ResetVisualStateCells();
+            ChangeStateForSelectedUnit(UnitBattleState.Finished);   // Clean up all States
             if (!_selectedUnit)
             {
                 return;
             }
 
-            _selectedUnit.UnBindFromOnMovementPostCompleted(UpdateSelectedHoverObject);
-            _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterMove);
+            _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
+            onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
             selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
         }
@@ -176,67 +163,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        private bool IsHoverObjectSpawned()
+        private void UpdatePlayerStateAfterRegularMove()
         {
-            return _currentHoverObject != null;
-        }
-
-        private void UpdateSelectedHoverObject()
-        {
-            if (_currentHoverObject)
+            if (!_selectedUnit) return;
+            if (_selectedUnit.GetCurrentState() != UnitBattleState.MovingProgress)
             {
-                Destroy(_currentHoverObject);
+                throw new Exception(
+                    $"State ERROR: Current State must be <{UnitBattleState.MovingProgress.ToString()}>, but Having <{CurrentBattleState.ToString()}>");
             }
-
-            if (_selectedUnit && !_selectedUnit.IsDead())
-            {
-                GameObject hoverObj = TacticBattleManager.GetSelectedHoverPrefab();
-                if (hoverObj)
-                {
-                    _currentHoverObject = Instantiate(hoverObj, _selectedUnit.GetCell().GetAllignPos(_selectedUnit), hoverObj.transform.rotation);
-                }
-            }
-        }
-
-        private void UpdatePlayerStateAfterMove()
-        {
-            if (_selectedUnit)
-            {
-                if (_selectedUnit.GetCurrentState() is UnitBattleState.Moving or UnitBattleState.MovingProgress)
-                {
-                    // TODO: Rewrite this part
-                    ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
-                    // {
-                    //     _selectedUnit.ClearStates();
-                    // }
-                }
-            }
+            ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
         }
 
         public override void Update()
         {
-            if (!_selectedUnit && IsHoverObjectSpawned())
+            switch (CurrentBattleState)
             {
-                UpdateSelectedHoverObject();
-            }
-
-            if (_selectedUnit)
-            {
-                var unitState = _selectedUnit.GetCurrentState();
-                switch (unitState)
-                {
-                    case UnitBattleState.UsingAbility:
-                    case UnitBattleState.AbilityTargeting:
-                        _gameVisualManager.OnVisualUpdate(_selectedUnit.EquippedAbility, _selectedUnit);
-                        break;
-                    case UnitBattleState.Moving:
-                        _gameVisualManager.OnVisualUpdate(_selectedUnit);
-                        break;
-                }
-            }
-            else
-            {
-                _gameVisualManager.OnVisualUpdate();
+                case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
+                    onUpdateSupportWithAbility.Invoke(_selectedUnit, _selectedUnit.EquippedAbility);
+                    break;
+                case UnitBattleState.Moving:
+                case UnitBattleState.Finished:
+                    onUpdateSupport.Invoke(_selectedUnit);
+                    break;
             }
         }
 
