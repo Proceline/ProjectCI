@@ -38,9 +38,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         [SerializeField] private BattleGameRules gameRulesModel;
         [SerializeField] private FeLiteGameVisual gameVisual;
-        
-        [SerializeField]
-        private InputActionManager inputActionManager;
 
         [SerializeField]
         private InputActionPairForCellTarget onCellSelectedFoTurnOwner;
