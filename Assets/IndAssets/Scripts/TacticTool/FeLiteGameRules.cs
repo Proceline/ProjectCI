@@ -63,8 +63,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
-        
+
         [Header("State Support")]
+        
+        [SerializeField]
+        private PvSoUnitBattleStateEvent onStateChangedImmediately;
+        
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
         public UnitBattleState CurrentBattleState =>
@@ -101,19 +105,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void ChangeStateForSelectedUnit(UnitBattleState state)
         {
+            var stateBehaviour = UnitStateBehaviour.Emphasis;
             var selectedUnit = _selectedUnit;
             if (selectedUnit)
             {
                 if (state != UnitBattleState.Finished)
                 {
                     selectedUnit.AddState(state);
+                    stateBehaviour = UnitStateBehaviour.Adding;
                 }
                 else
                 {
                     selectedUnit.ClearStates();
+                    stateBehaviour = UnitStateBehaviour.Clear;
                 }
             }
-            
+
+            onStateChangedImmediately.Raise(selectedUnit, state, stateBehaviour);
             onStateChangedInModel?.Invoke(selectedUnit, state);
         }
 

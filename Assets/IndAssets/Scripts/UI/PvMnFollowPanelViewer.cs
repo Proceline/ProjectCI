@@ -1,0 +1,68 @@
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Events;
+using UnityEngine;
+
+namespace ProjectCI.Runtime.GUI.Battle
+{
+    public class PvMnFollowPanelViewer : MonoBehaviour
+    {
+        [SerializeField] 
+        private PvSoUnitBattleStateEvent onStateDetermined;
+
+        [SerializeField] 
+        private Camera controlUiCamera;
+        
+        [SerializeField] 
+        private GameObject canvasGameObject;
+
+        [SerializeField]
+        private PvMnControlPanel mainControlPanel;
+
+        private void Start()
+        {
+            canvasGameObject.SetActive(false);
+            onStateDetermined.RegisterCallback(ChangeViewDuringStateDetermined);
+        }
+
+        private void OnDestroy()
+        {
+            onStateDetermined.UnregisterCallback(ChangeViewDuringStateDetermined);
+        }
+
+        private void ChangeViewDuringStateDetermined(IEventOwner owner, UnitStateEventParam stateEventParam)
+        {
+            if (owner is PvMnBattleGeneralUnit battleUnit)
+            {
+                var state = stateEventParam.battleState;
+                var stateBehaviour = stateEventParam.behaviour;
+
+                if (stateBehaviour == UnitStateBehaviour.Adding)
+                {
+                    switch (state)
+                    {
+                        case UnitBattleState.UsingAbility:
+                            canvasGameObject.SetActive(true);
+                            canvasGameObject.transform.position = owner.Position;
+                            canvasGameObject.transform.rotation = controlUiCamera.transform.rotation;
+                            mainControlPanel.gameObject.SetActive(true);
+                            break;
+                        case UnitBattleState.AbilityTargeting:
+                        case UnitBattleState.AbilityConfirming:
+                        case UnitBattleState.Idle:
+                        case UnitBattleState.Moving:
+                        case UnitBattleState.MovingProgress:
+                        case UnitBattleState.Finished:
+                        default:
+                            canvasGameObject.SetActive(false);
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                canvasGameObject.SetActive(false);
+            }
+        }
+    }
+}

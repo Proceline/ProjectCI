@@ -38,7 +38,6 @@ namespace ProjectCI.Runtime.GUI.Battle
         [SerializeField]
         private PvMnViewAbilityBattleSlot slotPrefab;
         
-        private readonly ServiceLocator<PvSoUnitBattleStateEvent> _stateEventLocator = new();
         private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
         private readonly PvSimpleWidgetsContainer<PvMnViewAbilityBattleSlot> _battleSlotsContainer = new();
@@ -52,7 +51,7 @@ namespace ProjectCI.Runtime.GUI.Battle
                 _toggleGroup.allowSwitchOff = false;
             }
 
-            _stateEventLocator.Service.RegisterCallback(RespondToSelectedUnitState);
+            // _stateEventLocator.Service.RegisterCallback(RespondToSelectedUnitState);
             containerView.SetActive(visibleAtBeginning);
 
             if (!worldSpaceView) return;
@@ -65,7 +64,7 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         protected void OnDestroy()
         {
-            _stateEventLocator.Service.UnregisterCallback(RespondToSelectedUnitState);
+            // _stateEventLocator.Service.UnregisterCallback(RespondToSelectedUnitState);
             _selectEventLocator.Service.UnregisterCallback(HandleUnitSelected);
         }
 
