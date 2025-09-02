@@ -3589,8 +3589,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 115299663}
+  - component: {fileID: 115299665}
   m_Layer: 0
-  m_Name: SceneCameras
+  m_Name: ControlableSceneCameras
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3605,14 +3606,57 @@ Transform:
   m_GameObject: {fileID: 115299662}
   serializedVersion: 2
   m_LocalRotation: {x: -0.42759302, y: -0.361735, z: 0.1919288, w: -0.80590034}
-  m_LocalPosition: {x: -18.69, y: 49.16, z: -17.82}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 330585546}
   - {fileID: 486988560}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1604073942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &115299665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115299662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f27bbbc4d939d44ead8af9d18662d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minZoom: 0
+  maxZoom: 10
+  zoomingSpeed: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  rotationPivotCam: {fileID: 330585545}
+  rotatingSpeed: 100
+  translateTarget: {fileID: 1604073942}
+  movingSpeed: 50
+  panDirectionActionRef: {fileID: -1908229126227159267, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  rotationActionRef: {fileID: -3888731248808976008, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  zoomInActionRef: {fileID: -5188718990484125378, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  zoomOutActionRef: {fileID: 106577688278535241, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  onRotationChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1658297597}
+        m_TargetAssemblyTypeName: ProjectCI.Runtime.GUI.Battle.PvMnFollowPanelViewer,
+          Assembly-CSharp
+        m_MethodName: SetupCorrectRotation
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onStateDetermined: {fileID: 11400000, guid: 280ad2952b1111848ba1cf6a14bfd886, type: 2}
 --- !u!1001 &115566468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50122,6 +50166,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}
   m_PrefabInstance: {fileID: 1602724457}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1604073941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1604073942}
+  m_Layer: 0
+  m_Name: SceneCamerasRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1604073942
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604073941}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -18.69, y: 49.16, z: -17.82}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 115299663}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1604756141
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -68125,6 +68201,6 @@ SceneRoots:
   - {fileID: 496114430}
   - {fileID: 519407419}
   - {fileID: 1162727512}
-  - {fileID: 115299663}
   - {fileID: 8168464463013384539}
   - {fileID: 1658297596}
+  - {fileID: 1604073942}

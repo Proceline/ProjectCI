@@ -2,6 +2,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace ProjectCI.Runtime.GUI.Battle
@@ -45,7 +46,7 @@ namespace ProjectCI.Runtime.GUI.Battle
                         case UnitBattleState.UsingAbility:
                             canvasGameObject.SetActive(true);
                             canvasGameObject.transform.position = owner.Position;
-                            canvasGameObject.transform.rotation = controlUiCamera.transform.rotation;
+                            SetupCorrectRotation(controlUiCamera);
                             mainControlPanel.gameObject.SetActive(true);
                             break;
                         case UnitBattleState.AbilityTargeting:
@@ -69,6 +70,12 @@ namespace ProjectCI.Runtime.GUI.Battle
         private void DisableFollowingCanvas()
         {
             canvasGameObject.SetActive(false);
+        }
+
+        public void SetupCorrectRotation(Camera targetCamera)
+        {
+            controlUiCamera = targetCamera;
+            canvasGameObject.transform.rotation = targetCamera.transform.rotation;
         }
     }
 }

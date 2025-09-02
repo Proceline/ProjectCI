@@ -22,7 +22,7 @@ namespace ProjectCI.Runtime.GUI.Battle
                 Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
                 canvas.worldCamera = inCamera;
                 
-                RotateHealthBarByCamera(inCamera);
+                RotateHealthBarByCamera(inCamera.transform);
             }
         }
 
@@ -34,12 +34,10 @@ namespace ProjectCI.Runtime.GUI.Battle
             }
         }
 
-        private void RotateHealthBarByCamera(Camera inCamera)
+        public void RotateHealthBarByCamera(Transform targetTransform)
         {
-            if (_healthBarInstance != null)
-            {
-                _healthBarInstance.transform.rotation = inCamera.transform.rotation;
-            }
+            if (!_healthBarInstance) return;
+            _healthBarInstance.transform.rotation = targetTransform.rotation;
         }
 
         public override void SetHealth(int inHealth)

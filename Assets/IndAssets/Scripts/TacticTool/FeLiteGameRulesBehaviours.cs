@@ -1,21 +1,8 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
-using ProjectCI.CoreSystem.DependencyInjection;
-using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
-using ProjectCI.Utilities.Runtime.Events;
-using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -27,6 +14,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="cell"></param>
         public void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
+            if (!cell) return;
             // TODO: Consider Lock
             GridPawnUnit standUnit = cell.GetUnitOnCell();
             if (standUnit is PvMnBattleGeneralUnit playableUnit)
@@ -50,6 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
         {
+            if (!targetCell) return;
             // TODO: Handle Lock
 
             if (!_selectedUnit || _selectedUnit.GetCurrentState() != UnitBattleState.Moving)
