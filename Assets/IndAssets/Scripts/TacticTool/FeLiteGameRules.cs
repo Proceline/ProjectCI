@@ -103,6 +103,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         #region StateSwitchAndActions
 
+        public void ChangeStateToConfirmedTargeting()
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException("ERROR: No selected unit while Selecting ACTION OPTION!");
+            }
+            ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
+        }
+        
         private void ChangeStateForSelectedUnit(UnitBattleState state)
         {
             var stateBehaviour = UnitStateBehaviour.Emphasis;

@@ -38,9 +38,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         [SerializeField] private BattleGameRules gameRulesModel;
         [SerializeField] private FeLiteGameVisual gameVisual;
-
+        
         [SerializeField]
-        private InputActionPairForCellTarget onCellSelectedFoTurnOwner;
+        private InputActionPairForCellTarget onCellSelectedForTurnOwner;
         
         [SerializeField]
         private InputActionPairForCellTarget onCellSelectedForMovement;
@@ -50,26 +50,36 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         public void RegisterControlActions()
         {
-            onCellSelectedFoTurnOwner.RegisterCellControl(gameVisual);
+            onCellSelectedForTurnOwner.RegisterCellControl(gameVisual);
             onCellSelectedForMovement.RegisterCellControl(gameVisual);
             onCellSelectedWhileTargeting.RegisterCellControl(gameVisual);
         }
 
         public void UnregisterControlActions()
         {
-            onCellSelectedFoTurnOwner.UnregisterCellControl();
+            onCellSelectedForTurnOwner.UnregisterCellControl();
             onCellSelectedForMovement.UnregisterCellControl();
             onCellSelectedWhileTargeting.UnregisterCellControl();
         }
 
-        private void DisableAllConfirm()
+        public void DisableAllConfirm()
         {
-            onCellSelectedFoTurnOwner.InputAction.Disable();
+            onCellSelectedForTurnOwner.InputAction.Disable();
             onCellSelectedForMovement.InputAction.Disable();
             onCellSelectedWhileTargeting.InputAction.Disable();
         }
 
+        public void EnableConfirmActionOnAbilityDetermining()
+        {
+            EnableConfirmActionByState(UnitBattleState.UsingAbility);
+        }
+
         public void SwitchEnabledConfirmAction(PvMnBattleGeneralUnit unit, UnitBattleState state)
+        {
+            EnableConfirmActionByState(state);
+        }
+
+        private void EnableConfirmActionByState(UnitBattleState state)
         {
             DisableAllConfirm();
             switch (state)
@@ -82,7 +92,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     onCellSelectedWhileTargeting.InputAction.Enable();
                     break;
                 case UnitBattleState.Finished:
-                    onCellSelectedFoTurnOwner.InputAction.Enable();
+                    onCellSelectedForTurnOwner.InputAction.Enable();
                     break;
                 case UnitBattleState.MovingProgress:
                 case UnitBattleState.Idle:

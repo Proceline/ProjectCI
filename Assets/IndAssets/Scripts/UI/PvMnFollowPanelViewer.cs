@@ -2,6 +2,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
@@ -54,15 +55,20 @@ namespace ProjectCI.Runtime.GUI.Battle
                         case UnitBattleState.MovingProgress:
                         case UnitBattleState.Finished:
                         default:
-                            canvasGameObject.SetActive(false);
+                            DisableFollowingCanvas();
                             break;
                     }
                 }
             }
             else
             {
-                canvasGameObject.SetActive(false);
+                DisableFollowingCanvas();
             }
+        }
+
+        private void DisableFollowingCanvas()
+        {
+            canvasGameObject.SetActive(false);
         }
     }
 }
