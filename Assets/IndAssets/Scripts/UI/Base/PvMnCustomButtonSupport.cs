@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace ProjectCI.Runtime.GUI.Battle
@@ -14,6 +15,8 @@ namespace ProjectCI.Runtime.GUI.Battle
         public int ButtonIndex { get; internal set; }
 
         internal Action<int> OnButtonClickedAsIndex;
+        public UnityEvent<int> onButtonClickedAsIndexPostEvent;
+        public UnityEvent<int> onButtonHoveredAsIndexPostEvent;
 
         protected internal Button Button
         {
@@ -40,6 +43,15 @@ namespace ProjectCI.Runtime.GUI.Battle
         public void ApplyOnButtonClickedWithIndex()
         {
             OnButtonClickedAsIndex?.Invoke(ButtonIndex);
+            onButtonClickedAsIndexPostEvent.Invoke(ButtonIndex);
+        }
+        
+        /// <summary>
+        /// Normally assigned to Hover Event Trigger
+        /// </summary>
+        public void ApplyOnButtonHoveredWithIndex()
+        {
+            onButtonHoveredAsIndexPostEvent.Invoke(ButtonIndex);
         }
     }
 }
