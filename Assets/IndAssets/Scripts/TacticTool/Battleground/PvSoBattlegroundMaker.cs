@@ -1,5 +1,4 @@
 using System;
-using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
@@ -43,21 +42,10 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
         public UnityEvent<RaycastHit, Vector2Int, LevelGridBase> gridCreatingRule;
 
-        [Inject]
-        private PvMnViewControlBattlePanel _battleViewControlPanel;
-
-        [NonSerialized] private bool _hasInjected;
-
         [NonSerialized] private SquarePresetGrid _levelGrid;
         
         public void ScanAndGenerateBattle(Vector3 centerPosition, Camera uiCamera)
         {
-            if (!_hasInjected)
-            {
-                DIConfiguration.InjectFromConfiguration(this);
-                _hasInjected = true;
-            }
-            
             GridBattleUtils.GenerateLevelGridFromGround(
                 centerPosition,
                 hexWidth,
@@ -78,13 +66,6 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     battleManagerPrefab,
                     _levelGrid
                 );
-
-                if (battleManager != null)
-                {
-                    Debug.Log("Successfully created Battle Manager");
-                    var abilityListUI = Instantiate(_battleViewControlPanel);
-                    abilityListUI.Setup();
-                }
 
                 var sceneUnits = GridBattleUtils.ScanAreaForObjects<PvMnSceneUnit>(
                     new Vector3(centerPosition.x, 0, centerPosition.z),
