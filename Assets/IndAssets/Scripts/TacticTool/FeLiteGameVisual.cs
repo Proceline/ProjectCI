@@ -10,7 +10,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     
     [CreateAssetMenu(fileName = "New Visual", menuName = "ProjectCI Tools/MVC/Visual", order = 1)]
-    public class FeLiteGameVisual : ScriptableObject, IGameVisual
+    public class FeLiteGameVisual : ScriptableObject
     {
         internal LevelCellBase CurrentHoverCell { get; private set; }
         private readonly List<LevelCellBase> _bufferedVisualStateCells = new();

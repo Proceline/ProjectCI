@@ -1,6 +1,4 @@
 using System;
-using ProjectCI.CoreSystem.Runtime.Services;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 

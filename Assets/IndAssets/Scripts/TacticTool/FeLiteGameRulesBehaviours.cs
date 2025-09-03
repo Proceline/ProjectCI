@@ -76,7 +76,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 List<CommandResult> results =
                     HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
 
-                turnLogicEndEvent.Raise();
+                raiserTurnLogicallyEndEvent.Raise();
                 HandleCommandResultsCoroutine(results);
 
                 // TODO: Logically end the action, might need some event

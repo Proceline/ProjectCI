@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,10 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [SerializeField] 
         protected Text buttonContentText;
+
+        public int ButtonIndex { get; internal set; }
+
+        internal Action<int> OnButtonClickedAsIndex;
 
         protected internal Button Button
         {
@@ -27,6 +32,14 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             get => buttonContentText.text;
             set => buttonContentText.text = value;
+        }
+
+        /// <summary>
+        /// Normally assigned to Button Component
+        /// </summary>
+        public void ApplyOnButtonClickedWithIndex()
+        {
+            OnButtonClickedAsIndex?.Invoke(ButtonIndex);
         }
     }
 }

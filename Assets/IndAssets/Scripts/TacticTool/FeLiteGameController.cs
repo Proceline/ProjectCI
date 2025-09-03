@@ -34,7 +34,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     }
     
     [CreateAssetMenu(fileName = "New Controller", menuName = "ProjectCI Tools/MVC/Controller", order = 1)]
-    public class FeLiteGameController : ScriptableObject, IGameController
+    public class FeLiteGameController : ScriptableObject
     {
         [SerializeField] private BattleGameRules gameRulesModel;
         [SerializeField] private FeLiteGameVisual gameVisual;

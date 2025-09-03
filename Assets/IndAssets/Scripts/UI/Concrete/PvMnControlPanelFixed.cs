@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,29 +17,5 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [SerializeField] 
         private List<PvMnCustomButtonSupport> fixedControlButtons = new();
-
-        [SerializeField] 
-        private UnityEvent onAnyButtonPressed;
-        
-        public override void ActivatePanel()
-        {
-            // Empty
-        }
-
-        private void Start()
-        {
-            fixedControlButtons.ForEach(fixedButton =>
-            {
-                fixedButton.Button.onClick.AddListener(onAnyButtonPressed.Invoke);
-            });
-        }
-
-        private void OnDestroy()
-        {
-            fixedControlButtons.ForEach(fixedButton =>
-            {
-                fixedButton.Button.onClick.RemoveListener(onAnyButtonPressed.Invoke);
-            });
-        }
     }
 }

@@ -1,9 +1,8 @@
+using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
@@ -20,6 +19,12 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [SerializeField]
         private PvMnControlPanel mainControlPanel;
+
+        [SerializeField]
+        private PvMnControlPanelDynamic sideControlPanel;
+
+        [NonSerialized]
+        private PvMnBattleGeneralUnit _determinedUnit;
 
         private void Start()
         {
@@ -44,15 +49,20 @@ namespace ProjectCI.Runtime.GUI.Battle
                     switch (state)
                     {
                         case UnitBattleState.UsingAbility:
+                            _determinedUnit = battleUnit;
+                            
                             canvasGameObject.SetActive(true);
                             canvasGameObject.transform.position = owner.Position;
                             SetupCorrectRotation(controlUiCamera);
                             mainControlPanel.gameObject.SetActive(true);
                             break;
+                        case UnitBattleState.Moving:
+                            _determinedUnit = battleUnit;
+                            DisableFollowingCanvas();
+                            break;
                         case UnitBattleState.AbilityTargeting:
                         case UnitBattleState.AbilityConfirming:
                         case UnitBattleState.Idle:
-                        case UnitBattleState.Moving:
                         case UnitBattleState.MovingProgress:
                         case UnitBattleState.Finished:
                         default:
@@ -76,6 +86,27 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             controlUiCamera = targetCamera;
             canvasGameObject.transform.rotation = targetCamera.transform.rotation;
+        }
+
+        public void OnDeterminedAttackSlotSelected()
+        {
+            if (!_determinedUnit)
+            {
+                throw new NullReferenceException("ERROR: No Unit Selected");
+            }
+
+            mainControlPanel.gameObject.SetActive(false);
+            sideControlPanel.gameObject.SetActive(true);
+            var abilities = _determinedUnit.GetUsableAbilities();
+            sideControlPanel.NumOfSlots = abilities.Count;
+            sideControlPanel.ControlButtons.ForEach(customButton =>
+            {
+                customButton.ButtonContentText = abilities[customButton.ButtonIndex].GetAbilityName();
+                customButton.OnButtonClickedAsIndex = index =>
+                {
+                    Debug.Log("Click on this skill!");
+                };
+            });
         }
     }
 }

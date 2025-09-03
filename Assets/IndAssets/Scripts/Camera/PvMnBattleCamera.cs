@@ -235,7 +235,8 @@ public class PvMnBattleCamera : MonoBehaviour
             {
                 case UnitBattleState.Moving:
                 case UnitBattleState.UsingAbility:
-                    var zoomValue = state == UnitBattleState.Moving ? 0 : 20;
+                case UnitBattleState.AbilityTargeting:
+                    var zoomValue = state == UnitBattleState.UsingAbility ? 20 : 0;
                     var duration = 0.25f;
                     if (GetCurrentCenter(out var center, out _))
                     {
@@ -243,7 +244,6 @@ public class PvMnBattleCamera : MonoBehaviour
                     }
                     StartCoroutine(AssignCameraZoom(zoomValue, duration));
                     break;
-                case UnitBattleState.AbilityTargeting:
                 case UnitBattleState.AbilityConfirming:
                 case UnitBattleState.Idle:
                 case UnitBattleState.MovingProgress:

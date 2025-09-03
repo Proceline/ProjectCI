@@ -1,6 +1,5 @@
 using System;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 
 namespace ProjectCI.Utilities.Runtime.Events
@@ -10,6 +9,7 @@ namespace ProjectCI.Utilities.Runtime.Events
         public PvSoUnitAbility Ability;
     }
     
+    // TODO: NOT IN USED FOR NOW
     [CreateAssetMenu(fileName = "AbilitySelect Event", menuName = "ProjectCI Utilities/Events/AbilitySelect Event")]
     public class PvSoAbilitySelectEvent : SoUnityEventBase<AbilitySelectEventParam>, IEventOwner
     {

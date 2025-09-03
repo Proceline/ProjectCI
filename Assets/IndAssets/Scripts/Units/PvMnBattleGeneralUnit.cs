@@ -22,7 +22,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
 
         private readonly Stack<UnitBattleState> _unitStates = new();
-        private readonly ServiceLocator<PvSoAbilityEquipEvent> _abilityEquipEventLocator = new();
+        private readonly ServiceLocator<PvSoAbilityEquipEvent> _raiserServiceForAbilityEquip = new();
 
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
         
@@ -151,7 +151,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new Exception("ERROR: Ability is not a weapon to EQUIP!");
             }
             _currentAbility = ability;
-            _abilityEquipEventLocator.Service.Raise(this, ability);
+            _raiserServiceForAbilityEquip.Service.Raise(this, ability);
         }
         
         public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)

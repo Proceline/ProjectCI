@@ -9,6 +9,9 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         public override List<PvMnCustomButtonSupport> ControlButtons => _controlButtons;
 
+        /// <summary>
+        /// If you assigned, you need to clean listener at last
+        /// </summary>
         public override int NumOfSlots
         {
             get => _controlButtons.Count;
@@ -23,16 +26,10 @@ namespace ProjectCI.Runtime.GUI.Battle
         [SerializeField]
         private UnityEvent<int> onClickSlotByDefault;
 
-        public override void ActivatePanel()
-        {
-            // Empty
-        }
-
         private void DisableAllControlButtons()
         {
             _controlButtons.ForEach(button =>
             {
-               button.Button.onClick.RemoveAllListeners();
                button.gameObject.SetActive(false);
             });
         }
@@ -45,14 +42,13 @@ namespace ProjectCI.Runtime.GUI.Battle
                 if (i >= _controlButtons.Count)
                 {
                     var newButton = Instantiate(controlButtonPrefab, buttonsContainer);
+                    newButton.ButtonIndex = i;
                     _controlButtons.Add(newButton);
                 }
                 else
                 {
-                    var indexOfButton = i;
-                    var button = _controlButtons[indexOfButton];
+                    var button = _controlButtons[i];
                     button.gameObject.SetActive(true);
-                    button.Button.onClick.AddListener(() => onClickSlotByDefault?.Invoke(indexOfButton));
                 }
             }
         }

@@ -43,9 +43,6 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
         public UnityEvent<RaycastHit, Vector2Int, LevelGridBase> gridCreatingRule;
 
-        [SerializeField] 
-        private PvSoAbilityEquipEvent abilityEquipEvent;
-
         [Inject]
         private PvMnViewControlBattlePanel _battleViewControlPanel;
 

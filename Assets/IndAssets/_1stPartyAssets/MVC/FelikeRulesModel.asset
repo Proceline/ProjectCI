@@ -14,9 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilitySpeedAttributeType:
     value: 14
-  selectUnitEvent: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
-  turnViewEndEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
-  turnLogicEndEvent: {fileID: 11400000, guid: aa58336ff5926144380c17002c348436, type: 2}
   layerMasksRuleList:
   - serializedVersion: 2
     m_Bits: 64
@@ -84,6 +81,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  raiserOnOwnerSelectedEvent: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
   onTurnOwnerSelectedPreview:
     m_PersistentCalls:
       m_Calls:
@@ -116,7 +114,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onStateChangedImmediately: {fileID: 11400000, guid: 280ad2952b1111848ba1cf6a14bfd886, type: 2}
+  raiserTurnLogicallyEndEvent: {fileID: 11400000, guid: aa58336ff5926144380c17002c348436, type: 2}
+  raiserTurnAnimationEndEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
+  raiserOnStateChangedBeforeUEvent: {fileID: 11400000, guid: 280ad2952b1111848ba1cf6a14bfd886, type: 2}
   onStateChangedInModel:
     m_PersistentCalls:
       m_Calls:

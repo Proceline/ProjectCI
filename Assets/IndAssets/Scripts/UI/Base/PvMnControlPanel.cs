@@ -10,17 +10,5 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [SerializeField] 
         protected RectTransform buttonsContainer;
-
-        public abstract void ActivatePanel();
-        
-        public void HidePanel()
-        {
-            
-        }
-
-        public void DisablePanel()
-        {
-            
-        }
     }
 }

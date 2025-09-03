@@ -33,15 +33,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
 
         [SerializeField] 
-        private PvSoUnitSelectEvent selectUnitEvent;
-
-        [SerializeField] 
-        private PvSoTurnViewEndEvent turnViewEndEvent;
-
-        [SerializeField] 
-        private PvSoTurnLogicEndEvent turnLogicEndEvent;
-
-        [SerializeField] 
         private LayerMask[] layerMasksRuleList;
         
         [SerializeField] 
@@ -58,16 +49,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private UnityEvent<PvMnBattleGeneralUnit, PvSoUnitAbility> onUpdateSupportWithAbility;
 
         [Header("Select Support")]
+        
+        [SerializeField] 
+        private PvSoUnitSelectEvent raiserOnOwnerSelectedEvent;
+        
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerSelectedPreview;
         
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
 
+        [Header("On Turn Support")]
+        
+        [SerializeField] 
+        private PvSoTurnLogicEndEvent raiserTurnLogicallyEndEvent;
+        
+        [SerializeField] 
+        private PvSoTurnViewEndEvent raiserTurnAnimationEndEvent;
+        
         [Header("State Support")]
         
         [SerializeField]
-        private PvSoUnitBattleStateEvent onStateChangedImmediately;
+        private PvSoUnitBattleStateEvent raiserOnStateChangedBeforeUEvent;
         
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
@@ -130,7 +133,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
             }
 
-            onStateChangedImmediately.Raise(selectedUnit, state, stateBehaviour);
+            raiserOnStateChangedBeforeUEvent.Raise(selectedUnit, state, stateBehaviour);
             onStateChangedInModel?.Invoke(selectedUnit, state);
         }
 
@@ -152,7 +155,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             ChangeStateForSelectedUnit(UnitBattleState.Moving);
             onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
-            selectUnitEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
+            raiserOnOwnerSelectedEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
         }
 
         private void ClearStateAndDeselectUnit()
@@ -165,7 +168,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
             onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
-            selectUnitEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
+            raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
         }
 
@@ -270,7 +273,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             // TODO: This should be responded through Broadcast
             ClearStateAndDeselectUnit();
             
-            turnViewEndEvent.Raise();
+            raiserTurnAnimationEndEvent.Raise();
 
             void RefreshAimCell(CommandResult result)
             {

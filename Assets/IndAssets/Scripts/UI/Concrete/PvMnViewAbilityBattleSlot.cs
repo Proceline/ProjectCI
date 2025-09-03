@@ -2,6 +2,7 @@ using System;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace ProjectCI.Runtime.GUI.Battle
@@ -14,8 +15,8 @@ namespace ProjectCI.Runtime.GUI.Battle
         [NonSerialized]
         private PvSoUnitAbility _abilityData;
 
-        [SerializeField] 
-        private PvSoAbilitySelectEvent abilitySelectEvent;
+        [FormerlySerializedAs("abilitySelectEvent")] [SerializeField] 
+        private PvSoAbilitySelectEvent raiserAbilitySelectEvent;
         
         public void Setup(PvSoUnitAbility ability)
         {
@@ -33,7 +34,7 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             if (bIsOn && _abilityData)
             {
-                abilitySelectEvent.Raise(_abilityData);
+                raiserAbilitySelectEvent.Raise(_abilityData);
             }
         }
 
