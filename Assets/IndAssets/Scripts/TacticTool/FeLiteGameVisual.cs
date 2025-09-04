@@ -28,31 +28,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _bufferedVisualStateCells.Clear();
         }
-        
-        /// <summary>
-        /// Highlight Ability Range, but you need do reset manually
-        /// </summary>
-        /// <param name="ability"></param>
-        /// <param name="casterUnit"></param>
-        public void HighlightAbilityRange(PvSoUnitAbility ability, GridPawnUnit casterUnit)
+
+        private void HighlightAbilityOrSupportCells(PvSoUnitAbility ability, PvMnBattleGeneralUnit unit, CellState state)
         {
-            if (!ability.GetShape())
-            {
-                return;
-            }
-
-            List<LevelCellBase> abilityCells = ability.GetAbilityCells(casterUnit);
-
-            CellState abilityState = ability.GetEffectedTeam() == BattleTeam.Hostile ? CellState.eNegative : CellState.ePositive;
-
+            List<LevelCellBase> abilityCells = ability.GetAbilityCells(unit);
             foreach (LevelCellBase cell in abilityCells)
             {
                 _bufferedVisualStateCells.Add(cell);
-                TacticBattleManager.SetCellState(cell, abilityState);
+                TacticBattleManager.SetCellState(cell, state);
             }
         }
 
-        public void HighlightMovementRange(GridPawnUnit casterUnit)
+        private void HighlightMovementRange(GridPawnUnit casterUnit)
         {
             List<LevelCellBase> allowedMovementCells = casterUnit.GetAllowedMovementCells();
             foreach (LevelCellBase cell in allowedMovementCells)
@@ -201,10 +188,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             switch (state)
             {
                 case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
                     var ability = unit.EquippedAbility;
-                    ResetVisualStateCells();
-                    HighlightAbilityRange(ability, unit);
+                    HighlightAbilityAndSupportRange(unit);
                     //TODO: Consider ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
                     UpdateHoverCells(unit, ability);
                     break;
@@ -218,6 +203,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 case UnitBattleState.MovingProgress:
                     ResetVisualStateCells();
                     break;
+                case UnitBattleState.AbilityTargeting:
                 case UnitBattleState.Idle:
                 case UnitBattleState.AbilityConfirming:
                 default:
@@ -225,6 +211,48 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     break;
             }
         }
+
+        /// <summary>
+        /// Both used in Event Call and Internal
+        /// </summary>
+        public void HighlightAbilityAndSupportRange(PvMnBattleGeneralUnit casterUnit)
+        {
+            ResetVisualStateCells();
+            var ability = casterUnit.EquippedAbility;
+            if (!ability || !ability.GetShape())
+            {
+                throw new NullReferenceException("ERROR: Ability MUST have Shape!");
+            }
+
+            HighlightAbilityOrSupportCells(ability, casterUnit, CellState.eNegative);
+
+            var support = casterUnit.DefaultSupport;
+            if (!support.GetShape())
+            {
+                throw new NullReferenceException("ERROR: Support MUST have Shape!");
+            }
+
+            HighlightAbilityOrSupportCells(support, casterUnit, CellState.ePositive);
+        }
+        
+        public void ReHighlightAbilityRange(PvSoUnitAbility ability, PvMnBattleGeneralUnit casterUnit)
+        {
+            ResetVisualStateCells();
+
+            if (!ability)
+            {
+                return;
+            }
+
+            if (!ability.GetShape())
+            {
+                throw new NullReferenceException("ERROR: This specific Ability MUST have Shape!");
+            }
+
+            HighlightAbilityOrSupportCells(ability, casterUnit,
+                ability.GetEffectedTeam() == BattleTeam.Friendly ? CellState.ePositive : CellState.eNegative);
+        }
+
         #endregion
         
         #region NonGrid Visual

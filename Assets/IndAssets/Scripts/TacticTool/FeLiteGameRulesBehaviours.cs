@@ -3,11 +3,18 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
+using ProjectCI.CoreSystem.Runtime.Abilities;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public partial class FeLiteGameRules
     {
+        [Header("View Strong Links")]
+        [SerializeField] private UnityEvent<PvSoUnitAbility, PvMnBattleGeneralUnit> onPreviewAbilitiesIndex;
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onResetDefaultAbilitiesRange;
+        
         /// <summary>
         /// Asset usage in Battle Scene
         /// </summary>
@@ -81,6 +88,76 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                 // TODO: Logically end the action, might need some event
             }
+        }
+
+        /// <summary>
+        /// Normally used in Buttons with ButtonIndex
+        /// </summary>
+        /// <param name="index"></param>
+        /// <exception cref="IndexOutOfRangeException"></exception>
+        public void PreviewPlayerAbilityInModel(int index = -1)
+        {
+            if (!_selectedUnit)
+            {
+                return;
+            }
+
+            if (index == -1)
+            {
+                onPreviewAbilitiesIndex.Invoke(_selectedUnit.EquippedAbility, _selectedUnit);
+                return;
+            }
+
+            var attacks = _selectedUnit.GetAttackAbilities();
+            if (index >= attacks.Count)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            onPreviewAbilitiesIndex.Invoke(attacks[index], _selectedUnit);
+        }
+
+        /// <summary>
+        /// Normally used in Buttons with ButtonIndex
+        /// </summary>
+        /// <param name="index"></param>
+        /// <exception cref="IndexOutOfRangeException"></exception>
+        public void PreviewPlayerSupportInModel(int index = -1)
+        {
+
+            if (!_selectedUnit)
+            {
+                return;
+            }
+
+            if (index == -1)
+            {
+                var defaultSupport = _selectedUnit.DefaultSupport;
+                if (defaultSupport)
+                {
+                    onPreviewAbilitiesIndex.Invoke(defaultSupport, _selectedUnit);
+                }
+
+                return;
+            }
+
+            var supports = _selectedUnit.GetSupportAbilities();
+            if (index >= supports.Count)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            onPreviewAbilitiesIndex.Invoke(supports[index], _selectedUnit);
+        }
+
+        public void ResetPlayerDefaultAbilities()
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException();
+            }
+            
+            onResetDefaultAbilitiesRange.Invoke(_selectedUnit);
         }
     }
 }

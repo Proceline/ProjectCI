@@ -4,6 +4,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
@@ -32,7 +33,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private Coroutine _rotatingCoroutine;
 
         public PvSoUnitAbility EquippedAbility
-            // { get => _currentAbility.Item1; set => _currentAbility.Item1 = value; }
         {
             get
             {
@@ -41,9 +41,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     return _currentAbility;
                 }
 
-                var firstWeaponAbility = _battleAbilities.Find(ability => ability.IsAbilityWeapon());
+                var firstWeaponAbility = _battleAbilities.Find(ability =>
+                    ability.IsAbilityWeapon() && ability.GetEffectedTeam() == BattleTeam.Hostile);
                 EquipAbility(firstWeaponAbility);
                 return _currentAbility;
+            }
+        }
+        
+        public PvSoUnitAbility DefaultSupport
+        {
+            get
+            {
+                return _battleAbilities.Find(ability =>
+                    !ability.IsAbilityWeapon() && ability.GetEffectedTeam() == BattleTeam.Friendly);
             }
         }
         
@@ -163,9 +173,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public List<PvSoUnitAbility> GetUsableAbilities()
+        public List<PvSoUnitAbility> GetUsableAbilities() => _battleAbilities;
+
+        public List<PvSoUnitAbility> GetAttackAbilities()
         {
-            return _battleAbilities;
+            return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Hostile);
+        }
+        
+        public List<PvSoUnitAbility> GetSupportAbilities()
+        {
+            return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Friendly);
         }
 
         public override UnitBattleState GetCurrentState()

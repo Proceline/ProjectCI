@@ -97,7 +97,7 @@ namespace ProjectCI.Runtime.GUI.Battle
 
             mainControlPanel.gameObject.SetActive(false);
             sideControlPanel.gameObject.SetActive(true);
-            var abilities = _determinedUnit.GetUsableAbilities();
+            var abilities = _determinedUnit.GetAttackAbilities();
             sideControlPanel.NumOfSlots = abilities.Count;
             sideControlPanel.ControlButtons.ForEach(customButton =>
             {

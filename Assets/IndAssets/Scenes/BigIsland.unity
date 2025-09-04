@@ -17341,6 +17341,7 @@ MonoBehaviour:
   unitAbilities:
   - {fileID: 11400000, guid: 7e6b92df314062d41907bc2699620556, type: 2}
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   m_ExtraAttributes:
   - m_AttributeType:
       value: 15
@@ -44809,6 +44810,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonContentText: {fileID: 1768734162}
+  onButtonClickedAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onButtonHoveredAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1415648217 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3604274183285564942, guid: fdc3fcdb18e51cf44b134308461bc877, type: 3}
@@ -45101,6 +45108,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonContentText: {fileID: 183736724}
+  onButtonClickedAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onButtonHoveredAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1427697449 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3063450851153204193, guid: 473e58a45cf2c5b46a6172709dec44b5, type: 3}
@@ -49728,6 +49741,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonContentText: {fileID: 281814069}
+  onButtonClickedAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onButtonHoveredAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1594742090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53860,6 +53879,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonContentText: {fileID: 824512257}
+  onButtonClickedAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onButtonHoveredAsIndexPostEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1713595787
 PrefabInstance:
   m_ObjectHideFlags: 0
