@@ -19,7 +19,7 @@ MonoBehaviour:
   m_bAllowBlocked: 1
   m_EffectedTeam: 2
   m_EffectedType: 0
-  m_AbilityShape: {fileID: 11400000, guid: 8e507bc5180987744934293604bd252e, type: 2}
+  m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
   m_SpawnOnCaster: []

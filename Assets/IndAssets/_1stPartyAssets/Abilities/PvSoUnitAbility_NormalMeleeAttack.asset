@@ -19,7 +19,7 @@ MonoBehaviour:
   m_bAllowBlocked: 1
   m_EffectedTeam: 2
   m_EffectedType: 0
-  m_AbilityShape: {fileID: 11400000, guid: 405df59af8961ce4592c016ad1fe05a7, type: 2}
+  m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
   m_SpawnOnCaster: []
@@ -30,4 +30,5 @@ MonoBehaviour:
   isCounterAllowed: 1
   isFollowUpAllowed: 1
   isAbilityWeapon: 1
+  projectilePrefab: {fileID: 0}
   abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
