@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8235728796978286583}
   - component: {fileID: -8831707949372437208}
   m_Layer: 0
-  m_Name: ProjectCI TestCell
+  m_Name: ProjectCI Cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,9 +29,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2529811221382486278}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: -18.839128, y: 10.25099, z: -18.832335}
-  m_LocalScale: {x: 100, y: 99.99997, z: 20}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2529811221382486278}
-  m_Mesh: {fileID: 4300000, guid: 7126d060cdb734d45a063ab3bb8f786e, type: 3}
+  m_Mesh: {fileID: -5495902117074765545, guid: 542895bb305ff2c46b5f19b898614ce3, type: 3}
 --- !u!23 &297639793681802095
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -68,6 +68,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: eb8718ee5b0307b439e6610faa03e1ac, type: 2}
+  - {fileID: 2100000, guid: c44c393a4036d7846b1c20c737829bf0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,7 +111,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 7126d060cdb734d45a063ab3bb8f786e, type: 3}
+  m_Mesh: {fileID: -5495902117074765545, guid: 542895bb305ff2c46b5f19b898614ce3, type: 3}
 --- !u!114 &8235728796978286583
 MonoBehaviour:
   m_ObjectHideFlags: 0

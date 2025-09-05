@@ -6,18 +6,19 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
 using ProjectCI.Runtime.GUI.Battle;
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using Unity.VisualScripting;
+using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.Battleground
 {
     [CreateAssetMenu(fileName = "PvSoBattlegroundMaker", menuName = "Project CI/Battleground/PvSoBattlegroundMaker")]
     public class PvSoBattlegroundMaker : ScriptableObject, IService
     {
-        public float hexWidth = 2f;
-        public float hexHeight = 2f;
+        private const float DefaultCellValue = 2.25f;
+        public float cellWidth = DefaultCellValue;
+        public float cellHeight = DefaultCellValue;
         public int gridWidth = 5;
         public int gridHeight = 5;
         
@@ -48,8 +49,8 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         {
             GridBattleUtils.GenerateLevelGridFromGround(
                 centerPosition,
-                hexWidth,
-                hexHeight,
+                cellWidth,
+                cellHeight,
                 new Vector2Int(gridWidth, gridHeight),
                 layerMask,
                 cellPalette,
@@ -59,6 +60,15 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
             if (_levelGrid)
             {
+                float scaleSize = cellWidth / DefaultCellValue;
+                if (!Mathf.Approximately(scaleSize, 1f))
+                {
+                    _levelGrid.GetAllCells().ForEach(cellMesh =>
+                    {
+                        var scale = cellMesh.transform.localScale;
+                        cellMesh.transform.localScale = scale * scaleSize;
+                    });
+                }
                 Debug.Log($"Successfully generated grid with {gridWidth * gridHeight} cells");
 
                 // 创建 Battle Manager

@@ -15,4 +15,4 @@ MonoBehaviour:
   m_CellPieces:
   - m_Name: Normal
     m_Cells:
-    - {fileID: 2529811221382486278, guid: ae5185b2eecf6e444bc952d25c6ef6a7, type: 3}
+    - {fileID: 2529811221382486278, guid: 5358a1efd2526234687eadb313243ca2, type: 3}
