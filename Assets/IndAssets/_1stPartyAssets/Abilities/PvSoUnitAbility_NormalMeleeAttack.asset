@@ -32,3 +32,4 @@ MonoBehaviour:
   isAbilityWeapon: 1
   projectilePrefab: {fileID: 0}
   abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
+  hitEffectPrefab: {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}

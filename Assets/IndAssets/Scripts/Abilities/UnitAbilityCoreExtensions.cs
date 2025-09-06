@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Pools;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -46,6 +47,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                 foreach (Action<GridPawnUnit, LevelCellBase> react in reacts)
                 {
                     react?.Invoke(casterUnit, target);
+                    if (!ability.HitEffectPrefab) continue;
+                    var hitEffect = MnObjectPool.Instance.Get(ability.HitEffectPrefab);
+                    hitEffect.transform.position = target.transform.position + Vector3.up * 2;
                 }
 
                 if (abilityAnimation)

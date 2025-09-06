@@ -9,14 +9,11 @@ using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using UnityEngine;
 
-namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
+namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
     [CreateAssetMenu(fileName = "PvSoDirectDamageParams", menuName = "ProjectCI Tools/Ability/Parameters/PvSoDirectDamageParams")]
     public class PvSoDirectDamageAbilityParams : AbilityParamBase
     {
-        // TODO: This will affect player's attack might
-        public int m_Damage;
-
         public AttributeType attackerAttribute;
         public AttributeType defenderAttribute;
 

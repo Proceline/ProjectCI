@@ -25,7 +25,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [HideInInspector]
         public UnitAbilityAnimation abilityAnimation;
 
+        [SerializeField] 
+        private GameObject hitEffectPrefab;
+
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
+        public GameObject HitEffectPrefab => hitEffectPrefab;
         
         public bool IsCounterAllowed()
         {
