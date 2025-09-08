@@ -47,12 +47,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         [SerializeField]
         private InputActionPairForCellTarget onCellSelectedWhileTargeting;
+
+        [SerializeField] 
+        private InputActionReference onControllerCancelled;
+
+        [SerializeField]
+        private UnityEvent onControllerCancelledUnityEvent;
         
         public void RegisterControlActions()
         {
             onCellSelectedForTurnOwner.RegisterCellControl(gameVisual);
             onCellSelectedForMovement.RegisterCellControl(gameVisual);
             onCellSelectedWhileTargeting.RegisterCellControl(gameVisual);
+            onControllerCancelled.action.canceled += ApplyCancelFromUnityEvent;
         }
 
         public void UnregisterControlActions()
@@ -60,6 +67,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onCellSelectedForTurnOwner.UnregisterCellControl();
             onCellSelectedForMovement.UnregisterCellControl();
             onCellSelectedWhileTargeting.UnregisterCellControl();
+            onControllerCancelled.action.canceled -= ApplyCancelFromUnityEvent;
         }
 
         public void DisableAllConfirm()
@@ -74,11 +82,30 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             EnableConfirmActionByState(UnitBattleState.UsingAbility);
         }
 
+        public void ToggleSelectedUnitCancelAction(bool enabled)
+        {
+            if (enabled)
+            {
+                Debug.Log("Hint: ControlCancel for SelectedUnit ENABLED!");
+                onControllerCancelled.action.Enable();
+            }
+            else
+            {
+                Debug.Log("Hint: ControlCancel for SelectedUnit DISABLED!");
+                onControllerCancelled.action.Disable();
+            }
+        }
+
         public void SwitchEnabledConfirmAction(PvMnBattleGeneralUnit unit, UnitBattleState state)
         {
             EnableConfirmActionByState(state);
         }
 
+        private void ApplyCancelFromUnityEvent(InputAction.CallbackContext context)
+        {
+            onControllerCancelledUnityEvent.Invoke();
+        }
+        
         private void EnableConfirmActionByState(UnitBattleState state)
         {
             DisableAllConfirm();
@@ -86,6 +113,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 case UnitBattleState.Moving:
                     onCellSelectedForMovement.InputAction.Enable();
+                    ToggleSelectedUnitCancelAction(true);
                     break;
                 case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:

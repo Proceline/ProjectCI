@@ -15,9 +15,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Confirm",
+                    "name": "Action Cancel",
                     "type": "Button",
-                    "id": "ba40b40f-c6e9-4d34-b40b-151c7b1169a7",
+                    "id": "5db73f55-ec94-4ee4-9ea4-109feeb13aaa",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -101,12 +101,12 @@
                 },
                 {
                     "name": "",
-                    "id": "7fea4598-6319-4c21-9b8b-edba7e52a365",
-                    "path": "<Mouse>/leftButton",
+                    "id": "99c53c78-eaa9-49de-987a-bbf8623a6cb8",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Confirm",
+                    "action": "Action Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -32,6 +32,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private Coroutine _rotatingCoroutine;
 
+        private int _maximumMovementPoints;
+
         public PvSoUnitAbility EquippedAbility
         {
             get
@@ -217,6 +219,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             CurrentMovementPoints = 
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
+            _maximumMovementPoints = CurrentMovementPoints;
+        }
+
+        public void ResetMovementPoints()
+        {
+            CurrentMovementPoints = _maximumMovementPoints;
         }
 
         public override List<LevelCellBase> GetAllowedMovementCells()

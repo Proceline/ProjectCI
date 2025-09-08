@@ -72,6 +72,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private PvSoUnitBattleStateEvent raiserOnStateChangedBeforeUEvent;
         
+        /// <summary>
+        /// Used for Controller and Models to show range and enable/disable input actions
+        /// </summary>
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
         public UnitBattleState CurrentBattleState =>
@@ -137,6 +140,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onStateChangedInModel?.Invoke(selectedUnit, state);
         }
 
+        private UnitBattleState CancelStatePurelyForUnit(PvMnBattleGeneralUnit unit, UnitBattleState stateToBeRemoved)
+        {
+            unit.RemoveLastState();
+            var stateAfterRemove = unit.GetCurrentState();
+            if (stateAfterRemove == UnitBattleState.MovingProgress)
+            {
+                unit.RemoveLastState();
+                stateAfterRemove = unit.GetCurrentState();
+            }
+            // Notify which state is going to be removed
+            raiserOnStateChangedBeforeUEvent.Raise(unit, stateToBeRemoved, UnitStateBehaviour.Popping);
+            // Notify which state is ON
+            onStateChangedInModel?.Invoke(unit, stateAfterRemove);
+            return stateAfterRemove;
+        }
+
+        /// <summary>
+        /// Select Turn Owner Unit state will be different from other State Switch
+        /// </summary>
+        /// <param name="selectingUnit"></param>
+        /// <exception cref="Exception"></exception>
         private void PushStateAfterSelectUnit(PvMnBattleGeneralUnit selectingUnit)
         {
             if (_selectedUnit)
@@ -172,17 +196,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _selectedUnit = null;
         }
 
-        #endregion
-
-        private void SetupTeam(BattleTeam inTeam)
-        {
-            List<GridPawnUnit> units = TacticBattleManager.GetUnitsOnTeam(inTeam);
-            foreach (GridPawnUnit unit in units)
-            {
-                unit.HandleTurnStarted();
-            }
-        }
-
+        /// <summary>
+        /// Only Used for binding to OnMovementEnd of Pawn
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         private void UpdatePlayerStateAfterRegularMove()
         {
             if (!_selectedUnit) return;
@@ -192,6 +209,53 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     $"State ERROR: Current State must be <{UnitBattleState.MovingProgress.ToString()}>, but Having <{CurrentBattleState.ToString()}>");
             }
             ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
+        }
+
+        public void CancelLastStateForSelectedUnit()
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException(
+                    "ERROR: This Cancel function should be called ONLY when Unit Selected.");
+            }
+
+            var state = _selectedUnit.GetCurrentState();
+            switch (state)
+            {
+                case UnitBattleState.MovingProgress:
+                    Debug.LogError("State change doesn't work during Moving Progress!");
+                    break;
+                case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
+                    if (state == UnitBattleState.UsingAbility)
+                    {
+                        _selectedUnit.ResetMovementPoints();
+                    }
+
+                    CancelStatePurelyForUnit(_selectedUnit, state);
+                    break;
+                case UnitBattleState.Moving:
+                    Debug.LogWarning("You are cancelling state for selected Unit!");
+                    break;
+                case UnitBattleState.AbilityConfirming:
+                    Debug.LogWarning("State change doesn't work in AbilityConfirming!");
+                    break;
+                case UnitBattleState.Finished:
+                case UnitBattleState.Idle:
+                default:
+                    break;
+            }
+        }
+
+        #endregion
+
+        private void SetupTeam(BattleTeam inTeam)
+        {
+            List<GridPawnUnit> units = TacticBattleManager.GetUnitsOnTeam(inTeam);
+            foreach (GridPawnUnit unit in units)
+            {
+                unit.HandleTurnStarted();
+            }
         }
 
         public override void Update()

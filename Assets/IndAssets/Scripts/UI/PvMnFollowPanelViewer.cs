@@ -14,9 +14,15 @@ namespace ProjectCI.Runtime.GUI.Battle
         [SerializeField] 
         private Camera controlUiCamera;
         
+        /// <summary>
+        /// Root of Canvas
+        /// </summary>
         [SerializeField] 
         private GameObject canvasGameObject;
 
+        /// <summary>
+        /// Root of Attack/Ride/Support/Wait
+        /// </summary>
         [SerializeField]
         private PvMnControlPanel mainControlPanel;
 
@@ -61,6 +67,32 @@ namespace ProjectCI.Runtime.GUI.Battle
                             DisableFollowingCanvas();
                             break;
                         case UnitBattleState.AbilityTargeting:
+                        case UnitBattleState.AbilityConfirming:
+                        case UnitBattleState.Idle:
+                        case UnitBattleState.MovingProgress:
+                        case UnitBattleState.Finished:
+                        default:
+                            DisableFollowingCanvas();
+                            break;
+                    }
+                }
+                else if (stateBehaviour == UnitStateBehaviour.Popping)
+                {
+                    // while Popping, the state in parameter is the state TO BE REMOVED (already removed)
+                    switch (state)
+                    {
+                        case UnitBattleState.UsingAbility:
+                            mainControlPanel.gameObject.SetActive(false);
+                            // TODO: Consider side
+                            DisableFollowingCanvas();
+                            break;
+                        case UnitBattleState.Moving:
+                            throw new NotImplementedException("ERROR: Cancel from Moving still in progress");
+                            _determinedUnit = null;
+                            DisableFollowingCanvas();
+                            break;
+                        case UnitBattleState.AbilityTargeting:
+                            throw new NotImplementedException("ERROR: Cancel from Targeting still in progress");
                         case UnitBattleState.AbilityConfirming:
                         case UnitBattleState.Idle:
                         case UnitBattleState.MovingProgress:

@@ -14,24 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameRulesModel: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
   gameVisual: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
-  onCellSelectedFoTurnOwner:
-    inputActionReference: {fileID: 5395146128303671689, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
-    onCellConfirmed:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
-          m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
-            Assembly-CSharp
-          m_MethodName: ApplyCellUnitToSelectedUnit
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
   onCellSelectedForTurnOwner:
     inputActionReference: {fileID: 5395146128303671689, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
     onCellConfirmed:
@@ -86,3 +68,20 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  onControllerCancelled: {fileID: 8939409920718070800, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  onControllerCancelledUnityEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: CancelLastStateForSelectedUnit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
