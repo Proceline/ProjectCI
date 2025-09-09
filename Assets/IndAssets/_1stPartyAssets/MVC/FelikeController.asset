@@ -85,3 +85,4 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onBattleControlPanelCanceled: {fileID: 7169567937759881902, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}

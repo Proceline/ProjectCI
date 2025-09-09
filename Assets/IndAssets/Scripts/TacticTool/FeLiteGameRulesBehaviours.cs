@@ -14,6 +14,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Header("View Strong Links")]
         [SerializeField] private UnityEvent<PvSoUnitAbility, PvMnBattleGeneralUnit> onPreviewAbilitiesIndex;
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onResetDefaultAbilitiesRange;
+
+        [NonSerialized] private LevelCellBase _selectedUnitLastCell;
         
         /// <summary>
         /// Asset usage in Battle Scene
@@ -23,7 +25,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (!cell) return;
             // TODO: Consider Lock
-            GridPawnUnit standUnit = cell.GetUnitOnCell();
+            var standUnit = cell.GetUnitOnCell();
+            _selectedUnitLastCell = null;
+            
             if (standUnit is PvMnBattleGeneralUnit playableUnit)
             {
                 if (standUnit.GetTeam() == CurrentTeam)
@@ -52,12 +56,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 return;
             }
+
+            _selectedUnitLastCell = _selectedUnit.GetCell();
             if (_selectedUnit.ExecuteMovement(targetCell))
             {
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
             }
         }
-        
+
         /// <summary>
         /// Asset usage in Battle Scene
         /// </summary>

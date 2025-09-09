@@ -42512,6 +42512,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d71fb8fdd7564124591ae9173367da6e, type: 3}
+--- !u!1 &1342956169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1342956171}
+  - component: {fileID: 1342956170}
+  m_Layer: 0
+  m_Name: InSceneControllerBridge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1342956170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1342956169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73bd898f62a05274fa5b5d17a37dc0ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 11400000, guid: 11c740db8f6c4e64487d2b1c494a2ea9, type: 2}
+  onControlPanelUiCanceledApplied:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1658297597}
+        m_TargetAssemblyTypeName: ProjectCI.Runtime.GUI.Battle.PvMnFollowPanelViewer,
+          Assembly-CSharp
+        m_MethodName: ToggleSideControlPanelAndMainControlPanel
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!4 &1342956171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1342956169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.3865747, y: 8.460368, z: -4.524998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1343070894
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52009,6 +52070,22 @@ MonoBehaviour:
   canvasGameObject: {fileID: 244435116}
   mainControlPanel: {fileID: 960232009}
   sideControlPanel: {fileID: 2127671595}
+  onSideControlPanelToggled:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1342956170}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnGameControllerBridge,
+          Assembly-CSharp
+        m_MethodName: ToggleControlPanelUICancel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1658297598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52029,8 +52106,8 @@ MonoBehaviour:
         - m_Target: {fileID: 11400000, guid: 11c740db8f6c4e64487d2b1c494a2ea9, type: 2}
           m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameController,
             Assembly-CSharp
-          m_MethodName: DisableAllConfirm
-          m_Mode: 1
+          m_MethodName: set_IsBattlegroundInteractionOn
+          m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -52046,15 +52123,15 @@ MonoBehaviour:
         - m_Target: {fileID: 11400000, guid: 11c740db8f6c4e64487d2b1c494a2ea9, type: 2}
           m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameController,
             Assembly-CSharp
-          m_MethodName: EnableConfirmActionOnAbilityDetermining
-          m_Mode: 1
+          m_MethodName: set_IsBattlegroundInteractionOn
+          m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
-            m_BoolArgument: 0
+            m_BoolArgument: 1
           m_CallState: 2
 --- !u!1001 &1660782530
 PrefabInstance:
@@ -68267,3 +68344,4 @@ SceneRoots:
   - {fileID: 8168464463013384539}
   - {fileID: 1658297596}
   - {fileID: 1604073942}
+  - {fileID: 1342956171}

@@ -3,6 +3,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
@@ -31,6 +32,12 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [NonSerialized]
         private PvMnBattleGeneralUnit _determinedUnit;
+
+        /// <summary>
+        /// Disable BattleActionCancel input action will be bind in here
+        /// </summary>
+        [SerializeField]
+        private UnityEvent<bool> onSideControlPanelToggled;
 
         private void Start()
         {
@@ -87,10 +94,9 @@ namespace ProjectCI.Runtime.GUI.Battle
                             DisableFollowingCanvas();
                             break;
                         case UnitBattleState.Moving:
-                            throw new NotImplementedException("ERROR: Cancel from Moving still in progress");
                             _determinedUnit = null;
                             DisableFollowingCanvas();
-                            break;
+                            throw new NotImplementedException("ERROR: Cancel from Moving still in progress");
                         case UnitBattleState.AbilityTargeting:
                             throw new NotImplementedException("ERROR: Cancel from Targeting still in progress");
                         case UnitBattleState.AbilityConfirming:
@@ -127,8 +133,7 @@ namespace ProjectCI.Runtime.GUI.Battle
                 throw new NullReferenceException("ERROR: No Unit Selected");
             }
 
-            mainControlPanel.gameObject.SetActive(false);
-            sideControlPanel.gameObject.SetActive(true);
+            ToggleSideControlPanelAndMainControlPanel(true);
             var abilities = _determinedUnit.GetAttackAbilities();
             sideControlPanel.NumOfSlots = abilities.Count;
             sideControlPanel.ControlButtons.ForEach(customButton =>
@@ -139,6 +144,13 @@ namespace ProjectCI.Runtime.GUI.Battle
                     Debug.Log("Click on this skill!");
                 };
             });
+        }
+
+        public void ToggleSideControlPanelAndMainControlPanel(bool isSideControlOn)
+        {
+            sideControlPanel.gameObject.SetActive(isSideControlOn);
+            mainControlPanel.gameObject.SetActive(!isSideControlOn);
+            onSideControlPanelToggled.Invoke(isSideControlOn);
         }
     }
 }

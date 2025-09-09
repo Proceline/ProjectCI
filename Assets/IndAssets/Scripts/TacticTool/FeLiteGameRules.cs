@@ -229,7 +229,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 case UnitBattleState.AbilityTargeting:
                     if (state == UnitBattleState.UsingAbility)
                     {
+                        if (!_selectedUnitLastCell)
+                        {
+                            throw new NullReferenceException("ERROR: No record of Last Stand Cell!");
+                        }
                         _selectedUnit.ResetMovementPoints();
+                        // TODO: Consider clean up movement buff
+                        // TODO: Consider if NEED rotation RESET (Maybe not since rotation not matter)
+                        _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                     }
 
                     CancelStatePurelyForUnit(_selectedUnit, state);

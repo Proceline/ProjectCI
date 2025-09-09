@@ -9,33 +9,42 @@ using UnityEngine.InputSystem;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
-    [Serializable]
-    public class InputActionPairForCellTarget
-    {
-        public InputActionReference inputActionReference;
-        public UnityEvent<LevelCellBase> onCellConfirmed;
-
-        [NonSerialized] private Action<InputAction.CallbackContext> _preloadedMethod;
-
-        internal InputAction InputAction => inputActionReference.action;
-
-        public void RegisterCellControl(FeLiteGameVisual visual)
-        {
-            UnregisterCellControl();
-            _preloadedMethod = _ => onCellConfirmed?.Invoke(visual.CurrentHoverCell);
-            InputAction.canceled += _preloadedMethod;
-        }
-
-        public void UnregisterCellControl()
-        {
-            InputAction.canceled -= _preloadedMethod;
-            _preloadedMethod = null;
-        }
-    }
     
     [CreateAssetMenu(fileName = "New Controller", menuName = "ProjectCI Tools/MVC/Controller", order = 1)]
     public class FeLiteGameController : ScriptableObject
     {
+        /// <summary>
+        /// Internal Cell Target Pair
+        /// </summary>
+        [Serializable]
+        public class InputActionPairForCellTarget
+        {
+            public InputActionReference inputActionReference;
+            public UnityEvent<LevelCellBase> onCellConfirmed;
+
+            [NonSerialized] private Action<InputAction.CallbackContext> _preloadedMethod;
+
+            internal InputAction InputAction => inputActionReference.action;
+
+            public void RegisterCellControl(FeLiteGameVisual visual)
+            {
+                UnregisterCellControl();
+                _preloadedMethod = _ =>
+                {
+                    if (!_isBattlegroundInteractionOn)
+                        return;
+                    onCellConfirmed?.Invoke(visual.CurrentHoverCell);
+                };
+                InputAction.canceled += _preloadedMethod;
+            }
+
+            public void UnregisterCellControl()
+            {
+                InputAction.canceled -= _preloadedMethod;
+                _preloadedMethod = null;
+            }
+        }
+        
         [SerializeField] private BattleGameRules gameRulesModel;
         [SerializeField] private FeLiteGameVisual gameVisual;
         
@@ -53,6 +62,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private UnityEvent onControllerCancelledUnityEvent;
+
+        [Header("UI Controllers"), SerializeField]
+        private InputActionReference onBattleControlPanelCanceled;
+
+        internal InputAction OnBattleControlPanelCanceledAction => onBattleControlPanelCanceled.ToInputAction();
+
+        private static bool _isBattlegroundInteractionOn = true;
+        public bool IsBattlegroundInteractionOn
+        {
+            get => _isBattlegroundInteractionOn;
+            set => _isBattlegroundInteractionOn = value;
+        }
         
         public void RegisterControlActions()
         {
@@ -75,11 +96,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onCellSelectedForTurnOwner.InputAction.Disable();
             onCellSelectedForMovement.InputAction.Disable();
             onCellSelectedWhileTargeting.InputAction.Disable();
-        }
-
-        public void EnableConfirmActionOnAbilityDetermining()
-        {
-            EnableConfirmActionByState(UnitBattleState.UsingAbility);
         }
 
         public void ToggleSelectedUnitCancelAction(bool enabled)

@@ -10,6 +10,7 @@ using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
@@ -258,7 +259,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 AudioHandler.PlayAudio(audioData, gameObject.transform.position);
             }
         }
-        
+
+        public void ForceMoveToCellImmediately(LevelCellBase targetCell)
+        {
+            if (targetCell == m_CurrentCell) return;
+            SetCurrentCell(targetCell);
+
+            gameObject.transform.position = targetCell.GetAllignPos(this);
+            StatusEffectUtils.HandleUnitOnCell(this, targetCell);
+        }
+
         #region Rotator
         public override void LookAtCell(LevelCellBase targetCell)
         {
