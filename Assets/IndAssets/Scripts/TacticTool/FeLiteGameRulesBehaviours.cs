@@ -4,6 +4,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using ProjectCI.CoreSystem.Runtime.Abilities;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -54,6 +55,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             if (!_selectedUnit || _selectedUnit.GetCurrentState() != UnitBattleState.Moving)
             {
+                return;
+            }
+
+            if (targetCell.GetUnitOnCell())
+            {
+                // TODO: Consider move to Unit = Ride/Be Ride
+                var teamSituation =
+                    TacticBattleManager.GetTeamAffinity(targetCell.GetCellTeam(), _selectedUnit.GetTeam());
+                Debug.Log(
+                    $"CELL<{targetCell.GetIndex().ToString()}> already be occupied by Pawn, Team is <color=green>{teamSituation.ToString()}</color>");
                 return;
             }
 

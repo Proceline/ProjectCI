@@ -227,6 +227,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             HighlightAbilityOrSupportCells(ability, casterUnit, CellState.eNegative);
 
             var support = casterUnit.DefaultSupport;
+            if (!support)
+            {
+                throw new NullReferenceException("ERROR: MUST HAVE A SUPPORT SKILL!");
+            }
             if (!support.GetShape())
             {
                 throw new NullReferenceException("ERROR: Support MUST have Shape!");

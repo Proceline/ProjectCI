@@ -6,7 +6,7 @@
             "id": "dd1bbed2-d202-4155-85a3-d1f7ea9d21b0",
             "actions": [
                 {
-                    "name": "Cancel",
+                    "name": "Unit Cancel",
                     "type": "Button",
                     "id": "74f67661-d156-440f-9473-550589d3b737",
                     "expectedControlType": "",
@@ -95,7 +95,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cancel",
+                    "action": "Unit Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

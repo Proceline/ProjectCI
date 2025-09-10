@@ -3,6 +3,7 @@ using ProjectCI.CoreSystem.Runtime.InputSupport;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -56,12 +57,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         [SerializeField]
         private InputActionPairForCellTarget onCellSelectedWhileTargeting;
-
+        
         [SerializeField] 
-        private InputActionReference onControllerCancelled;
-
-        [SerializeField]
-        private UnityEvent onControllerCancelledUnityEvent;
+        private InputActionReference onActionSelectionCanceled;
+        
+        [SerializeField] 
+        private InputActionReference onUnitSelectionCanceled;
+        
+        [SerializeField] 
+        private UnityEvent onActionSelectionCanceledBindingEvent;
+        
+        [SerializeField] 
+        private UnityEvent onUnitSelectionCanceledBindingEvent;
 
         [Header("UI Controllers"), SerializeField]
         private InputActionReference onBattleControlPanelCanceled;
@@ -80,7 +87,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onCellSelectedForTurnOwner.RegisterCellControl(gameVisual);
             onCellSelectedForMovement.RegisterCellControl(gameVisual);
             onCellSelectedWhileTargeting.RegisterCellControl(gameVisual);
-            onControllerCancelled.action.canceled += ApplyCancelFromUnityEvent;
+            onActionSelectionCanceled.action.canceled += ApplyActionCancelFromUnityEvent;
+            onUnitSelectionCanceled.action.canceled += ApplyUnitCancelFromUnityEvent;
         }
 
         public void UnregisterControlActions()
@@ -88,27 +96,99 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onCellSelectedForTurnOwner.UnregisterCellControl();
             onCellSelectedForMovement.UnregisterCellControl();
             onCellSelectedWhileTargeting.UnregisterCellControl();
-            onControllerCancelled.action.canceled -= ApplyCancelFromUnityEvent;
+            onActionSelectionCanceled.action.canceled -= ApplyActionCancelFromUnityEvent;
+            onUnitSelectionCanceled.action.canceled -= ApplyUnitCancelFromUnityEvent;
         }
 
-        public void DisableAllConfirm()
+        private void DisableAllConfirm()
         {
             onCellSelectedForTurnOwner.InputAction.Disable();
             onCellSelectedForMovement.InputAction.Disable();
             onCellSelectedWhileTargeting.InputAction.Disable();
         }
 
+        /// <summary>
+        /// This normally controlled by Control Panel/Finished
+        /// </summary>
+        /// <param name="enabled"></param>
         public void ToggleSelectedUnitCancelAction(bool enabled)
         {
             if (enabled)
             {
-                Debug.Log("Hint: ControlCancel for SelectedUnit ENABLED!");
-                onControllerCancelled.action.Enable();
+                Debug.Log("<color=blue>Cancel Action Enabled!</color>");
+                onActionSelectionCanceled.action.Enable();
             }
             else
             {
-                Debug.Log("Hint: ControlCancel for SelectedUnit DISABLED!");
-                onControllerCancelled.action.Disable();
+                Debug.Log("<color=red>Cancel Action Disabled!</color>");
+                onActionSelectionCanceled.action.Disable();
+            }
+        }
+        
+        private void TogglePendingSelectUnitAction(bool enabled)
+        {
+            if (enabled)
+            {
+                Debug.Log("<color=blue>Cancel Selected Unit Enabled!</color>");
+                onUnitSelectionCanceled.action.Enable();
+            }
+            else
+            {
+                Debug.Log("<color=red>Cancel Selected Unit Enabled!</color>");
+                onUnitSelectionCanceled.action.Disable();
+            }
+        }
+
+        /// <summary>
+        /// This event will be applied before EnableConfirmActionByState
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="stateEventParam"></param>
+        public void SwitchPendingSelectUnitActionWhileStating(IEventOwner owner, UnitStateEventParam stateEventParam)
+        {
+            var state = stateEventParam.battleState;
+            var stateBehaviour = stateEventParam.behaviour;
+
+            if (state == UnitBattleState.Moving && stateBehaviour == UnitStateBehaviour.Adding)
+            {
+                TogglePendingSelectUnitAction(true);
+                ToggleSelectedUnitCancelAction(false);
+            }
+            else if (state == UnitBattleState.UsingAbility)
+            {
+                switch (stateBehaviour)
+                {
+                    case UnitStateBehaviour.Adding:
+                        ToggleSelectedUnitCancelAction(true);
+                        break;
+                    case UnitStateBehaviour.Popping:
+                        ToggleSelectedUnitCancelAction(false);
+                        Debug.Log(
+                            $"<color=yellow>State <{UnitBattleState.MovingProgress.ToString()}> will be SKIPPED during Cancelling</color>");
+                        TogglePendingSelectUnitAction(true);
+                        break;
+                    default:
+                        throw new IndexOutOfRangeException(
+                            $"Using Behaviour<{stateBehaviour.ToString()}> is NOT allowed during <{state.ToString()}>");
+                }
+            }
+            else if (state == UnitBattleState.Finished)
+            {
+                if (stateBehaviour != UnitStateBehaviour.Adding && stateBehaviour != UnitStateBehaviour.Emphasis &&
+                    stateBehaviour != UnitStateBehaviour.Clear)
+                {
+                    throw new IndexOutOfRangeException(
+                        $"Using Behaviour<{stateBehaviour.ToString()}> is NOT allowed during <{state.ToString()}>");
+                }
+
+                TogglePendingSelectUnitAction(false);
+                ToggleSelectedUnitCancelAction(false);
+            }
+            else if (stateBehaviour != UnitStateBehaviour.Emphasis)
+            {
+                Debug.Log(
+                    $"<color=red>Apply Disable for Cancel Selected Unit during <{state.ToString()}> with behaviour<{stateBehaviour.ToString()}>!</color>");
+                TogglePendingSelectUnitAction(false);
             }
         }
 
@@ -117,9 +197,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             EnableConfirmActionByState(state);
         }
 
-        private void ApplyCancelFromUnityEvent(InputAction.CallbackContext context)
+        private void ApplyActionCancelFromUnityEvent(InputAction.CallbackContext context)
         {
-            onControllerCancelledUnityEvent.Invoke();
+            onActionSelectionCanceledBindingEvent.Invoke();
+        }
+        
+        private void ApplyUnitCancelFromUnityEvent(InputAction.CallbackContext context)
+        {
+            onUnitSelectionCanceledBindingEvent.Invoke();
         }
         
         private void EnableConfirmActionByState(UnitBattleState state)
@@ -129,7 +214,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 case UnitBattleState.Moving:
                     onCellSelectedForMovement.InputAction.Enable();
-                    ToggleSelectedUnitCancelAction(true);
                     break;
                 case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:

@@ -4839,6 +4839,7 @@ MonoBehaviour:
   unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   m_ExtraAttributes:
   - m_AttributeType:
       value: 15

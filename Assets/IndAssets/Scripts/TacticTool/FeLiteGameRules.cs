@@ -182,7 +182,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             raiserOnOwnerSelectedEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
         }
 
-        private void ClearStateAndDeselectUnit()
+        public void ClearStateAndDeselectUnit()
         {
             ChangeStateForSelectedUnit(UnitBattleState.Finished);   // Clean up all States
             if (!_selectedUnit)
