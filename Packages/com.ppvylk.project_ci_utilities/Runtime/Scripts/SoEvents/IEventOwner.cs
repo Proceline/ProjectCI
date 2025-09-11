@@ -7,6 +7,6 @@ namespace ProjectCI.Utilities.Runtime.Events
         string EventIdentifier { get; }
         bool IsGridObject { get; }
         Vector3 Position { get; }
-        Vector2 GridPosition { get; }
+        Vector2Int GridPosition { get; }
     }
 }

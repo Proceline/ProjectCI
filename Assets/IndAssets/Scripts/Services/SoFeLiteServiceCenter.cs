@@ -1,5 +1,5 @@
 using UnityEngine;
-using ProjectCI.CoreSystem.Runtime.Services;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Services.Concrete
 {
@@ -9,7 +9,9 @@ namespace ProjectCI.CoreSystem.Runtime.Services.Concrete
         [SerializeField]
         private ScriptableObject[] m_ServicesListBeforeSceneLoad;
 
-        private static SoFeLiteServiceCenter m_Instance;
+        [SerializeField] private UnityEvent onAfterSceneLoadEventRaised;
+
+        private static SoFeLiteServiceCenter _instance;
 
         /// <summary>
         /// Called when the game is loaded, before any scene is loaded
@@ -17,14 +19,23 @@ namespace ProjectCI.CoreSystem.Runtime.Services.Concrete
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void OnGameLoadedBeforeScene()
         {
-            m_Instance = Resources.LoadAll<SoFeLiteServiceCenter>("")[0];
-            foreach (var scriptableObject in m_Instance.m_ServicesListBeforeSceneLoad)
+            _instance = Resources.LoadAll<SoFeLiteServiceCenter>("")[0];
+            foreach (var scriptableObject in _instance.m_ServicesListBeforeSceneLoad)
             {
                 if (scriptableObject is IService service)
                 {
                     ServiceLocator.Register(service);
                 }
             }
+        }
+        
+        /// <summary>
+        /// Called right after Scene Loaded
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void OnGameLoadedAfterScene()
+        {
+            _instance.onAfterSceneLoadEventRaised?.Invoke();
         }
     }
 } 

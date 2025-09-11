@@ -8,6 +8,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
@@ -79,6 +80,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
         public UnitBattleState CurrentBattleState =>
             _selectedUnit ? _selectedUnit.GetCurrentState() : UnitBattleState.Finished;
+        
+        #region Injected Fields
+        
+        [Inject] public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent;
+        
+        #endregion
 
         protected override void StartGame()
         {

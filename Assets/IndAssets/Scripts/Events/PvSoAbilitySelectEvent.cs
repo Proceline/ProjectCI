@@ -37,6 +37,6 @@ namespace ProjectCI.Utilities.Runtime.Events
 
         public bool IsGridObject => false;
         public Vector3 Position => Vector3.zero;
-        public Vector2 GridPosition => Vector2.zero;
+        public Vector2Int GridPosition => Vector2Int.zero;
     }
 }

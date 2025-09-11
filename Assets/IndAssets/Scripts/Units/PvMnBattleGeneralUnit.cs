@@ -74,7 +74,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public string EventIdentifier => ID;
         public bool IsGridObject => true;
         public Vector3 Position => transform.position;
-        public Vector2 GridPosition => m_CurrentCell.GetIndex();
+        public Vector2Int GridPosition => m_CurrentCell.GetIndex();
 
         /// <summary>
         /// Called in Package, do not delete
@@ -106,7 +106,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 container.OnHealthPreDepleted.AddListener(Kill);
                 container.OnHitPreReceived.AddListener(PlayHitVisualResult);
-                container.Initialize(uiCamera, resourceContainerPrefab);
+                container.Initialize(this, uiCamera, resourceContainerPrefab);
                 container.SetHealth(RuntimeAttributes.Health.CurrentValue);
                 container.SetMaxHealth(RuntimeAttributes.Health.MaxValue);
             }

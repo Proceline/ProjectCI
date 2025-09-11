@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
+using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Events;
@@ -16,6 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
     {
         public AttributeType attackerAttribute;
         public AttributeType defenderAttribute;
+        public PvEnDamageType damageType;
 
         [Inject, NonSerialized]
         private IFinalReceiveDamageModifier _receiveDamageModifier;
@@ -39,15 +42,16 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             return base.GetAbilityInfo();
         }
 
-        public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit, GridPawnUnit toUnit, List<CommandResult> results)
+        public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
+            GridPawnUnit toUnit, List<CommandResult> results)
         {
             var toContainer = toUnit.RuntimeAttributes;
             var fromContainer = fromUnit.RuntimeAttributes;
-            
+
             int beforeHealth = toContainer.Health.CurrentValue;
             int damage = fromContainer.GetAttributeValue(attackerAttribute);
-            
-            int deltaDamage = 
+
+            int deltaDamage =
                 Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
 
             int finalDeltaDamage = deltaDamage;
@@ -55,24 +59,23 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             {
                 finalDeltaDamage = ReceiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
             }
+
             toContainer.Health.ModifyValue(-finalDeltaDamage);
             int afterHealth = toContainer.Health.CurrentValue;
-            
-            if (results != null)
+
+            results.Add(new PvSimpleDamageCommand
             {
-                results.Add(new CommandDamageResult
-                {
-                    ResultId = resultId,
-                    AbilityId = ability.ID,
-                    OwnerId = fromUnit.ID,
-                    TargetCellIndex = toUnit.GetCell().GetIndex(),
-                    BeforeValue = beforeHealth,
-                    AfterValue = afterHealth,
-                    CommandType = CommandResult.TakeDamage,
-                    Value = deltaDamage,
-                    ExtraInfo = nameof(UnitAttributeContainer.Health)
-                });
-            }
+                ResultId = resultId,
+                AbilityId = ability.ID,
+                OwnerId = fromUnit.ID,
+                TargetCellIndex = toUnit.GetCell().GetIndex(),
+                BeforeValue = beforeHealth,
+                AfterValue = afterHealth,
+                CommandType = CommandResult.TakeDamage,
+                Value = deltaDamage,
+                DamageType = damageType,
+                ExtraInfo = nameof(UnitAttributeContainer.Health)
+            });
         }
     }
 }

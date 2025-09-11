@@ -2,6 +2,10 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using ProjectCI.CoreSystem.Runtime.Interfaces;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
@@ -9,26 +13,36 @@ namespace ProjectCI.Runtime.GUI.Battle
     {
         [NonSerialized] private GameObject _healthBarInstance;
         [NonSerialized] private Slider _healthSlider;
+        [NonSerialized] private bool _initialized;
+        [SerializeField] private GridObject _followingTarget;
 
-        public void Initialize(Camera inCamera, GameObject healthBarPrefab)
+        public void Initialize(GridObject owner, Camera inCamera, GameObject healthBarPrefab)
         {
-            if (healthBarPrefab != null)
-            {
-                // Instantiate health bar UI
-                _healthBarInstance = Instantiate(healthBarPrefab);
-                
-                // Get UI components
-                _healthSlider = _healthBarInstance.GetComponentInChildren<Slider>();
-                Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
-                canvas.worldCamera = inCamera;
-                
-                RotateHealthBarByCamera(inCamera.transform);
-            }
+            // Instantiate health bar UI
+            _healthBarInstance = Instantiate(healthBarPrefab);
+
+            // Get UI components
+            _healthSlider = _healthBarInstance.GetComponentInChildren<Slider>();
+            Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
+            canvas.worldCamera = inCamera;
+
+            RotateHealthBarByCamera(inCamera.transform);
+            _followingTarget = owner;
+            
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(UpdateHealthViewInfo);
+            _initialized = true;
         }
 
-        void LateUpdate()
+        private void UpdateHealthViewInfo(IEventOwner owner, DamageDescriptionParam damageParams)
         {
-            if (_healthBarInstance != null)
+            if (_followingTarget != damageParams.Victim) return;
+            ReceiveHitDamage();
+            SetHealth(damageParams.AfterValue);
+        }
+
+        private void LateUpdate()
+        {
+            if (_initialized)
             {
                 _healthBarInstance.transform.position = transform.position;
             }
@@ -65,6 +79,8 @@ namespace ProjectCI.Runtime.GUI.Battle
             {
                 Destroy(_healthBarInstance);
             }
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(UpdateHealthViewInfo);
+            _initialized = false;
         }
     }
 } 

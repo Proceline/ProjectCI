@@ -19,3 +19,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: aa58336ff5926144380c17002c348436, type: 2}
   - {fileID: 11400000, guid: 053918910e69ae94fab01a5aa4c3d6b5, type: 2}
   - {fileID: 11400000, guid: 44cf1f5a2c700894f8ae93cc2d10ffbc, type: 2}
+  onAfterSceneLoadEventRaised:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 74bc8af41e97d374fb369c8f8fe70b14, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.DependencyInjection.DIConfiguration,
+          ProjectCI_CoreSystem_Runtime
+        m_MethodName: InjectFromConfiguration
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
