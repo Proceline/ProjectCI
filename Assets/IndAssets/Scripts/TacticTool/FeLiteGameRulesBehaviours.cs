@@ -94,6 +94,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new Exception("State ERROR: Must during Ability Targeting");
             }
 
+            ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
+            
             GridPawnUnit gridPawnUnit = selectedCell.GetUnitOnCell();
             if (gridPawnUnit && gridPawnUnit is PvMnBattleGeneralUnit targetUnit)
             {

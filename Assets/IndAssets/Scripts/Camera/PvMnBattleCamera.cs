@@ -14,7 +14,15 @@ public class PvMnBattleCamera : MonoBehaviour
     [SerializeField] private float maxZoom;
     [SerializeField] private float zoomingSpeed;
 
+    /// <summary>
+    /// Used to record AUTO-ZOOM
+    /// </summary>
     [NonSerialized] private float _currentZoomValue;
+    
+    /// <summary>
+    /// Used to record Manual-ZOOM
+    /// </summary>
+    [NonSerialized] private float _zoomValueAdjustor;
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Camera rotationPivotCam;
@@ -38,6 +46,7 @@ public class PvMnBattleCamera : MonoBehaviour
     private void Start()
     {
         _currentZoomValue = 0;
+        _zoomValueAdjustor = 0;
         _panDirectionInputAction = panDirectionActionRef.ToInputAction();
         _panDirectionInputAction.Enable();
         
@@ -80,34 +89,35 @@ public class PvMnBattleCamera : MonoBehaviour
     private void AssignCameraZoomIn(InputAction.CallbackContext context)
     {
         var zoomDelta = zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta);
+        AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
     }
     
     private void AssignCameraZoomOut(InputAction.CallbackContext context)
     {
         var zoomDelta = -zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta);
+        AddOnCameraZoom(zoomDelta,  ref _zoomValueAdjustor);
     }
 
-    private void AddOnCameraZoom(float zoomDelta)
+    private void AddOnCameraZoom(float zoomDelta, ref float recordValue)
     {
-        _currentZoomValue += zoomDelta;
+        recordValue += zoomDelta;
         var moveDir = transform.forward * zoomDelta;
         translateTarget.Translate(moveDir, Space.Self);
     }
 
     private IEnumerator AssignCameraZoom(float targetZoomValue, float duration)
     {
-        float zoomDelta;
-        if (targetZoomValue > 0)
+        if (targetZoomValue > 0 && _zoomValueAdjustor >= targetZoomValue)
         {
-            zoomDelta = targetZoomValue > _currentZoomValue ? targetZoomValue - _currentZoomValue : _currentZoomValue;
+            yield break;
         }
-        else
+        
+        if (Mathf.Approximately(targetZoomValue, _currentZoomValue))
         {
-            zoomDelta = targetZoomValue < _currentZoomValue ? targetZoomValue - _currentZoomValue : _currentZoomValue;
+            yield break;
         }
-
+        
+        var zoomDelta = targetZoomValue - _currentZoomValue;
         float deltaSum = 0;
         var elapsed = 0f;
 
@@ -118,7 +128,7 @@ public class PvMnBattleCamera : MonoBehaviour
             var deltaProgress = Mathf.Lerp(0f, zoomDelta, progress);
             var delta = deltaProgress - deltaSum;
             deltaSum = deltaProgress;
-            AddOnCameraZoom(delta);
+            AddOnCameraZoom(delta, ref _currentZoomValue);
             yield return null;
         }
     }
@@ -140,21 +150,6 @@ public class PvMnBattleCamera : MonoBehaviour
             translateTarget.Translate(delta, Space.Self);
             yield return null;
         }
-    }
-
-    private void AssignCameraZoom(float targetZoomValue)
-    {
-        float zoomDelta;
-        if (targetZoomValue > 0)
-        {
-            zoomDelta = targetZoomValue > _currentZoomValue ? targetZoomValue - _currentZoomValue : _currentZoomValue;
-        }
-        else
-        {
-            zoomDelta = targetZoomValue < _currentZoomValue ? targetZoomValue - _currentZoomValue : _currentZoomValue;
-        }
-        
-        AddOnCameraZoom(zoomDelta);
     }
 
     private void AssignCameraRotation(InputAction.CallbackContext context)
@@ -234,28 +229,35 @@ public class PvMnBattleCamera : MonoBehaviour
             switch (state)
             {
                 case UnitBattleState.Moving:
+                    StartToMoveCamera(owner.Position, 0f);
+                    break;
                 case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
-                    var zoomValue = state == UnitBattleState.UsingAbility ? 20 : 0;
-                    var duration = 0.25f;
-                    if (GetCurrentCenter(out var center, out _))
-                    {
-                        StartCoroutine(TranslateCameraToPosition(center, owner.Position, duration));
-                    }
-                    StartCoroutine(AssignCameraZoom(zoomValue, duration));
+                    StartToMoveCamera(owner.Position, 20f);
                     break;
                 case UnitBattleState.AbilityConfirming:
+                    StartToMoveCamera(owner.Position, -10f, 0.1f);
+                    break;
                 case UnitBattleState.Idle:
                 case UnitBattleState.MovingProgress:
                 case UnitBattleState.Finished:
                 default:
-                    AssignCameraZoom(0);
+                    StartToMoveCamera(owner.Position, 0f, 0.1f);
                     break;
             }
         }
-        else
+        else 
         {
-            AssignCameraZoom(0);
+            StartToMoveCamera(owner.Position, 0f, 0.1f);
         }
+    }
+
+    private void StartToMoveCamera(Vector3 position, float zoomValue, float duration = 0.25f)
+    {
+        if (GetCurrentCenter(out var center, out _))
+        {
+            StartCoroutine(TranslateCameraToPosition(center, position, duration));
+        }
+        StartCoroutine(AssignCameraZoom(zoomValue, duration));
     }
 }
