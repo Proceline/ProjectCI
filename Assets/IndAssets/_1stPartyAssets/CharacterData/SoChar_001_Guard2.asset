@@ -17,11 +17,11 @@ MonoBehaviour:
   originalAttributes:
   - m_AttributeType:
       value: 0
-    m_Value: 29
+    m_Value: 30
     m_GainValue: 40
   - m_AttributeType:
       value: 1
-    m_Value: 13
+    m_Value: 12
     m_GainValue: 55
   - m_AttributeType:
       value: 2

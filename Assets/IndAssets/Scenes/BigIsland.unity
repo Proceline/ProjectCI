@@ -13309,6 +13309,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onDamageReceivedEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
   defaultText: {fileID: 711795112}
+  damageTypeColors:
+  - type: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - type: 1
+    color: {r: 0.5031446, g: 0.5031446, b: 0.5031446, a: 1}
+  - type: 2
+    color: {r: 1, g: 0.7012578, b: 0.7012578, a: 1}
+  - type: 3
+    color: {r: 1, g: 0.3366067, b: 0, a: 1}
+  - type: 4
+    color: {r: 0.46226406, g: 1, b: 0.9985167, a: 1}
+  - type: 5
+    color: {r: 0, g: 0.5065923, b: 1, a: 1}
+  - type: 6
+    color: {r: 1, g: 0.9350232, b: 0, a: 1}
+  - type: 7
+    color: {r: 0.31379166, g: 0.8238993, b: 0, a: 1}
+  - type: 8
+    color: {r: 0.6446917, g: 0, b: 0.8050314, a: 1}
+  - type: 9
+    color: {r: 1, g: 0.89583963, b: 0.54402506, a: 1}
   onInitializedRoot:
     m_PersistentCalls:
       m_Calls:
@@ -17416,7 +17437,7 @@ MonoBehaviour:
   m_IsFriendly: 1
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
   unitAbilities:
-  - {fileID: 11400000, guid: 7e6b92df314062d41907bc2699620556, type: 2}
+  - {fileID: 11400000, guid: 830481975ca9f8f49936f550d79f5f00, type: 2}
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   m_ExtraAttributes:

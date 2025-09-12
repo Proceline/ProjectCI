@@ -21,16 +21,22 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public PvEnDamageType damageType;
 
         [Inject, NonSerialized]
-        private IFinalReceiveDamageModifier _receiveDamageModifier;
+        private static IFinalReceiveDamageModifier _receiveDamageModifier;
 
-        protected IFinalReceiveDamageModifier ReceiveDamageModifier
+        [NonSerialized]
+        private static bool _modifierInjected;
+
+        private IFinalReceiveDamageModifier ReceiveDamageModifier
         {
             get
             {
-                if (_receiveDamageModifier == null)
+                if (_modifierInjected)
                 {
-                    DIConfiguration.InjectFromConfiguration(this);
+                    return _receiveDamageModifier;
                 }
+
+                DIConfiguration.InjectFromConfiguration(this);
+                _modifierInjected = true;
 
                 return _receiveDamageModifier;
             }

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
+  m_Name: PvSoUnitAbility_StaticRide00
+  m_EditorClassIdentifier: 
+  m_AbilityName: Ride
+  m_Icon: {fileID: 0}
+  m_Radius: 1
+  m_ActionPointCost: 1
+  m_bAllowBlocked: 1
+  m_EffectedTeam: 1
+  m_EffectedType: 0
+  m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
+  m_EffectShape: {fileID: 0}
+  m_EffectRadius: 0
+  m_SpawnOnCaster: []
+  m_SpawnOnTarget: []
+  m_Params:
+  - {fileID: 11400000, guid: 49a781cc688dab846942d23a971f7338, type: 2}
+  m_Ailments: []
+  isCounterAllowed: 0
+  isFollowUpAllowed: 0
+  isAbilityWeapon: 0
+  projectilePrefab: {fileID: 0}
+  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
+  hitEffectPrefab: {fileID: 0}

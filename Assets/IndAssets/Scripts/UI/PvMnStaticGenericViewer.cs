@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.Utilities.Runtime.Events;
 using TMPro;
 using UnityEngine;
@@ -9,10 +10,19 @@ namespace ProjectCI.Runtime.GUI.Battle
 {
     public class PvMnStaticGenericViewer : MonoBehaviour
     {
+        [Serializable]
+        public struct DamageTypeEnumColor
+        {
+            public PvEnDamageType type;
+            public Color color;
+        }
+        
         [SerializeField] private PvSoSimpleDamageApplyEvent onDamageReceivedEvent;
         [SerializeField] private TextMeshPro defaultText;
+        [SerializeField] private DamageTypeEnumColor[] damageTypeColors;
 
-        [NonSerialized] private readonly Queue<TextMeshPro> _availableTexts = new();
+        private readonly Queue<TextMeshPro> _availableTexts = new();
+        private readonly Dictionary<PvEnDamageType, Color> _damageTypeColorsDic = new();
 
         [SerializeField] private UnityEvent onInitializedRoot;
 
@@ -22,6 +32,11 @@ namespace ProjectCI.Runtime.GUI.Battle
             defaultText.gameObject.SetActive(false);
             onDamageReceivedEvent.RegisterCallback(ShowDamageValueText);
             onInitializedRoot?.Invoke();
+
+            for (int i = 0; i < damageTypeColors.Length; i++)
+            {
+                _damageTypeColorsDic.TryAdd(damageTypeColors[i].type, damageTypeColors[i].color);
+            }
         }
 
         private void OnDestroy()
@@ -49,6 +64,11 @@ namespace ProjectCI.Runtime.GUI.Battle
             var showingValue = damageParams.FinalDamageBeforeAdjusted;
             var textMesh = GetAvailableDamageText();
             textMesh.transform.position = targetPosition;
+            var damageType = (PvEnDamageType)damageParams.DamageType;
+            if (_damageTypeColorsDic.TryGetValue(damageType, out var color))
+            {
+                textMesh.color = color;
+            }
             textMesh.SetText(showingValue.ToString());
             AnimateText(textMesh, 0.5f, targetPosition);
         }
