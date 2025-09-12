@@ -18,7 +18,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [NonSerialized] 
         private GameObject _pawnVisualMark;
+        
+        [NonSerialized] 
+        private PvSoUnitAbility _highlightAbility;
 
+        public void AssignAbilityOnView(PvSoUnitAbility ability)
+        {
+            _highlightAbility = ability;
+        }
+        
         public void ResetVisualStateCells()
         {
             foreach (LevelCellBase editedCell in _bufferedVisualStateCells)
@@ -188,10 +196,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             switch (state)
             {
                 case UnitBattleState.UsingAbility:
-                    var ability = unit.EquippedAbility;
                     HighlightAbilityAndSupportRange(unit);
                     //TODO: Consider ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
-                    UpdateHoverCells(unit, ability);
+                    UpdateHoverCells(unit, _highlightAbility);
                     break;
                 case UnitBattleState.Finished:
                     ResetVisualStateCells();
@@ -218,7 +225,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void HighlightAbilityAndSupportRange(PvMnBattleGeneralUnit casterUnit)
         {
             ResetVisualStateCells();
-            var ability = casterUnit.EquippedAbility;
+            var ability = _highlightAbility;
             if (!ability || !ability.GetShape())
             {
                 throw new NullReferenceException("ERROR: Ability MUST have Shape!");

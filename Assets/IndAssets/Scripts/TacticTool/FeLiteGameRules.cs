@@ -32,6 +32,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private const int DoubleAttackSpeedThreshold = 5;
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
+        [NonSerialized] private PvSoUnitAbility _selectedAbility;
+        
+        #region Static Action Variables
+
+        [SerializeField] private List<PvSoUnitAbility> preloadedAbilities;
+        
+        #endregion
+
+        [SerializeField] 
+        private UnityEvent<PvSoUnitAbility> onAbilitySelectedPostSupport;
+
+        private PvSoUnitAbility CurrentAbility
+        {
+            get => _selectedAbility;
+            set
+            {
+                _selectedAbility = value;
+                if (value)
+                {
+                    onAbilitySelectedPostSupport?.Invoke(_selectedAbility);
+                }
+            }
+        }
 
         [SerializeField] 
         private LayerMask[] layerMasksRuleList;
@@ -86,7 +109,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent;
         
         #endregion
-
+        
         protected override void StartGame()
         {
             onGameStarted?.Invoke();
@@ -94,6 +117,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentTeam = BattleTeam.Friendly;
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
+
+            foreach (var staticAbility in preloadedAbilities)
+            {
+                if (string.IsNullOrEmpty(staticAbility.ID))
+                {
+                    staticAbility.GenerateNewID();
+                }
+                _abilityIdToAbilityHash.TryAdd(staticAbility.ID, staticAbility);
+            }
             
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
@@ -103,8 +135,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     foreach (var ability in unit.GetUsableAbilities())
                     {
                         // TODO: Consider whether initialize ID here
-                        ability.GenerateNewID();
-                        _abilityIdToAbilityHash.Add(ability.ID, ability);
+                        if (string.IsNullOrEmpty(ability.ID))
+                        {
+                            ability.GenerateNewID();
+                        }
+                        _abilityIdToAbilityHash.TryAdd(ability.ID, ability);
                     }
                 }
             }
@@ -182,6 +217,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _selectedUnit = selectingUnit;
+            CurrentAbility = _selectedUnit.EquippedAbility;
             _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
 
             ChangeStateForSelectedUnit(UnitBattleState.Moving);
@@ -246,6 +282,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                     }
 
+                    CurrentAbility = null;
                     CancelStatePurelyForUnit(_selectedUnit, state);
                     break;
                 case UnitBattleState.Moving:
@@ -278,7 +315,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
-                    onUpdateSupportWithAbility.Invoke(_selectedUnit, _selectedUnit.EquippedAbility);
+                    // TODO: Consider ability option
+                    onUpdateSupportWithAbility.Invoke(_selectedUnit, CurrentAbility);
                     break;
                 case UnitBattleState.Moving:
                 case UnitBattleState.Finished:
@@ -389,7 +427,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <returns></returns>
         private List<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
         {
-            PvSoUnitAbility ability = abilityOwner.EquippedAbility;
+            PvSoUnitAbility ability = CurrentAbility;
             PvSoUnitAbility targetAbility = targetUnit.EquippedAbility;
 
             if (!ability || !targetAbility)

@@ -14,6 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilitySpeedAttributeType:
     value: 14
+  onAbilitySelectedPostSupport:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
+          Assembly-CSharp
+        m_MethodName: AssignAbilityOnView
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   layerMasksRuleList:
   - serializedVersion: 2
     m_Bits: 64
@@ -146,6 +162,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  preloadedAbilities:
+  - {fileID: 11400000, guid: 846dda27c0e92e34095e3715671b3027, type: 2}
   onPreviewAbilitiesIndex:
     m_PersistentCalls:
       m_Calls:

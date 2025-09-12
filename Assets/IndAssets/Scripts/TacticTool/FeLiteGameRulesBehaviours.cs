@@ -109,6 +109,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
+        public void AssignAbilityToCurrentUnit(PvSoUnitAbility ability)
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException("ERROR: No selected unit!");
+            }
+            CurrentAbility = ability;
+        }
+
         /// <summary>
         /// Normally used in Buttons with ButtonIndex
         /// </summary>
