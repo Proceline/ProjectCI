@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d6fd63bc69fc2f4aa0c021d742f326f, type: 3}
-  m_Name: PvSoAnimation_Idle
+  m_Script: {fileID: 11500000, guid: adda66c291a2e584c9e39823e3ebb7c5, type: 3}
+  m_Name: AnimationClipInfo_RiderDefend
   m_EditorClassIdentifier: 
-  m_AnimationIndexName: 0
+  m_AnimationClip: {fileID: 7400000, guid: fca008c643d44019b538436bbb84a4b8, type: 3}
+  m_TransitDuration: 0.1
+  m_BreakPoints: []

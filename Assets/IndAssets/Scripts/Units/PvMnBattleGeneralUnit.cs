@@ -85,18 +85,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             SetFormulaCollection();
 
             _animationManager = gameObject.GetComponent<UnitAnimationManager>();
+            if (!_animationManager)
+            {
+                _animationManager = gameObject.GetComponentInChildren<UnitAnimationManager>();
+            }
+
             if (_animationManager)
             {
                 OnPreStandIdleAnimRequired += PlayIdleAnimation;
                 OnPreMovementAnimRequired += PlayMovementAnimation;
                 OnPreHitAnimRequired += PlayHitAnimation;
             }
-            
+
             OnMovementPostComplete.RemoveAllListeners();
-            OnMovementPostComplete.AddListener(() =>
-            {
-                CurrentMovementPoints = 0;
-            });
+            OnMovementPostComplete.AddListener(() => { CurrentMovementPoints = 0; });
         }
 
         public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
@@ -135,6 +137,36 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void PlayHitAnimation()
         {
             _animationManager.ForcePlayAnimation(AnimationIndexName.Hit);
+        }
+
+        public override void BroadcastActionTriggerByTag(string actionTagName)
+        {
+            if (!_animationManager) return;
+            _animationManager.ForcePlayAnimation(actionTagName);
+        }
+
+        public override float GrabActionValueDataByIndexTag(int additionalIndex, params string[] tags)
+        {
+            if (tags == null) return 0;
+            if (!_animationManager || tags.Length < 1) return 0;
+            if (tags.Length > 1)
+            {
+                switch (tags[1])
+                {
+                    case "Length":
+                        return _animationManager.GetPresetAnimationDuration(tags[0]);
+                }
+            }
+            else
+            {
+                var breakPoints = _animationManager.GetPresetAnimationBreakPoints(tags[0]);
+                if (breakPoints.Length > additionalIndex)
+                {
+                    return breakPoints[additionalIndex];
+                }
+            }
+
+            return 0;
         }
 
         public override void SetUnitData(SoUnitData unitData)
