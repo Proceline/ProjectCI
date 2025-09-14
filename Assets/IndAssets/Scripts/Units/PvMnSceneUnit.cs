@@ -11,8 +11,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public class PvMnSceneUnit : MonoBehaviour, ISceneUnit
     {
         [SerializeField]
-        private bool m_IsFriendly;
-        public bool IsFriendly => m_IsFriendly;
+        private bool isFriendly;
+        public bool IsFriendly => isFriendly;
 
         [SerializeField]
         protected SoUnitData unitData;
@@ -24,7 +24,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public List<PvSoUnitAbility> UnitAbilities => unitAbilities;
 
         [SerializeField]
-        private AttributeValuePair[] m_ExtraAttributes;
+        private AttributeValuePair[] extraAttributes;
 
         /// <summary>
         /// Gets the unique identifier of the object
@@ -63,7 +63,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public void SetExtraAttributes(UnitAttributeContainer attributeContainer)
         {
-            foreach (var attribute in m_ExtraAttributes)
+            foreach (var attribute in extraAttributes)
             {
                 attributeContainer.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
             }

@@ -3,7 +3,7 @@ using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Interface;
 using UnityEngine;
 
-namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
+namespace ProjectCI.CoreSystem.Runtime.Animation
 {
     [CreateAssetMenu(fileName = "PvSoFunctionalAnimationClip", menuName = "ProjectCI Tools/Animations/PvSoFunctionalClip")]
     public class PvSoFunctionalAnimationClip : UnitAbilityAnimation, IAnimationClipInfo

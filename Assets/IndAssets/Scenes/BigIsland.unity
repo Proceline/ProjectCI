@@ -4513,13 +4513,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsFriendly: 1
+  isFriendly: 1
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 830481975ca9f8f49936f550d79f5f00, type: 2}
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
-  m_ExtraAttributes:
+  extraAttributes:
   - m_AttributeType:
       value: 15
     m_Value: 5
@@ -9725,9 +9725,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: 468ebea5685bf2044a0703bc42d4b0ba, type: 2}
-  OnIndexModified:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &306567124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17501,9 +17498,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: 468ebea5685bf2044a0703bc42d4b0ba, type: 2}
-  OnIndexModified:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &496114438 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8511647367374981090, guid: 35edb2f37426447783adbad4b3c99a8d, type: 3}
@@ -25023,12 +25017,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsFriendly: 1
+  isFriendly: 1
   unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
-  m_ExtraAttributes:
+  extraAttributes:
   - m_AttributeType:
       value: 15
     m_Value: 5
@@ -37063,9 +37057,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: fb8a7d716417bbd4f9e01e7ee5d7ea3c, type: 2}
-  OnIndexModified:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &1162727518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4191744185429214, guid: ffddcbf899f441a89e27cbfa4db5c845, type: 3}
@@ -40649,11 +40640,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsFriendly: 0
+  isFriendly: 0
   unitData: {fileID: 11400000, guid: c4e443c2858f5054899aac03e65ee8dd, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
-  m_ExtraAttributes:
+  extraAttributes:
   - m_AttributeType:
       value: 15
     m_Value: 5

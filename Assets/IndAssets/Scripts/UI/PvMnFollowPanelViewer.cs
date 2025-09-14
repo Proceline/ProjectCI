@@ -68,6 +68,7 @@ namespace ProjectCI.Runtime.GUI.Battle
                             canvasGameObject.transform.position = owner.Position;
                             SetupCorrectRotation(controlUiCamera);
                             mainControlPanel.gameObject.SetActive(true);
+                            sideControlPanel.gameObject.SetActive(false);
                             break;
                         case UnitBattleState.Moving:
                             _determinedUnit = battleUnit;

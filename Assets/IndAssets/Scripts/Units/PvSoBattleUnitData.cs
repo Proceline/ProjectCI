@@ -1,3 +1,4 @@
+using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
@@ -9,6 +10,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         [SerializeField] 
         private PvSoPassiveBase[] personalPassives;
+
+        [SerializeField] 
+        private UnitAnimationManager animatedMountForm;
+
+        public UnitAnimationManager PresetAnimatedMount => animatedMountForm;
 
         public override void InitializeUnitDataToGridUnit(GridPawnUnit pawnUnit)
         {

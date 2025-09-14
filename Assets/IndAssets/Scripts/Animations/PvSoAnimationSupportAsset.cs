@@ -4,7 +4,7 @@ using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Interface;
 using UnityEngine;
 
-namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
+namespace ProjectCI.CoreSystem.Runtime.Animation
 {
     public enum AnimationPvCustomName
     {

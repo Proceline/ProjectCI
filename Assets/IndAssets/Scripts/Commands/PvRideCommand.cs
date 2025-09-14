@@ -56,12 +56,17 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
                 // TODO: Change Hide process
                 owner.gameObject.SetActive(false);
             }
-            else if (owner is PvMnBattleGeneralUnit ownerUnit)
+            else if (owner is PvMnBattleGeneralUnit transformingUnit)
             {
                 var cell = targetUnit.GetCell();
                 targetUnit.SetCurrentCell(null);
-                ownerUnit.ForceMoveToCellImmediately(cell);
-                
+                transformingUnit.ForceMoveToCellImmediately(cell);
+
+                if (transformingUnit.GetUnitData() is PvSoBattleUnitData detail)
+                {
+                    transformingUnit.UpdateAnimationToRide(detail);
+                }
+
                 // TODO: Change Hide process
                 targetUnit.gameObject.SetActive(false);
             }

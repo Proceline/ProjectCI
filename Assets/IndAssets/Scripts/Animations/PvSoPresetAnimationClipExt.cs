@@ -1,9 +1,8 @@
 using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI_Animation.Runtime;
 using UnityEngine;
 
-namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
+namespace ProjectCI.CoreSystem.Runtime.Animation
 {
     [CreateAssetMenu(fileName = "PvSoPresetAnimationClip", menuName = "ProjectCI Tools/Animations/PvSoPresetClipExt")]
     public class PvSoPresetAnimationClipExt : UnitAbilityAnimation

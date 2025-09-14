@@ -1,7 +1,7 @@
 using System;
 using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Editor;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using UnityEditor;
 
 namespace ProjectCI.CoreSystem.Editor.Animations
