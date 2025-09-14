@@ -9,7 +9,6 @@ using ProjectCI.Runtime.GUI.Battle;
 using UnityEngine;
 using UnityEngine.Events;
 using Unity.VisualScripting;
-using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.Battleground
 {

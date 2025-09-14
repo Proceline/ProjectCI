@@ -1,10 +1,8 @@
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
@@ -17,7 +15,7 @@ using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
-    public class PvMnBattleGeneralUnit : GridPawnUnit, IEventOwner
+    public partial class PvMnBattleGeneralUnit : GridPawnUnit, IEventOwner
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
         [NonSerialized] private FormulaCollection _formulaCollection;
