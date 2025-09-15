@@ -32,9 +32,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 UnregisterCellControl();
                 _preloadedMethod = _ =>
                 {
-                    if (!_isBattlegroundInteractionOn)
+                    if (!IsBasicControllerEnabled)
+                    {
                         return;
-                    onCellConfirmed?.Invoke(visual.CurrentHoverCell);
+                    }
+
+                    if (!_isBattlegroundInteractionOn)
+                    {
+                        return;
+                    }
+
+                    if (visual.CurrentHoverCell)
+                    {
+                        onCellConfirmed?.Invoke(visual.CurrentHoverCell);
+                    }
                 };
                 InputAction.canceled += _preloadedMethod;
             }
@@ -46,7 +57,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
         
-        [SerializeField] private BattleGameRules gameRulesModel;
         [SerializeField] private FeLiteGameVisual gameVisual;
         
         [SerializeField]
@@ -76,6 +86,48 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         internal InputAction OnBattleControlPanelCanceledAction => onBattleControlPanelCanceled.ToInputAction();
 
         private static bool _isBattlegroundInteractionOn = true;
+        private static int _isBasicControllerEnabledCount;
+
+        public static bool IsBasicControllerEnabled
+        {
+            get => _isBasicControllerEnabledCount >= 0;
+            set
+            {
+                var isEnabled = _isBasicControllerEnabledCount >= 0;
+                if (!value)
+                {
+                    _isBasicControllerEnabledCount--;
+                }
+                else
+                {
+                    _isBasicControllerEnabledCount++;
+                    if (_isBasicControllerEnabledCount > 0)
+                    {
+                        _isBasicControllerEnabledCount = 0;
+                    }
+                }
+
+                #if UNITY_EDITOR
+
+                var colorSymbolOriginal = !isEnabled ? "<color=red>" : "<color=green>";
+                var colorSymbolValue = !value ? "<color=red>" : "<color=green>";
+                var colorSymbolForFinal = _isBasicControllerEnabledCount < 0 ? "<color=red>" : "<color=green>";
+
+                Debug.Log(
+                    "<color=yellow>Basic Control Toggle switch from" + colorSymbolOriginal +
+                    $" <{isEnabled}></color><color=yellow>-></color>" +
+                    colorSymbolValue + $"<{value}></color>, <color=yellow>with result</color>" + colorSymbolForFinal +
+                    $"<{_isBasicControllerEnabledCount >= 0}></color>");
+#endif
+            }
+        }
+        
+        public static bool IsBasicControllerLocked
+        {
+            get => !IsBasicControllerEnabled;
+            set => IsBasicControllerEnabled = !value;
+        }
+        
         public bool IsBattlegroundInteractionOn
         {
             get => _isBattlegroundInteractionOn;
@@ -192,19 +244,31 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
+        private void ApplyActionCancelFromUnityEvent(InputAction.CallbackContext context)
+        {
+            if (!IsBasicControllerEnabled)
+            {
+                return;
+            }
+
+            onActionSelectionCanceledBindingEvent.Invoke();
+        }
+
+        private void ApplyUnitCancelFromUnityEvent(InputAction.CallbackContext context)
+        {
+            if (!IsBasicControllerEnabled)
+            {
+                return;
+            }
+
+            onUnitSelectionCanceledBindingEvent.Invoke();
+        }
+
+        #region ModelDirectStateBind
+
         public void SwitchEnabledConfirmAction(PvMnBattleGeneralUnit unit, UnitBattleState state)
         {
             EnableConfirmActionByState(state);
-        }
-
-        private void ApplyActionCancelFromUnityEvent(InputAction.CallbackContext context)
-        {
-            onActionSelectionCanceledBindingEvent.Invoke();
-        }
-        
-        private void ApplyUnitCancelFromUnityEvent(InputAction.CallbackContext context)
-        {
-            onUnitSelectionCanceledBindingEvent.Invoke();
         }
         
         private void EnableConfirmActionByState(UnitBattleState state)
@@ -230,5 +294,25 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     break;
             }
         }
+        
+        
+        public void ToggleGlobalControllerLockDuringStating(PvMnBattleGeneralUnit unit, UnitBattleState state)
+        {
+            switch (state)
+            {
+                case UnitBattleState.Idle:
+                case UnitBattleState.Moving:
+                case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
+                case UnitBattleState.Finished:
+                    IsBasicControllerEnabled = true;
+                    break;
+                case UnitBattleState.MovingProgress:
+                case UnitBattleState.AbilityConfirming:
+                    IsBasicControllerEnabled = false;
+                    break;
+            }
+        }
+        #endregion
     }
 }

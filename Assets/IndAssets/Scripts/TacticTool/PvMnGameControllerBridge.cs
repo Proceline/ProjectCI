@@ -13,7 +13,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void Start()
         {
-            _recordedOnControlPanelUiCanceledApplied = _ => onControlPanelUiCanceledApplied.Invoke();
+            _recordedOnControlPanelUiCanceledApplied = _ =>
+            {
+                if (!FeLiteGameController.IsBasicControllerEnabled)
+                {
+                    return;
+                }
+
+                onControlPanelUiCanceledApplied.Invoke();
+            };
             controller.OnBattleControlPanelCanceledAction.canceled += _recordedOnControlPanelUiCanceledApplied;
         }
 

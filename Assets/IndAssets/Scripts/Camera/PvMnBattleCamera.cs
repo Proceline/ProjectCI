@@ -43,6 +43,9 @@ public class PvMnBattleCamera : MonoBehaviour
     [SerializeField] 
     private PvSoUnitBattleStateEvent onStateDetermined;
 
+    [SerializeField] 
+    private UnityEvent<bool> onCameraStartOrEndAnyTween;
+
     private void Start()
     {
         _currentZoomValue = 0;
@@ -85,85 +88,12 @@ public class PvMnBattleCamera : MonoBehaviour
         
         translateTarget.Translate(moveDir * (movingSpeed * Time.deltaTime), Space.Self);
     }
-    
-    private void AssignCameraZoomIn(InputAction.CallbackContext context)
-    {
-        var zoomDelta = zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
-    }
-    
-    private void AssignCameraZoomOut(InputAction.CallbackContext context)
-    {
-        var zoomDelta = -zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta,  ref _zoomValueAdjustor);
-    }
 
     private void AddOnCameraZoom(float zoomDelta, ref float recordValue)
     {
         recordValue += zoomDelta;
         var moveDir = transform.forward * zoomDelta;
         translateTarget.Translate(moveDir, Space.Self);
-    }
-
-    private IEnumerator AssignCameraZoom(float targetZoomValue, float duration)
-    {
-        if (targetZoomValue > 0 && _zoomValueAdjustor >= targetZoomValue)
-        {
-            yield break;
-        }
-        
-        if (Mathf.Approximately(targetZoomValue, _currentZoomValue))
-        {
-            yield break;
-        }
-        
-        var zoomDelta = targetZoomValue - _currentZoomValue;
-        float deltaSum = 0;
-        var elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            var progress = Mathf.Clamp01(elapsed / duration);
-            var deltaProgress = Mathf.Lerp(0f, zoomDelta, progress);
-            var delta = deltaProgress - deltaSum;
-            deltaSum = deltaProgress;
-            AddOnCameraZoom(delta, ref _currentZoomValue);
-            yield return null;
-        }
-    }
-
-    private IEnumerator TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition, float duration)
-    {
-        var deltaDirection = targetPosition - currentCenter;
-        deltaDirection.y = 0;
-
-        var directionSum = Vector3.zero;
-        var elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            var progress = Mathf.Clamp01(elapsed / duration);
-            var deltaProgress = Vector3.Lerp(Vector3.zero, deltaDirection, progress);
-            var delta = deltaProgress - directionSum;
-            directionSum = deltaProgress;
-            translateTarget.Translate(delta, Space.Self);
-            yield return null;
-        }
-    }
-
-    private void AssignCameraRotation(InputAction.CallbackContext context)
-    {
-        var value = context.ReadValue<float>();
-        switch (value)
-        {
-            case > 0:
-                SetRotationWithDegrees(45);
-                break;
-            case < 0:
-                SetRotationWithDegrees(-45);
-                break;
-        }
     }
 
     private void SetRotationWithDegrees(float degrees)
@@ -260,4 +190,106 @@ public class PvMnBattleCamera : MonoBehaviour
         }
         StartCoroutine(AssignCameraZoom(zoomValue, duration));
     }
+    
+    #region Camera Tween
+
+    private IEnumerator AssignCameraZoom(float targetZoomValue, float duration)
+    {
+        if (targetZoomValue > 0 && _zoomValueAdjustor >= targetZoomValue)
+        {
+            yield break;
+        }
+
+        if (Mathf.Approximately(targetZoomValue, _currentZoomValue))
+        {
+            yield break;
+        }
+
+        onCameraStartOrEndAnyTween.Invoke(true);
+        {
+            var zoomDelta = targetZoomValue - _currentZoomValue;
+            float deltaSum = 0;
+            var elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var progress = Mathf.Clamp01(elapsed / duration);
+                var deltaProgress = Mathf.Lerp(0f, zoomDelta, progress);
+                var delta = deltaProgress - deltaSum;
+                deltaSum = deltaProgress;
+                AddOnCameraZoom(delta, ref _currentZoomValue);
+                yield return null;
+            }
+        }
+        onCameraStartOrEndAnyTween.Invoke(false);
+    }
+
+    private IEnumerator TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition, float duration)
+    {
+        onCameraStartOrEndAnyTween.Invoke(true);
+        {
+            var deltaDirection = targetPosition - currentCenter;
+            deltaDirection.y = 0;
+
+            var directionSum = Vector3.zero;
+            var elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var progress = Mathf.Clamp01(elapsed / duration);
+                var deltaProgress = Vector3.Lerp(Vector3.zero, deltaDirection, progress);
+                var delta = deltaProgress - directionSum;
+                directionSum = deltaProgress;
+                translateTarget.Translate(delta, Space.Self);
+                yield return null;
+            }
+        }
+        onCameraStartOrEndAnyTween.Invoke(false);
+    }
+    #endregion
+    
+    #region Manual Camera Control
+
+    private void AssignCameraZoomIn(InputAction.CallbackContext context)
+    {
+        if (!FeLiteGameController.IsBasicControllerEnabled)
+        {
+            return;
+        }
+
+        var zoomDelta = zoomingSpeed * context.ReadValue<float>();
+        AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
+    }
+
+    private void AssignCameraZoomOut(InputAction.CallbackContext context)
+    {
+        if (!FeLiteGameController.IsBasicControllerEnabled)
+        {
+            return;
+        }
+
+        var zoomDelta = -zoomingSpeed * context.ReadValue<float>();
+        AddOnCameraZoom(zoomDelta,  ref _zoomValueAdjustor);
+    }
+    
+    private void AssignCameraRotation(InputAction.CallbackContext context)
+    {
+        if (!FeLiteGameController.IsBasicControllerEnabled)
+        {
+            return;
+        }
+
+        var value = context.ReadValue<float>();
+        switch (value)
+        {
+            case > 0:
+                SetRotationWithDegrees(45);
+                break;
+            case < 0:
+                SetRotationWithDegrees(-45);
+                break;
+        }
+    }
+    #endregion
 }

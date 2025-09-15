@@ -2,12 +2,12 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Utilities.Runtime.Events;
 
 public class PvDebugHUD : MonoBehaviour
 {
-    [System.Serializable]
+    [Serializable]
     public struct DebugValuePair
     {
         public string name;
@@ -203,4 +203,12 @@ public class PvDebugHUD : MonoBehaviour
     {
         debugValues.Clear();
     }
+    
+    #region Specific
+
+    public void UpdateHoverCellDebugInfo(LevelCellBase cell)
+    {
+        UpdateValue("HoverCell", cell.GetIndex().ToString());
+    }
+    #endregion
 }
