@@ -61,30 +61,20 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
             }
             else
             {
-                // Vertical alignment: spread left-right along X axis and forward-back along Y axis
-                minY = targetCellIndex.y - leftRight;
-                maxY = targetCellIndex.y + leftRight;
+                minX = targetCellIndex.x - leftRight;
+                maxX = targetCellIndex.x + leftRight;
                 
-                // Forward direction is away from caster
-                int forwardDirection = targetCellIndex.x > casterCellIndex.x ? 1 : -1;
-                int forwardEnd = targetCellIndex.x + (forwardBack * forwardDirection);
-                int backEnd = targetCellIndex.x - (forwardBack * forwardDirection);
-                
-                // Ensure we don't go beyond caster position when Y is negative
-                if (forwardBack < 0)
-                {
-                    if (forwardDirection > 0)
-                    {
-                        backEnd = Mathf.Max(backEnd, casterCellIndex.x);
-                    }
-                    else
-                    {
-                        backEnd = Mathf.Min(backEnd, casterCellIndex.x);
-                    }
-                }
-                
-                minX = Mathf.Min(forwardEnd, backEnd);
-                maxX = Mathf.Max(forwardEnd, backEnd);
+                int forwardDirection = targetCellIndex.y > casterCellIndex.y ? 1 : -1;
+                int firstCellIndex = casterCellIndex.y + (selfIncluded ? 0 : forwardDirection);
+                int forwardEnd = targetCellIndex.y + (forwardBack * forwardDirection);
+                int backEnd = targetCellIndex.y - (forwardBack * forwardDirection);
+
+                backEnd = forwardDirection > 0
+                    ? Mathf.Max(backEnd, firstCellIndex)
+                    : Mathf.Min(backEnd, firstCellIndex);
+
+                minY = Mathf.Min(forwardEnd, backEnd);
+                maxY = Mathf.Max(forwardEnd, backEnd);
             }
             
             // Collect all cells in the calculated area

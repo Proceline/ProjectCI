@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
-  m_Name: PvSoUnitAbility_NormalMeleeAttack
+  m_Name: PvSoUnitAbility_SplashMeleeAttack
   m_EditorClassIdentifier: 
-  m_AbilityName: AttackSample
+  m_AbilityName: AttackSample_Splash
   m_Icon: {fileID: 0}
   m_Radius: 1
   m_ActionPointCost: 1
@@ -20,7 +20,7 @@ MonoBehaviour:
   m_EffectedTeam: 2
   m_EffectedType: 0
   m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
-  m_EffectShape: {fileID: 0}
+  m_EffectShape: {fileID: 11400000, guid: 43d3353917898c147a2912c839d0aebe, type: 2}
   m_EffectRadius: 0
   spawnOnCaster: []
   spawnOnTarget:
