@@ -9,29 +9,17 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     /// <summary>
     /// The result of a command execution, can be sent to frontend for animation.
     /// </summary>
-    public class PvRideCommand : CommandResult
+    public class PvRideCommand : PvConcreteCommand
     {
-        [NonSerialized]
-        private UnitAbilityCore _runtimeAbility;
-
-        public override void AddReaction(UnitAbilityCore ability, List<Action<GridPawnUnit, LevelCellBase>> reactions)
+        public override void AddReaction(UnitAbilityCore ability, Queue<Action<GridPawnUnit>> reactions)
         {
-            if (reactions == null)
-            {
-                return;
-            }
-            _runtimeAbility = ability;
-            reactions.Add(DetermineRideSituation);
+            base.AddReaction(ability, reactions);
+            reactions.Enqueue(DetermineRideSituation);
         }
 
-        private void DetermineRideSituation(GridPawnUnit owner, LevelCellBase target)
+        private void DetermineRideSituation(GridPawnUnit owner)
         {
-            if (!_runtimeAbility)
-            {
-                return;
-            }
-
-            var targetObj = target.GetObjectOnCell();
+            var targetObj = TargetCell.GetObjectOnCell();
             if (!targetObj)
             {
                 return;
@@ -46,7 +34,8 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
             {
                 return;
             }
-
+            
+            ShowEffectOnTarget(TargetCell.transform.position);
             if (Value > 0)
             {
                 var cell = owner.GetCell();

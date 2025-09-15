@@ -94,23 +94,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new Exception("State ERROR: Must during Ability Targeting");
             }
 
-            List<LevelCellBase> effectedCells = CurrentAbility.GetEffectedCells(_selectedUnit, selectedCell);
             ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
 
             GridPawnUnit gridPawnUnit = selectedCell.GetUnitOnCell();
             if (gridPawnUnit && gridPawnUnit is PvMnBattleGeneralUnit targetUnit)
             {
-                List<CommandResult> results =
-                    HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
-                foreach (var otherTarget in effectedCells)
-                {
-                    if (otherTarget == selectedCell)
-                    {
-                        continue;
-                    }
-
-                    HandleAbilityCombatingLogic(_selectedUnit, otherTarget, results);
-                }
+                var results = HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
 
                 raiserTurnLogicallyEndEvent.Raise();
                 HandleCommandResultsCoroutine(results);

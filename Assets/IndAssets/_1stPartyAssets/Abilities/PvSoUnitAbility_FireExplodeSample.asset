@@ -22,8 +22,9 @@ MonoBehaviour:
   m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
   m_EffectShape: {fileID: 11400000, guid: 3f3916795c303aa45bd0e569dd2570ee, type: 2}
   m_EffectRadius: 0
-  m_SpawnOnCaster: []
-  m_SpawnOnTarget: []
+  spawnOnCaster: []
+  spawnOnTarget:
+  - {fileID: 5976799327186537325, guid: 30ea9158161b6df46b80ee9ed9d12216, type: 3}
   m_Params:
   - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   m_Ailments: []

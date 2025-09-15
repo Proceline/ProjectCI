@@ -5,14 +5,10 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
-using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
@@ -346,153 +342,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     // AStarAlgorithmUtils.RunAI(aiUnits, EndTurn);
                     // TODO: Run AI
                 }
-            }
-        }
-
-        private async void HandleCommandResultsCoroutine(List<CommandResult> results)
-        {
-            CommandResult lastResult = null;
-            LevelCellBase lastAimCell = null;
-            GridPawnUnit lastOwner = null;
-            List<Action<GridPawnUnit, LevelCellBase>> lastReactions = new();
-            foreach (CommandResult result in results)
-            {
-                if (_abilityIdToAbilityHash.TryGetValue(result.AbilityId, out PvSoUnitAbility ability))
-                {
-                    if (lastAimCell == null)
-                    {
-                        RefreshAimCell(result);
-                    }
-                    if (lastOwner == null)
-                    {
-                        RefreshOwner(result);
-                    }
-                    if (lastResult != null && result.ResultId != lastResult.ResultId && lastOwner)
-                    {
-                        // Consume collected reactions and analyzed results
-                        await AnalyzeResult(lastResult);
-
-                        // Clear collected info for the next ability
-                        RefreshAimCell(result);
-                        RefreshOwner(result);
-                        lastReactions.Clear();
-                    }
-                    result.AddReaction(ability, lastReactions);
-                    lastResult = result;
-                }
-            }
-            if (lastReactions.Count > 0 && lastOwner && lastAimCell)
-            {
-                await AnalyzeResult(lastResult);
-            }
-            
-            // TODO: This should be responded through Broadcast
-            ClearStateAndDeselectUnit();
-            
-            raiserTurnAnimationEndEvent.Raise();
-
-            void RefreshAimCell(CommandResult result)
-            {
-                LevelCellBase cell = TacticBattleManager.GetGrid()[result.TargetCellIndex];
-                if (cell != null)
-                {
-                    lastAimCell = cell;
-                }
-            }
-
-            void RefreshOwner(CommandResult result)
-            {
-                if (_unitIdToBattleUnitHash.TryGetValue(result.OwnerId, out PvMnBattleGeneralUnit owner))
-                {
-                    lastOwner = owner;
-                }
-            }
-
-            async Awaitable AnalyzeResult(CommandResult result)
-            {
-                if (_abilityIdToAbilityHash.TryGetValue(result.AbilityId, out PvSoUnitAbility ability))
-                {
-                    // TODO: Handle IsAttacking if Required
-                    // TODO: UnityEvent onAbilityComplete = new UnityEvent();
-                    await UnitAbilityCoreExtensions.ApplyResult(ability, lastOwner, lastAimCell, lastReactions, null);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 开始进行对峙,主要攻击角色将会对目标角色发起Ability,需要取到主要角色的CurrentAbility以及可能出现目标角色的反击EquippedAbility
-        /// </summary>
-        /// <param name="abilityOwner">发起进攻/辅助/行动的角色</param>
-        /// <param name="targetUnit">被标记的目标角色</param>
-        /// <returns></returns>
-        private List<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
-        {
-            PvSoUnitAbility ability = CurrentAbility;
-            PvSoUnitAbility targetAbility = targetUnit.EquippedAbility;
-
-            if (!ability || !targetAbility)
-            {
-                throw new NullReferenceException("ERROR: One of these two pawns missing ability!");
-            }
-
-            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(targetUnit);
-            bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());
-
-            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
-            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
-            FollowUpCondition followUpCondition = FollowUpCondition.None;
-            if (abilitySpeed >= targetAbilitySpeed + DoubleAttackSpeedThreshold && ability.IsFollowUpAllowed())
-            {
-                followUpCondition = FollowUpCondition.InitiativeFollowUp;
-            }
-            else if (targetAbilitySpeed >= abilitySpeed + DoubleAttackSpeedThreshold && targetAbility.IsFollowUpAllowed())
-            {
-                followUpCondition = FollowUpCondition.CounterFollowUp;
-            }
-
-            List<CommandResult> results = new List<CommandResult>();
-            List<CombatActionContext> combatActionContextList = ability.CreateCombatActionContextList(bIsTargetAbilityAbleToCounter, followUpCondition);
-
-            foreach (CombatActionContext combatActionContext in combatActionContextList)
-            {
-                var combatAbility = combatActionContext.IsVictim ? targetAbility : ability;
-                var caster = combatActionContext.IsVictim ? targetUnit : abilityOwner;
-                var victim = combatActionContext.IsVictim ? abilityOwner : targetUnit;
-                if (combatAbility)
-                {
-                    HandleAbilityParam(combatAbility, caster, victim, ability, results);
-                }
-            }
-
-            return results;
-        }
-
-        private void HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, LevelCellBase targetCell,
-            List<CommandResult> results)
-        {
-            PvSoUnitAbility ability = CurrentAbility;
-
-            if (!ability)
-            {
-                throw new NullReferenceException("ERROR: Owner missing ability!");
-            }
-
-            var targetUnit = targetCell.GetUnitOnCell();
-            if (!targetUnit)
-            {
-                return;
-            }
-
-            HandleAbilityParam(ability, abilityOwner, targetUnit, ability, results);
-        }
-
-        private void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
-            PvSoUnitAbility ability, List<CommandResult> results)
-        {
-            var resultId = Guid.NewGuid().ToString();
-            foreach (AbilityParamBase param in ability.GetParameters())
-            {
-                param.Execute(resultId, inAbility, caster, target, results);
             }
         }
 

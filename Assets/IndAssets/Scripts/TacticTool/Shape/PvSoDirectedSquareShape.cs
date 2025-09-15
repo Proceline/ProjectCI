@@ -49,8 +49,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
                 // Forward direction is away from caster
                 int forwardDirection = targetCellIndex.x > casterCellIndex.x ? 1 : -1;
                 int firstCellIndex = casterCellIndex.x + (selfIncluded ? 0 : forwardDirection);
-                int forwardEnd = targetCellIndex.x + (forwardBack * forwardDirection);
-                int backEnd = targetCellIndex.x - (forwardBack * forwardDirection);
+                int forwardEnd = targetCellIndex.x + forwardBack * forwardDirection;
+                int backEnd = targetCellIndex.x - forwardBack * forwardDirection;
 
                 backEnd = forwardDirection > 0
                     ? Mathf.Max(backEnd, firstCellIndex)

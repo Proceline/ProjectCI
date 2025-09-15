@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.Utilities.Runtime.Pools;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 {
     public static class UnitAbilityCoreExtensions
     {
-        public static async Awaitable ApplyResult(PvSoUnitAbility ability, GridPawnUnit casterUnit, LevelCellBase target,
-            List<Action<GridPawnUnit, LevelCellBase>> reacts, UnityEvent onNonLogicalComplete = null,
-            UnityEvent<GridPawnUnit> onCasterUnitStartAnim = null, UnityEvent<GridPawnUnit> onCasterUnitAfterExecute = null)
+        public static async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
+            LevelCellBase target, Queue<Action<GridPawnUnit>> reacts)
         {
-            if(ability.GetShape())
+            if (ability.GetShape())
             {
                 casterUnit.LookAtCell(target);
                 // TODO: Need to have a lock
@@ -23,7 +20,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
                 UnitAbilityAnimation abilityAnimation = ability.abilityAnimation;
                 abilityAnimation?.PlayAnimation(casterUnit);
-                onCasterUnitStartAnim?.Invoke(casterUnit);
 
                 float firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
                 await Awaitable.WaitForSecondsAsync(firstExecuteTime);
@@ -31,25 +27,17 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                 if (ability.ProjectilePrefab)
                 {
                     var projectile = PvMnProjectilePool.InstantiateProjectile(ability.ProjectilePrefab);
-                    projectile.Initialize(casterUnit.transform.position, target.transform.position);
-                    while (!projectile.IsProgressEnded)
-                    {
-                        await Awaitable.NextFrameAsync();
-                    }
+                    await ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
                     firstExecuteTime += projectile.ProgressDuration;
                 }
 
-                onCasterUnitAfterExecute?.Invoke(casterUnit);
                 // TODO: Handle Audio
                 // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
                 // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
 
-                foreach (Action<GridPawnUnit, LevelCellBase> react in reacts)
+                while (reacts.TryDequeue(out var reactAction))
                 {
-                    react?.Invoke(casterUnit, target);
-                    if (!ability.HitEffectPrefab) continue;
-                    var hitEffect = MnObjectPool.Instance.Get(ability.HitEffectPrefab);
-                    hitEffect.transform.position = target.transform.position + Vector3.up * 2;
+                    reactAction?.Invoke(casterUnit);
                 }
 
                 if (abilityAnimation)
@@ -63,8 +51,15 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                 // TODO: Need a end of lock
                 // TacticBattleManager.RemoveActionBeingPerformed();
             }
+        }
 
-            onNonLogicalComplete?.Invoke();
+        private static async Awaitable ApplyProjectile(PvMnProjectile projectile, Vector3 departure, Vector3 dest)
+        {
+            projectile.Initialize(departure, dest);
+            while (!projectile.IsProgressEnded)
+            {
+                await Awaitable.NextFrameAsync();
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         }
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit toUnit, List<CommandResult> results)
+            GridPawnUnit toUnit, Queue<CommandResult> results)
         {
             
             var toContainer = toUnit.RuntimeAttributes;
@@ -37,7 +37,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             {
                 throw new InvalidOperationException("ERROR: Same size should not be able to ride");
             }
-            results.Add(new PvRideCommand
+            results.Enqueue(new PvRideCommand
             {
                 ResultId = resultId,
                 AbilityId = ability.ID,

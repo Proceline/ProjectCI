@@ -10,40 +10,29 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     /// <summary>
     /// The result of a command execution, can be sent to frontend for animation.
     /// </summary>
-    public class PvSimpleDamageCommand : CommandResult
+    public class PvSimpleDamageCommand : PvConcreteCommand
     {
         public int BeforeValue;
         public int AfterValue;
         public PvEnDamageType DamageType;
 
-        [NonSerialized]
-        private UnitAbilityCore _runtimeAbility;
-
-        public override void AddReaction(UnitAbilityCore ability, List<Action<GridPawnUnit, LevelCellBase>> reactions)
+        public override void AddReaction(UnitAbilityCore ability, Queue<Action<GridPawnUnit>> reactions)
         {
-            if (reactions == null)
-            {
-                return;
-            }
-            _runtimeAbility = ability;
-            reactions.Add(ApplyVisualEffects);
+            base.AddReaction(ability, reactions);
+            reactions.Enqueue(ApplyVisualEffects);
         }
 
-        private void ApplyVisualEffects(GridPawnUnit owner, LevelCellBase target)
+        private void ApplyVisualEffects(GridPawnUnit owner)
         {
-            if (!_runtimeAbility)
-            {
-                return;
-            }
+            RuntimeAbility.ApplyVisualEffects(owner, TargetCell);
 
-            _runtimeAbility.ApplyVisualEffects(owner, target);
-
-            var targetObj = target.GetObjectOnCell();
+            var targetObj = TargetCell.GetObjectOnCell();
             if (!targetObj)
             {
                 return;
             }
-
+            
+            ShowEffectOnTarget(targetObj.transform.position);
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
                 targetObj, DamageType);
         }

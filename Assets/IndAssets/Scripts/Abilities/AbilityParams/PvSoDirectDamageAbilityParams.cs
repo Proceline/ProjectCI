@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Events;
@@ -49,39 +50,50 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         }
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit toUnit, List<CommandResult> results)
+            GridPawnUnit toUnit, Queue<CommandResult> results)
         {
-            var toContainer = toUnit.RuntimeAttributes;
-            var fromContainer = fromUnit.RuntimeAttributes;
+            var targetCell = toUnit.GetCell();
+            List<LevelCellBase> effectedCells = ability.GetEffectedCells(fromUnit, toUnit.GetCell());
 
-            int beforeHealth = toContainer.Health.CurrentValue;
-            int damage = fromContainer.GetAttributeValue(attackerAttribute);
-
-            int deltaDamage =
-                Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
-
-            int finalDeltaDamage = deltaDamage;
-            if (ReceiveDamageModifier != null && toUnit is IEventOwner damageReceiver)
+            foreach (var cell in effectedCells)
             {
-                finalDeltaDamage = ReceiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
+                var targetUnit = cell.GetUnitOnCell();
+                if (!targetUnit)
+                {
+                    continue;
+                }
+
+                var toContainer = targetUnit.RuntimeAttributes;
+                var fromContainer = fromUnit.RuntimeAttributes;
+
+                var beforeHealth = toContainer.Health.CurrentValue;
+                var damage = fromContainer.GetAttributeValue(attackerAttribute);
+
+                var deltaDamage =
+                    Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
+
+                var finalDeltaDamage = deltaDamage;
+                if (ReceiveDamageModifier != null && targetUnit is IEventOwner damageReceiver)
+                {
+                    finalDeltaDamage = ReceiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
+                }
+
+                toContainer.Health.ModifyValue(-finalDeltaDamage);
+                int afterHealth = toContainer.Health.CurrentValue;
+
+                results.Enqueue(new PvSimpleDamageCommand
+                {
+                    ResultId = resultId,
+                    AbilityId = ability.ID,
+                    OwnerId = fromUnit.ID,
+                    TargetCellIndex = targetUnit.GetCell().GetIndex(),
+                    BeforeValue = beforeHealth,
+                    AfterValue = afterHealth,
+                    CommandType = CommandResult.TakeDamage,
+                    Value = deltaDamage,
+                    DamageType = damageType
+                });
             }
-
-            toContainer.Health.ModifyValue(-finalDeltaDamage);
-            int afterHealth = toContainer.Health.CurrentValue;
-
-            results.Add(new PvSimpleDamageCommand
-            {
-                ResultId = resultId,
-                AbilityId = ability.ID,
-                OwnerId = fromUnit.ID,
-                TargetCellIndex = toUnit.GetCell().GetIndex(),
-                BeforeValue = beforeHealth,
-                AfterValue = afterHealth,
-                CommandType = CommandResult.TakeDamage,
-                Value = deltaDamage,
-                DamageType = damageType,
-                ExtraInfo = nameof(UnitAttributeContainer.Health)
-            });
         }
     }
 }
