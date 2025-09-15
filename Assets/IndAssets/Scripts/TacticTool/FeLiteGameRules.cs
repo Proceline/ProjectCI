@@ -233,6 +233,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
             raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
+            CurrentAbility = null;
         }
 
         /// <summary>
@@ -278,11 +279,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                     }
 
-                    CurrentAbility = null;
                     CancelStatePurelyForUnit(_selectedUnit, state);
                     break;
                 case UnitBattleState.Moving:
                     Debug.LogWarning("You are cancelling state for selected Unit!");
+                    Debug.Log($"<color=yellow>Move Prepare State is directly controlled in {nameof(FeLiteGameController)}</color>");
                     break;
                 case UnitBattleState.AbilityConfirming:
                     Debug.LogWarning("State change doesn't work in AbilityConfirming!");

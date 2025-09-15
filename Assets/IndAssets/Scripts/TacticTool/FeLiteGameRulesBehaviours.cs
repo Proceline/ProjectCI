@@ -58,7 +58,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            if (targetCell.GetUnitOnCell())
+            var standUnit = targetCell.GetUnitOnCell();
+            if (standUnit && standUnit != _selectedUnit)
             {
                 // TODO: Consider move to Unit = Ride/Be Ride
                 var teamSituation =
@@ -69,7 +70,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _selectedUnitLastCell = _selectedUnit.GetCell();
-            if (_selectedUnit.ExecuteMovement(targetCell))
+            if (standUnit)
+            {
+                ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
+                UpdatePlayerStateAfterRegularMove();
+            }
+            else if (_selectedUnit.ExecuteMovement(targetCell))
             {
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
             }
