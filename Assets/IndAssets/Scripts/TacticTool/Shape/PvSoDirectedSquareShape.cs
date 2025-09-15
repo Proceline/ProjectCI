@@ -8,11 +8,11 @@ using System;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
 {
-
     [CreateAssetMenu(fileName = "PvSoDirectedSquareShape", menuName = "ProjectCI Tools/Ability/Shapes/PvSoDirectedSquareShape")]
     public class PvSoDirectedSquareShape : AbilityShape
     {
         [SerializeField] private Vector2Int squareSize;
+        [SerializeField] private bool selfIncluded;
 
         public override List<LevelCellBase> GetCellList(GridPawnUnit caster, LevelCellBase cell, int range,
             bool allowBlocked = true, BattleTeam effectedTeam = BattleTeam.None)
@@ -43,29 +43,21 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
             if (isHorizontal)
             {
                 // Horizontal alignment: spread left-right and forward-back along Y axis
-                minX = targetCellIndex.x - leftRight;
-                maxX = targetCellIndex.x + leftRight;
+                minY = targetCellIndex.y - leftRight;
+                maxY = targetCellIndex.y + leftRight;
                 
                 // Forward direction is away from caster
-                int forwardDirection = targetCellIndex.y > casterCellIndex.y ? 1 : -1;
-                int forwardEnd = targetCellIndex.y + (forwardBack * forwardDirection);
-                int backEnd = targetCellIndex.y - (forwardBack * forwardDirection);
+                int forwardDirection = targetCellIndex.x > casterCellIndex.x ? 1 : -1;
+                int firstCellIndex = casterCellIndex.x + (selfIncluded ? 0 : forwardDirection);
+                int forwardEnd = targetCellIndex.x + (forwardBack * forwardDirection);
+                int backEnd = targetCellIndex.x - (forwardBack * forwardDirection);
+
+                backEnd = forwardDirection > 0
+                    ? Mathf.Max(backEnd, firstCellIndex)
+                    : Mathf.Min(backEnd, firstCellIndex);
                 
-                // Ensure we don't go beyond caster position when Y is negative
-                if (forwardBack < 0)
-                {
-                    if (forwardDirection > 0)
-                    {
-                        backEnd = Mathf.Max(backEnd, casterCellIndex.y);
-                    }
-                    else
-                    {
-                        backEnd = Mathf.Min(backEnd, casterCellIndex.y);
-                    }
-                }
-                
-                minY = Mathf.Min(forwardEnd, backEnd);
-                maxY = Mathf.Max(forwardEnd, backEnd);
+                minX = Mathf.Min(forwardEnd, backEnd);
+                maxX = Mathf.Max(forwardEnd, backEnd);
             }
             else
             {
@@ -103,7 +95,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
                     Vector2Int cellIndex = new Vector2Int(x, y);
                     try
                     {
-                        LevelCellBase targetCell = grid[cellIndex];
+                        var targetCell = grid[cellIndex];
                         if (targetCell != null)
                         {
                             resultCells.Add(targetCell);
@@ -111,8 +103,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
                     }
                     catch
                     {
-                        // Cell doesn't exist at this index, skip it
-                        continue;
+                        // Empty
                     }
                 }
             }

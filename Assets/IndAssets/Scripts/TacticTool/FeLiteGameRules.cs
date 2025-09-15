@@ -460,19 +460,39 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var victim = combatActionContext.IsVictim ? abilityOwner : targetUnit;
                 if (combatAbility)
                 {
-                    HandleAbilityParam(combatAbility, caster, victim);
+                    HandleAbilityParam(combatAbility, caster, victim, ability, results);
                 }
             }
 
             return results;
+        }
 
-            void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target)
+        private void HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, LevelCellBase targetCell,
+            List<CommandResult> results)
+        {
+            PvSoUnitAbility ability = CurrentAbility;
+
+            if (!ability)
             {
-                string resultId = Guid.NewGuid().ToString();
-                foreach (AbilityParamBase param in ability.GetParameters())
-                {
-                    param.Execute(resultId, inAbility, caster, target, results);
-                }
+                throw new NullReferenceException("ERROR: Owner missing ability!");
+            }
+
+            var targetUnit = targetCell.GetUnitOnCell();
+            if (!targetUnit)
+            {
+                return;
+            }
+
+            HandleAbilityParam(ability, abilityOwner, targetUnit, ability, results);
+        }
+
+        private void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
+            PvSoUnitAbility ability, List<CommandResult> results)
+        {
+            var resultId = Guid.NewGuid().ToString();
+            foreach (AbilityParamBase param in ability.GetParameters())
+            {
+                param.Execute(resultId, inAbility, caster, target, results);
             }
         }
 

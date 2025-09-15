@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9270ce379dac4ff0ab50c1750bcc6c8e, type: 3}
-  m_Name: AoeOnlyDirectedSquareShape_1x0_Vertical
+  m_Name: AoeOnlyDirectedSquareShape_0x1_Forward
   m_EditorClassIdentifier: 
-  squareSize: {x: 1, y: 0}
+  squareSize: {x: 0, y: 1}
+  selfIncluded: 0
