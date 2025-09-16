@@ -158,38 +158,40 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _hoveringCells.Clear();
         }
-        
+
         private void UpdateHoverCellsToList(GridPawnUnit caster, PvSoUnitAbility ability, LevelCellBase cell)
         {
             if (!ability)
             {
                 throw new NullReferenceException("ERROR: Cannot identify current Ability");
             }
-            
-            if (ability)
+
+            if (!ability)
             {
-                List<LevelCellBase> abilityCells = ability.GetAbilityCells(caster);
+                return;
+            }
+
+            List<LevelCellBase> abilityCells = ability.GetAbilityCells(caster);
+
+            if (abilityCells.Contains(cell))
+            {
                 List<LevelCellBase> effectedCells = ability.GetEffectedCells(caster, cell);
-
-                if (abilityCells.Contains(cell))
+                foreach (var currCell in effectedCells)
                 {
-                    foreach (var currCell in effectedCells)
+                    if (!currCell || currCell == cell)
                     {
-                        if (!currCell || currCell == cell)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (TacticBattleManager.CanCasterEffectTarget(caster.GetCell(), currCell, BattleTeam.All,
-                                ability.DoesAllowBlocked()))
-                        {
-                            _hoveringCells.Add(currCell);
-                        }
+                    if (TacticBattleManager.CanCasterEffectTarget(caster.GetCell(), currCell, BattleTeam.All,
+                            ability.DoesAllowBlocked()))
+                    {
+                        _hoveringCells.Add(currCell);
                     }
                 }
             }
         }
-        
+
         #region MethodsCombo
         public void ShowRangeWhileStateChanged(PvMnBattleGeneralUnit unit, UnitBattleState state)
         {

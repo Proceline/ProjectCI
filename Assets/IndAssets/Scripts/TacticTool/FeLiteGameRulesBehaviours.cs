@@ -87,9 +87,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="selectedCell"></param>
         public void ApplyAbilityToTargetCell(LevelCellBase selectedCell)
         {
-            // TODO: Handle Lock
-
             if (!_selectedUnit)
+            {
+                return;
+            }
+
+            var effectTeam = CurrentAbility.GetEffectedTeam();
+            var cellState = selectedCell.GetCellState();
+            if ((effectTeam == BattleTeam.Hostile && cellState != CellState.eNegative) ||
+                (effectTeam == BattleTeam.Friendly && cellState != CellState.ePositive))
             {
                 return;
             }
@@ -109,8 +115,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                 raiserTurnLogicallyEndEvent.Raise();
                 HandleCommandResultsCoroutine(results);
-
-                // TODO: Logically end the action, might need some event
             }
         }
 
