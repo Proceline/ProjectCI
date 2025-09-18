@@ -12,6 +12,9 @@
 .idea/
 
 /[Aa]ssets/IndAssets/_3rdParty/PolygonNature/Scenes/
+/[Aa]ssets/IndAssets/_3rdParty/RPGTinyHeroWavePolyart/Animator/
+/[Aa]ssets/IndAssets/_3rdParty/RPGTinyHeroWavePolyart/Scene/
+/[Aa]ssets/IndAssets/_3rdParty/RPGTinyHeroWavePolyart/Prefab/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
