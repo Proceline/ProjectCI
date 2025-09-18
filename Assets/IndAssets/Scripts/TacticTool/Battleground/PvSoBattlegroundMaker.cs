@@ -79,12 +79,12 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                 var sceneUnits = GridBattleUtils.ScanAreaForObjects<PvMnSceneUnit>(
                     new Vector3(centerPosition.x, 0, centerPosition.z),
                     gridWidth > gridHeight ? gridWidth * 2 : gridHeight * 2,
-                    true,
+                    false,
                     pawnDetectLayerMask,
                     detectMaxResults
                 );
 
-                Debug.Log($"Found {sceneUnits.Count} SceneUnit(s) in area.");
+                Debug.Log($"<color=blue>Found {sceneUnits.Count} SceneUnit(s)</color> in area.");
 
                 foreach (var sceneUnit in sceneUnits)
                 {
