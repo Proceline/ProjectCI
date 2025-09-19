@@ -1,36 +1,35 @@
+using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Interface;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.Animation
 {
     [CreateAssetMenu(fileName = "PvSoFunctionalAnimationClip", menuName = "ProjectCI Tools/Animations/PvSoFunctionalClip")]
     public class PvSoFunctionalAnimationClip : UnitAbilityAnimation, IAnimationClipInfo
     {
-        [SerializeField]
-        private AnimationClip m_AnimationClip;
+        [FormerlySerializedAs("m_AnimationClip")] [SerializeField]
+        private AnimationClip animationClip;
 
-        [SerializeField]
-        private float m_TransitDuration;
+        [FormerlySerializedAs("m_TransitDuration")] [SerializeField]
+        private float transitDuration;
 
-        [SerializeField]
-        private float[] m_BreakPoints;
+        [FormerlySerializedAs("m_BreakPoints")] [SerializeField]
+        private float[] breakPoints;
 
-        public AnimationClip Clip => m_AnimationClip;
-        public float TransitDuration => m_TransitDuration;
-        public float[] BreakPoints => m_BreakPoints;
+        public AnimationClip Clip => animationClip;
+        public float TransitDuration => transitDuration;
+        public float[] BreakPoints => breakPoints;
 
-        public override void PlayAnimation(GridPawnUnit InUnit)
+        public override void PlayAnimation(GridPawnUnit inUnit)
         {
-            var animationManager = InUnit.GetComponent<UnitAnimationManager>();
-            if(animationManager)
-            {
-                animationManager.ForcePlayAnimation(this);
-            }
+            // Empty
+            throw new Exception("<PvSoFunctionalAnimationClip>This is Information-only Scriptable Animation!");
         }
 
-        public override float ExecuteAfterTime(int executeOrder) => m_BreakPoints[executeOrder];
-        public override float GetAnimationLength() => m_AnimationClip.length;
+        public override float ExecuteAfterTime(int executeOrder) => breakPoints[executeOrder];
+        public override float GetAnimationLength() => animationClip.length;
     }
 }

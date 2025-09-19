@@ -7,6 +7,7 @@ namespace ProjectCI.CoreSystem.Runtime.Animation
     [CreateAssetMenu(fileName = "PvSoPresetAnimationClip", menuName = "ProjectCI Tools/Animations/PvSoPresetClipExt")]
     public class PvSoPresetAnimationClipExt : UnitAbilityAnimation
     {
+        public const string AnimationLengthTag = "Length";
         [SerializeField] private AnimationPvCustomName customAnimIndexName;
         [NonSerialized] private GridPawnUnit _lastUsingPawn;
 
@@ -25,7 +26,7 @@ namespace ProjectCI.CoreSystem.Runtime.Animation
         public override float GetAnimationLength()
         {
             if (!_lastUsingPawn) return 0;
-            return _lastUsingPawn.GrabActionValueDataByIndexTag(0, customAnimIndexName.ToString(), "Length");
+            return _lastUsingPawn.GrabActionValueDataByIndexTag(0, customAnimIndexName.ToString(), AnimationLengthTag);
         }
     }
 }

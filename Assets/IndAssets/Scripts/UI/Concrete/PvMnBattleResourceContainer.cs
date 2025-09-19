@@ -36,7 +36,6 @@ namespace ProjectCI.Runtime.GUI.Battle
         private void UpdateHealthViewInfo(IEventOwner owner, DamageDescriptionParam damageParams)
         {
             if (_followingTarget != damageParams.Victim) return;
-            ReceiveHitDamage();
             SetHealth(damageParams.AfterValue);
         }
 
@@ -66,11 +65,6 @@ namespace ProjectCI.Runtime.GUI.Battle
         public override void SetMaxHealth(int maxHp)
         {
             _healthSlider.maxValue = maxHp;
-        }
-
-        public override void ReceiveHealthDamage(int damage)
-        {
-
         }
 
         private void OnDestroy()

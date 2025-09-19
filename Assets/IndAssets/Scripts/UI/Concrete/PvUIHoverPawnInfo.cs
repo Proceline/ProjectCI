@@ -1,9 +1,7 @@
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
+using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using UnityEngine.UI;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.Utilities.Runtime.Events;
@@ -32,12 +30,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
+        [NonSerialized] 
+        private GridPawnUnit _currentUnit;
 
-        protected GridPawnUnit m_CurrUnit = null;
-        public bool bIsSelectedEnabled = false;
+        public bool bIsSelectedEnabled;
 
-        private bool bEnabled = true;
-        private bool _bInitialized = false;
+        private bool _bEnabled = true;
+        private bool _bInitialized;
 
         public void Initialize()
         {
@@ -99,49 +98,25 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (InUnit)
             {
-                bEnabled = true;
+                _bEnabled = true;
                 m_ScreenObject.SetActive(true);
             }
             else
             {
-                bEnabled = false;
+                _bEnabled = false;
                 m_ScreenObject.SetActive(false);
             }
         }
 
         protected virtual void HandleUnitHover(GridPawnUnit InUnit)
         {
-            if (m_CurrUnit)
-            {
-                BattleHealth hpComp = m_CurrUnit.GetComponent<BattleHealth>();
-                if (hpComp)
-                {
-                    hpComp.OnHealthPreDepleted.RemoveListener(HandleUnitDeath);
-                }
-            }
-
-            m_CurrUnit = InUnit;
-
-            if (m_CurrUnit)
-            {
-                BattleHealth hpComp = m_CurrUnit.GetComponent<BattleHealth>();
-                if (hpComp)
-                {
-                    hpComp.OnHealthPreDepleted.AddListener(HandleUnitDeath);
-                }
-            }
-
+            _currentUnit = InUnit;
             SetupScreen();
-        }
-
-        protected virtual void HandleUnitDeath()
-        {
-            HandleUnitHover(null);
         }
 
         protected void SetupScreen()
         {
-            if (m_CurrUnit && bEnabled)
+            if (_currentUnit && _bEnabled)
             {
                 m_ScreenObject.SetActive(true);
                 UpdateViewInfo();
@@ -154,18 +129,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected virtual void UpdateViewInfo()
         {
-            if (m_CurrUnit)
+            if (_currentUnit)
             {
-                m_NameText.text = m_CurrUnit.GetUnitData().m_UnitName;
-                m_HitpointText.text = m_CurrUnit.RuntimeAttributes.Health.CurrentValue.ToString() 
-                    + "/" + m_CurrUnit.RuntimeAttributes.Health.MaxValue.ToString();
-                m_HitpointSlider.maxValue = m_CurrUnit.RuntimeAttributes.Health.MaxValue;
-                m_HitpointSlider.value = m_CurrUnit.RuntimeAttributes.Health.CurrentValue;
+                m_NameText.text = _currentUnit.GetUnitData().m_UnitName;
+                m_HitpointText.text = _currentUnit.RuntimeAttributes.Health.CurrentValue.ToString() 
+                    + "/" + _currentUnit.RuntimeAttributes.Health.MaxValue.ToString();
+                m_HitpointSlider.maxValue = _currentUnit.RuntimeAttributes.Health.MaxValue;
+                m_HitpointSlider.value = _currentUnit.RuntimeAttributes.Health.CurrentValue;
 
-                m_AttackValueText.text = m_CurrUnit.RuntimeAttributes.GetAttributeValue(m_PhysicalAttackAttribute).ToString();
+                m_AttackValueText.text = _currentUnit.RuntimeAttributes.GetAttributeValue(m_PhysicalAttackAttribute).ToString();
                 for (int i = 0; i < m_AttributesToDisplay.Length; i++)
                 {
-                    m_AttributeValueTexts[i].text = m_CurrUnit.RuntimeAttributes.GetAttributeValue(m_AttributesToDisplay[i]).ToString();
+                    m_AttributeValueTexts[i].text = _currentUnit.RuntimeAttributes.GetAttributeValue(m_AttributesToDisplay[i]).ToString();
                 }
             }
         }

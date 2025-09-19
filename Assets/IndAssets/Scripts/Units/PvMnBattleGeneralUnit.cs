@@ -4,8 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ProjectCI_Animation.Runtime;
+using ProjectCI_Animation.Runtime.Concrete;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Audio;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
@@ -82,17 +83,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             base.Initialize();
             SetFormulaCollection();
 
-            _animationManager = gameObject.GetComponent<UnitAnimationManager>();
-            if (!_animationManager)
+            var animator = GetComponent<PvMnFunctionalAnimator>();
+            if (!animator)
             {
-                _animationManager = gameObject.GetComponentInChildren<UnitAnimationManager>();
+                animator = GetComponentInChildren<PvMnFunctionalAnimator>();
             }
+
+            if (animator)
+            {
+                animator.Initialize(this);
+            }
+
+            _animationManager = animator;
 
             if (_animationManager)
             {
                 OnPreStandIdleAnimRequired += PlayIdleAnimation;
                 OnPreMovementAnimRequired += PlayMovementAnimation;
-                OnPreHitAnimRequired += PlayHitAnimation;
             }
 
             OnMovementPostComplete.RemoveAllListeners();
@@ -104,8 +111,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             PvMnBattleResourceContainer container = GetComponent<PvMnBattleResourceContainer>();
             if (container)
             {
-                container.OnHealthPreDepleted.AddListener(Kill);
-                container.OnHitPreReceived.AddListener(PlayHitVisualResult);
                 container.Initialize(this, uiCamera, resourceContainerPrefab);
                 container.SetHealth(RuntimeAttributes.Health.CurrentValue);
                 container.SetMaxHealth(RuntimeAttributes.Health.MaxValue);
@@ -118,7 +123,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 OnPreStandIdleAnimRequired -= PlayIdleAnimation;
                 OnPreMovementAnimRequired -= PlayMovementAnimation;
-                OnPreHitAnimRequired -= PlayHitAnimation;
             }
         }
 
@@ -151,7 +155,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 switch (tags[1])
                 {
-                    case "Length":
+                    case PvSoPresetAnimationClipExt.AnimationLengthTag:
                         return _animationManager.GetPresetAnimationDuration(tags[0]);
                 }
             }
@@ -262,32 +266,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             // TODO: Change BattleTeam type to enable cross enemy
             return UnitData.m_MovementShape.GetCellList(this, GetCell(), CurrentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
-        }
-
-        private void Kill()
-        {
-            // TODO: Consider Clear States
-            // ClearStates();
-
-            if ( m_CurrentCell )
-            {
-                m_CurrentCell.SetObjectOnCell(null);
-                m_CurrentCell = null;
-            }
-
-            // TODO: Handle isDead, m_bIsDead = true;
-
-            SetVisible(false);
-            CheckCellVisibility();
-
-            // TODO: HandleDeath();
-
-            AudioClip clip = GetUnitData().m_DeathSound;
-            if (clip)
-            {
-                AudioPlayData audioData = new AudioPlayData(clip);
-                AudioHandler.PlayAudio(audioData, gameObject.transform.position);
-            }
         }
 
         public void ForceMoveToCellImmediately(LevelCellBase targetCell)

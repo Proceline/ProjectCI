@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: ACI_SNS_Attack
   m_EditorClassIdentifier: 
   m_AnimationClip: {fileID: 1827226128182048838, guid: 2a2d488e2125476a8f4c190e378ec37a, type: 3}
-  m_TransitDuration: 0.1
+  m_TransitDuration: 0.025
   m_BreakPoints:
-  - 0.4
+  - 0.3
