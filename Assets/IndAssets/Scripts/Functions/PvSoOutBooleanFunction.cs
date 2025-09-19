@@ -14,10 +14,13 @@ namespace ProjectCI.Utilities.Runtime.Functions
 
         private readonly Dictionary<int, IEventOwner> _ownersRecord = new();
 
-        public void RegisterDelegate<T>(T eventOwner, Func<IEventOwner, EmptyParameterForFunction, bool> func) where T : Object, IEventOwner
+        public void RegisterDelegate<T>(T eventOwner, Func<IEventOwner, bool> func) where T : Object, IEventOwner
         {
             _ownersRecord.TryAdd(eventOwner.GetInstanceID(), eventOwner);
-            base.RegisterDelegate(eventOwner, func);
+            base.RegisterDelegate(eventOwner, TranslatedFunc);
+            return;
+            
+            bool TranslatedFunc(IEventOwner inEventOwner, EmptyParameterForFunction _) => func.Invoke(inEventOwner);
         }
 
         public override bool Get(IEventOwner owner)

@@ -13,6 +13,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
     public static class UnitAbilityCoreExtensions
     {
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
+        private const float AnimatingPendingInterval = 0.125f;
         
         public static async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
             LevelCellBase target, Queue<Action<GridPawnUnit>> reacts)
@@ -20,9 +21,10 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             if (ability.GetShape())
             {
                 casterUnit.LookAtCell(target);
-                if (_raiserIsAnimatingProgressFunc.Get(casterUnit))
+                
+                while (_raiserIsAnimatingProgressFunc.Get(casterUnit))
                 {
-                    Debug.LogError("????");
+                    await Awaitable.WaitForSecondsAsync(AnimatingPendingInterval);
                 }
 
                 UnitAbilityAnimation abilityAnimation = ability.abilityAnimation;
