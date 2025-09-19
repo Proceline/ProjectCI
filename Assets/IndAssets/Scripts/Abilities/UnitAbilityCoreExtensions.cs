@@ -1,22 +1,29 @@
 using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Functions;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 {
+    [StaticInjectableTarget]
     public static class UnitAbilityCoreExtensions
     {
+        [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
+        
         public static async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
             LevelCellBase target, Queue<Action<GridPawnUnit>> reacts)
         {
             if (ability.GetShape())
             {
                 casterUnit.LookAtCell(target);
-                // TODO: Need to have a lock
-                // TacticBattleManager.AddActionBeingPerformed();
+                if (_raiserIsAnimatingProgressFunc.Get(casterUnit))
+                {
+                    Debug.LogError("????");
+                }
 
                 UnitAbilityAnimation abilityAnimation = ability.abilityAnimation;
                 abilityAnimation?.PlayAnimation(casterUnit);

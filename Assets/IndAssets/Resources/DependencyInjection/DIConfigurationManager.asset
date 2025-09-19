@@ -22,3 +22,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.PvSoSimpleDamageApplyEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Functions.PvSoOutBooleanFunction,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 72e6c06c4ca2c8d43b3db24d3c500b05, type: 2}
+  staticInjectTargets:
+  - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
+    Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
