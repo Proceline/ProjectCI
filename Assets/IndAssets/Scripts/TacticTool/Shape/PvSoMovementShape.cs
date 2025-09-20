@@ -12,13 +12,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
     public class PvSoMovementShape : AbilityShape
     {
         public override List<LevelCellBase> GetCellList(GridPawnUnit caster, LevelCellBase inCell, int inRange,
-            bool bAllowBlocked, BattleTeam effectedTeam)
+            bool bAllowBlocked = true, BattleTeam effectedTeam = BattleTeam.None)
         {
-            GridPawnUnit Caster = inCell.GetUnitOnCell();
-
             AIRadiusInfo radiusInfo = new AIRadiusInfo(inCell, inRange)
             {
-                Caster = Caster,
+                Caster = caster,
                 bAllowBlocked = bAllowBlocked,
                 bStopAtBlockedCell = true,
                 EffectedTeam = effectedTeam
