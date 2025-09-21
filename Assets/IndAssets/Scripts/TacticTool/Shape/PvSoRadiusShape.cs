@@ -20,7 +20,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
         {
             AIRadiusInfo radiusInfo = new AIRadiusInfo(cell, range)
             {
-                Caster = cell.GetUnitOnCell(),
+                Caster = caster,
                 bAllowBlocked = allowBlocked,
                 bStopAtBlockedCell = allowStopOnBlock,
                 EffectedTeam = effectedTeam
