@@ -33,8 +33,17 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
             }
             
             ShowEffectOnTarget(targetObj.transform.position);
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
-                targetObj, DamageType);
+
+            if (string.IsNullOrEmpty(ExtraInfo))
+            {
+                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
+                    targetObj, DamageType);
+            }
+            else
+            {
+                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
+                    targetObj, DamageType, ExtraInfo);
+            }
         }
     }
 } 

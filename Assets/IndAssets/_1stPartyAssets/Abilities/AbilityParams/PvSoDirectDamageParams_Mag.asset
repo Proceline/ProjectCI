@@ -17,3 +17,6 @@ MonoBehaviour:
   defenderAttribute:
     value: 7
   damageType: 3
+  isCriticalEnabledByDefault: 0
+  criticalAttribute:
+    value: 9

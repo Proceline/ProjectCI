@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.Utilities.Runtime.Events;
 using TMPro;
 using UnityEngine;
@@ -25,6 +26,9 @@ namespace ProjectCI.Runtime.GUI.Battle
         private readonly Dictionary<PvEnDamageType, Color> _damageTypeColorsDic = new();
 
         [SerializeField] private UnityEvent onInitializedRoot;
+
+        public float normalTextSize = 10f;
+        public float criticalTextSize = 12f;
 
         private void Start()
         {
@@ -69,7 +73,19 @@ namespace ProjectCI.Runtime.GUI.Battle
             {
                 textMesh.color = color;
             }
-            textMesh.SetText(showingValue.ToString());
+
+            var finalText = showingValue.ToString();
+            if (damageParams.ContainsTag(UnitAbilityCoreExtensions.CriticalExtraInfoHint))
+            {
+                finalText += "!";
+                textMesh.fontSize = criticalTextSize;
+            }
+            else
+            {
+                textMesh.fontSize = normalTextSize;
+            }
+
+            textMesh.SetText(finalText);
             AnimateText(textMesh, 0.5f, targetPosition);
         }
 

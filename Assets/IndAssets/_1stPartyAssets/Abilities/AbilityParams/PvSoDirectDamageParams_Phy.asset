@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4290c076828f27045a3305d91868b179, type: 3}
   m_Name: PvSoDirectDamageParams_Phy
   m_EditorClassIdentifier: 
-  m_Damage: 50
   attackerAttribute:
     value: 12
   defenderAttribute:
     value: 6
+  damageType: 0
+  isCriticalEnabledByDefault: 1
+  criticalAttribute:
+    value: 9

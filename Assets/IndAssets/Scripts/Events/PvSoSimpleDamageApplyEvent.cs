@@ -26,6 +26,11 @@ namespace ProjectCI.Utilities.Runtime.Events
             _damageTags.Clear();
             foreach (var tag in tags)
             {
+                if (string.IsNullOrEmpty(tag))
+                {
+                    continue;
+                }
+
                 _damageTags.Add(tag);
             }
         }

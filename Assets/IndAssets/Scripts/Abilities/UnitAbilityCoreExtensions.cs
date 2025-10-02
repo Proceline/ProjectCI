@@ -12,6 +12,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
     [StaticInjectableTarget]
     public static class UnitAbilityCoreExtensions
     {
+        public const string CriticalExtraInfoHint = "Critical";
+        
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
         private const float AnimatingPendingInterval = 0.125f;
         

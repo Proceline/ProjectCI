@@ -13447,6 +13447,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  normalTextSize: 10
+  criticalTextSize: 12
 --- !u!1001 &410070214
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23987,7 +23989,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: -2
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -29010,6 +29012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: ac20ea71bb454824681b3f92b3f78572, type: 2}
   onSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+  generalAdjustOnTransition: 0.15
 --- !u!1001 &888006411
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30343,6 +30346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: 491723784bff23a4b9775801fad7fe11, type: 2}
   onSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+  generalAdjustOnTransition: 0.15
 --- !u!1001 &923117695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31851,6 +31855,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: fb8a7d716417bbd4f9e01e7ee5d7ea3c, type: 2}
   onSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+  generalAdjustOnTransition: 0.15
 --- !u!1001 &995151916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37534,6 +37539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationPlayableSupport: {fileID: 11400000, guid: fb8a7d716417bbd4f9e01e7ee5d7ea3c, type: 2}
   onSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+  generalAdjustOnTransition: 0.15
 --- !u!1001 &1164125860
 PrefabInstance:
   m_ObjectHideFlags: 0

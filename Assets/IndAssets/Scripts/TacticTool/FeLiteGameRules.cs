@@ -15,6 +15,7 @@ using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
+    [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "NewGameRules", menuName = "ProjectCI Tools/GameRules/Create FeLiteGameRules", order = 1)]
     public partial class FeLiteGameRules : BattleGameRules
     {
