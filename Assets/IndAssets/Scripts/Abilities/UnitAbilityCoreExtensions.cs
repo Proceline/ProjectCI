@@ -13,6 +13,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
     public static class UnitAbilityCoreExtensions
     {
         public const string CriticalExtraInfoHint = "Critical";
+        public const string MissExtraInfoHint = "Miss";
+        public const string HealExtraInfoHint = "Heal";
         
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
         private const float AnimatingPendingInterval = 0.125f;

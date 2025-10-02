@@ -80,6 +80,11 @@ namespace ProjectCI.Runtime.GUI.Battle
                 finalText += "!";
                 textMesh.fontSize = criticalTextSize;
             }
+            else if (damageParams.ContainsTag(UnitAbilityCoreExtensions.MissExtraInfoHint))
+            {
+                finalText = "Miss";
+                textMesh.fontSize = normalTextSize;
+            }
             else
             {
                 textMesh.fontSize = normalTextSize;

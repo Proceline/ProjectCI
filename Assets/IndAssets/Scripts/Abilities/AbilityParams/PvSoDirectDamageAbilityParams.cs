@@ -30,6 +30,12 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField]
         private AttributeType criticalAttribute;
 
+        [Header("Accuracy")] 
+        [SerializeField] 
+        private bool isAlwaysHitByDefault;
+        [SerializeField] private AttributeType hitAttribute;
+        [SerializeField] private AttributeType dodgeAttribute;
+
         [Inject]
         private static IFinalReceiveDamageModifier _receiveDamageModifier;
 
@@ -60,8 +66,29 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 var beforeHealth = toContainer.Health.CurrentValue;
                 var damage = fromContainer.GetAttributeValue(attackerAttribute);
 
+                bool isReallyHit = isAlwaysHitByDefault;
+                if (!isAlwaysHitByDefault)
+                {
+                    var hitThreshold = fromContainer.GetAttributeValue(hitAttribute);
+                    var dodgeThreshold = toContainer.GetAttributeValue(dodgeAttribute);
+                    var hitPercentageResult = hitThreshold - dodgeThreshold;
+                    if (hitPercentageResult >= 100)
+                    {
+                        isReallyHit = true;
+                    }
+                    else if (hitPercentageResult <= 0)
+                    {
+                        isReallyHit = false;
+                    }
+                    else
+                    {
+                        var randomValue = Random.Range(0, 10000) % 100;
+                        isReallyHit = randomValue < hitPercentageResult;
+                    }
+                }
+                
                 bool isCritical = false;
-                if (isCriticalEnabledByDefault)
+                if (isCriticalEnabledByDefault && isReallyHit && damage > 0)
                 {
                     var criticalThreshold = fromContainer.GetAttributeValue(criticalAttribute);
                     var finalCriticalThreshold = criticalThreshold + 70;
@@ -75,7 +102,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 }
 
                 var deltaDamage =
-                    Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
+                    isReallyHit ? Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0) : 0;
 
                 var finalDeltaDamage = deltaDamage;
                 if (targetUnit is IEventOwner damageReceiver)
@@ -83,7 +110,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
                 }
 
-                toContainer.Health.ModifyValue(-finalDeltaDamage);
+                if (isReallyHit)
+                {
+                    toContainer.Health.ModifyValue(-finalDeltaDamage);
+                }
+
                 int afterHealth = toContainer.Health.CurrentValue;
 
                 var savingCommand = new PvSimpleDamageCommand
@@ -99,7 +130,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     DamageType = damageType
                 };
 
-                if (isCritical)
+                if (!isReallyHit)
+                {
+                    savingCommand.ExtraInfo = UnitAbilityCoreExtensions.MissExtraInfoHint;
+                }
+                else if (isCritical)
                 {
                     savingCommand.ExtraInfo = UnitAbilityCoreExtensions.CriticalExtraInfoHint;
                 }

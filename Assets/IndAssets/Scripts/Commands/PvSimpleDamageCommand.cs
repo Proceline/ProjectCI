@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -31,8 +32,11 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
             {
                 return;
             }
-            
-            ShowEffectOnTarget(targetObj.transform.position);
+
+            if (ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint)
+            {
+                ShowEffectOnTarget(targetObj.transform.position);
+            }
 
             if (string.IsNullOrEmpty(ExtraInfo))
             {

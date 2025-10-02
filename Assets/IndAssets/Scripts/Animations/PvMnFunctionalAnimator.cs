@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
 using ProjectCI.Utilities.Runtime.Events;
@@ -52,7 +53,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
         {
             return checkingOwner == _animatorOwner && _isLockableAnimating;
         }
-        
+
         private void RespondToDamageParams(IEventOwner owner, DamageDescriptionParam damageParams)
         {
             if (_animatorOwner.EventIdentifier != damageParams.Victim.ID)
@@ -66,8 +67,16 @@ namespace ProjectCI_Animation.Runtime.Concrete
                 _isLockableAnimating = false;
             }
 
-            ForcePlayAnimation(AnimationIndexName.Hit);
-            var actingTime = GetPresetAnimationDuration(AnimationIndexName.Hit) - generalAdjustOnTransition;
+            if (damageParams.ContainsTag(UnitAbilityCoreExtensions.MissExtraInfoHint) ||
+                damageParams.ContainsTag(UnitAbilityCoreExtensions.HealExtraInfoHint))
+            {
+                return;
+            }
+
+            var showingValue = damageParams.FinalDamageBeforeAdjusted;
+            var animationIndex = showingValue <= 0 ? AnimationIndexName.Defend : AnimationIndexName.Hit;
+            ForcePlayAnimation(animationIndex);
+            var actingTime = GetPresetAnimationDuration(animationIndex) - generalAdjustOnTransition;
             _lockingRoutine = StartCoroutine(EnablePresetTimeLock(actingTime));
         }
 
