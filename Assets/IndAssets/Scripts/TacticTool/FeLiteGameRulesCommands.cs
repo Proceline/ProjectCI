@@ -112,7 +112,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var victim = combatActionContext.IsVictim ? abilityOwner : targetUnit;
                 if (combatAbility)
                 {
-                    HandleAbilityParam(combatAbility, caster, victim, ability, results);
+                    HandleAbilityParam(combatAbility, caster, victim, results);
                 }
             }
 
@@ -141,10 +141,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 */
         private void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
-            PvSoUnitAbility ability, Queue<CommandResult> results)
+            Queue<CommandResult> results)
         {
             var resultId = Guid.NewGuid().ToString();
-            foreach (AbilityParamBase param in ability.GetParameters())
+            foreach (AbilityParamBase param in inAbility.GetParameters())
             {
                 param.Execute(resultId, inAbility, caster, target, results);
             }

@@ -15,5 +15,5 @@ MonoBehaviour:
   passiveTiming: 1
   customValueModifier: {fileID: 11400000, guid: 62ec9bd4f320c9f4eb581a026e1cb274, type: 2}
   attributeModifier:
-    flatValue: -50
+    flatValue: -10
     percentAddValue: 0

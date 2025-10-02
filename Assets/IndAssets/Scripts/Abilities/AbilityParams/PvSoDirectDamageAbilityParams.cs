@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
@@ -126,7 +125,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     BeforeValue = beforeHealth,
                     AfterValue = afterHealth,
                     CommandType = CommandResult.TakeDamage,
-                    Value = deltaDamage,
+                    Value = finalDeltaDamage,
                     DamageType = damageType
                 };
 
@@ -134,7 +133,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 {
                     savingCommand.ExtraInfo = UnitAbilityCoreExtensions.MissExtraInfoHint;
                 }
-                else if (isCritical)
+                else if (isCritical && finalDeltaDamage > 0)
                 {
                     savingCommand.ExtraInfo = UnitAbilityCoreExtensions.CriticalExtraInfoHint;
                 }

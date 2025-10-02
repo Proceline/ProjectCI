@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda66c291a2e584c9e39823e3ebb7c5, type: 3}
   m_Name: ACI_SNS_Defend
   m_EditorClassIdentifier: 
-  m_AnimationClip: {fileID: 1827226128182048838, guid: d4cf0a0a5ae84b34a06b4bd2d6632c1e, type: 3}
-  m_TransitDuration: 0.1
-  m_BreakPoints: []
+  animationClip: {fileID: 1827226128182048838, guid: d4cf0a0a5ae84b34a06b4bd2d6632c1e, type: 3}
+  transitDuration: 0.1
+  breakPoints: []
