@@ -36,3 +36,6 @@ MonoBehaviour:
   - type:
       value: 20
     value: 0
+  - type:
+      value: 30
+    value: 10

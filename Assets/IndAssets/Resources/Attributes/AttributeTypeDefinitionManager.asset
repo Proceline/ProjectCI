@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AttributeTypeDefinitionManager
   m_EditorClassIdentifier: 
   attributeTypeNames:
-  - HitPoint
+  - Health
   - Strength
   - Psychic
   - Dexterity
@@ -42,3 +42,5 @@ MonoBehaviour:
   - _movement
   - DEFense
   - SPIrit
+  - HITpoint
+  - _weaponDefense
