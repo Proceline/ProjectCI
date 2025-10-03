@@ -15,7 +15,7 @@ MonoBehaviour:
   attackerAttribute:
     value: 12
   defenderAttribute:
-    value: 6
+    value: 27
   damageType: 0
   isCriticalEnabledByDefault: 1
   criticalAttribute:

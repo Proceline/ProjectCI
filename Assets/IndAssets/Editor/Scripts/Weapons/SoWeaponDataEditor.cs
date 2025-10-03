@@ -1,39 +1,47 @@
+using IndAssets.Scripts.Weapons;
 using UnityEditor;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Weapons;
 using UnityEngine;
 
-namespace ProjectCI.TacticTool.Editor
+namespace IndAssets.Editor.Scripts.Weapons
 {
-    [CustomEditor(typeof(SoWeaponData))]
+    [CustomEditor(typeof(PvSoWeaponData))]
     public class SoWeaponDataEditor : UnityEditor.Editor
     {
-        private SerializedProperty m_WeaponNumberIdentifier;
-        private SerializedProperty m_WeaponName;
-        private SerializedProperty m_Description;
-        private SerializedProperty m_Attributes;
+        private SerializedProperty _mWeaponNumberIdentifier;
+        private SerializedProperty _mWeaponName;
+        private SerializedProperty _mDescription;
+        private SerializedProperty _mAttributes;
 
         private void OnEnable()
         {
-            m_WeaponNumberIdentifier = serializedObject.FindProperty("m_WeaponNumberIdentifier");
-            m_WeaponName = serializedObject.FindProperty("weaponName");
-            m_Description = serializedObject.FindProperty("description");
-            m_Attributes = serializedObject.FindProperty("attributes");
+            _mWeaponNumberIdentifier = serializedObject.FindProperty("weaponIdentifier");
+            _mWeaponName = serializedObject.FindProperty("weaponName");
+            _mDescription = serializedObject.FindProperty("description");
+            _mAttributes = serializedObject.FindProperty("attributes");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(m_WeaponNumberIdentifier);
-            EditorGUILayout.PropertyField(m_WeaponName);
-            EditorGUILayout.PropertyField(m_Description);
+            EditorGUILayout.PropertyField(_mWeaponNumberIdentifier);
+            EditorGUILayout.PropertyField(_mWeaponName);
+            EditorGUILayout.PropertyField(_mDescription);
+
+            var animatorProperty = serializedObject.FindProperty(PvSoWeaponData.AnimatorPropertyName);
+            var abilityProperty = serializedObject.FindProperty(PvSoWeaponData.BindingAbilityPropertyName);
+            EditorGUILayout.PropertyField(animatorProperty);
+            EditorGUILayout.PropertyField(abilityProperty);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponPrefab)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalRotation)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalPosition)));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Attributes", EditorStyles.boldLabel);
 
-            for (int i = 0; i < m_Attributes.arraySize; i++)
+            for (int i = 0; i < _mAttributes.arraySize; i++)
             {
-                var attribute = m_Attributes.GetArrayElementAtIndex(i);
+                var attribute = _mAttributes.GetArrayElementAtIndex(i);
                 var type = attribute.FindPropertyRelative("type");
                 var value = attribute.FindPropertyRelative("value");
 
@@ -42,7 +50,7 @@ namespace ProjectCI.TacticTool.Editor
                 EditorGUILayout.PropertyField(value, GUIContent.none);
                 if (GUILayout.Button("X", GUILayout.Width(20)))
                 {
-                    m_Attributes.DeleteArrayElementAtIndex(i);
+                    _mAttributes.DeleteArrayElementAtIndex(i);
                     break;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -50,7 +58,7 @@ namespace ProjectCI.TacticTool.Editor
 
             if (GUILayout.Button("Add Attribute"))
             {
-                m_Attributes.arraySize++;
+                _mAttributes.arraySize++;
             }
 
             serializedObject.ApplyModifiedProperties();

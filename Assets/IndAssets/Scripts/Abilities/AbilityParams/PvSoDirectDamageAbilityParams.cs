@@ -90,12 +90,10 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 if (isCriticalEnabledByDefault && isReallyHit && damage > 0)
                 {
                     var criticalThreshold = fromContainer.GetAttributeValue(criticalAttribute);
-                    var finalCriticalThreshold = criticalThreshold + 70;
                     var randomValue = Random.Range(0, 10000) % 100;
-                    if (randomValue < finalCriticalThreshold)
+                    if (randomValue < criticalThreshold)
                     {
-                        damage += 5;
-                        damage *= 3;
+                        damage *= 2;
                         isCritical = true;
                     }
                 }
