@@ -25,7 +25,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] 
         private bool showingSupportRangeByDefault;
 
-        public void AssignAbilityOnView(PvSoUnitAbility ability)
+        public void AssignAbilityOnView(PvSoUnitAbility ability, PvMnBattleGeneralUnit unit)
         {
             _highlightAbility = ability;
         }
@@ -272,6 +272,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             HighlightAbilityOrSupportCells(ability, casterUnit,
                 ability.GetEffectedTeam() == BattleTeam.Friendly ? CellState.ePositive : CellState.eNegative);
+            
+            UpdateHoverCells(casterUnit, ability);
         }
 
         #endregion

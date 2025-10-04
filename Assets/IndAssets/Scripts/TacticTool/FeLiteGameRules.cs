@@ -38,7 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         #endregion
 
         [SerializeField] 
-        private UnityEvent<PvSoUnitAbility> onAbilitySelectedPostSupport;
+        private UnityEvent<PvSoUnitAbility, PvMnBattleGeneralUnit> onAbilitySelectedPostSupport;
 
         private PvSoUnitAbility CurrentAbility
         {
@@ -48,7 +48,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _selectedAbility = value;
                 if (value)
                 {
-                    onAbilitySelectedPostSupport?.Invoke(_selectedAbility);
+                    onAbilitySelectedPostSupport?.Invoke(_selectedAbility, _selectedUnit);
                 }
             }
         }
