@@ -1,4 +1,5 @@
 using System;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
@@ -38,6 +39,9 @@ namespace ProjectCI.Runtime.GUI.Battle
         /// </summary>
         [SerializeField]
         private UnityEvent<bool> onSideControlPanelToggled;
+
+        [SerializeField]
+        private UnityEvent<PvSoUnitAbility> onAbilitySelectedThroughButton;
 
         private void Start()
         {
@@ -139,10 +143,11 @@ namespace ProjectCI.Runtime.GUI.Battle
             sideControlPanel.NumOfSlots = abilities.Count;
             sideControlPanel.ControlButtons.ForEach(customButton =>
             {
+                var refAbility = abilities[customButton.ButtonIndex];
                 customButton.ButtonContentText = abilities[customButton.ButtonIndex].GetAbilityName();
                 customButton.OnButtonClickedAsIndex = index =>
                 {
-                    Debug.Log("Click on this skill!");
+                    onAbilitySelectedThroughButton?.Invoke(refAbility);
                 };
             });
         }

@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6a701e2840544ef8ebb0f5f69403ff6, type: 3}
   m_Name: FelikeVisualGrid
   m_EditorClassIdentifier: 
+  showingSupportRangeByDefault: 0
