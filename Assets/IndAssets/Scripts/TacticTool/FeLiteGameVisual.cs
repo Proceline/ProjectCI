@@ -22,6 +22,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized] 
         private PvSoUnitAbility _highlightAbility;
 
+        [SerializeField] 
+        private bool showingSupportRangeByDefault;
+
         public void AssignAbilityOnView(PvSoUnitAbility ability)
         {
             _highlightAbility = ability;
@@ -234,6 +237,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             HighlightAbilityOrSupportCells(ability, casterUnit, CellState.eNegative);
+
+            if (!showingSupportRangeByDefault)
+            {
+                return;
+            }
 
             var support = casterUnit.DefaultSupport;
             if (!support)

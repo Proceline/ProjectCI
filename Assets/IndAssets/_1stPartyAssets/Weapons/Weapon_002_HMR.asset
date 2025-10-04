@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
-  m_Name: Weapon_001_BLK
+  m_Name: Weapon_002_HMR
   m_EditorClassIdentifier: 
-  weaponIdentifier: 1
-  animator: {fileID: 11400000, guid: 491723784bff23a4b9775801fad7fe11, type: 2}
+  weaponIdentifier: 2
+  animator: {fileID: 11400000, guid: ac20ea71bb454824681b3f92b3f78572, type: 2}
   bindingAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
-  weaponPrefab: {fileID: 1483447435328282, guid: 6c0ccdc6d657c0c4595db29f9f50b136, type: 3}
-  prefabLocalRotation: {x: 0.49999997, y: 0.49999997, z: -0.49999997, w: -0.49999997}
-  prefabLocalPosition: {x: -0.039, y: 0, z: 0}
-  prefabLocalScale: {x: 1, y: 1, z: 1}
-  weaponName: Shield0
-  description: Shield0Description
+  weaponPrefab: {fileID: 1508111972039902, guid: 89b90286461bbc54c8a7071998f61d6a, type: 3}
+  prefabLocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
+  prefabLocalPosition: {x: 0, y: 0, z: 0}
+  prefabLocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  weaponName: Hammer0
+  description: Hammer0Description
   attributes:
   - type:
       value: 15
@@ -37,6 +37,3 @@ MonoBehaviour:
   - type:
       value: 20
     value: 0
-  - type:
-      value: 30
-    value: 10

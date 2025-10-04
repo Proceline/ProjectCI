@@ -35,6 +35,7 @@ namespace IndAssets.Editor.Scripts.Weapons
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponPrefab)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalRotation)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalPosition)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalScale)));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Attributes", EditorStyles.boldLabel);

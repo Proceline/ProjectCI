@@ -18,6 +18,7 @@ MonoBehaviour:
   weaponPrefab: {fileID: 1544745192496040, guid: 092b3560b76f6ee4089747437e2a38bc, type: 3}
   prefabLocalRotation: {x: 0, y: 0, z: 0, w: 0}
   prefabLocalPosition: {x: 0, y: 0, z: 0}
+  prefabLocalScale: {x: 1, y: 1, z: 1}
   weaponName: SingleHandSword0
   description: SingleHandSwordDescription
   attributes:

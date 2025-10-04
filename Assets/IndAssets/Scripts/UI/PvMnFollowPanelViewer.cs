@@ -126,8 +126,8 @@ namespace ProjectCI.Runtime.GUI.Battle
             controlUiCamera = targetCamera;
             canvasGameObject.transform.rotation = targetCamera.transform.rotation;
         }
-
-        public void OnDeterminedAttackSlotSelected()
+        
+        public void OnDeterminedAbilityColSlotSelected(bool isHostile)
         {
             if (!_determinedUnit)
             {
@@ -135,7 +135,7 @@ namespace ProjectCI.Runtime.GUI.Battle
             }
 
             ToggleSideControlPanelAndMainControlPanel(true);
-            var abilities = _determinedUnit.GetAttackAbilities();
+            var abilities = isHostile ? _determinedUnit.GetAttackAbilities() : _determinedUnit.GetSupportAbilities();
             sideControlPanel.NumOfSlots = abilities.Count;
             sideControlPanel.ControlButtons.ForEach(customButton =>
             {

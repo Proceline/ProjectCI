@@ -37,6 +37,7 @@ namespace IndAssets.Scripts.Weapons
         public GameObject weaponPrefab;
         public Quaternion prefabLocalRotation;
         public Vector3 prefabLocalPosition;
+        public Vector3 prefabLocalScale = Vector3.one;
         
         public string ID
         {

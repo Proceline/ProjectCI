@@ -33428,11 +33428,11 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+      - m_Target: {fileID: 1658297597}
+        m_TargetAssemblyTypeName: ProjectCI.Runtime.GUI.Battle.PvMnFollowPanelViewer,
           Assembly-CSharp
-        m_MethodName: ChangeStateToConfirmedTargeting
-        m_Mode: 1
+        m_MethodName: OnDeterminedAbilityColSlotSelected
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -46206,15 +46206,15 @@ MonoBehaviour:
       - m_Target: {fileID: 1658297597}
         m_TargetAssemblyTypeName: ProjectCI.Runtime.GUI.Battle.PvMnFollowPanelViewer,
           Assembly-CSharp
-        m_MethodName: OnDeterminedAttackSlotSelected
-        m_Mode: 1
+        m_MethodName: OnDeterminedAbilityColSlotSelected
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &1422505618
 MonoBehaviour:
