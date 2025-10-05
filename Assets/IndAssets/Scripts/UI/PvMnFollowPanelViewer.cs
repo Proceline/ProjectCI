@@ -79,6 +79,9 @@ namespace ProjectCI.Runtime.GUI.Battle
                             DisableFollowingCanvas();
                             break;
                         case UnitBattleState.AbilityTargeting:
+                            ToggleSideControlPanelAndMainControlPanel(false);
+                            DisableFollowingCanvas();
+                            break;
                         case UnitBattleState.AbilityConfirming:
                         case UnitBattleState.Idle:
                         case UnitBattleState.MovingProgress:
@@ -103,7 +106,9 @@ namespace ProjectCI.Runtime.GUI.Battle
                             DisableFollowingCanvas();
                             throw new NotImplementedException("ERROR: Cancel from Moving still in progress");
                         case UnitBattleState.AbilityTargeting:
-                            throw new NotImplementedException("ERROR: Cancel from Targeting still in progress");
+                            ToggleSideControlPanelAndMainControlPanel(true);
+                            canvasGameObject.SetActive(true);
+                            break;
                         case UnitBattleState.AbilityConfirming:
                         case UnitBattleState.Idle:
                         case UnitBattleState.MovingProgress:
@@ -156,6 +161,8 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             sideControlPanel.gameObject.SetActive(isSideControlOn);
             mainControlPanel.gameObject.SetActive(!isSideControlOn);
+            
+            // Invoke Side Control Panel Controlling Actions
             onSideControlPanelToggled.Invoke(isSideControlOn);
         }
     }
