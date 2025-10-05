@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
   m_Name: PvSoUnitAbility_TestFriendAttack
   m_EditorClassIdentifier: 
-  m_AbilityName: AttackSample
+  m_AbilityName: AttackSampleSupport
   m_Icon: {fileID: 0}
   m_Radius: 1
   m_ActionPointCost: 1
@@ -22,8 +22,8 @@ MonoBehaviour:
   m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
-  m_SpawnOnCaster: []
-  m_SpawnOnTarget: []
+  spawnOnCaster: []
+  spawnOnTarget: []
   m_Params:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
   m_Ailments: []

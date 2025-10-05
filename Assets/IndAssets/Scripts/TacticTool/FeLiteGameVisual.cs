@@ -22,9 +22,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized] 
         private PvSoUnitAbility _highlightAbility;
 
-        [SerializeField] 
-        private bool showingSupportRangeByDefault;
-
         public void AssignAbilityOnView(PvSoUnitAbility ability, PvMnBattleGeneralUnit unit)
         {
             _highlightAbility = ability;
@@ -227,7 +224,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <summary>
         /// Both used in Event Call and Internal
         /// </summary>
-        public void HighlightAbilityAndSupportRange(PvMnBattleGeneralUnit casterUnit)
+        private void HighlightAbilityAndSupportRange(PvMnBattleGeneralUnit casterUnit)
         {
             ResetVisualStateCells();
             var ability = _highlightAbility;
@@ -236,24 +233,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new NullReferenceException("ERROR: Ability MUST have Shape!");
             }
 
-            HighlightAbilityOrSupportCells(ability, casterUnit, CellState.eNegative);
-
-            if (!showingSupportRangeByDefault)
-            {
-                return;
-            }
-
-            var support = casterUnit.DefaultSupport;
-            if (!support)
-            {
-                throw new NullReferenceException("ERROR: MUST HAVE A SUPPORT SKILL!");
-            }
-            if (!support.GetShape())
-            {
-                throw new NullReferenceException("ERROR: Support MUST have Shape!");
-            }
-
-            HighlightAbilityOrSupportCells(support, casterUnit, CellState.ePositive);
+            HighlightAbilityOrSupportCells(ability, casterUnit,
+                ability.GetEffectedTeam() == BattleTeam.Friendly ? CellState.ePositive : CellState.eNegative);
         }
         
         public void ReHighlightAbilityRange(PvSoUnitAbility ability, PvMnBattleGeneralUnit casterUnit)
