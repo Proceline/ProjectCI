@@ -104,6 +104,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         #region Injected Fields
         
         [Inject] public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent;
+        [Inject] private static readonly IUnitPrepareEvent UnitManualFinishOrRestPrepareEvent;
         
         #endregion
         

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -121,6 +118,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new NullReferenceException("ERROR: No selected unit!");
             }
             CurrentAbility = ability;
+        }
+
+        public void TakeRestForCurrentPlayer()
+        {
+            if (!_selectedUnit)
+            {
+                throw new Exception("ERROR: Take Rest MUST have a Selected Unit!");
+            }
+            UnitManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
+            ClearStateAndDeselectUnit();
         }
     }
 }

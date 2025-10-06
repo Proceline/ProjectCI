@@ -1,14 +1,7 @@
-using System;
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.DependencyInjection;
-using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Services;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
-using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using UnityEngine;
 using UnityEngine.Events;
 using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifier;
@@ -16,7 +9,7 @@ using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifie
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     
-    [CreateAssetMenu(fileName = "SoPassiveCustomValueModifier", menuName = "Project CI Passives/CustomValueModifier", order = 1)]
+    [CreateAssetMenu(fileName = "SoPassiveCustomValueModifier", menuName = "ProjectCI Passives/CustomValueModifier", order = 1)]
     public class PvSoPassiveCustomValueModifier : PvSoPassiveBase
     {
         [Header("Modifier Details"), SerializeField] 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -16,7 +15,7 @@ using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifie
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     
-    [CreateAssetMenu(fileName = "New EnhanceAttribute Passive", menuName = "Project CI Passives/EnhanceAttribute", order = 1)]
+    [CreateAssetMenu(fileName = "New EnhanceAttribute Passive", menuName = "ProjectCI Passives/EnhanceAttribute", order = 1)]
     public class PvSoPassiveEnhanceAttribute : PvSoPassiveBase
     {
         [Header("Parameters"), SerializeField] 

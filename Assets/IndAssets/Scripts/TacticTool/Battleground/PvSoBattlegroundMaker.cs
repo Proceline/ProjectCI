@@ -12,7 +12,7 @@ using Unity.VisualScripting;
 
 namespace ProjectCI.CoreSystem.Runtime.Battleground
 {
-    [CreateAssetMenu(fileName = "PvSoBattlegroundMaker", menuName = "Project CI/Battleground/PvSoBattlegroundMaker")]
+    [CreateAssetMenu(fileName = "PvSoBattlegroundMaker", menuName = "ProjectCI/Battleground/PvSoBattlegroundMaker")]
     public class PvSoBattlegroundMaker : ScriptableObject, IService
     {
         private const float DefaultCellValue = 2.25f;

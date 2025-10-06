@@ -61,7 +61,12 @@ namespace ProjectCI.Runtime.GUI.Battle
                 var state = stateEventParam.battleState;
                 var stateBehaviour = stateEventParam.behaviour;
 
-                if (stateBehaviour == UnitStateBehaviour.Adding)
+                if (stateBehaviour == UnitStateBehaviour.Clear)
+                {
+                    _determinedUnit = null;
+                    DisableFollowingCanvas();
+                }
+                else if (stateBehaviour == UnitStateBehaviour.Adding)
                 {
                     switch (state)
                     {

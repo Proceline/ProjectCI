@@ -25,6 +25,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Functions.PvSoOutBooleanFunction,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 72e6c06c4ca2c8d43b3db24d3c500b05, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitPrepareEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: f7f445ba1f0c5a54ea343ea1c1435c1f, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
