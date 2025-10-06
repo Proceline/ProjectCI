@@ -22,9 +22,14 @@ namespace ProjectCI.Utilities.Runtime.Events
     {
         // Empty: For Injection
     }
+
+    public interface IUnitDyingEvent : IUnitEmphasisEvent
+    {
+        // Empty: For Injection
+    }
     
     [CreateAssetMenu(fileName = "UnitState Event", menuName = "ProjectCI Utilities/Events/Unit Emphasis Event")]
-    public class PvSoUnitEmphasisEvent : SoUnityEventBase<UnitPureEventParam>, IUnitPrepareEvent
+    public class PvSoUnitEmphasisEvent : SoUnityEventBase<UnitPureEventParam>, IUnitPrepareEvent, IUnitDyingEvent
     {
         public void Raise(PvMnBattleGeneralUnit inUnit)
         {
