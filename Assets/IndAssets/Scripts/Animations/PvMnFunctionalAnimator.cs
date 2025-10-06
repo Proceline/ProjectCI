@@ -2,6 +2,7 @@
 using System.Collections;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
 using ProjectCI.Utilities.Runtime.Events;
@@ -14,9 +15,6 @@ namespace ProjectCI_Animation.Runtime.Concrete
     public class PvMnFunctionalAnimator : UnitAnimationManager
     {
         [Inject] private static PvSoOutBooleanFunction _onIsAnimatingProgressFunc;
-        
-        [SerializeField]
-        private PvSoSimpleDamageApplyEvent onSimpleDamageApplyEvent;
 
         [SerializeField] 
         private float generalAdjustOnTransition = 0.15f;
@@ -35,7 +33,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
                 return;
             }
 
-            onSimpleDamageApplyEvent?.RegisterCallback(RespondToDamageParams);
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(RespondToDamageParams);
             _onIsAnimatingProgressFunc.RegisterDelegate(gridObject, IsLockableAnimating);
             _initialized = true;
         }
@@ -44,7 +42,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
         {
             if (_initialized)
             {
-                onSimpleDamageApplyEvent?.UnregisterCallback(RespondToDamageParams);
+                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(RespondToDamageParams);
                 _initialized = false;
             }
         }

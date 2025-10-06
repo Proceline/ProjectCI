@@ -22,6 +22,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public AttributeType attackerAttribute;
         public AttributeType defenderAttribute;
         public PvEnDamageType damageType;
+
+        [SerializeField]
+        private bool isHealValue;
+
+        [SerializeField] private int basicAddon;
         
         [Header("Critical")]
         [SerializeField]
@@ -63,7 +68,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 var fromContainer = fromUnit.RuntimeAttributes;
 
                 var beforeHealth = toContainer.Health.CurrentValue;
-                var damage = fromContainer.GetAttributeValue(attackerAttribute);
+                var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
 
                 bool isReallyHit = isAlwaysHitByDefault;
                 if (!isAlwaysHitByDefault)
@@ -109,10 +114,17 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
                 if (isReallyHit)
                 {
-                    toContainer.Health.ModifyValue(-finalDeltaDamage);
+                    if (!isHealValue)
+                    {
+                        toContainer.Health.ModifyValue(-finalDeltaDamage);
+                    }
+                    else
+                    {
+                        toContainer.Health.ModifyValue(finalDeltaDamage);
+                    }
                 }
 
-                int afterHealth = toContainer.Health.CurrentValue;
+                var afterHealth = toContainer.Health.CurrentValue;
 
                 var savingCommand = new PvSimpleDamageCommand
                 {
@@ -122,12 +134,16 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     TargetCellIndex = targetUnit.GetCell().GetIndex(),
                     BeforeValue = beforeHealth,
                     AfterValue = afterHealth,
-                    CommandType = CommandResult.TakeDamage,
+                    CommandType = isHealValue? CommandResult.Heal : CommandResult.TakeDamage,
                     Value = finalDeltaDamage,
                     DamageType = damageType
                 };
 
-                if (!isReallyHit)
+                if (isHealValue)
+                {
+                    savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
+                }
+                else if (!isReallyHit)
                 {
                     savingCommand.ExtraInfo = UnitAbilityCoreExtensions.MissExtraInfoHint;
                 }

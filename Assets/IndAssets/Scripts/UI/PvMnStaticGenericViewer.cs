@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using TMPro;
 using UnityEngine;
@@ -18,7 +19,6 @@ namespace ProjectCI.Runtime.GUI.Battle
             public Color color;
         }
         
-        [SerializeField] private PvSoSimpleDamageApplyEvent onDamageReceivedEvent;
         [SerializeField] private TextMeshPro defaultText;
         [SerializeField] private DamageTypeEnumColor[] damageTypeColors;
 
@@ -34,7 +34,7 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             _availableTexts.Enqueue(defaultText);
             defaultText.gameObject.SetActive(false);
-            onDamageReceivedEvent.RegisterCallback(ShowDamageValueText);
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(ShowDamageValueText);
             onInitializedRoot?.Invoke();
 
             for (int i = 0; i < damageTypeColors.Length; i++)
@@ -45,7 +45,7 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         private void OnDestroy()
         {
-            onDamageReceivedEvent.UnregisterCallback(ShowDamageValueText);
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(ShowDamageValueText);
         }
 
         private TextMeshPro GetAvailableDamageText()

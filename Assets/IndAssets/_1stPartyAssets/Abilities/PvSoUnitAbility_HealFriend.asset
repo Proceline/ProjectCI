@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
-  m_Name: PvSoUnitAbility_TestFriendAttack
+  m_Name: PvSoUnitAbility_HealFriend
   m_EditorClassIdentifier: 
   m_AbilityName: AttackSampleSupport
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ MonoBehaviour:
   spawnOnCaster: []
   spawnOnTarget: []
   m_Params:
-  - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
+  - {fileID: 11400000, guid: efb7dbd38a66e974aa15793edb14674f, type: 2}
   m_Ailments: []
   isCounterAllowed: 0
   isFollowUpAllowed: 0
