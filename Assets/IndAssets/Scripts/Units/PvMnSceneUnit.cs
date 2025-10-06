@@ -99,11 +99,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
         #endregion
 
-        public void SetExtraAttributes(UnitAttributeContainer attributeContainer)
+        public void InitializeAttributes(UnitAttributeContainer attributeContainer)
         {
             foreach (var attribute in extraAttributes)
             {
                 attributeContainer.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
+            }
+
+            foreach (var weapon in ownedWeapons)
+            {
+                foreach (var attributePair in weapon.attributes)
+                {
+                    attributeContainer.SetGeneralAttribute(attributePair.type, attributePair.value);
+                }
             }
         }
 

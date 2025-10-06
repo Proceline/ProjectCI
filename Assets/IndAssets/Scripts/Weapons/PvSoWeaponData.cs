@@ -63,7 +63,7 @@ namespace IndAssets.Scripts.Weapons
         public class AttributePair
         {
             public AttributeType type;
-            public float value;
+            public int value;
         }
 
         [Header("Basic Info")]

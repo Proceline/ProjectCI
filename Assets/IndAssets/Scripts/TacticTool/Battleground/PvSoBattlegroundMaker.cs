@@ -105,7 +105,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     unit.GenerateNewID();
                     sceneUnit.UnitData.InitializeUnitDataToGridUnit(unit);
                     
-                    sceneUnit.SetExtraAttributes(unit.RuntimeAttributes);
+                    sceneUnit.InitializeAttributes(unit.RuntimeAttributes);
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
                     
