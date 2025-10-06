@@ -4573,6 +4573,9 @@ MonoBehaviour:
       value: 26
     m_Value: 2
     m_GainValue: 0
+  ownedWeapons:
+  - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
+  - {fileID: 11400000, guid: b5ef5386526e0e3489c56f702a6c9152, type: 2}
 --- !u!4 &130359352
 Transform:
   m_ObjectHideFlags: 0
@@ -25079,6 +25082,8 @@ MonoBehaviour:
       value: 26
     m_Value: 3
     m_GainValue: 0
+  ownedWeapons:
+  - {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
 --- !u!4 &747133205
 Transform:
   m_ObjectHideFlags: 0
@@ -28981,7 +28986,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4609207544898266216, guid: f250425c8ee9bf94fbb60e783c1c1242, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8606755148461151098, guid: f250425c8ee9bf94fbb60e783c1c1242, type: 3}
@@ -29010,7 +29016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c298a1b5d6cc4dc8b2fbccc4173d6d11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationPlayableSupport: {fileID: 11400000, guid: ac20ea71bb454824681b3f92b3f78572, type: 2}
+  animationPlayableSupport: {fileID: 11400000, guid: 491723784bff23a4b9775801fad7fe11, type: 2}
   onSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
   generalAdjustOnTransition: 0.15
 --- !u!1001 &888006411
@@ -36811,6 +36817,7 @@ MonoBehaviour:
       value: 26
     m_Value: 5
     m_GainValue: 0
+  ownedWeapons: []
 --- !u!4 &1137085769
 Transform:
   m_ObjectHideFlags: 0
@@ -41301,6 +41308,7 @@ MonoBehaviour:
       value: 26
     m_Value: 5
     m_GainValue: 0
+  ownedWeapons: []
 --- !u!4 &1275341774
 Transform:
   m_ObjectHideFlags: 0
@@ -48831,7 +48839,9 @@ PrefabInstance:
       value: TestProtagonist
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 725179236732007935, guid: aecaf76386fd18941922e417ebff783c, type: 3}
+    - {fileID: 2777404938842170183, guid: aecaf76386fd18941922e417ebff783c, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8001354749718593143, guid: aecaf76386fd18941922e417ebff783c, type: 3}

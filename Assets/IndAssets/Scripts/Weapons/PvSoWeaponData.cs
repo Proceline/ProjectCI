@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
@@ -38,6 +39,8 @@ namespace IndAssets.Scripts.Weapons
         public Quaternion prefabLocalRotation;
         public Vector3 prefabLocalPosition;
         public Vector3 prefabLocalScale = Vector3.one;
+
+        public AnimationPlayableSupportBase Animator => animator;
         
         public string ID
         {
