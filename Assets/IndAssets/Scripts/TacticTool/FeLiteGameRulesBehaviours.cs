@@ -126,7 +126,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 throw new Exception("ERROR: Take Rest MUST have a Selected Unit!");
             }
-            UnitManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
+            RaiserManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
             ClearStateAndDeselectUnit();
         }
     }

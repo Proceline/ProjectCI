@@ -258,6 +258,11 @@ public class PvMnBattleCamera : MonoBehaviour
             return;
         }
 
+        if (_zoomValueAdjustor > maxZoom)
+        {
+            return;
+        }
+
         var zoomDelta = zoomingSpeed * context.ReadValue<float>();
         AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
     }
@@ -265,6 +270,11 @@ public class PvMnBattleCamera : MonoBehaviour
     private void AssignCameraZoomOut(InputAction.CallbackContext context)
     {
         if (!FeLiteGameController.IsBasicControllerEnabled)
+        {
+            return;
+        }
+        
+        if (_zoomValueAdjustor < minZoom)
         {
             return;
         }
