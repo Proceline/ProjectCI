@@ -2,6 +2,7 @@
 using System.Collections;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
@@ -25,6 +26,8 @@ namespace ProjectCI_Animation.Runtime.Concrete
         [NonSerialized] private bool _isLockableAnimating;
         private Coroutine _lockingRoutine;
 
+        [Inject] private static IUnitDyingEvent _onIsDyingEvent;
+
         public void Initialize<T>(T gridObject) where T : GridObject, IEventOwner
         {
             _animatorOwner = gridObject;
@@ -34,6 +37,8 @@ namespace ProjectCI_Animation.Runtime.Concrete
             }
 
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(RespondToDamageParams);
+            _onIsDyingEvent.RegisterCallback(RespondToDie);
+            
             _onIsAnimatingProgressFunc.RegisterDelegate(gridObject, IsLockableAnimating);
             _initialized = true;
         }
@@ -43,6 +48,8 @@ namespace ProjectCI_Animation.Runtime.Concrete
             if (_initialized)
             {
                 FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(RespondToDamageParams);
+                _onIsDyingEvent.UnregisterCallback(RespondToDie);
+                
                 _initialized = false;
             }
         }
@@ -76,6 +83,23 @@ namespace ProjectCI_Animation.Runtime.Concrete
             ForcePlayAnimation(animationIndex);
             var actingTime = GetPresetAnimationDuration(animationIndex) - generalAdjustOnTransition;
             _lockingRoutine = StartCoroutine(EnablePresetTimeLock(actingTime));
+        }
+        
+        private void RespondToDie(IEventOwner owner, UnitPureEventParam unitParam)
+        {
+            if (_animatorOwner.EventIdentifier != unitParam.unit.ID)
+            {
+                return;
+            }
+
+            if (_isLockableAnimating)
+            {
+                StopCoroutine(_lockingRoutine);
+                _isLockableAnimating = false;
+            }
+
+            PlayLoopAnimation(CurrentPlayableSupport.GetAnimationIndex(AnimationPvCustomName.DieStay.ToString()));
+            ForcePlayAnimation(AnimationIndexName.Death);
         }
 
         private IEnumerator EnablePresetTimeLock(float lockTime)

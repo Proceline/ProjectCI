@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
@@ -67,6 +68,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 var toContainer = targetUnit.RuntimeAttributes;
                 var fromContainer = fromUnit.RuntimeAttributes;
 
+                if (targetUnit.IsDead())
+                {
+                    continue;
+                }
+
                 var beforeHealth = toContainer.Health.CurrentValue;
                 var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
 
@@ -90,7 +96,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                         isReallyHit = randomValue < hitPercentageResult;
                     }
                 }
-                
+
                 bool isCritical = false;
                 if (isCriticalEnabledByDefault && isReallyHit && damage > 0)
                 {
@@ -134,7 +140,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     TargetCellIndex = targetUnit.GetCell().GetIndex(),
                     BeforeValue = beforeHealth,
                     AfterValue = afterHealth,
-                    CommandType = isHealValue? CommandResult.Heal : CommandResult.TakeDamage,
+                    CommandType = isHealValue ? CommandResult.Heal : CommandResult.TakeDamage,
                     Value = finalDeltaDamage,
                     DamageType = damageType
                 };
@@ -153,6 +159,27 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 }
 
                 results.Enqueue(savingCommand);
+
+                // Add Die Command if Health is 0
+                if (!targetUnit.IsDead())
+                {
+                    continue;
+                }
+
+                Debug.Log($"<color=red>{targetUnit.name} is Dead!</color>");
+
+                var dieCommand = new PvDieCommand
+                {
+                    ResultId = resultId,
+                    AbilityId = ability.ID,
+                    OwnerId = targetUnit.ID,
+                    TargetCellIndex = targetUnit.GetCell().GetIndex(),
+                    CommandType = CommandResult.TakeDamage,
+                    Value = beforeHealth - afterHealth,
+                    TargetUnit = targetUnit
+                };
+
+                results.Enqueue(dieCommand);
             }
         }
     }

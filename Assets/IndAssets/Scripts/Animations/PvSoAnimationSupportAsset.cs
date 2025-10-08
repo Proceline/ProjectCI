@@ -8,7 +8,8 @@ namespace ProjectCI.CoreSystem.Runtime.Animation
 {
     public enum AnimationPvCustomName
     {
-        AttackBasic
+        AttackBasic,
+        DieStay
     }
     
     public class PvCustomAnimationNamesList : IAnimationIndexAddon

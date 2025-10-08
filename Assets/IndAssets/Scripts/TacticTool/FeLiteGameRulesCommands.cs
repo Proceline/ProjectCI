@@ -143,6 +143,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
             Queue<CommandResult> results)
         {
+            if (caster.IsDead())
+            {
+                return;
+            }
+
             var resultId = Guid.NewGuid().ToString();
             foreach (AbilityParamBase param in inAbility.GetParameters())
             {

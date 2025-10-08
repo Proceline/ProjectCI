@@ -117,13 +117,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             if (_animationManager)
             {
                 OnPreStandIdleAnimRequired -= PlayIdleAnimation;
                 OnPreMovementAnimRequired -= PlayMovementAnimation;
             }
+        }
+
+        public override bool IsDead()
+        {
+            return RuntimeAttributes.Health.CurrentValue <= 0;
         }
 
         private void PlayIdleAnimation()

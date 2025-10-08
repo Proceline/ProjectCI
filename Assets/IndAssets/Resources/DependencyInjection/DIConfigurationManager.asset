@@ -36,6 +36,8 @@ MonoBehaviour:
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Abilities.PvSoDirectDamageAbilityParams, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvDieCommand, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
