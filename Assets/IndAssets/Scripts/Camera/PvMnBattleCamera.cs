@@ -46,6 +46,8 @@ public class PvMnBattleCamera : MonoBehaviour
     [SerializeField] 
     private UnityEvent<bool> onCameraStartOrEndAnyTween;
 
+    [NonSerialized] private Coroutine _cameraZoomingCoroutine;
+
     private void Start()
     {
         _currentZoomValue = 0;
@@ -176,7 +178,7 @@ public class PvMnBattleCamera : MonoBehaviour
                     break;
             }
         }
-        else 
+        else
         {
             StartToMoveCamera(owner.Position, 0f, 0.1f);
         }
@@ -188,9 +190,10 @@ public class PvMnBattleCamera : MonoBehaviour
         {
             StartCoroutine(TranslateCameraToPosition(center, position, duration));
         }
-        StartCoroutine(AssignCameraZoom(zoomValue, duration));
+
+        _cameraZoomingCoroutine ??= StartCoroutine(AssignCameraZoom(zoomValue, duration));
     }
-    
+
     #region Camera Tween
 
     private IEnumerator AssignCameraZoom(float targetZoomValue, float duration)
@@ -223,6 +226,7 @@ public class PvMnBattleCamera : MonoBehaviour
             }
         }
         onCameraStartOrEndAnyTween.Invoke(false);
+        _cameraZoomingCoroutine = null;
     }
 
     private IEnumerator TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition, float duration)

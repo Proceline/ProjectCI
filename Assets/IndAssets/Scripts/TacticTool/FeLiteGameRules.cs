@@ -218,7 +218,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentAbility = _selectedUnit.EquippedAbility;
             _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
 
-            ChangeStateForSelectedUnit(UnitBattleState.Moving);
+            ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
+                ? UnitBattleState.Moving
+                : UnitBattleState.UsingAbility);
             onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
             raiserOnOwnerSelectedEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
         }
@@ -250,9 +252,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new Exception(
                     $"State ERROR: Current State must be <{UnitBattleState.MovingProgress.ToString()}>, but Having <{CurrentBattleState.ToString()}>");
             }
+
             ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
         }
 
+        /// <summary>
+        /// This function is directly binded to Controller, and links to Cancel InputAction
+        /// </summary>
+        /// <exception cref="NullReferenceException"></exception>
         public void CancelLastStateForSelectedUnit()
         {
             if (!_selectedUnit)
@@ -271,17 +278,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 case UnitBattleState.AbilityTargeting:
                     if (state == UnitBattleState.UsingAbility)
                     {
-                        if (!_selectedUnitLastCell)
+                        if (_selectedUnitLastCell)
                         {
-                            throw new NullReferenceException("ERROR: No record of Last Stand Cell!");
+                            // TODO: Consider clean up movement buff, Consider if NEED rotation RESET (Maybe not since rotation not matter)
+                            _selectedUnit.ResetMovementPoints();
+                            _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                         }
-                        _selectedUnit.ResetMovementPoints();
-                        // TODO: Consider clean up movement buff
-                        // TODO: Consider if NEED rotation RESET (Maybe not since rotation not matter)
-                        _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                     }
 
-                    CancelStatePurelyForUnit(_selectedUnit, state);
+                    var afterState = CancelStatePurelyForUnit(_selectedUnit, state);
+                    if (afterState == UnitBattleState.Idle)
+                    {
+                        ClearStateAndDeselectUnit();
+                    }
                     break;
                 case UnitBattleState.Moving:
                     Debug.LogWarning("You are cancelling state for selected Unit!");
