@@ -2,18 +2,22 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
+    [StaticInjectableTarget]
     public class PvMnBattleResourceContainer : BattleHealth
     {
         [NonSerialized] private GameObject _healthBarInstance;
         [NonSerialized] private Slider _healthSlider;
         [NonSerialized] private bool _initialized;
-        [SerializeField] private GridObject _followingTarget;
+        private GridObject _followingTarget;
+
+        [Inject] private static IUnitDyingEvent _onUnitDyingEvent;
 
         public void Initialize(GridObject owner, Camera inCamera, GameObject healthBarPrefab)
         {
@@ -29,7 +33,15 @@ namespace ProjectCI.Runtime.GUI.Battle
             _followingTarget = owner;
             
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(UpdateHealthViewInfo);
+            _onUnitDyingEvent.RegisterCallback(OnObjectMarkedAsDead);
+            
             _initialized = true;
+        }
+
+        private void OnObjectMarkedAsDead(IEventOwner owner, UnitPureEventParam unitParam)
+        {
+            if (unitParam.unit != _followingTarget) return;
+            _healthBarInstance.SetActive(false);
         }
 
         private void UpdateHealthViewInfo(IEventOwner owner, DamageDescriptionParam damageParams)
@@ -73,6 +85,8 @@ namespace ProjectCI.Runtime.GUI.Battle
                 Destroy(_healthBarInstance);
             }
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(UpdateHealthViewInfo);
+            _onUnitDyingEvent.UnregisterCallback(OnObjectMarkedAsDead);
+            
             _initialized = false;
         }
     }

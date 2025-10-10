@@ -23,12 +23,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
 
         private readonly Stack<UnitBattleState> _unitStates = new();
-        private readonly ServiceLocator<PvSoAbilityEquipEvent> _raiserServiceForAbilityEquip = new();
-
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
         
         [NonSerialized]
-        private PvSoUnitAbility _currentAbility;
+        private PvSoUnitAbility _defaultAttackAbility;
 
         private Coroutine _rotatingCoroutine;
 
@@ -38,27 +36,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             get
             {
-                if (_currentAbility)
+                if (_defaultAttackAbility)
                 {
-                    return _currentAbility;
+                    return _defaultAttackAbility;
                 }
 
-                var firstWeaponAbility = _battleAbilities.Find(ability =>
+                _defaultAttackAbility = _battleAbilities.Find(ability =>
                     ability.IsAbilityWeapon() && ability.GetEffectedTeam() == BattleTeam.Hostile);
-                EquipAbility(firstWeaponAbility);
-                return _currentAbility;
+                return _defaultAttackAbility;
             }
         }
-        
-        public PvSoUnitAbility DefaultSupport
-        {
-            get
-            {
-                return _battleAbilities.Find(ability =>
-                    !ability.IsAbilityWeapon() && ability.GetEffectedTeam() == BattleTeam.Friendly);
-            }
-        }
-        
+
         private void SetFormulaCollection()
         {
             RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection, this);
@@ -141,11 +129,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _animationManager.PlayLoopAnimation(AnimationIndexName.Run);
         }
 
-        private void PlayHitAnimation()
-        {
-            _animationManager.ForcePlayAnimation(AnimationIndexName.Hit);
-        }
-
         public override void BroadcastActionTriggerByTag(string actionTagName)
         {
             if (!_animationManager) return;
@@ -194,16 +177,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 RuntimeAttributes.Health.SetValue(10, 10);
             }
-        }
-
-        public void EquipAbility(PvSoUnitAbility ability)
-        {
-            if (!ability.IsAbilityWeapon())
-            {
-                throw new Exception("ERROR: Ability is not a weapon to EQUIP!");
-            }
-            _currentAbility = ability;
-            _raiserServiceForAbilityEquip.Service.Raise(this, ability);
         }
         
         public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)

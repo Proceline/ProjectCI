@@ -126,8 +126,26 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 throw new Exception("ERROR: Take Rest MUST have a Selected Unit!");
             }
+
+            var lastUnit = _selectedUnit;
             RaiserManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
             ClearStateAndDeselectUnit();
+
+            var team = lastUnit.GetTeam();
+            var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
+            var remainCount = 0;
+            foreach (var unit in allUnitsInBattle)
+            {
+                if (unit.GetTeam() == team && unit.GetCurrentMovementPoints() > 0 && !unit.IsDead())
+                {
+                    remainCount++;
+                }
+            }
+
+            if (remainCount <= 0)
+            {
+                Debug.Log("All Units finished actions");
+            }
         }
     }
 }
