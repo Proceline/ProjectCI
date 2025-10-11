@@ -31,6 +31,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitDyingEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 2988af4b3767f374ab31cdcdb4184109, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITeamRoundEndEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

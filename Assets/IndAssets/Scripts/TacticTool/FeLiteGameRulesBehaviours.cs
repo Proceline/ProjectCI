@@ -26,7 +26,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 if (standUnit.GetTeam() == CurrentTeam)
                 {
-                    if (playableUnit.IsDead() || playableUnit.GetCurrentMovementPoints() <= 0)
+                    if (playableUnit.IsDead())// || playableUnit.GetCurrentMovementPoints() <= 0)
                     {
                         return;
                     }
@@ -145,6 +145,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (remainCount <= 0)
             {
                 Debug.Log("All Units finished actions");
+                // TODO: Register Team Round End Event
+                XRaiserTeamRoundEndEvent.Raise(CurrentTeam);
             }
         }
     }
