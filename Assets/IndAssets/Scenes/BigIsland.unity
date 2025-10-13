@@ -4838,7 +4838,6 @@ MonoBehaviour:
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 830481975ca9f8f49936f550d79f5f00, type: 2}
-  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   extraAttributes:
   - m_AttributeType:
@@ -4846,8 +4845,8 @@ MonoBehaviour:
     m_Value: 3
     m_GainValue: 0
   ownedWeapons:
-  - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
-  - {fileID: 11400000, guid: b5ef5386526e0e3489c56f702a6c9152, type: 2}
+  - {fileID: 11400000, guid: 5d79286aa19323345986aaa6862f69e9, type: 2}
+  - {fileID: 11400000, guid: eb7ec04af2c3fd94e91d8df2aa519385, type: 2}
 --- !u!4 &130359352
 Transform:
   m_ObjectHideFlags: 0
@@ -25969,7 +25968,6 @@ MonoBehaviour:
   isFriendly: 1
   unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   unitAbilities:
-  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   extraAttributes:
   - m_AttributeType:

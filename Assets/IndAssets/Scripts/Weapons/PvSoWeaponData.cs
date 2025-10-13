@@ -41,6 +41,7 @@ namespace IndAssets.Scripts.Weapons
         public Vector3 prefabLocalScale = Vector3.one;
 
         public AnimationPlayableSupportBase Animator => animator;
+        public PvSoUnitAbility DefaultAttackAbility => bindingAbility;
         
         public string ID
         {

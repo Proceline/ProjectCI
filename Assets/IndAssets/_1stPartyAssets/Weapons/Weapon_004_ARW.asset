@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
+  m_Name: Weapon_004_ARW
+  m_EditorClassIdentifier: 
+  weaponIdentifier: 2
+  animator: {fileID: 11400000, guid: dcf21fe4e3a2f4343aa08eebffff34e4, type: 2}
+  bindingAbility: {fileID: 11400000, guid: 723740be6830b974a86483b5b7ccdf61, type: 2}
+  weaponPrefab: {fileID: 2248045107162348003, guid: 72c9cbd2ecb659048bdbd87d05df8c61, type: 3}
+  prefabLocalRotation: {x: 0.49999997, y: 0.49999997, z: 0.49999997, w: 0.49999997}
+  prefabLocalPosition: {x: 0, y: 0, z: 0}
+  prefabLocalScale: {x: 1, y: 1, z: 1}
+  weaponName: Hammer0
+  description: Hammer0Description
+  attributes:
+  - type:
+      value: 15
+    value: 0
+  - type:
+      value: 16
+    value: 2
+  - type:
+      value: 18
+    value: 0
+  - type:
+      value: 19
+    value: 0
+  - type:
+      value: 20
+    value: 0

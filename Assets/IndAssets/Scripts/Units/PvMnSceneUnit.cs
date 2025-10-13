@@ -58,6 +58,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void Initialize()
         {
             AnimationPlayableSupportBase animator = null;
+            PvSoUnitAbility defaultAbility = null;
+            
             for (var i = 0; i <= 1; i++)
             {
                 if (i >= ownedWeapons.Length)
@@ -74,12 +76,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 weaponInstance.transform.localScale = weaponData.prefabLocalScale;
 
                 animator = weaponData.Animator;
+                defaultAbility = weaponData.DefaultAttackAbility;
             }
             
             if (animator)
             {
                 var animatorController = GetComponentInChildren<UnitAnimationManager>();
                 animatorController.SetupAnimationGraphDetails(animator, false);
+            }
+
+            if (defaultAbility)
+            {
+                unitAbilities.Insert(0, defaultAbility);
             }
         }
 

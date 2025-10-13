@@ -10,26 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
-  m_Name: PvSoUnitAbility_HealFriend
+  m_Name: PvSoUnitAbility_BowArrowAttack
   m_EditorClassIdentifier: 
-  m_AbilityName: '[Heal]'
+  m_AbilityName: '[BowAttack]'
   m_Icon: {fileID: 0}
-  m_Radius: 1
+  m_Radius: 2
   m_ActionPointCost: 1
-  m_bAllowBlocked: 1
-  m_EffectedTeam: 1
+  m_bAllowBlocked: 0
+  m_EffectedTeam: 2
   m_EffectedType: 0
-  m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
+  m_AbilityShape: {fileID: 11400000, guid: 5fc7702f156d2654885ef62d575398f8, type: 2}
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
   spawnOnCaster: []
-  spawnOnTarget:
-  - {fileID: 4772634663576830964, guid: afd2f82550dd15e4cbfc80a0f21b7648, type: 3}
+  spawnOnTarget: []
   m_Params:
-  - {fileID: 11400000, guid: efb7dbd38a66e974aa15793edb14674f, type: 2}
+  - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   m_Ailments: []
-  isCounterAllowed: 0
-  isFollowUpAllowed: 0
-  isAbilityWeapon: 0
-  projectilePrefab: {fileID: 0}
+  isCounterAllowed: 1
+  isFollowUpAllowed: 1
+  isAbilityWeapon: 1
+  projectilePrefab: {fileID: 8337765058929653559, guid: b71fea516b8e617488e15dd53909a2b7, type: 3}
   abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}

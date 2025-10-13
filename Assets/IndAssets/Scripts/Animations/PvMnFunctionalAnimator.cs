@@ -28,6 +28,8 @@ namespace ProjectCI_Animation.Runtime.Concrete
 
         [Inject] private static IUnitDyingEvent _onIsDyingEvent;
 
+        public Action<string> OnForcePlayAnimation;
+
         public void Initialize<T>(T gridObject) where T : GridObject, IEventOwner
         {
             _animatorOwner = gridObject;
@@ -107,6 +109,12 @@ namespace ProjectCI_Animation.Runtime.Concrete
             _isLockableAnimating = true;
             yield return GameUtils.WaitSecondsNoAlloc(lockTime);
             _isLockableAnimating = false;
+        }
+
+        public override void ForcePlayAnimation(string animName)
+        {
+            base.ForcePlayAnimation(animName);
+            OnForcePlayAnimation?.Invoke(animName);
         }
     }
 }
