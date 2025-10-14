@@ -106,7 +106,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent;
         [Inject] private static readonly IUnitPrepareEvent RaiserManualFinishOrRestPrepareEvent;
         [Inject] private static readonly ITeamRoundEndEvent XRaiserTeamRoundEndEvent;
-        [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicFinishedEvent;
+        [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicPostEvent;
+        [Inject] private static readonly IUnitCombatLogicPreEvent RaiserOnCombatLogicPreEvent;
         
         #endregion
         

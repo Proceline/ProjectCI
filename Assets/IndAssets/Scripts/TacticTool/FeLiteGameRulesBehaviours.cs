@@ -1,7 +1,9 @@
 ﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using System;
+using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Abilities;
+using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using UnityEngine;
 
@@ -101,15 +103,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
 
-            GridPawnUnit gridPawnUnit = selectedCell.GetUnitOnCell();
-            if (gridPawnUnit && gridPawnUnit is PvMnBattleGeneralUnit targetUnit)
+            var gridPawnUnit = selectedCell.GetUnitOnCell();
+            if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
             {
-                var results = HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
-
-                RaiserOnCombatLogicFinishedEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
-                raiserTurnLogicallyEndEvent.Raise();
-                HandleCommandResultsCoroutine(results);
+                return;
             }
+
+            var results = new Queue<CommandResult>();
+            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
+            {
+                HandleAbilityCombatingLogic(_selectedUnit, targetUnit, ref results);
+            }
+            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
+            raiserTurnLogicallyEndEvent.Raise();
+            HandleCommandResultsCoroutine(results);
         }
 
         public void AssignAbilityToCurrentUnit(PvSoUnitAbility ability)

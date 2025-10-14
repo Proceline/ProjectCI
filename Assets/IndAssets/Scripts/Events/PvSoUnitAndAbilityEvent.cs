@@ -29,9 +29,15 @@ namespace ProjectCI.Utilities.Runtime.Events
     {
         // Empty: For Injection
     }
-    
+
+    public interface IUnitCombatLogicPreEvent : IUnitAndAbilityEvent
+    {
+        // Empty: For Injection
+    }
+
     [CreateAssetMenu(fileName = "Unit&Ability Event", menuName = "ProjectCI Utilities/Events/Unit and Ability Event")]
-    public class PvSoUnitAndAbilityEvent : SoUnityEventBase<UnitAndAbilityEventParam>, IUnitCombatLogicFinishedEvent
+    public class PvSoUnitAndAbilityEvent : SoUnityEventBase<UnitAndAbilityEventParam>, IUnitCombatLogicFinishedEvent,
+        IUnitCombatLogicPreEvent
     {
         [NonSerialized] private UnitAndAbilityEventParam _bufferedParam;
         [NonSerialized] private bool _hasEverBuffered;

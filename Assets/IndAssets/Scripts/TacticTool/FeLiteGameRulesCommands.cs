@@ -76,8 +76,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// </summary>
         /// <param name="abilityOwner">发起进攻/辅助/行动的角色</param>
         /// <param name="targetUnit">被标记的目标角色</param>
+        /// <param name="results"></param>
         /// <returns></returns>
-        private Queue<CommandResult> HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit)
+        private void HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit,
+            ref Queue<CommandResult> results)
         {
             PvSoUnitAbility ability = CurrentAbility;
             PvSoUnitAbility targetAbility = targetUnit.EquippedAbility;
@@ -88,7 +90,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(targetUnit);
-            bool bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());
+            bool bIsTargetAbilityAbleToCounter =
+                targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());
 
             int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
             int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
@@ -97,13 +100,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 followUpCondition = FollowUpCondition.InitiativeFollowUp;
             }
-            else if (targetAbilitySpeed >= abilitySpeed + DoubleAttackSpeedThreshold && targetAbility.IsFollowUpAllowed())
+            else if (targetAbilitySpeed >= abilitySpeed + DoubleAttackSpeedThreshold &&
+                     targetAbility.IsFollowUpAllowed())
             {
                 followUpCondition = FollowUpCondition.CounterFollowUp;
             }
 
-            var results = new Queue<CommandResult>();
-            List<CombatActionContext> combatActionContextList = ability.CreateCombatActionContextList(bIsTargetAbilityAbleToCounter, followUpCondition);
+            List<CombatActionContext> combatActionContextList =
+                ability.CreateCombatActionContextList(bIsTargetAbilityAbleToCounter, followUpCondition);
 
             foreach (CombatActionContext combatActionContext in combatActionContextList)
             {
@@ -115,8 +119,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     HandleAbilityParam(combatAbility, caster, victim, results);
                 }
             }
-
-            return results;
         }
 
         // TODO: Electric Chain-like skill
