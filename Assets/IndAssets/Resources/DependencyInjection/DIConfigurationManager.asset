@@ -34,12 +34,17 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITeamRoundEndEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatLogicFinishedEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 6ea0b33e67c6b164e97df2f7752b3d94, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Abilities.PvSoDirectDamageAbilityParams, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvDieCommand, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveExtraAttack, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

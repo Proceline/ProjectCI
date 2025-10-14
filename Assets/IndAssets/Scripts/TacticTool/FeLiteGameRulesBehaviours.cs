@@ -106,6 +106,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 var results = HandleAbilityCombatingLogic(_selectedUnit, targetUnit);
 
+                RaiserOnCombatLogicFinishedEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
                 raiserTurnLogicallyEndEvent.Raise();
                 HandleCommandResultsCoroutine(results);
             }

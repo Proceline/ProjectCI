@@ -140,7 +140,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             HandleAbilityParam(ability, abilityOwner, targetUnit, ability, results);
         }
 */
-        private void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
+        public static void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
             Queue<CommandResult> results)
         {
             if (caster.IsDead())

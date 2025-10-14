@@ -29,7 +29,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         public void DisposePassive(GridPawnUnit unit)
         {
-            if (_recordedOwners.Contains(unit.ID))
+            if (IsOwner(unit.ID))
             {
                 DisposePassiveInternally(unit);
                 _recordedOwners.Remove(unit.ID);
@@ -37,6 +37,8 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
             Debug.LogWarning($"{unit.name} hasn't registered this passive!");
         }
+
+        protected bool IsOwner(string unitId) => _recordedOwners.Contains(unitId);
 
         protected abstract void InstallPassiveInternally(GridPawnUnit unit);
         protected abstract void DisposePassiveInternally(GridPawnUnit unit);
