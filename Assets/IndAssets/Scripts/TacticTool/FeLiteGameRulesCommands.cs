@@ -14,7 +14,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public partial class FeLiteGameRules
     {
         private readonly Queue<Action<GridPawnUnit>> _bufferedReacts = new();
-        
+
         private async void HandleCommandResultsCoroutine(Queue<CommandResult> results)
         {
             var bSequenceHead = true;
@@ -31,7 +31,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
 
                 var isNewSequence = !bSequenceHead && result.ResultId != lastResult.ResultId;
-                
+
                 // If enter new sequence, then APPLY all reactions
                 if (isNewSequence)
                 {
@@ -66,9 +66,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 await UnitAbilityCoreExtensions.ApplyAnimationProcess(ability, owner, lastAimCell, _bufferedReacts);
                 break;
             }
-            
+
             raiserTurnAnimationEndEvent.Raise();
-            ClearStateAndDeselectUnit();
+            ClearStateAndDeselectUnitCombo();
         }
 
         /// <summary>

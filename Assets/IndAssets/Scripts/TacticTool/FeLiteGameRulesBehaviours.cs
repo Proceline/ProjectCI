@@ -23,24 +23,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             // TODO: Consider Lock
             var standUnit = cell.GetUnitOnCell();
             _selectedUnitLastCell = null;
-            
-            if (standUnit is PvMnBattleGeneralUnit playableUnit)
+
+            if (standUnit is not PvMnBattleGeneralUnit playableUnit)
             {
-                if (standUnit.GetTeam() == CurrentTeam)
-                {
-                    if (playableUnit.IsDead())// || playableUnit.GetCurrentMovementPoints() <= 0)
-                    {
-                        return;
-                    }
-
-                    if (_selectedUnit)
-                    {
-                        return;
-                    }
-
-                    PushStateAfterSelectUnit(playableUnit);
-                }
+                throw new TypeAccessException($"ONLY Type <{nameof(PvMnBattleGeneralUnit)}> can be used!");
             }
+            
+            if (standUnit.GetTeam() != CurrentTeam)
+            {
+                return;
+            }
+                
+            if (playableUnit.IsDead() || (playableUnit.GetCurrentMovementPoints() <= 0 &&
+                                          playableUnit.GetCurrentActionPoints() <= 0))
+            {
+                return;
+            }
+
+            if (_selectedUnit)
+            {
+                return;
+            }
+
+            PushStateAfterSelectUnit(playableUnit);
         }
 
         public void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
@@ -65,10 +70,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _selectedUnitLastCell = _selectedUnit.GetCell();
+            
+            // Move target is Self
             if (standUnit)
             {
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
                 UpdatePlayerStateAfterRegularMove();
+                _selectedUnit.SetCurrentMovementPoints(0);
             }
             else if (_selectedUnit.ExecuteMovement(targetCell))
             {
@@ -116,6 +124,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
             RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
             raiserTurnLogicallyEndEvent.Raise();
+            ArchiveUnitBehaviourPoints(_selectedUnit);
+            
+            // ClearStateAndDeselectUnitCombo func applied in HandleCommandResultsCoroutine
             HandleCommandResultsCoroutine(results);
         }
 
@@ -128,6 +139,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentAbility = ability;
         }
 
+        /// <summary>
+        /// Take Rest,待命
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         public void TakeRestForCurrentPlayer()
         {
             if (!_selectedUnit)
@@ -137,14 +152,37 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             var lastUnit = _selectedUnit;
             RaiserManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
+            ArchiveUnitBehaviourPoints(lastUnit);
             ClearStateAndDeselectUnit();
 
-            var team = lastUnit.GetTeam();
+            CheckRestUnits();
+        }
+
+        private void ArchiveUnitBehaviourPoints(PvMnBattleGeneralUnit unit, bool moveEntirelyEnd = false,
+            bool actionEntirelyEnd = false)
+        {
+            // TODO: 再移动
+            var targetActionPointResult = 0;
+            var targetMovementPointResult = 0;
+            unit.SetCurrentActionPoints(actionEntirelyEnd? 0 : targetActionPointResult);
+            unit.SetCurrentMovementPoints(moveEntirelyEnd ? 0 : targetMovementPointResult);
+        }
+
+        private void ClearStateAndDeselectUnitCombo()
+        {
+            ClearStateAndDeselectUnit();
+            CheckRestUnits();
+        }
+        
+        private void CheckRestUnits()
+        {
             var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
             var remainCount = 0;
+            var team = CurrentTeam;
             foreach (var unit in allUnitsInBattle)
             {
-                if (unit.GetTeam() == team && unit.GetCurrentMovementPoints() > 0 && !unit.IsDead())
+                if (unit.GetTeam() == team &&
+                    (unit.GetCurrentMovementPoints() > 0 || unit.GetCurrentActionPoints() > 0) && !unit.IsDead())
                 {
                     remainCount++;
                 }
@@ -157,5 +195,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 XRaiserTeamRoundEndEvent.Raise(CurrentTeam);
             }
         }
+
+        private void OnTeamRoundEndResponse(BattleTeam team)
+        {
+            var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
+            foreach (var unit in allUnitsInBattle)
+            {
+                if (unit.GetTeam() == team && !unit.IsDead())
+                {
+                    ArchiveUnitBehaviourPoints(unit, true, true);
+                }
+            }
+
+            CurrentTeam = team == BattleTeam.Friendly? BattleTeam.Hostile : BattleTeam.Friendly;
+            BeginTeamTurn(CurrentTeam);
+        }
+        
+        #if UNITY_EDITOR
+        public void EndRoundDontUseEditorOnly()
+        {
+            XRaiserTeamRoundEndEvent.Raise(CurrentTeam);
+        }
+        #endif
     }
 }

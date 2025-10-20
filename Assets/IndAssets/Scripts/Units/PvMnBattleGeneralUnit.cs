@@ -31,6 +31,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private Coroutine _rotatingCoroutine;
 
         private int _maximumMovementPoints;
+        private int _currentActionPoints = 1;
 
         public PvSoUnitAbility EquippedAbility
         {
@@ -91,7 +92,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             OnMovementPostComplete.RemoveAllListeners();
-            OnMovementPostComplete.AddListener(() => { CurrentMovementPoints = 0; });
         }
 
         public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
@@ -233,11 +233,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentMovementPoints = 
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
             _maximumMovementPoints = CurrentMovementPoints;
+            SetCurrentActionPoints(1);
         }
 
-        public void ResetMovementPoints()
+        public override void SetCurrentMovementPoints(int movePoint)
         {
-            CurrentMovementPoints = _maximumMovementPoints;
+            CurrentMovementPoints = movePoint;
         }
 
         public override List<LevelCellBase> GetAllowedMovementCells()
@@ -253,6 +254,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             gameObject.transform.position = targetCell.GetAllignPos(this);
             StatusEffectUtils.HandleUnitOnCell(this, targetCell);
+        }
+
+        public override int GetCurrentActionPoints()
+        {
+            return _currentActionPoints;
+        }
+
+        public override void SetCurrentActionPoints(int actionPoint)
+        {
+            _currentActionPoints = actionPoint;
         }
 
         #region Rotator

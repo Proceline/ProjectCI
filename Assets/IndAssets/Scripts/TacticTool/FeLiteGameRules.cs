@@ -115,9 +115,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             onGameStarted?.Invoke();
 
-            CurrentTeam = BattleTeam.Friendly;
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
+            
+            CurrentTeam = BattleTeam.Friendly;
 
             foreach (var staticAbility in preloadedAbilities)
             {
@@ -145,6 +146,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
             }
 
+            // TODO: Unregister this response after Game End
+            XRaiserTeamRoundEndEvent.RegisterCallback(OnTeamRoundEndResponse);
             TacticBattleManager.HandleGameStarted();
 
             BeginTeamTurn(CurrentTeam);
@@ -235,7 +238,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 return;
             }
-
+            
             _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
             onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
             raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
@@ -256,7 +259,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     $"State ERROR: Current State must be <{UnitBattleState.MovingProgress.ToString()}>, but Having <{CurrentBattleState.ToString()}>");
             }
 
-            ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
+            if (_selectedUnit.GetCurrentActionPoints() > 0)
+            {
+                ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
+            }
+            else
+            {
+                ArchiveUnitBehaviourPoints(_selectedUnit, true, true);
+                ClearStateAndDeselectUnitCombo();
+            }
         }
 
         /// <summary>
@@ -284,7 +295,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         if (_selectedUnitLastCell)
                         {
                             // TODO: Consider clean up movement buff, Consider if NEED rotation RESET (Maybe not since rotation not matter)
-                            _selectedUnit.ResetMovementPoints();
                             _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                         }
                     }

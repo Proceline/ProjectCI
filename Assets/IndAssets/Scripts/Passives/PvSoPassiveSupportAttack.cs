@@ -48,6 +48,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
             var triggerAbility = usingParam.ability;
             // The trigger player must use a FollowEnabled Attack
+            // TODO: Consider support task
             if (!triggerAbility.IsFollowUpAllowed())
             {
                 return;
