@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6470885d82814be6b98497561c26affc, type: 3}
-  m_Name: PvSoUnitPostAbility_NormalMeleeAttack
+  m_Name: PvSoUnitPostAbility_NormalMigiri
   m_EditorClassIdentifier: 
-  m_AbilityName: '[PostMeleeAttack]'
+  m_AbilityName: '[PostMigiri]'
   m_Icon: {fileID: 0}
   m_Radius: 1
   m_ActionPointCost: 1
@@ -37,7 +37,7 @@ MonoBehaviour:
   onUnitEnteredInCombating:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: 07abfd31477d92c44b9c2896f46860ef, type: 2}
+      - m_Target: {fileID: 11400000, guid: b6ad620dbea2d4a4589ac7887d1b578e, type: 2}
         m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
           Assembly-CSharp
         m_MethodName: Apply
@@ -56,7 +56,7 @@ MonoBehaviour:
   onUnitLeftFromCombating:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: 07abfd31477d92c44b9c2896f46860ef, type: 2}
+      - m_Target: {fileID: 11400000, guid: b6ad620dbea2d4a4589ac7887d1b578e, type: 2}
         m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
           Assembly-CSharp
         m_MethodName: UnApply

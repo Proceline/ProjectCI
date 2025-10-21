@@ -6,6 +6,8 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
@@ -33,8 +35,18 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         [Inject] 
         private static readonly ICombatingOnStartEvent XRaiserCombatingOnStarted;
+
+        [Inject]
+        private static readonly ICombatingTurnEndEvent OnLogicallyEndedInTurn;
         
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
+
+        [FormerlySerializedAs("onTriggerUnitEnteredInCombating")] 
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombating;
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombatingAsTarget;
+        [FormerlySerializedAs("onTriggerUnitLeftFromCombating")] 
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitLeftFromCombating;
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitLeftFromCombatingAsTarget;
         
         public bool IsCounterAllowed()
         {
@@ -51,6 +63,12 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public virtual List<CombatingQueryContext> OnCombatingQueryListCreated(PvMnBattleGeneralUnit caster,
             PvMnBattleGeneralUnit victim, bool casterSpeedExceed, bool victimSpeedExceed)
         {
+            var targetAbility = victim.EquippedAbility;
+            
+            OnLogicallyEndedInTurn.RegisterCallback(OnCombatedTurnLogicallyEndedResponse);
+            onUnitEnteredInCombating.Invoke(caster);
+            targetAbility.onUnitEnteredInCombatingAsTarget.Invoke(victim);
+            
             // You can register on Combating status before this calculation
             XRaiserCombatingOnStarted.Raise(caster, victim);
             
@@ -64,8 +82,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             {
                 return combatContextList;
             }
-
-            var targetAbility = victim.EquippedAbility;
             List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(victim);
             var bIsTargetAbilityAbleToCounter =
                 targetAbilityCells.Count > 0 && targetAbilityCells.Contains(caster.GetCell());
@@ -88,6 +104,16 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             }
 
             return combatContextList;
+        }
+
+        protected virtual void OnCombatedTurnLogicallyEndedResponse(PvMnBattleGeneralUnit caster,
+            PvMnBattleGeneralUnit victim)
+        {
+            var targetAbility = victim.EquippedAbility;
+            onUnitEnteredInCombatingAsTarget.Invoke(victim);
+            
+            targetAbility.onUnitLeftFromCombating.Invoke(caster);
+            OnLogicallyEndedInTurn.UnregisterCallback(OnCombatedTurnLogicallyEndedResponse);
         }
 
         public override void ApplyVisualEffects(GridPawnUnit inCasterUnit, LevelCellBase inEffectCell)

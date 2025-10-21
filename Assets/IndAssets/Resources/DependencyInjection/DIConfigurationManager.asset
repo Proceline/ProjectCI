@@ -62,9 +62,13 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveExtraAttack, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveEnhanceAttribute, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.Runtime.GUI.Battle.PvMnBattleResourceContainer, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Modifiers.PvSoModifierSupportObject, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

@@ -14,9 +14,9 @@ using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifie
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
-    
+    [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "New EnhanceAttribute Passive", menuName = "ProjectCI Passives/EnhanceAttribute", order = 1)]
-    public class PvSoPassiveEnhanceAttribute : PvSoPassiveBase
+    public sealed class PvSoPassiveEnhanceAttribute : PvSoPassiveBase
     {
         [Header("Parameters"), SerializeField] 
         private AttributeType targetAttribute;
@@ -30,24 +30,10 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         [SerializeField]
         private BattleTeam teamCondition;
 
-        [Inject, NonSerialized] 
-        private PvSoModifiersManager _modifiersManager;
+        [Inject] private static readonly PvSoModifiersManager ModifiersManager;
 
         private readonly Dictionary<string, UnityAction<IEventOwner, IAttributeModifierContainer>>
             _loadedModifierActions = new();
-
-        protected PvSoModifiersManager ModifiersManager
-        {
-            get
-            {
-                if (_modifiersManager == null)
-                {
-                    DIConfiguration.InjectFromConfiguration(this);
-                }
-
-                return _modifiersManager;
-            }
-        }
 
         protected override void InstallPassiveInternally(GridPawnUnit unit)
         {
@@ -79,7 +65,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
         }
 
-        protected virtual void ModifyAttribute(GridPawnUnit gridPawnUnit, IEventOwner attributeOwner, IAttributeModifierContainer container)
+        private void ModifyAttribute(GridPawnUnit gridPawnUnit, IEventOwner attributeOwner, IAttributeModifierContainer container)
         {
             AIRadiusInfo radiusInfo = new AIRadiusInfo(gridPawnUnit.GetCell(), radius)
             {
