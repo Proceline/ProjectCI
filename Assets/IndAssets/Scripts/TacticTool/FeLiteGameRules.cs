@@ -26,7 +26,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private AttributeType abilitySpeedAttributeType;
-        private const int DoubleAttackSpeedThreshold = 5;
+        
+        [SerializeField]
+        private int followAttackSpeedThreshold = 5;
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
         [NonSerialized] private PvSoUnitAbility _selectedAbility;
@@ -102,12 +104,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _selectedUnit ? _selectedUnit.GetCurrentState() : UnitBattleState.Finished;
         
         #region Injected Fields
-        
-        [Inject] public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent;
+
+        public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent
+        {
+            get
+            {
+                try
+                {
+                    return RaiserSimpleDamageApplyEvent;
+                }
+                catch
+                {
+                    throw new NullReferenceException("ERROR: FeLiteGameRules didn't involved injection!");
+                }
+            }
+        }
+
+        [Inject] private static readonly PvSoSimpleDamageApplyEvent RaiserSimpleDamageApplyEvent;
         [Inject] private static readonly IUnitPrepareEvent RaiserManualFinishOrRestPrepareEvent;
         [Inject] private static readonly ITeamRoundEndEvent XRaiserTeamRoundEndEvent;
         [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicPostEvent;
         [Inject] private static readonly IUnitCombatLogicPreEvent RaiserOnCombatLogicPreEvent;
+        [Inject] private static readonly IUnitGeneralCombatingEvent RaiserOnCombatingListCreatedEvent;
         
         #endregion
         
@@ -146,8 +164,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
             }
 
-            // TODO: Unregister this response after Game End
+            // TODO: Unregister these responses after Game End
             XRaiserTeamRoundEndEvent.RegisterCallback(OnTeamRoundEndResponse);
+            
             TacticBattleManager.HandleGameStarted();
 
             BeginTeamTurn(CurrentTeam);

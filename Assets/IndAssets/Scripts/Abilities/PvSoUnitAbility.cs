@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
@@ -42,47 +43,45 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             return isAbilityWeapon;
         }
 
-        public List<CombatActionContext> CreateCombatActionContextList(bool bIsCounterReachable, FollowUpCondition followUpCondition)
+        public virtual List<CombatingQueryContext> OnCombatingQueryListCreated(PvMnBattleGeneralUnit caster,
+            PvMnBattleGeneralUnit victim, bool casterSpeedExceed, bool victimSpeedExceed)
         {
-            List<CombatActionContext> combatActionContextList = new List<CombatActionContext>()
+            var combatContextList = new List<CombatingQueryContext>
             {
-                new()
-                {
-                    IsVictim = false,
-                    InitiativeType = InitiativeType.Initiative
-                }
+                new() { IsCounter = false, QueryType = CombatingQueryType.FirstAttempt }
             };
-            if (IsCounterAllowed())
-            {
-                if (bIsCounterReachable)
-                {
-                    combatActionContextList.Add(new CombatActionContext
-                    {
-                        IsVictim = true,
-                        InitiativeType = InitiativeType.Counter
-                    });
-                }
 
-                if (followUpCondition == FollowUpCondition.CounterFollowUp && bIsCounterReachable)
-                {
-                    combatActionContextList.Add(new CombatActionContext
-                    {
-                        IsVictim = true,
-                        InitiativeType = InitiativeType.FollowUp
-                    });
-                }
-                else if (followUpCondition == FollowUpCondition.InitiativeFollowUp)
-                {
-                    combatActionContextList.Add(new CombatActionContext
-                    {
-                        IsVictim = false,
-                        InitiativeType = InitiativeType.FollowUp
-                    });
-                }
+            // Normally, only support abilities don't allow counter
+            if (!IsCounterAllowed())
+            {
+                return combatContextList;
             }
-            return combatActionContextList;
+
+            var targetAbility = victim.EquippedAbility;
+            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(victim);
+            var bIsTargetAbilityAbleToCounter =
+                targetAbilityCells.Count > 0 && targetAbilityCells.Contains(caster.GetCell());
+
+            if (bIsTargetAbilityAbleToCounter)
+            {
+                combatContextList.Add(new CombatingQueryContext
+                    { IsCounter = true, QueryType = CombatingQueryType.FirstAttempt });
+            }
+
+            if (casterSpeedExceed && IsFollowUpAllowed())
+            {
+                combatContextList.Add(new CombatingQueryContext
+                    { IsCounter = false, QueryType = CombatingQueryType.AutoFollowUp });
+            }
+            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetAbility.IsFollowUpAllowed())
+            {
+                combatContextList.Add(new CombatingQueryContext
+                    { IsCounter = true, QueryType = CombatingQueryType.AutoFollowUp });
+            }
+
+            return combatContextList;
         }
-        
+
         public override void ApplyVisualEffects(GridPawnUnit inCasterUnit, LevelCellBase inEffectCell)
         {
             // GridObject targetObj = inEffectCell.GetObjectOnCell();

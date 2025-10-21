@@ -6,8 +6,8 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Abilities.Enums;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -15,6 +15,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         private readonly Queue<Action<GridPawnUnit>> _bufferedReacts = new();
 
+        /// <summary>
+        /// This function applied after you get all results from logic level, after HandleAbilityCombatingLogic
+        /// </summary>
+        /// <param name="results"></param>
+        /// <exception cref="NullReferenceException"></exception>
         private async void HandleCommandResultsCoroutine(Queue<CommandResult> results)
         {
             var bSequenceHead = true;
@@ -89,31 +94,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new NullReferenceException("ERROR: One of these two pawns missing ability!");
             }
 
-            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(targetUnit);
-            bool bIsTargetAbilityAbleToCounter =
-                targetAbilityCells.Count > 0 && targetAbilityCells.Contains(abilityOwner.GetCell());
-
             int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
             int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
-            FollowUpCondition followUpCondition = FollowUpCondition.None;
-            if (abilitySpeed >= targetAbilitySpeed + DoubleAttackSpeedThreshold && ability.IsFollowUpAllowed())
-            {
-                followUpCondition = FollowUpCondition.InitiativeFollowUp;
-            }
-            else if (targetAbilitySpeed >= abilitySpeed + DoubleAttackSpeedThreshold &&
-                     targetAbility.IsFollowUpAllowed())
-            {
-                followUpCondition = FollowUpCondition.CounterFollowUp;
-            }
 
-            List<CombatActionContext> combatActionContextList =
-                ability.CreateCombatActionContextList(bIsTargetAbilityAbleToCounter, followUpCondition);
+            var combatContextList = ability.OnCombatingQueryListCreated(abilityOwner, targetUnit,
+                abilitySpeed >= targetAbilitySpeed + followAttackSpeedThreshold,
+                targetAbilitySpeed >= abilitySpeed + followAttackSpeedThreshold);
+            RaiserOnCombatingListCreatedEvent.Raise(abilityOwner, targetUnit, combatContextList);
 
-            foreach (CombatActionContext combatActionContext in combatActionContextList)
+            foreach (CombatingQueryContext combatActionContext in combatContextList)
             {
-                var combatAbility = combatActionContext.IsVictim ? targetAbility : ability;
-                var caster = combatActionContext.IsVictim ? targetUnit : abilityOwner;
-                var victim = combatActionContext.IsVictim ? abilityOwner : targetUnit;
+                var combatAbility = combatActionContext.IsCounter ? targetAbility : ability;
+                var caster = combatActionContext.IsCounter ? targetUnit : abilityOwner;
+                var victim = combatActionContext.IsCounter ? abilityOwner : targetUnit;
                 if (combatAbility)
                 {
                     HandleAbilityParam(combatAbility, caster, victim, results);

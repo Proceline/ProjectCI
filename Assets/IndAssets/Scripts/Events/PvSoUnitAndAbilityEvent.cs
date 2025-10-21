@@ -14,7 +14,7 @@ namespace ProjectCI.Utilities.Runtime.Events
         public PvMnBattleGeneralUnit unit;
         public PvSoUnitAbility ability;
         public PvMnBattleGeneralUnit target;
-        public Queue<CommandResult> ResultsReference;
+        public Queue<CommandResult> ResultsReference { get; internal set; }
     }
 
     public interface IUnitAndAbilityEvent
@@ -49,6 +49,7 @@ namespace ProjectCI.Utilities.Runtime.Events
             {
                 _bufferedParam = new UnitAndAbilityEventParam
                     { unit = inUnit, ability = inAbility, target = inTarget, ResultsReference = existedResults };
+                _hasEverBuffered = true;
             }
             else
             {

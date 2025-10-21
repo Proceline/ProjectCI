@@ -7,7 +7,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 
 namespace ProjectCI.CoreSystem.Editor.Abilities
 {
-    [CustomEditor(typeof(PvSoUnitAbility))]
+    [CustomEditor(typeof(PvSoUnitAbility), true)]
     public class PvSoUnitAbilityEditor : UnitAbilityEditor
     {
         private static string pathOfEnumMarks = "Assets/IndAssets/_1stPartyAssets/AnimationAssets/AnimationEnumMarks";
