@@ -18,6 +18,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private bool isFollowUpAllowed = true;
 
         [SerializeField]
+        private bool isAutoFollowUpAllowed = true;
+
+        [SerializeField]
         private bool isAbilityWeapon = true;
 
         [SerializeField] 
@@ -33,10 +36,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             return isCounterAllowed;
         }
 
-        public bool IsFollowUpAllowed()
-        {
-            return isFollowUpAllowed;
-        }
+        public bool IsFollowUpAllowed() => isFollowUpAllowed;
 
         public bool IsAbilityWeapon()
         {
@@ -68,12 +68,12 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     { IsCounter = true, QueryType = CombatingQueryType.FirstAttempt });
             }
 
-            if (casterSpeedExceed && IsFollowUpAllowed())
+            if (casterSpeedExceed && isAutoFollowUpAllowed)
             {
                 combatContextList.Add(new CombatingQueryContext
                     { IsCounter = false, QueryType = CombatingQueryType.AutoFollowUp });
             }
-            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetAbility.IsFollowUpAllowed())
+            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetAbility.isAutoFollowUpAllowed)
             {
                 combatContextList.Add(new CombatingQueryContext
                     { IsCounter = true, QueryType = CombatingQueryType.AutoFollowUp });

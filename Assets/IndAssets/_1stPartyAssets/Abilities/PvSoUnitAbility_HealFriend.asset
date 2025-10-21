@@ -30,6 +30,7 @@ MonoBehaviour:
   m_Ailments: []
   isCounterAllowed: 0
   isFollowUpAllowed: 0
+  isAutoFollowUpAllowed: 0
   isAbilityWeapon: 0
   projectilePrefab: {fileID: 0}
   abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}

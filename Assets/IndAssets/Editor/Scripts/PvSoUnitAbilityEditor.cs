@@ -83,6 +83,15 @@ namespace ProjectCI.CoreSystem.Editor.Abilities
                 abilityAnimationObj.objectReferenceValue = animationAssets[selectedIndex];
                 serializedObject.ApplyModifiedProperties();
             }
+
+            var followUpProperty = serializedObject.FindProperty("isFollowUpAllowed");
+            var autoFollowUpProperty = serializedObject.FindProperty("isAutoFollowUpAllowed");
+
+            if (!followUpProperty.boolValue && autoFollowUpProperty.boolValue)
+            {
+                autoFollowUpProperty.boolValue = false;
+                serializedObject.ApplyModifiedProperties();
+            }
         }
     }
 } 
