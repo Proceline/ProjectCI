@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
   m_Name: PvSoUnitAbility_StaticRide00
   m_EditorClassIdentifier: 
-  m_AbilityName: Ride
+  m_AbilityName: '[DeprecatedRide]'
   m_Icon: {fileID: 0}
   m_Radius: 1
   m_ActionPointCost: 1
