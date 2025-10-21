@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -8,6 +9,7 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
+    [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "NewAbility", menuName = "ProjectCI Tools/Ability/Create Custom Ability", order = 1)]
     public class PvSoUnitAbility : UnitAbilityCore
     {
@@ -29,6 +31,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [HideInInspector]
         public UnitAbilityAnimation abilityAnimation;
 
+        [Inject] 
+        private static readonly ICombatingOnStartEvent XRaiserCombatingOnStarted;
+        
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
         
         public bool IsCounterAllowed()
@@ -46,6 +51,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public virtual List<CombatingQueryContext> OnCombatingQueryListCreated(PvMnBattleGeneralUnit caster,
             PvMnBattleGeneralUnit victim, bool casterSpeedExceed, bool victimSpeedExceed)
         {
+            // You can register on Combating status before this calculation
+            XRaiserCombatingOnStarted.Raise(caster, victim);
+            
             var combatContextList = new List<CombatingQueryContext>
             {
                 new() { IsCounter = false, QueryType = CombatingQueryType.FirstAttempt }

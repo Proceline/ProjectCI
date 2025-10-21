@@ -16,7 +16,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cd0d657ce42bfbd48b2d25b6d44f8e18, type: 2}
   - {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
   - {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
-  - {fileID: 11400000, guid: aa58336ff5926144380c17002c348436, type: 2}
   - {fileID: 11400000, guid: 053918910e69ae94fab01a5aa4c3d6b5, type: 2}
   - {fileID: 11400000, guid: 380203cf766cb3b429cd3def286bf64b, type: 2}
   onAfterSceneLoadEventRaised:

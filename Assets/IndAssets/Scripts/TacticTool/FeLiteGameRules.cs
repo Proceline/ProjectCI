@@ -82,12 +82,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] 
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
 
-        [Header("On Turn Support")]
-        
-        [SerializeField] 
-        private PvSoTurnLogicEndEvent raiserTurnLogicallyEndEvent;
-        
-        [SerializeField] 
+        [Header("On Turn Support"), SerializeField]
         private PvSoTurnViewEndEvent raiserTurnAnimationEndEvent;
         
         [Header("State Support")]
@@ -126,6 +121,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicPostEvent;
         [Inject] private static readonly IUnitCombatLogicPreEvent RaiserOnCombatLogicPreEvent;
         [Inject] private static readonly IUnitGeneralCombatingEvent RaiserOnCombatingListCreatedEvent;
+        
+        [Inject] private static readonly ICombatingTurnEndEvent RaiserCombatingTurnEndLogically;
         
         #endregion
         

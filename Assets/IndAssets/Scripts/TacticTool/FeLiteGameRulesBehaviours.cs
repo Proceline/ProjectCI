@@ -123,7 +123,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 HandleAbilityCombatingLogic(_selectedUnit, targetUnit, ref results);
             }
             RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
-            raiserTurnLogicallyEndEvent.Raise();
+            RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
             ArchiveUnitBehaviourPoints(_selectedUnit);
             
             // ClearStateAndDeselectUnitCombo func applied in HandleCommandResultsCoroutine

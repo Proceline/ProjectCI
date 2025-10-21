@@ -43,9 +43,17 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitGeneralCombatingEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 8c60d5cd08dcbc44b8697e3f14e1a5c6, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ICombatingOnStartEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: f456678831b5d62408230f19403f9f79, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ICombatingTurnEndEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 5c625d7c76f613545917e316e5bbf529, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Abilities.PvSoUnitAbility, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Abilities.PvSoDirectDamageAbilityParams, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvDieCommand, Assembly-CSharp,
