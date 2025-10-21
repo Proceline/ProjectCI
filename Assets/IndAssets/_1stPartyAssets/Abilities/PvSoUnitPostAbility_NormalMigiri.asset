@@ -72,3 +72,4 @@ MonoBehaviour:
   onUnitLeftFromCombatingAsTarget:
     m_PersistentCalls:
       m_Calls: []
+  isFullPost: 1
