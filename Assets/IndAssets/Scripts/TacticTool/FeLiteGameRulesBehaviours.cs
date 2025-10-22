@@ -22,6 +22,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (!cell) return;
             // TODO: Consider Lock
             var standUnit = cell.GetUnitOnCell();
+
+            if (!standUnit)
+            {
+                return;
+            }
+            
             _selectedUnitLastCell = null;
 
             if (standUnit is not PvMnBattleGeneralUnit playableUnit)

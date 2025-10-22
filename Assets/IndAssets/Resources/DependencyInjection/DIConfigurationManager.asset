@@ -70,5 +70,7 @@ MonoBehaviour:
     Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Modifiers.PvSoModifierSupportObject, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicHurryCounter, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
