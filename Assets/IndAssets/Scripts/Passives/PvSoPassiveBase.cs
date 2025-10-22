@@ -14,6 +14,9 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
     public abstract class PvSoPassiveBase : ScriptableObject
     {
         public PvEnPassiveTiming passiveTiming;
+        
+        [SerializeField] private string passiveName;
+        public string PassiveName => passiveName;
 
         [NonSerialized] private readonly HashSet<string> _recordedOwners = new();
         public void InstallPassive(GridPawnUnit unit)
