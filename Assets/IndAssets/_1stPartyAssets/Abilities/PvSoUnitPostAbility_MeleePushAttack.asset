@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6470885d82814be6b98497561c26affc, type: 3}
+  m_Name: PvSoUnitPostAbility_MeleePushAttack
+  m_EditorClassIdentifier: 
+  m_AbilityName: '[PostPushAttack]'
+  m_Icon: {fileID: 0}
+  m_Radius: 1
+  m_ActionPointCost: 1
+  m_bAllowBlocked: 1
+  m_EffectedTeam: 2
+  m_EffectedType: 0
+  m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
+  m_EffectShape: {fileID: 0}
+  m_EffectRadius: 0
+  spawnOnCaster: []
+  spawnOnTarget:
+  - {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
+  m_Params:
+  - {fileID: 11400000, guid: c9d77f1bf7ffbd84d8c6b39686e87e29, type: 2}
+  - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
+  m_Ailments: []
+  isCounterAllowed: 1
+  isFollowUpAllowed: 0
+  isAutoFollowUpAllowed: 0
+  isAbilityWeapon: 1
+  projectilePrefab: {fileID: 0}
+  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
+  onUnitEnteredInCombating:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitEnteredInCombatingAsTarget:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitLeftFromCombating:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitLeftFromCombatingAsTarget:
+    m_PersistentCalls:
+      m_Calls: []
+  isFullPost: 1

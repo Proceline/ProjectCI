@@ -24,28 +24,27 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
 
         private void ApplyVisualEffects(GridPawnUnit owner)
         {
-            RuntimeAbility.ApplyVisualEffects(owner, TargetCell);
-
-            var targetObj = TargetCell.GetObjectOnCell();
-            if (!targetObj)
+            var targetObject = TargetObject;
+            RuntimeAbility.ApplyVisualEffects(owner, TargetObject.GetCell());
+            if (!targetObject)
             {
                 return;
             }
 
             if (ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint)
             {
-                ShowEffectOnTarget(targetObj.transform.position);
+                ShowEffectOnTarget(targetObject.transform.position);
             }
 
             if (string.IsNullOrEmpty(ExtraInfo))
             {
                 FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
-                    targetObj, DamageType);
+                    targetObject, DamageType);
             }
             else
             {
                 FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
-                    targetObj, DamageType, ExtraInfo);
+                    targetObject, DamageType, ExtraInfo);
             }
         }
     }

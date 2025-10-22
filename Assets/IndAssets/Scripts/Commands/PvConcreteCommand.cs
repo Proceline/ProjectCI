@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -20,10 +19,14 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
         [NonSerialized] 
         protected LevelCellBase TargetCell;
 
+        [NonSerialized]
+        protected GridObject TargetObject;
+
         public override void AddReaction(UnitAbilityCore ability, Queue<Action<GridPawnUnit>> reactions)
         {
             RuntimeAbility = ability;
             TargetCell = TacticBattleManager.GetGrid()[TargetCellIndex];
+            TargetObject = TargetCell.GetObjectOnCell();
         }
 
         protected void ShowEffectOnTarget(Vector3 position)
