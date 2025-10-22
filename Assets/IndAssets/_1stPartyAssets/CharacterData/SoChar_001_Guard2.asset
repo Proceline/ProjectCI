@@ -67,5 +67,5 @@ MonoBehaviour:
   m_AbilityPoints: 5
   personalPassives:
   - {fileID: 11400000, guid: a36832e32baf01c4598c7725e7958e48, type: 2}
-  - {fileID: 11400000, guid: 76a30a010ac528a43855312d4c864e6d, type: 2}
+  - {fileID: 11400000, guid: d3217b9726d277b4696a2466e6ce00dc, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}

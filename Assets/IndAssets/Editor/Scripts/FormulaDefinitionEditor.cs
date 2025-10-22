@@ -9,11 +9,12 @@ namespace ProjectCI.TacticTool.Editor
     [CustomEditor(typeof(FormulaDefinition))]
     public class FormulaDefinitionEditor : UnityEditor.Editor
     {
-        private SerializedProperty targetAttributeProperty;
-        private SerializedProperty formulaNodesProperty;
-        private SerializedProperty preventNegativeSubResultProperty;
-        private AttributeTypeDefinition attributeTypeDefinition;
-        private string[] attributeTypeNames;
+        private SerializedProperty _targetAttributeProperty;
+        private SerializedProperty _formulaNodesProperty;
+        private SerializedProperty _preventNegativeSubResultProperty;
+        private SerializedProperty _preventFloatDuringCalculationProperty;
+        private AttributeTypeDefinition _attributeTypeDefinition;
+        private string[] _attributeTypeNames;
         private string newOperatorSymbol = "+";
         private float newConstantValue = 0f;
         private Dictionary<AttributeType, int> testValues = new Dictionary<AttributeType, int>();
@@ -21,9 +22,10 @@ namespace ProjectCI.TacticTool.Editor
 
         private void OnEnable()
         {
-            targetAttributeProperty = serializedObject.FindProperty("targetAttribute");
-            formulaNodesProperty = serializedObject.FindProperty("formulaNodes");
-            preventNegativeSubResultProperty = serializedObject.FindProperty("preventNegativeSubResult");
+            _targetAttributeProperty = serializedObject.FindProperty("targetAttribute");
+            _formulaNodesProperty = serializedObject.FindProperty("formulaNodes");
+            _preventNegativeSubResultProperty = serializedObject.FindProperty("preventNegativeSubResult");
+            _preventFloatDuringCalculationProperty = serializedObject.FindProperty("preventFloatDuringCalculation");
             LoadAttributeTypeDefinition();
         }
 
@@ -33,15 +35,15 @@ namespace ProjectCI.TacticTool.Editor
             if (guids.Length > 0)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guids[0]);
-                attributeTypeDefinition = AssetDatabase.LoadAssetAtPath<AttributeTypeDefinition>(path);
-                if (attributeTypeDefinition != null)
+                _attributeTypeDefinition = AssetDatabase.LoadAssetAtPath<AttributeTypeDefinition>(path);
+                if (_attributeTypeDefinition != null)
                 {
-                    attributeTypeNames = attributeTypeDefinition.AttributeTypeNames.ToArray();
+                    _attributeTypeNames = _attributeTypeDefinition.AttributeTypeNames.ToArray();
                 }
             }
             else
             {
-                attributeTypeNames = new string[] { "None" };
+                _attributeTypeNames = new string[] { "None" };
             }
         }
 
@@ -53,19 +55,22 @@ namespace ProjectCI.TacticTool.Editor
             EditorGUILayout.LabelField("Formula Definition", EditorStyles.boldLabel);
 
             // Draw target attribute selector
-            EditorGUILayout.PropertyField(targetAttributeProperty, new GUIContent("Target Attribute"));
+            EditorGUILayout.PropertyField(_targetAttributeProperty, new GUIContent("Target Attribute"));
 
             // Draw prevent negative sub-result toggle
-            EditorGUILayout.PropertyField(preventNegativeSubResultProperty, new GUIContent("Prevent Negative Sub-Results", 
+            EditorGUILayout.PropertyField(_preventNegativeSubResultProperty, new GUIContent("Prevent Negative Sub-Results", 
                 "If enabled, any sub-calculation that results in a negative number will be treated as 0"));
+            
+            EditorGUILayout.PropertyField(_preventFloatDuringCalculationProperty, new GUIContent("Prevent Floating All-Time", 
+                "If enabled, float value will never be rounded during calculation"));
 
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Formula Nodes", EditorStyles.boldLabel);
 
             // Draw existing nodes
-            for (int i = 0; i < formulaNodesProperty.arraySize; i++)
+            for (int i = 0; i < _formulaNodesProperty.arraySize; i++)
             {
-                var nodeProperty = formulaNodesProperty.GetArrayElementAtIndex(i);
+                var nodeProperty = _formulaNodesProperty.GetArrayElementAtIndex(i);
                 DrawNodeProperty(nodeProperty, i);
             }
 
@@ -152,22 +157,22 @@ namespace ProjectCI.TacticTool.Editor
             }
             if (GUILayout.Button("X", GUILayout.Width(20)))
             {
-                formulaNodesProperty.DeleteArrayElementAtIndex(index);
+                _formulaNodesProperty.DeleteArrayElementAtIndex(index);
             }
             EditorGUILayout.EndHorizontal();
         }
 
         private void AddAttributeNode()
         {
-            formulaNodesProperty.arraySize++;
-            var newElement = formulaNodesProperty.GetArrayElementAtIndex(formulaNodesProperty.arraySize - 1);
+            _formulaNodesProperty.arraySize++;
+            var newElement = _formulaNodesProperty.GetArrayElementAtIndex(_formulaNodesProperty.arraySize - 1);
             var typeProperty = newElement.FindPropertyRelative("type");
             typeProperty.enumValueIndex = (int)FormulaNode.NodeType.Attribute;
         }
         private void AddOperatorNode()
         {
-            formulaNodesProperty.arraySize++;
-            var newElement = formulaNodesProperty.GetArrayElementAtIndex(formulaNodesProperty.arraySize - 1);
+            _formulaNodesProperty.arraySize++;
+            var newElement = _formulaNodesProperty.GetArrayElementAtIndex(_formulaNodesProperty.arraySize - 1);
             var typeProperty = newElement.FindPropertyRelative("type");
             typeProperty.enumValueIndex = (int)FormulaNode.NodeType.Operator;
             var operatorProperty = newElement.FindPropertyRelative("operatorSymbol");
@@ -175,8 +180,8 @@ namespace ProjectCI.TacticTool.Editor
         }
         private void AddConstantNode()
         {
-            formulaNodesProperty.arraySize++;
-            var newElement = formulaNodesProperty.GetArrayElementAtIndex(formulaNodesProperty.arraySize - 1);
+            _formulaNodesProperty.arraySize++;
+            var newElement = _formulaNodesProperty.GetArrayElementAtIndex(_formulaNodesProperty.arraySize - 1);
             var typeProperty = newElement.FindPropertyRelative("type");
             typeProperty.enumValueIndex = (int)FormulaNode.NodeType.Constant;
             var constantProperty = newElement.FindPropertyRelative("constantValue");
@@ -214,8 +219,8 @@ namespace ProjectCI.TacticTool.Editor
         // Helper to get attribute name from definition
         private string GetAttributeTypeName(AttributeType type)
         {
-            if (attributeTypeDefinition != null && type.Value >= 0 && type.Value < attributeTypeNames.Length)
-                return attributeTypeNames[type.Value];
+            if (_attributeTypeDefinition != null && type.Value >= 0 && type.Value < _attributeTypeNames.Length)
+                return _attributeTypeNames[type.Value];
             return $"[{type.Value}]";
         }
     }

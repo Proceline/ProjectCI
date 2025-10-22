@@ -45,3 +45,4 @@ MonoBehaviour:
   - HITpoint
   - _weaponDefense
   - NONE
+  - readOnlyCurrentHp

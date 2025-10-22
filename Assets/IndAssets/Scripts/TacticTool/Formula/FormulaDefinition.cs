@@ -12,12 +12,15 @@ namespace ProjectCI.TacticTool
         public AttributeType TargetAttribute => targetAttribute;
 
         [SerializeField]
-        private List<FormulaNode> formulaNodes = new List<FormulaNode>();  // List of formula nodes
+        private List<FormulaNode> formulaNodes = new();  // List of formula nodes
         public IReadOnlyList<FormulaNode> FormulaNodes => formulaNodes;
 
         [SerializeField]
         private bool preventNegativeSubResult = true;  // Whether to prevent negative sub-results
         public bool PreventNegativeSubResult => preventNegativeSubResult;
+
+        [SerializeField] private bool preventFloatDuringCalculation;  // Whether to keep floating during calculating
+        public bool PreventFloatDuringCalculation => preventFloatDuringCalculation;
 
         // Add a new node to the formula
         public void AddNode(FormulaNode node)

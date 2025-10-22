@@ -19,23 +19,26 @@ namespace IndAssets.Scripts.Modifiers
         [SerializeField]
         private AttributeModifier modifierType;
 
-        private readonly HashSet<string> _registeredUnit = new();
+        protected virtual AttributeModifier GetDetail(UnitAttributeContainer container) => modifierType;
+
+        private readonly Dictionary<string, UnitAttributeContainer> _registeredUnitContainers = new();
 
         public void Apply(PvMnBattleGeneralUnit unit)
         {
-            var hasEverRegistered = _registeredUnit.Count > 0;
-            _registeredUnit.Add(unit.EventIdentifier);
+            var hasEverRegistered = _registeredUnitContainers.Count > 0;
+            if (!_registeredUnitContainers.TryAdd(unit.EventIdentifier, unit.RuntimeAttributes) || hasEverRegistered)
+            {
+                return;
+            }
 
-            if (hasEverRegistered) return;
             ModifiersManager.RegisterModifier(targetAttribute, ModifyAttribute);
-
         }
 
         public void UnApply(PvMnBattleGeneralUnit unit)
         {
-            _registeredUnit.Remove(unit.EventIdentifier);
+            _registeredUnitContainers.Remove(unit.EventIdentifier);
 
-            if (_registeredUnit.Count <= 0)
+            if (_registeredUnitContainers.Count <= 0)
             {
                 ModifiersManager.UnregisterModifier(targetAttribute, ModifyAttribute);
             }
@@ -43,9 +46,10 @@ namespace IndAssets.Scripts.Modifiers
     
         private void ModifyAttribute(IEventOwner attributeOwner, IAttributeModifierContainer container)
         {
-            if (_registeredUnit.Contains(attributeOwner.EventIdentifier))
+            var key = attributeOwner.EventIdentifier;
+            if (_registeredUnitContainers.TryGetValue(key, out var unitContainer))
             {
-                container.AddModifier(modifierType);
+                container.AddModifier(GetDetail(unitContainer));
             }
         }
     }

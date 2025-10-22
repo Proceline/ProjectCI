@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 860fdde73a3458a4ba2be149b7c9a135, type: 3}
+  m_Name: SoRelicModifier_BloodCritical_Lv1
+  m_EditorClassIdentifier: 
+  targetAttribute:
+    value: 9
+  modifierType:
+    flatValue: 40
+    percentAddValue: 0
+  valueFormula: {fileID: 11400000, guid: eb45d1042610a6643a61401cb609424b, type: 2}
+  baseValueAsMinLimit: 0
+  currentHitPointAttribute:
+    value: 32

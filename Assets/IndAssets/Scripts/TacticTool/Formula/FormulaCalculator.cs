@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace ProjectCI.TacticTool
 {
-    public class FormulaCalculator
+    public static class FormulaCalculator
     {
         public static float CalculateFormula(FormulaDefinition formula, IDictionary<AttributeType, int> attributeValues)
         {
-            if (formula == null || formula.FormulaNodes.Count == 0)
+            if (formula.FormulaNodes.Count == 0)
                 return 0f;
 
             var nodes = formula.FormulaNodes;
@@ -48,7 +48,7 @@ namespace ProjectCI.TacticTool
                             result = Mathf.Max(0, result);
                         }
                         
-                        stack.Push(Mathf.Floor(result));
+                        stack.Push(formula.PreventFloatDuringCalculation? result : Mathf.Floor(result));
                         break;
                 }
             }
