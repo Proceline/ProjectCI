@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SoRelic_IncreaseCritical_Lv0
   m_EditorClassIdentifier: 
   passiveTiming: 1
-  passiveName: '[CriticalHit]'
+  passiveName: '[CriticalHit][0]'
   onRelicSettledForUnit:
     m_PersistentCalls:
       m_Calls:
