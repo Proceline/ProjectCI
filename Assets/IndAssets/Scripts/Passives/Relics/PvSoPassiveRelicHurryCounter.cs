@@ -5,7 +5,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace IndAssets.Scripts.Passives.Relics
 {
@@ -13,8 +12,8 @@ namespace IndAssets.Scripts.Passives.Relics
     [CreateAssetMenu(fileName = "SoRelic_HurryCounter", menuName = "ProjectCI Passives/Relics/HurryCounter", order = 1)]
     public class PvSoPassiveRelicHurryCounter : PvSoPassiveRelic
     {
-        [SerializeField] private AttributeType speedAttributeType;
-        [SerializeField] private int triggerDeltaValue;
+        [SerializeField] protected AttributeType speedAttributeType;
+        [SerializeField] protected int triggerDeltaValue;
         
         [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         
@@ -28,12 +27,12 @@ namespace IndAssets.Scripts.Passives.Relics
             OnCombatingListCreatedEvent.UnregisterCallback(ReorderCombatingList);
         }
 
-        private void ReorderCombatingList(IEventOwner raiser, UnitCombatingEventParam combatingParam)
+        protected virtual void ReorderCombatingList(IEventOwner raiser, UnitCombatingEventParam combatingParam)
         {
             var list = combatingParam.CombatingList;
             var caster = combatingParam.unit;
             var victim = combatingParam.target;
-            if (!IsOwner(victim.EventIdentifier))
+            if (!IsResponsiveOwner(caster, victim))
             {
                 return;
             }
@@ -41,14 +40,24 @@ namespace IndAssets.Scripts.Passives.Relics
             var casterSpeed = caster.RuntimeAttributes.GetAttributeValue(speedAttributeType);
             var victimSpeed = victim.RuntimeAttributes.GetAttributeValue(speedAttributeType);
 
-            var delta = victimSpeed - casterSpeed;
-            if (delta >= triggerDeltaValue)
+            if (IsSpeedCheckPassed(casterSpeed, victimSpeed))
             {
-                MoveCounterToFront(list);
+                AdjustQueryList(list);
             }
         }
 
-        private void MoveCounterToFront(List<CombatingQueryContext> contextQueryList)
+        protected virtual bool IsResponsiveOwner(PvMnBattleGeneralUnit caster, PvMnBattleGeneralUnit victim)
+        {
+            return IsOwner(victim.EventIdentifier);
+        }
+        
+        protected virtual bool IsSpeedCheckPassed(int casterSpeed, int victimSpeed)
+        {
+            var delta = victimSpeed - casterSpeed;
+            return delta >= triggerDeltaValue;
+        }
+
+        protected virtual void AdjustQueryList(List<CombatingQueryContext> contextQueryList)
         {
             var index = contextQueryList.FindIndex(query =>
                 query is { IsCounter: true, QueryType: CombatingQueryType.FirstAttempt });

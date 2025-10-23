@@ -70,4 +70,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3b063152081af37438052cf8d900a05b, type: 2}
   - {fileID: 11400000, guid: 907e7abc95ab0cf4791c5e25e3155e50, type: 2}
   - {fileID: 11400000, guid: 44e5ce403f919384bb81d69c659a74d0, type: 2}
+  - {fileID: 11400000, guid: 3902bb95af16f544f86fd057948d363e, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
