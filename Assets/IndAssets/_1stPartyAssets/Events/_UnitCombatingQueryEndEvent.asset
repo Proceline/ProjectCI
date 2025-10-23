@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad9c26354f384d168a51e87ff71da3d9, type: 3}
-  m_Name: _OnStartedCombatingVoidEvent
+  m_Script: {fileID: 11500000, guid: b57e295e4e9e59947b4d8094ddcf5976, type: 3}
+  m_Name: _UnitCombatingQueryEndEvent
   m_EditorClassIdentifier: 
   internalEvent:
     m_PersistentCalls:

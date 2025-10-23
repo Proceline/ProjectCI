@@ -13,7 +13,7 @@ namespace IndAssets.Scripts.Passives.Relics
             return IsOwner(caster.EventIdentifier);
         }
 
-        protected override bool IsSpeedCheckPassed(int casterSpeed, int victimSpeed)
+        protected override bool IsAttributeCheckPassed(int casterSpeed, int victimSpeed)
         {
             var delta = casterSpeed - victimSpeed;
             return delta >= triggerDeltaValue;

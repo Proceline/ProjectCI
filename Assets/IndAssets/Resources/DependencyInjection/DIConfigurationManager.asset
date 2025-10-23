@@ -49,6 +49,12 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ICombatingTurnEndEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 5c625d7c76f613545917e316e5bbf529, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatingQueryStartEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 727ba1bcf8b6af048bf9399134ab689c, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatingQueryEndEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 3a76a52073b862b4884bc9523c0b51ff, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -71,6 +77,8 @@ MonoBehaviour:
   - IndAssets.Scripts.Modifiers.PvSoModifierSupportObject, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicHurryCounter, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicEnforceFollowUp, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

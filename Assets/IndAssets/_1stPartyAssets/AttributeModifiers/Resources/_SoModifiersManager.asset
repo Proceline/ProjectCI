@@ -28,3 +28,9 @@ MonoBehaviour:
   - attributeType:
       value: 11
     modifier: {fileID: 11400000, guid: f83bfa8c148ebe64db5a5de37f35adad, type: 2}
+  - attributeType:
+      value: 13
+    modifier: {fileID: 11400000, guid: 9990d3b9c443345439afad5f74049fbf, type: 2}
+  - attributeType:
+      value: 12
+    modifier: {fileID: 11400000, guid: 4432a5bf177c7a847a28d05b1afd63a7, type: 2}

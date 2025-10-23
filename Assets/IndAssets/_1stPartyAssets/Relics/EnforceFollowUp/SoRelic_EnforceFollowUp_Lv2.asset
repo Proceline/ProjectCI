@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be09d2480485b43489c121c60fa6fa96, type: 3}
+  m_Name: SoRelic_EnforceFollowUp_Lv2
+  m_EditorClassIdentifier: 
+  passiveTiming: 0
+  passiveName: '[EnforceFollowUp][2]'
+  targetAttributeType:
+    value: 0
+  triggerDeltaValue: 0
+  onEffectAppliedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: a2cf9374d6925cc44915e059fe6fa8e1, type: 2}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
+          Assembly-CSharp
+        m_MethodName: Apply
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 770dbe618a046504aaeee65396b79539, type: 2}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
+          Assembly-CSharp
+        m_MethodName: Apply
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onEffectDisposedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: a2cf9374d6925cc44915e059fe6fa8e1, type: 2}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
+          Assembly-CSharp
+        m_MethodName: UnApply
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 770dbe618a046504aaeee65396b79539, type: 2}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
+          Assembly-CSharp
+        m_MethodName: UnApply
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

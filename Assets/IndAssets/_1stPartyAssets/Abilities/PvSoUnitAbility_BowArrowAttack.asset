@@ -25,10 +25,23 @@ MonoBehaviour:
   spawnOnCaster: []
   spawnOnTarget: []
   m_Params:
-  - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
+  - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
   m_Ailments: []
   isCounterAllowed: 1
   isFollowUpAllowed: 1
+  isAutoFollowUpAllowed: 1
   isAbilityWeapon: 1
   projectilePrefab: {fileID: 8337765058929653559, guid: b71fea516b8e617488e15dd53909a2b7, type: 3}
   abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
+  onUnitEnteredInCombating:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitEnteredInCombatingAsTarget:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitLeftFromCombating:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitLeftFromCombatingAsTarget:
+    m_PersistentCalls:
+      m_Calls: []

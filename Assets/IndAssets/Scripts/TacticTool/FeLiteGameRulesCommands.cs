@@ -15,6 +15,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         private readonly Queue<Action<GridPawnUnit>> _bufferedReacts = new();
 
+        private readonly List<CombatingQueryContext> _singleCombatQueryAlloc =
+            new(1) { new CombatingQueryContext { QueryType = CombatingQueryType.None } };
+
         /// <summary>
         /// This function applied after you get all results from logic level, after HandleAbilityCombatingLogic
         /// </summary>
@@ -104,13 +107,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             foreach (CombatingQueryContext combatActionContext in combatContextList)
             {
+                _singleCombatQueryAlloc[0] = combatActionContext;
+                
                 var combatAbility = combatActionContext.IsCounter ? targetAbility : ability;
                 var caster = combatActionContext.IsCounter ? targetUnit : abilityOwner;
                 var victim = combatActionContext.IsCounter ? abilityOwner : targetUnit;
-                if (combatAbility)
-                {
-                    HandleAbilityParam(combatAbility, caster, victim, results);
-                }
+                if (!combatAbility) continue;
+                RaiserOnCombatingQueryStartEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
+                HandleAbilityParam(combatAbility, caster, victim, results);
+                RaiserOnCombatingQueryEndEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
             }
         }
 

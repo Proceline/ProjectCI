@@ -16,6 +16,7 @@ namespace ProjectCI.Utilities.Runtime.Events
 
     public enum CombatingQueryType
     {
+        None,
         FirstAttempt,
         AutoFollowUp,
         ExtraFollowUp
@@ -46,8 +47,19 @@ namespace ProjectCI.Utilities.Runtime.Events
         // Empty
     }
 
+    public interface IUnitCombatingQueryStartEvent : IUnitCombatingEvent
+    {
+        // Empty
+    }
+
+    public interface IUnitCombatingQueryEndEvent : IUnitCombatingEvent
+    {
+        // Empty
+    }
+
     [CreateAssetMenu(fileName = "Unit Combating Event", menuName = "ProjectCI Utilities/Events/Unit Combating Event")]
-    public class PvSoUnitCombatingEvent : SoUnityEventBase<UnitCombatingEventParam>, IUnitGeneralCombatingEvent
+    public class PvSoUnitCombatingEvent : SoUnityEventBase<UnitCombatingEventParam>, IUnitGeneralCombatingEvent,
+        IUnitCombatingQueryStartEvent, IUnitCombatingQueryEndEvent
     {
         [NonSerialized] private UnitCombatingEventParam _bufferedParam;
         [NonSerialized] private bool _hasEverBuffered;

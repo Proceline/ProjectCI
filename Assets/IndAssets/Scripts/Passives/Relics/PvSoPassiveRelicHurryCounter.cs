@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace IndAssets.Scripts.Passives.Relics
 {
@@ -12,7 +13,8 @@ namespace IndAssets.Scripts.Passives.Relics
     [CreateAssetMenu(fileName = "SoRelic_HurryCounter", menuName = "ProjectCI Passives/Relics/HurryCounter", order = 1)]
     public class PvSoPassiveRelicHurryCounter : PvSoPassiveRelic
     {
-        [SerializeField] protected AttributeType speedAttributeType;
+        [FormerlySerializedAs("speedAttributeType")] 
+        [SerializeField] protected AttributeType targetAttributeType;
         [SerializeField] protected int triggerDeltaValue;
         
         [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
@@ -37,10 +39,10 @@ namespace IndAssets.Scripts.Passives.Relics
                 return;
             }
 
-            var casterSpeed = caster.RuntimeAttributes.GetAttributeValue(speedAttributeType);
-            var victimSpeed = victim.RuntimeAttributes.GetAttributeValue(speedAttributeType);
+            var casterSpeed = caster.RuntimeAttributes.GetAttributeValue(targetAttributeType);
+            var victimSpeed = victim.RuntimeAttributes.GetAttributeValue(targetAttributeType);
 
-            if (IsSpeedCheckPassed(casterSpeed, victimSpeed))
+            if (IsAttributeCheckPassed(casterSpeed, victimSpeed))
             {
                 AdjustQueryList(list);
             }
@@ -51,7 +53,7 @@ namespace IndAssets.Scripts.Passives.Relics
             return IsOwner(victim.EventIdentifier);
         }
         
-        protected virtual bool IsSpeedCheckPassed(int casterSpeed, int victimSpeed)
+        protected virtual bool IsAttributeCheckPassed(int casterSpeed, int victimSpeed)
         {
             var delta = victimSpeed - casterSpeed;
             return delta >= triggerDeltaValue;
