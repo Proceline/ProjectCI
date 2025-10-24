@@ -1,4 +1,5 @@
 ﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 
 namespace IndAssets.Scripts.Passives.Status
 {
@@ -27,6 +28,11 @@ namespace IndAssets.Scripts.Passives.Status
         public override void ConsumeStatus(PvMnBattleGeneralUnit unit)
         {
             DisposeStatus(unit);
+        }
+
+        public override void OnStatusAppliedResponse(PvMnBattleGeneralUnit unit, IBattleStatus statusData)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

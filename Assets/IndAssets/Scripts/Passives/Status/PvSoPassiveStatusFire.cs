@@ -1,4 +1,7 @@
-﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+﻿using IndAssets.Scripts.Abilities;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
+using UnityEngine;
 
 namespace IndAssets.Scripts.Passives.Status
 {
@@ -6,6 +9,8 @@ namespace IndAssets.Scripts.Passives.Status
     {
         public override bool IsAccumulationAllowed { get; set; } = true;
         private readonly PvStatusData _dataPrefab = PvStatusData.CreateStatusData<PvSoPassiveStatusFire>(0, 0);
+
+        [SerializeField] private int damagePerLayer;
 
         public override void InstallStatus(PvMnBattleGeneralUnit unit)
         {
@@ -28,6 +33,24 @@ namespace IndAssets.Scripts.Passives.Status
         {
             _dataPrefab.Layer = 1;
             RemoveStatusPrefab(unit, _dataPrefab);
+        }
+
+        public override void OnStatusAppliedResponse(PvMnBattleGeneralUnit unit, IBattleStatus statusData)
+        {
+            var layerCount = statusData.Layer;
+            var damageType = PvEnDamageType.Flame;
+            var damage = layerCount * damagePerLayer;
+
+            var container = unit.RuntimeAttributes;
+            var beforeHealth = container.Health.CurrentValue;
+            container.Health.ModifyValue(-damage);
+            var afterHealth = container.Health.CurrentValue;
+
+            // TODO: Consider Owner
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(beforeHealth, afterHealth, damage, unit,
+                unit, damageType);
+
+            ConsumeStatus(unit);
         }
     }
 }
