@@ -3,13 +3,14 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using IndAssets.Scripts.Passives.Status;
 using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Concrete;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
@@ -32,6 +33,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private int _maximumMovementPoints;
         private int _currentActionPoints = 1;
+
+        private PvStatusDataCollection _statusCollection = new PvStatusDataCollection();
 
         public PvSoUnitAbility EquippedAbility
         {
@@ -200,6 +203,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Friendly);
         }
 
+        public override IStatusEffectContainer GetStatusEffectContainer() => _statusCollection;
+
         public override UnitBattleState GetCurrentState()
         {
             if (_unitStates.TryPeek(out var result))
@@ -253,7 +258,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             SetCurrentCell(targetCell);
 
             gameObject.transform.position = targetCell.GetAllignPos(this);
-            StatusEffectUtils.HandleUnitOnCell(this, targetCell);
         }
 
         public override int GetCurrentActionPoints()

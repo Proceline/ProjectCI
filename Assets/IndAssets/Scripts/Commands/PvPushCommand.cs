@@ -32,7 +32,7 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
             for (var i = 0; i < Value; i++)
             {
                 var dirCell = toCell.GetAdjacentCell(direction);
-                if (dirCell && dirCell.IsCellAccesible())
+                if (dirCell && dirCell.IsCellAccessible())
                 {
                     toCell = dirCell;
                 }

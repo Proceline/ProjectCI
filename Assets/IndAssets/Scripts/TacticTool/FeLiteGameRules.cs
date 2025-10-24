@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.AilmentSystem;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using System;
@@ -374,8 +373,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             ClearStateAndDeselectUnit();
             SetupTeam(inTeam);
-
-            StatusEffectUtils.HandleTurnStart(inTeam);
 
             if (inTeam == BattleTeam.Hostile)
             {
