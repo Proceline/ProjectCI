@@ -257,7 +257,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (targetCell == m_CurrentCell) return;
             SetCurrentCell(targetCell);
 
-            gameObject.transform.position = targetCell.GetAllignPos(this);
+            gameObject.transform.position = targetCell.GetAlignPos(this);
         }
 
         public override int GetCurrentActionPoints()
@@ -313,7 +313,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private Vector3 GetCellLookAtPos(LevelCellBase cell)
         {
             if (!cell) return Vector3.zero;
-            Vector3 position = cell.GetAllignPos(this);
+            Vector3 position = cell.GetAlignPos(this);
             position.y = gameObject.transform.position.y;
 
             return position;

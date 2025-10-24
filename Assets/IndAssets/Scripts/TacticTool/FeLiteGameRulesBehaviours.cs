@@ -84,7 +84,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 UpdatePlayerStateAfterRegularMove();
                 _selectedUnit.SetCurrentMovementPoints(0);
             }
-            else if (_selectedUnit.ExecuteMovement(targetCell))
+            else if (_selectedUnit.ExecuteMovement(targetCell, OnPathDeterminedResponse, OnVisualMovementFinished))
             {
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
             }

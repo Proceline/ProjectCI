@@ -272,7 +272,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _pawnVisualMark.SetActive(false);
 
             if (!selectedUnit) return;
-            _pawnVisualMark.transform.position = selectedUnit.GetCell().GetAllignPos(selectedUnit);
+            _pawnVisualMark.transform.position = selectedUnit.GetCell().GetAlignPos(selectedUnit);
             _pawnVisualMark.transform.SetParent(selectedUnit.transform);
             _pawnVisualMark.SetActive(true);
         }

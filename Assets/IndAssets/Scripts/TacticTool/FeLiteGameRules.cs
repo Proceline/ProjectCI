@@ -317,6 +317,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         }
                     }
 
+                    // ONLY Place really to cancel State
                     var afterState = CancelStatePurelyForUnit(_selectedUnit, state);
                     if (afterState == UnitBattleState.Idle)
                     {
