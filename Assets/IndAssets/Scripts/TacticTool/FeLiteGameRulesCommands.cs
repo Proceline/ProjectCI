@@ -21,9 +21,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <summary>
         /// This function applied after you get all results from logic level, after HandleAbilityCombatingLogic
         /// </summary>
-        /// <param name="results"></param>
+        /// <param name="commandResults"></param>
         /// <exception cref="NullReferenceException"></exception>
-        private async void HandleCommandResultsCoroutine(Queue<CommandResult> results)
+        private async void HandleCommandResultsCoroutine(Queue<CommandResult> commandResults)
         {
             var bSequenceHead = true;
             CommandResult lastResult = null;
@@ -31,14 +31,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             GridPawnUnit owner = null;
             _bufferedReacts.Clear();
 
-            while (results.TryDequeue(out var result))
+            while (commandResults.TryDequeue(out var commandResult))
             {
-                if (!_abilityIdToAbilityHash.TryGetValue(result.AbilityId, out var ability))
+                if (!_abilityIdToAbilityHash.TryGetValue(commandResult.AbilityId, out var ability))
                 {
                     continue;
                 }
 
-                var isNewSequence = !bSequenceHead && result.ResultId != lastResult.ResultId;
+                var isNewSequence = !bSequenceHead && commandResult.ResultId != lastResult.ResultId;
 
                 // If enter new sequence, then APPLY all reactions
                 if (isNewSequence)
@@ -51,11 +51,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 {
                     bSequenceHead = false;
                     _bufferedReacts.Clear();
-                    lastResult = result;
+                    lastResult = commandResult;
                     try
                     {
-                        lastAimCell = TacticBattleManager.GetGrid()[result.TargetCellIndex];
-                        owner = _unitIdToBattleUnitHash[result.OwnerId];
+                        lastAimCell = TacticBattleManager.GetGrid()[commandResult.TargetCellIndex];
+                        owner = _unitIdToBattleUnitHash[commandResult.OwnerId];
                     }
                     catch
                     {
@@ -63,10 +63,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     }
                 }
 
-                result.AddReaction(ability, _bufferedReacts);
+                commandResult.AddReaction(ability, _bufferedReacts);
 
                 // If last result founded, directly apply the process
-                if (results.Count != 0)
+                if (commandResults.Count != 0)
                 {
                     continue;
                 }

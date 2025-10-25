@@ -123,17 +123,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            var results = new Queue<CommandResult>();
-            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
+            var commandResults = new Queue<CommandResult>();
+            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, commandResults);
             {
-                HandleAbilityCombatingLogic(_selectedUnit, targetUnit, ref results);
+                HandleAbilityCombatingLogic(_selectedUnit, targetUnit, ref commandResults);
             }
-            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, results);
+            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, commandResults);
             RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
             ArchiveUnitBehaviourPoints(_selectedUnit);
             
             // ClearStateAndDeselectUnitCombo func applied in HandleCommandResultsCoroutine
-            HandleCommandResultsCoroutine(results);
+            HandleCommandResultsCoroutine(commandResults);
         }
 
         public void AssignAbilityToCurrentUnit(PvSoUnitAbility ability)
