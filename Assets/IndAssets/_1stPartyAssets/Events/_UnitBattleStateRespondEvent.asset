@@ -28,3 +28,16 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 423d68873f12a1143911e944f8aff857, type: 2}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.Passives.Status.PvSoGroundStatusFire,
+          Assembly-CSharp
+        m_MethodName: DetermineProcessOnStateChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

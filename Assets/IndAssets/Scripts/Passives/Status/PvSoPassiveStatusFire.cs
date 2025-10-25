@@ -8,7 +8,6 @@ namespace IndAssets.Scripts.Passives.Status
     [CreateAssetMenu(fileName = "New Fire Status", menuName = "ProjectCI Status/FireBurn", order = 1)]
     public class PvSoPassiveStatusFire : PvSoPassiveStatus
     {
-        public override bool IsAccumulationAllowed { get; set; } = true;
         private readonly PvStatusData _dataPrefab = PvStatusData.CreateStatusData<PvSoPassiveStatusFire>(0, 0);
 
         [SerializeField] private int damagePerLayer;

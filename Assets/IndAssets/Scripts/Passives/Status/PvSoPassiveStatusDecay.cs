@@ -5,7 +5,6 @@ namespace IndAssets.Scripts.Passives.Status
 {
     public class PvSoPassiveStatusDecay : PvSoPassiveStatus
     {
-        public override bool IsAccumulationAllowed { get; set; } = true;
         private readonly PvStatusData _dataPrefab = PvStatusData.CreateStatusData<PvSoPassiveStatusDecay>(1, 0);
 
         public override void InstallStatus(PvMnBattleGeneralUnit unit)

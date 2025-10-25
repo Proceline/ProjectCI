@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilitySpeedAttributeType:
     value: 14
+  followAttackSpeedThreshold: 5
   preloadedAbilities:
   - {fileID: 11400000, guid: 846dda27c0e92e34095e3715671b3027, type: 2}
   onAbilitySelectedPostSupport:
@@ -145,7 +146,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  raiserTurnLogicallyEndEvent: {fileID: 11400000, guid: aa58336ff5926144380c17002c348436, type: 2}
   raiserTurnAnimationEndEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
   raiserOnStateChangedBeforeUEvent: {fileID: 11400000, guid: 280ad2952b1111848ba1cf6a14bfd886, type: 2}
   onStateChangedInModel:
@@ -190,3 +190,25 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onPathDeterminedSupport:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 423d68873f12a1143911e944f8aff857, type: 2}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.Passives.Status.PvSoGroundStatus,
+          Assembly-CSharp
+        m_MethodName: OnGroundPathStatusResponded
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onGlobalMovementFinishedSupport:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitStatusCalculatedGlobally:
+    m_PersistentCalls:
+      m_Calls: []

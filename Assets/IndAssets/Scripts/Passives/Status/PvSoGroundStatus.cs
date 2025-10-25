@@ -9,9 +9,6 @@ namespace IndAssets.Scripts.Passives.Status
     public abstract class PvSoGroundStatus : ScriptableObject
     {
         private readonly HashSet<Vector2Int> _markedCellPoints = new();
-        
-        [SerializeField]
-        protected PvSoUnitBattleStateEvent onStateChangeFinishedEvent;
 
         public void OnGroundPathStatusResponded(PvMnBattleGeneralUnit unit, List<LevelCellBase> path)
         {
@@ -26,6 +23,7 @@ namespace IndAssets.Scripts.Passives.Status
             }
         }
 
+        // TODO: Not in used yet
         public void OnGroundPathStatusResponded(PvMnBattleGeneralUnit unit, LevelCellBase cell)
         {
             if (_markedCellPoints.Count <= 0) return;
