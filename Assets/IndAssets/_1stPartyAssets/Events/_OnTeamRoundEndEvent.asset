@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc767009d9c450bb45c2c88b18e61db, type: 3}
   m_Name: _OnTeamRoundEndEvent
   m_EditorClassIdentifier: 
-  internalEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  onRuntimePostExtraEvents:
+  onRuntimePreInstalledEvents:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}

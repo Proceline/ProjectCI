@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace IndAssets.Scripts.Passives.Status
 {
+    [CreateAssetMenu(fileName = "New Fire Ground Status", menuName = "ProjectCI GroundStatus/FireWall", order = 1)]
     public class PvSoGroundStatusFire : PvSoGroundStatus
     {
         [SerializeField] private PvSoPassiveStatusFire relatedDeBuff;

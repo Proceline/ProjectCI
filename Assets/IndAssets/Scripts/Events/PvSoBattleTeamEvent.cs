@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace ProjectCI.Utilities.Runtime.Events
 {
-    public struct BattleTeamParam : IEventParameter
-    {
-        public BattleTeam Team;
-
-        public BattleTeamParam(BattleTeam inTeam)
-        {
-            Team = inTeam;
-        }
-    }
-    
     public interface ITeamRelatedEvent
     {
         void Raise(BattleTeam inTeam);
@@ -29,12 +19,12 @@ namespace ProjectCI.Utilities.Runtime.Events
     }
     
     [CreateAssetMenu(fileName = "Battle Team Event", menuName = "ProjectCI Utilities/Events/Team Event")]
-    public class PvSoBattleTeamEvent : SoUnityEventBase<BattleTeamParam>, ITeamRoundEndEvent
+    public class PvSoBattleTeamEvent : SoUnityEventBase, ITeamRoundEndEvent
     {
-        private readonly Dictionary<UnityAction<BattleTeam>, UnityAction<IEventOwner, BattleTeamParam>> _converters = new();
-        
-        [SerializeField]
-        private UnityEvent<BattleTeam> onRuntimePostExtraEvents;
+        [FormerlySerializedAs("onRuntimePostExtraEvents"), SerializeField]
+        private UnityEvent<BattleTeam> onRuntimePreInstalledEvents;
+
+        private readonly UnityEvent<BattleTeam> _onRuntimePostEvent = new();
 
         [NonSerialized]
         private bool _bIsPostHandleEventsLaunched;
@@ -43,28 +33,21 @@ namespace ProjectCI.Utilities.Runtime.Events
         {
             if (!_bIsPostHandleEventsLaunched)
             {
-                RegisterCallback(onRuntimePostExtraEvents.Invoke);
+                RegisterCallback(onRuntimePreInstalledEvents.Invoke);
                 _bIsPostHandleEventsLaunched = true;
             }
-            Raise(null, new BattleTeamParam(inTeam));
+            onRuntimePreInstalledEvents?.Invoke(inTeam);
+            _onRuntimePostEvent?.Invoke(inTeam);
         }
 
         public void RegisterCallback(UnityAction<BattleTeam> callback)
         {
-            if (!_converters.TryGetValue(callback, out var convertedCallback))
-            {
-                convertedCallback = (_, param) => callback.Invoke(param.Team);
-                _converters.Add(callback, convertedCallback);
-            }
-            RegisterCallback(convertedCallback);
+            _onRuntimePostEvent.AddListener(callback);
         }
 
         public void UnregisterCallback(UnityAction<BattleTeam> callback)
         {
-            if (_converters.TryGetValue(callback, out var convertedCallback))
-            {
-                UnregisterCallback(convertedCallback);
-            }
+            _onRuntimePostEvent.RemoveListener(callback);
         }
     }
 }

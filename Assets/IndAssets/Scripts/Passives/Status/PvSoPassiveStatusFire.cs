@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace IndAssets.Scripts.Passives.Status
 {
+    [CreateAssetMenu(fileName = "New Fire Status", menuName = "ProjectCI Status/FireBurn", order = 1)]
     public class PvSoPassiveStatusFire : PvSoPassiveStatus
     {
         public override bool IsAccumulationAllowed { get; set; } = true;
