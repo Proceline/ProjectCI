@@ -1,5 +1,6 @@
 ﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 
 namespace IndAssets.Scripts.Passives.Status
 {
@@ -7,29 +8,29 @@ namespace IndAssets.Scripts.Passives.Status
     {
         private readonly PvStatusData _dataPrefab = PvStatusData.CreateStatusData<PvSoPassiveStatusDecay>(1, 0);
 
-        public override void InstallStatus(PvMnBattleGeneralUnit unit)
+        public override void InstallStatus(GridPawnUnit unit)
         {
             AccumulateStatus(unit, 0);
         }
 
-        public override void DisposeStatus(PvMnBattleGeneralUnit unit)
+        public override void DisposeStatus(GridPawnUnit unit)
         {
             _dataPrefab.Layer = 100;
             RemoveStatusPrefab(unit, _dataPrefab);
         }
 
-        public override void AccumulateStatus(PvMnBattleGeneralUnit unit, int layer)
+        public override void AccumulateStatus(GridPawnUnit unit, int layer)
         {
             _dataPrefab.Layer = layer;
             AddStatusPrefab(unit, _dataPrefab);
         }
 
-        public override void ConsumeStatus(PvMnBattleGeneralUnit unit)
+        public override void ConsumeStatus(GridPawnUnit unit)
         {
             DisposeStatus(unit);
         }
 
-        public override void OnStatusAppliedResponse(PvMnBattleGeneralUnit unit, IBattleStatus statusData)
+        public override void OnStatusAppliedResponse(GridPawnUnit unit, IBattleStatus statusData)
         {
             throw new System.NotImplementedException();
         }

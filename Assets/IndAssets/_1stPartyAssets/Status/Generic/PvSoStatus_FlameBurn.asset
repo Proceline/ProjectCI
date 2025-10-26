@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: PvSoStatus_FlameBurn
   m_EditorClassIdentifier: 
   damagePerLayer: 5
+  statusIcon: {fileID: -1640926125, guid: 9c900846c14e5f0498c175ec5bc51b02, type: 3}

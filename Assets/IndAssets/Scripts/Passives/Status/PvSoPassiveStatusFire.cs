@@ -1,6 +1,7 @@
 ﻿using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 
 namespace IndAssets.Scripts.Passives.Status
@@ -11,31 +12,33 @@ namespace IndAssets.Scripts.Passives.Status
         private readonly PvStatusData _dataPrefab = PvStatusData.CreateStatusData<PvSoPassiveStatusFire>(0, 0);
 
         [SerializeField] private int damagePerLayer;
+        [SerializeField] private Sprite statusIcon;
 
-        public override void InstallStatus(PvMnBattleGeneralUnit unit)
+        public override void InstallStatus(GridPawnUnit unit)
         {
             AccumulateStatus(unit, 1);
         }
 
-        public override void DisposeStatus(PvMnBattleGeneralUnit unit)
+        public override void DisposeStatus(GridPawnUnit unit)
         {
             _dataPrefab.Layer = 100;
             RemoveStatusPrefab(unit, _dataPrefab);
         }
 
-        public override void AccumulateStatus(PvMnBattleGeneralUnit unit, int layer)
+        public override void AccumulateStatus(GridPawnUnit unit, int layer)
         {
+            Debug.Log($"<{nameof(PvSoPassiveStatusFire)}>: Status Accumulated!");
             _dataPrefab.Layer = layer;
             AddStatusPrefab(unit, _dataPrefab);
         }
 
-        public override void ConsumeStatus(PvMnBattleGeneralUnit unit)
+        public override void ConsumeStatus(GridPawnUnit unit)
         {
             _dataPrefab.Layer = 1;
             RemoveStatusPrefab(unit, _dataPrefab);
         }
 
-        public override void OnStatusAppliedResponse(PvMnBattleGeneralUnit unit, IBattleStatus statusData)
+        public override void OnStatusAppliedResponse(GridPawnUnit unit, IBattleStatus statusData)
         {
             var layerCount = statusData.Layer;
             var damageType = PvEnDamageType.Flame;
