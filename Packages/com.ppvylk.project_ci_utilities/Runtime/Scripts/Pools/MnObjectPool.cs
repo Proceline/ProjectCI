@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -81,16 +82,15 @@ namespace ProjectCI.Utilities.Runtime.Pools
         /// <param name="obj">The GameObject to return to the pool</param>
         public void Return(GameObject obj)
         {
-            if (obj == null) return;
+            if (!obj) return;
             
             // Find which prefab this object belongs to
             int prefabId = FindPrefabId(obj);
             
             if (prefabId == -1)
             {
-                Debug.LogWarning($"MnObjectPool: Cannot return object {obj.name} - no matching prefab found!");
                 Destroy(obj);
-                return;
+                throw new Exception($"MnObjectPool: Cannot return object {obj.name} - no matching prefab found!");
             }
             
             // Deactivate the object and add to pool

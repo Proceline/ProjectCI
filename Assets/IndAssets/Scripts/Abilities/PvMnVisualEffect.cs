@@ -13,6 +13,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Projectiles
         private static int _globalCheckingFrame = 0;
 
         private int _startFrame;
+        [SerializeField] private bool isAutoEnded = true;
+
+        public bool IsAutoEnded => isAutoEnded;
 
         private void Start()
         {
@@ -23,6 +26,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Projectiles
 
         private void Update()
         {
+            if (!isAutoEnded)
+            {
+                return;
+            }
+            
             if (!_particleSystem)
             {
                 return;
