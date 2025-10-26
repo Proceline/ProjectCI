@@ -31,7 +31,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private Coroutine _rotatingCoroutine;
 
-        private int _maximumMovementPoints;
+        private int _currentMovementPoints;
         private int _currentActionPoints = 1;
 
         private PvStatusDataCollection _statusCollection = new PvStatusDataCollection();
@@ -121,6 +121,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             return RuntimeAttributes.Health.CurrentValue <= 0;
         }
+
+        public override int GetCurrentMovementPoints() => _currentMovementPoints;
 
         private void PlayIdleAnimation()
         {
@@ -235,21 +237,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void HandleTurnStarted()
         {
-            CurrentMovementPoints = 
+            _currentMovementPoints = 
                 RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
-            _maximumMovementPoints = CurrentMovementPoints;
             SetCurrentActionPoints(1);
         }
 
         public override void SetCurrentMovementPoints(int movePoint)
         {
-            CurrentMovementPoints = movePoint;
+            _currentMovementPoints = movePoint;
         }
 
         public override List<LevelCellBase> GetAllowedMovementCells()
         {
             // TODO: Change BattleTeam type to enable cross enemy
-            return UnitData.m_MovementShape.GetCellList(this, GetCell(), CurrentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
+            return UnitData.m_MovementShape.GetCellList(this, GetCell(), _currentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
         }
 
         public void ForceMoveToCellImmediately(LevelCellBase targetCell)
