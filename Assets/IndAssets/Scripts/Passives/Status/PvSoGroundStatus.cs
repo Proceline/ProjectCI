@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 
 namespace IndAssets.Scripts.Passives.Status
