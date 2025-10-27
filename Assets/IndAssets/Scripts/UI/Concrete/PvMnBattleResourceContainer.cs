@@ -2,9 +2,12 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
+using IndAssets.Scripts.Passives.Status;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
@@ -14,10 +17,14 @@ namespace ProjectCI.Runtime.GUI.Battle
     {
         [NonSerialized] private GameObject _healthBarInstance;
         [NonSerialized] private Slider _healthSlider;
+        [NonSerialized] private GridLayoutGroup _statusLayoutGroup;
         [NonSerialized] private bool _initialized;
         private GridObject _followingTarget;
 
         [Inject] private static IUnitDyingEvent _onUnitDyingEvent;
+        [Inject] private static IOnStatusApplyEvent _onStatusVisualApplyEvent;
+
+        private static readonly Dictionary<string, Sprite> PreloadedTextures = new();
 
         public void Initialize(GridObject owner, Camera inCamera, GameObject healthBarPrefab)
         {
@@ -26,6 +33,7 @@ namespace ProjectCI.Runtime.GUI.Battle
 
             // Get UI components
             _healthSlider = _healthBarInstance.GetComponentInChildren<Slider>();
+            _statusLayoutGroup = _healthBarInstance.GetComponentInChildren<GridLayoutGroup>();
             Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
             canvas.worldCamera = inCamera;
 
@@ -34,6 +42,7 @@ namespace ProjectCI.Runtime.GUI.Battle
             
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(UpdateHealthViewInfo);
             _onUnitDyingEvent.RegisterCallback(OnObjectMarkedAsDead);
+            _onStatusVisualApplyEvent.RegisterCallback(UpdateStatusList);
             
             _initialized = true;
         }
@@ -48,6 +57,35 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             if (_followingTarget != damageParams.Victim) return;
             SetHealth(damageParams.AfterValue);
+        }
+
+        private void UpdateStatusList(GridPawnUnit statusOwner, PvSoPassiveStatus statusType)
+        {
+            if (statusOwner != _followingTarget) return;
+            var statusList = statusOwner.GetStatusEffectContainer().GetStatusList();
+            var prefab = _onStatusVisualApplyEvent.StatusViewPrefab;
+
+            var currentStatusKey = statusType.GetType().Name;
+            if (!PreloadedTextures.ContainsKey(currentStatusKey))
+            {
+                PreloadedTextures.Add(currentStatusKey, statusType.StatusIcon);
+            }
+            
+            int index;
+            for (var i = _statusLayoutGroup.transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(_statusLayoutGroup.transform.GetChild(i));
+            }
+            _statusLayoutGroup.transform.DetachChildren();
+            
+            for (index = 0; index < statusList.Count; index++)
+            {
+                var image = Instantiate(prefab, _statusLayoutGroup.transform);
+                if (PreloadedTextures.TryGetValue(statusList[index].StatusTag, out var statusIcon))
+                {
+                    image.sprite = statusIcon;
+                }
+            }
         }
 
         private void LateUpdate()

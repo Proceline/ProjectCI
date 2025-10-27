@@ -7,8 +7,6 @@ using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
-using ProjectCI.Utilities.Runtime.Events;
-using ProjectCI.Utilities.Runtime.Pools;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,9 +22,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private bool isAlwaysHitByDefault;
         [SerializeField] private AttributeType hitAttribute;
         [SerializeField] private AttributeType dodgeAttribute;
-        
-        [SerializeField]
-        private PvMnVisualEffect groundEffectPrefab;
 
         private readonly Queue<UnityAction> _pendingVisualActions = new();
 
@@ -46,7 +41,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     continue;
                 }
                 
-                if (!targetUnit.IsDead())
+                if (targetUnit.IsDead())
                 {
                     continue;
                 }
@@ -80,11 +75,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 {
                     ResultId = resultId,
                     AbilityId = ability.ID,
-                    OwnerId = targetUnit.ID,
+                    OwnerId = fromUnit.ID,
                     TargetCellIndex = targetUnit.GetCell().GetIndex(),
                     CommandType = "StatusApply",
                     Value = 1,
-                    StatusType = relatedStatus.GetType().Name
+                    StatusType = relatedStatus
                 };
                     
                 results.Enqueue(statusCommand);

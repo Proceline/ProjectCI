@@ -12,6 +12,7 @@ namespace IndAssets.Scripts.Passives.Status
     public class PvSoGroundStatusFire : PvSoGroundStatus
     {
         [SerializeField] private PvSoPassiveStatusFire relatedDeBuff;
+        [SerializeField] private PvSoStatusApplyEvent raiserStatusApplyEvent;
 
         private readonly Dictionary<IEventOwner , Action> _pendingActionsCollection = new(); 
         
@@ -20,11 +21,19 @@ namespace IndAssets.Scripts.Passives.Status
         {
             if (!_pendingActionsCollection.TryGetValue(unit, out var existedAction))
             {
-                existedAction = () => relatedDeBuff.AccumulateStatus(unit, 1);
+                existedAction = () =>
+                {
+                    relatedDeBuff.AccumulateStatus(unit, 1);
+                    raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
+                };
             }
             else
             {
-                existedAction += () => relatedDeBuff.AccumulateStatus(unit, 1);
+                existedAction += () =>
+                {
+                    relatedDeBuff.AccumulateStatus(unit, 1);
+                    raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
+                };
             }
             _pendingActionsCollection[unit] = existedAction;
         }

@@ -25,17 +25,9 @@ namespace ProjectCI.Utilities.Runtime.Events
         private UnityEvent<BattleTeam> onRuntimePreInstalledEvents;
 
         private readonly UnityEvent<BattleTeam> _onRuntimePostEvent = new();
-
-        [NonSerialized]
-        private bool _bIsPostHandleEventsLaunched;
         
         public void Raise(BattleTeam inTeam)
         {
-            if (!_bIsPostHandleEventsLaunched)
-            {
-                RegisterCallback(onRuntimePreInstalledEvents.Invoke);
-                _bIsPostHandleEventsLaunched = true;
-            }
             onRuntimePreInstalledEvents?.Invoke(inTeam);
             _onRuntimePostEvent?.Invoke(inTeam);
         }

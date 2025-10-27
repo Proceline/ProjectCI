@@ -9,8 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5100bba1fa9f41cbb70aa69785ee3649, type: 3}
-  m_Name: PvSoGroundStatus_FlameWall
+  m_Script: {fileID: 11500000, guid: c8db317309571d044a9af0ff9486a8a6, type: 3}
+  m_Name: PvSoPassiveStatusParams_Fire
   m_EditorClassIdentifier: 
-  relatedDeBuff: {fileID: 11400000, guid: 1b6df440799798c4e8c0504b0b569ce7, type: 2}
-  raiserStatusApplyEvent: {fileID: 11400000, guid: 03c8bb9555aff5d428728681a0fb6943, type: 2}
+  relatedStatus: {fileID: 11400000, guid: 1b6df440799798c4e8c0504b0b569ce7, type: 2}
+  isAlwaysHitByDefault: 1
+  hitAttribute:
+    value: 10
+  dodgeAttribute:
+    value: 11

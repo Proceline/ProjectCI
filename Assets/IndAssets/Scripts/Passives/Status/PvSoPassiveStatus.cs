@@ -7,6 +7,9 @@ namespace IndAssets.Scripts.Passives.Status
 {
     public abstract class PvSoPassiveStatus : ScriptableObject
     {
+        [SerializeField] private Sprite statusIcon;
+        public Sprite StatusIcon => statusIcon;
+        
         public abstract void InstallStatus(GridPawnUnit unit);
         public abstract void DisposeStatus(GridPawnUnit unit);
         public abstract void AccumulateStatus(GridPawnUnit unit, int layer);

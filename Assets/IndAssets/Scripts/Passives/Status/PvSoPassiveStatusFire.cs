@@ -12,7 +12,6 @@ namespace IndAssets.Scripts.Passives.Status
         private readonly PvStatusData _dataPrefab = PvStatusData.CreateStatusData<PvSoPassiveStatusFire>(0, 0);
 
         [SerializeField] private int damagePerLayer;
-        [SerializeField] private Sprite statusIcon;
 
         public override void InstallStatus(GridPawnUnit unit)
         {
