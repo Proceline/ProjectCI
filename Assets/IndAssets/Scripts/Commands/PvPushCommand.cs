@@ -10,35 +10,29 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     /// </summary>
     public class PvPushCommand : PvConcreteCommand
     {
+        public int Distance;
         public LevelCellBase FromCell { get; set; }
 
-        public override void AddReaction(UnitAbilityCore ability, Queue<Action<GridPawnUnit>> reactions)
-        {
-            base.AddReaction(ability, reactions);
-            reactions.Enqueue(ApplyVisualEffects);
-        }
-
-        private void ApplyVisualEffects(GridPawnUnit owner)
+        public override void ApplyCommand(GridPawnUnit fromUnit, LevelCellBase targetCell)
         {
             var fromCell = FromCell;
-            var toCell = TargetCell;
-            var victim = toCell.GetUnitOnCell();
+            var victim = targetCell.GetUnitOnCell();
             if (!victim)
             {
                 return;
             }
 
-            var direction = fromCell.GetDirectionToAdjacentCell(toCell);
-            for (var i = 0; i < Value; i++)
+            var direction = fromCell.GetDirectionToAdjacentCell(targetCell);
+            for (var i = 0; i < Distance; i++)
             {
-                var dirCell = toCell.GetAdjacentCell(direction);
+                var dirCell = targetCell.GetAdjacentCell(direction);
                 if (dirCell && dirCell.IsCellAccessible())
                 {
-                    toCell = dirCell;
+                    targetCell = dirCell;
                 }
             }
 
-            victim.ForceMoveTo(toCell);
+            victim.ForceMoveTo(targetCell);
         }
     }
 } 

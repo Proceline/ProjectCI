@@ -139,7 +139,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     TargetCellIndex = targetUnit.GetCell().GetIndex(),
                     BeforeValue = beforeHealth,
                     AfterValue = afterHealth,
-                    CommandType = isHealValue ? CommandResult.Heal : CommandResult.TakeDamage,
                     Value = finalDeltaDamage,
                     DamageType = damageType
                 };
@@ -172,10 +171,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     ResultId = resultId,
                     AbilityId = ability.ID,
                     OwnerId = targetUnit.ID,
-                    TargetCellIndex = targetUnit.GetCell().GetIndex(),
-                    CommandType = CommandResult.TakeDamage,
-                    Value = beforeHealth - afterHealth,
-                    TargetUnit = targetUnit
+                    TargetCellIndex = targetUnit.GetCell().GetIndex()
                 };
 
                 results.Enqueue(dieCommand);

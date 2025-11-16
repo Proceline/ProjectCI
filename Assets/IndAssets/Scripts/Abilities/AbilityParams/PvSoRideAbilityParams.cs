@@ -13,7 +13,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
     [CreateAssetMenu(fileName = "PvSoRideParams", menuName = "ProjectCI Tools/Ability/Parameters/PvSoRideParams")]
     public class PvSoRideAbilityParams : AbilityParamBase
     {
-        public const string RideCommandResultTag = "ToRide";
         public AttributeType carryOverAttribute;
 
         public override string GetAbilityInfo()
@@ -43,8 +42,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = toUnit.GetCell().GetIndex(),
-                Value = delta,
-                CommandType = RideCommandResultTag
+                Value = delta
             });
         }
     }

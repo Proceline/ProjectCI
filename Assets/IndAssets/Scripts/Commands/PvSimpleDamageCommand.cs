@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 
 namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
@@ -14,37 +15,20 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     {
         public int BeforeValue;
         public int AfterValue;
+        public int Value;
         public PvEnDamageType DamageType;
 
-        public override void AddReaction(UnitAbilityCore ability, Queue<Action<GridPawnUnit>> reactions)
+        public override void ApplyCommand(GridPawnUnit fromUnit, GridPawnUnit toUnit)
         {
-            base.AddReaction(ability, reactions);
-            reactions.Enqueue(ApplyVisualEffects);
-        }
-
-        private void ApplyVisualEffects(GridPawnUnit owner)
-        {
-            var targetObject = TargetObject;
-            RuntimeAbility.ApplyVisualEffects(owner, TargetObject.GetCell());
-            if (!targetObject)
-            {
-                return;
-            }
-
-            if (ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint)
-            {
-                ShowEffectOnTarget(targetObject.transform.position);
-            }
-
             if (string.IsNullOrEmpty(ExtraInfo))
             {
-                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
-                    targetObject, DamageType);
+                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, fromUnit,
+                    toUnit, DamageType);
             }
             else
             {
-                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, owner,
-                    targetObject, DamageType, ExtraInfo);
+                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, fromUnit,
+                    toUnit, DamageType, ExtraInfo);
             }
         }
     }

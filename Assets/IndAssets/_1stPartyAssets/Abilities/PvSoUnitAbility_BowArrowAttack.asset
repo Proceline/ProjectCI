@@ -23,10 +23,10 @@ MonoBehaviour:
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
   spawnOnCaster: []
-  spawnOnTarget: []
+  spawnOnTarget:
+  - {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
   m_Params:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
-  m_Ailments: []
   isCounterAllowed: 1
   isFollowUpAllowed: 1
   isAutoFollowUpAllowed: 1

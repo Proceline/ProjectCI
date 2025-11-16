@@ -1,7 +1,9 @@
-using System;
 using System.Collections.Generic;
+using IndAssets.Scripts.Commands;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.Commands;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Functions;
@@ -17,10 +19,37 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
         public const string HealExtraInfoHint = "Heal";
         
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
-        private const float AnimatingPendingInterval = 0.125f;
+        public static PvSoOutBooleanFunction GetRaiserIsAnimatingProgressFunc => _raiserIsAnimatingProgressFunc;
         
+        private const float AnimatingPendingInterval = 0.125f;
+
+        public static async Awaitable WaitUntilLockReleased(GridPawnUnit casterUnit)
+        {
+            while (_raiserIsAnimatingProgressFunc.Get(casterUnit))
+            {
+                await Awaitable.WaitForSecondsAsync(AnimatingPendingInterval);
+            }
+        }
+
+        public static async Awaitable<float> WaitUntilProjectileFinished(this PvSoUnitAbility ability, GridPawnUnit casterUnit,
+            LevelCellBase target)
+        {
+            var abilityAnimation = ability.abilityAnimation;
+            abilityAnimation?.PlayAnimation(casterUnit);
+
+            var firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
+            await Awaitable.WaitForSecondsAsync(firstExecuteTime);
+
+            if (!ability.ProjectilePrefab) return firstExecuteTime;
+            var projectile = PvMnProjectilePool.InstantiateProjectile(ability.ProjectilePrefab);
+            await ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
+            firstExecuteTime += projectile.ProgressDuration;
+
+            return firstExecuteTime;
+        }
+
         public static async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
-            LevelCellBase target, Queue<Action<GridPawnUnit>> reacts)
+            LevelCellBase target, Queue<CommandResult> commands, IDictionary<string, PvMnBattleGeneralUnit> idCollection)
         {
             if (ability.GetShape())
             {
@@ -48,9 +77,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                 // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
                 // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
 
-                while (reacts.TryDequeue(out var reactAction))
+                while (commands.TryDequeue(out var toDoCommand))
                 {
-                    reactAction?.Invoke(casterUnit);
+                    // toDoCommand.ApplyResultOnVisual(idCollection);
                 }
 
                 if (abilityAnimation)

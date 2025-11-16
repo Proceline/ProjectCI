@@ -68,8 +68,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = toUnit.GetCell().GetIndex(),
-                CommandType = "ForceMove",
-                Value = pushDistance,
+                Distance = pushDistance,
                 FromCell = fromUnit.GetCell()
             };
 

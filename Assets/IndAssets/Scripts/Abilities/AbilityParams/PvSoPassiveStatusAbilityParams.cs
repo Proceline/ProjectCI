@@ -77,8 +77,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     AbilityId = ability.ID,
                     OwnerId = fromUnit.ID,
                     TargetCellIndex = targetUnit.GetCell().GetIndex(),
-                    CommandType = "StatusApply",
-                    Value = 1,
                     StatusType = relatedStatus
                 };
                     

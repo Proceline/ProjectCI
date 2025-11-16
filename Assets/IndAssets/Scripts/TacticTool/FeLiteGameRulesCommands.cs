@@ -5,16 +5,16 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
+using IndAssets.Scripts.Commands;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.Utilities.Runtime.Events;
+using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public partial class FeLiteGameRules
     {
-        private readonly Queue<Action<GridPawnUnit>> _bufferedReacts = new();
-
         private readonly List<CombatingQueryContext> _singleCombatQueryAlloc =
             new(1) { new CombatingQueryContext { QueryType = CombatingQueryType.None } };
 
@@ -29,7 +29,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CommandResult lastResult = null;
             LevelCellBase lastAimCell = null;
             GridPawnUnit owner = null;
-            _bufferedReacts.Clear();
+            var commandsToApply = new Queue<CommandResult>();
 
             while (commandResults.TryDequeue(out var commandResult))
             {
@@ -43,14 +43,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 // If enter new sequence, then APPLY all reactions
                 if (isNewSequence)
                 {
-                    await UnitAbilityCoreExtensions.ApplyAnimationProcess(ability, owner, lastAimCell, _bufferedReacts);
+                    await ApplyAnimationProcess(ability, owner, lastAimCell, commandsToApply);
                     bSequenceHead = true;
                 }
 
                 if (bSequenceHead)
                 {
                     bSequenceHead = false;
-                    _bufferedReacts.Clear();
+                    commandsToApply.Clear();
                     lastResult = commandResult;
                     try
                     {
@@ -63,7 +63,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     }
                 }
 
-                commandResult.AddReaction(ability, _bufferedReacts);
+                commandsToApply.Enqueue(commandResult);
 
                 // If last result founded, directly apply the process
                 if (commandResults.Count != 0)
@@ -71,7 +71,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     continue;
                 }
 
-                await UnitAbilityCoreExtensions.ApplyAnimationProcess(ability, owner, lastAimCell, _bufferedReacts);
+                await ApplyAnimationProcess(ability, owner, lastAimCell, commandsToApply);
                 break;
             }
 
@@ -152,6 +152,39 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             foreach (AbilityParamBase param in inAbility.GetParameters())
             {
                 param.Execute(resultId, inAbility, caster, target, results);
+            }
+        }
+        
+        public async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
+            LevelCellBase target, Queue<CommandResult> commands)
+        {
+            if (ability.GetShape())
+            {
+                casterUnit.LookAtCell(target);
+
+                await UnitAbilityCoreExtensions.WaitUntilLockReleased(casterUnit);
+                var executedTime = await ability.WaitUntilProjectileFinished(casterUnit, target);
+
+                // TODO: Handle Audio
+                // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
+                // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
+
+                while (commands.TryDequeue(out var toDoCommand))
+                {
+                    toDoCommand.ApplyResultOnVisual(_unitIdToBattleUnitHash, _abilityIdToAbilityHash);
+                }
+
+                var abilityAnimation = ability.abilityAnimation;
+                if (abilityAnimation)
+                {
+                    var timeRemaining = abilityAnimation.GetAnimationLength() - executedTime;
+                    timeRemaining = Mathf.Max(0, timeRemaining);
+
+                    await Awaitable.WaitForSecondsAsync(timeRemaining);
+                }
+
+                // TODO: Need a end of lock
+                // TacticBattleManager.RemoveActionBeingPerformed();
             }
         }
     }
