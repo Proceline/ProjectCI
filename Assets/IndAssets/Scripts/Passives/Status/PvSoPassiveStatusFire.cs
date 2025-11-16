@@ -20,7 +20,9 @@ namespace IndAssets.Scripts.Passives.Status
 
         public override void DisposeStatus(GridPawnUnit unit)
         {
+            // Reduce 100 Layer, no Duration to status list
             _dataPrefab.Layer = 100;
+            _dataPrefab.Duration = 0;
             RemoveStatusPrefab(unit, _dataPrefab);
         }
 
@@ -28,12 +30,17 @@ namespace IndAssets.Scripts.Passives.Status
         {
             Debug.Log($"<{nameof(PvSoPassiveStatusFire)}>: Status Accumulated!");
             _dataPrefab.Layer = layer;
+            _dataPrefab.Duration = 1;
             AddStatusPrefab(unit, _dataPrefab);
         }
 
         public override void ConsumeStatus(GridPawnUnit unit)
         {
+            // Reduce 1 Layer, no Duration to status list
             _dataPrefab.Layer = 1;
+            _dataPrefab.Duration = 0;
+            
+            // Reduce one Layer on Unit
             RemoveStatusPrefab(unit, _dataPrefab);
         }
 

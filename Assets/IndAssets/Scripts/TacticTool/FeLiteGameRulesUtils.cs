@@ -18,6 +18,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit, IBattleStatus> onUnitStatusCalculatedGlobally;
+
+        [SerializeField]
+        private UnityEvent<PvMnBattleGeneralUnit> onUnitStatusUpdated;
         
         private void OnPathDeterminedResponse(List<LevelCellBase> path)
         {
@@ -37,12 +40,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 var unit = unitPair.Value;
                 var statusList = unit.GetStatusEffectContainer();
-                foreach (var statusData in statusList.GetStatusList())
+                var statusDataCollection = statusList.GetStatusList();
+                var toRemoveIndexList = new Stack<int>();
+                for (var i = 0; i < statusDataCollection.Count; i++)
                 {
+                    var statusData = statusDataCollection[i];
                     if (statusData.StatusTag == nameof(PvSoPassiveStatusFire))
                     {
                         onUnitStatusCalculatedGlobally.Invoke(unit, statusData);
                     }
+
+                    if (statusData.IsBeingDisposed())
+                    {
+                        toRemoveIndexList.Push(i);
+                    }
+                }
+
+                var isUpdateRequired = false;
+                while (toRemoveIndexList.TryPop(out var index))
+                {
+                    statusDataCollection.RemoveAt(index);
+                    isUpdateRequired = true;
+                }
+
+                if (isUpdateRequired)
+                {
+                    onUnitStatusUpdated.Invoke(unit);
                 }
             }
         }

@@ -58,6 +58,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IOnStatusApplyEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 03c8bb9555aff5d428728681a0fb6943, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITargetUnitUpdateStatusEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: aa0dc8e6a04921f4084924722f92553c, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

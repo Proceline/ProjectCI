@@ -4,12 +4,21 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 
 namespace IndAssets.Scripts.Passives.Status
 {
+    public enum PvStatusDisposeType
+    {
+        LayerOnly,
+        DurationOnly,
+        Either,
+        Both
+    }
+    
     public class PvStatusData : IBattleStatus
     {
         public string StatusTag { get; internal set; }
 
         public int Duration { get; internal set; }
         public int Layer { get; internal set; }
+        public PvStatusDisposeType DisposeType { get; internal set; } = PvStatusDisposeType.LayerOnly;
 
         private PvStatusData(Type statusType)
         {
@@ -20,17 +29,19 @@ namespace IndAssets.Scripts.Passives.Status
         {
             StatusTag = statusTypeName;
         }
-        
-        public static PvStatusData CreateStatusData<T>(int duration, int layer)
+
+        public static PvStatusData CreateStatusData<T>(int duration, int layer,
+            PvStatusDisposeType disposeType = PvStatusDisposeType.LayerOnly)
         {
             var output = new PvStatusData(typeof(T))
             {
                 Duration = duration,
-                Layer = layer
+                Layer = layer,
+                DisposeType = disposeType
             };
             return output;
         }
-        
+
         public static PvStatusData CreateStatusData(string typeName, int duration, int layer)
         {
             var output = new PvStatusData(typeName)
@@ -39,6 +50,18 @@ namespace IndAssets.Scripts.Passives.Status
                 Layer = layer
             };
             return output;
+        }
+
+        public bool IsBeingDisposed()
+        {
+            return DisposeType switch
+            {
+                PvStatusDisposeType.LayerOnly => Layer <= 0,
+                PvStatusDisposeType.DurationOnly => Duration <= 0,
+                PvStatusDisposeType.Either => Layer <= 0 || Duration <= 0,
+                PvStatusDisposeType.Both => Layer <= 0 && Duration <= 0,
+                _ => true
+            };
         }
     }
 
@@ -49,9 +72,9 @@ namespace IndAssets.Scripts.Passives.Status
 
         public List<IBattleStatus> GetStatusList() => _battleStatusList;
 
-        public void AddStatus(IBattleStatus status)
+        public void AddStatus(IBattleStatus statusPrefab)
         {
-            AddStatusInstance(status);
+            AddStatusInstance(statusPrefab);
         }
 
         private void AddStatusInstance(IBattleStatus statusPrefab)
@@ -71,21 +94,15 @@ namespace IndAssets.Scripts.Passives.Status
             }
         }
 
-        public void RemoveStatus(IBattleStatus status)
+        public void RemoveStatus(IBattleStatus statusPrefab)
         {
-            if (!_uniqueStatusTracker.TryGetValue(status.StatusTag, out var uniqueStatus))
+            if (!_uniqueStatusTracker.TryGetValue(statusPrefab.StatusTag, out var uniqueStatus))
             {
-                _battleStatusList.Remove(status);
+                return;
             }
-            else
-            {
-                uniqueStatus.Duration -= status.Duration;
-                uniqueStatus.Layer -= status.Layer;
-                if (uniqueStatus.Layer <= 0 && uniqueStatus.Duration <= 0)
-                {
-                    _battleStatusList.Remove(status);
-                }
-            }
+
+            uniqueStatus.Duration -= statusPrefab.Duration;
+            uniqueStatus.Layer -= statusPrefab.Layer;
         }
 
         private void AddUniqueStatus(PvStatusData specificStatus)
