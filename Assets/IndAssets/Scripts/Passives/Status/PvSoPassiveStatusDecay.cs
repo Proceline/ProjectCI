@@ -16,7 +16,7 @@ namespace IndAssets.Scripts.Passives.Status
         public override void DisposeStatus(GridPawnUnit unit)
         {
             _dataPrefab.Layer = 100;
-            RemoveStatusPrefab(unit, _dataPrefab);
+            MarkStatusPrefabRemoved(unit, _dataPrefab);
         }
 
         public override void AccumulateStatus(GridPawnUnit unit, int layer)

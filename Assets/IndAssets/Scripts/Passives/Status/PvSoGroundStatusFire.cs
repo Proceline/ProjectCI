@@ -16,28 +16,27 @@ namespace IndAssets.Scripts.Passives.Status
 
         private readonly Dictionary<IEventOwner , Action> _pendingActionsCollection = new(); 
         
-        protected override void ApplyGroundStatus(PvMnBattleGeneralUnit unit, LevelCellBase fromCell, int pathIndex = 0,
+        protected override void ApplyGroundStatusOnPath(PvMnBattleGeneralUnit unit, LevelCellBase fromCell, int pathIndex = 0,
             int pathLength = -1)
         {
-            if (!_pendingActionsCollection.TryGetValue(unit, out var existedAction))
+            var targetUnit = unit;
+            if (!_pendingActionsCollection.TryGetValue(targetUnit, out var existedAction))
             {
-                existedAction = () =>
-                {
-                    relatedDeBuff.AccumulateStatus(unit, 1);
-                    raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
-                };
+                existedAction = () => ApplyGroundStatusOnUnit(targetUnit);
             }
             else
             {
-                existedAction += () =>
-                {
-                    relatedDeBuff.AccumulateStatus(unit, 1);
-                    raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
-                };
+                existedAction += () => ApplyGroundStatusOnUnit(targetUnit);
             }
-            _pendingActionsCollection[unit] = existedAction;
+            _pendingActionsCollection[targetUnit] = existedAction;
         }
-        
+
+        protected override void ApplyGroundStatusOnUnit(PvMnBattleGeneralUnit unit)
+        {
+            relatedDeBuff.AccumulateStatus(unit, 1);
+            raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
+        }
+
         public void DetermineProcessOnStateChanged(IEventOwner owner, UnitStateEventParam stateEventParam)
         {
             if (_pendingActionsCollection.Count == 0) return;

@@ -116,7 +116,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [Inject] private static readonly PvSoSimpleDamageApplyEvent RaiserSimpleDamageApplyEvent;
         [Inject] private static readonly IUnitPrepareEvent RaiserManualFinishOrRestPrepareEvent;
-        [Inject] private static readonly ITeamRoundEndEvent XRaiserTeamRoundEndEvent;
+        [Inject] private static readonly ITeamRoundEndEvent RaiserTeamRoundEndEvent;
         [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicPostEvent;
         [Inject] private static readonly IUnitCombatLogicPreEvent RaiserOnCombatLogicPreEvent;
         
@@ -162,9 +162,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     }
                 }
             }
-
-            // TODO: Unregister these responses after Game End
-            XRaiserTeamRoundEndEvent.RegisterCallback(OnTeamRoundEndResponse);
             
             TacticBattleManager.HandleGameStarted();
 

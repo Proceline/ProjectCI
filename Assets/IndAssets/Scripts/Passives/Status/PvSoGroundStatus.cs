@@ -17,8 +17,18 @@ namespace IndAssets.Scripts.Passives.Status
                 var cell = path[i];
                 if (_markedCellPoints.Contains(cell.GetIndex()))
                 {
-                    ApplyGroundStatus(unit, cell, i, path.Count);
+                    ApplyGroundStatusOnPath(unit, cell, i, path.Count);
                 }
+            }
+        }
+
+        public void OnGroundStatusApplied(PvMnBattleGeneralUnit unit)
+        {
+            if (_markedCellPoints.Count <= 0) return;
+            var cell = unit.GetCell();
+            if (_markedCellPoints.Contains(cell.GetIndex()))
+            {
+                ApplyGroundStatusOnUnit(unit);
             }
         }
 
@@ -28,7 +38,7 @@ namespace IndAssets.Scripts.Passives.Status
             if (_markedCellPoints.Count <= 0) return;
             if (_markedCellPoints.Contains(cell.GetIndex()))
             {
-                ApplyGroundStatus(unit, cell);
+                ApplyGroundStatusOnPath(unit, cell);
             }
         }
 
@@ -38,7 +48,7 @@ namespace IndAssets.Scripts.Passives.Status
             if (!_markedCellPoints.Contains(cell.GetIndex())) return;
             if (cell.GetUnitOnCell() is PvMnBattleGeneralUnit battleUnit)
             {
-                ApplyGroundStatus(battleUnit, cell);
+                ApplyGroundStatusOnPath(battleUnit, cell);
             }
         }
 
@@ -64,7 +74,9 @@ namespace IndAssets.Scripts.Passives.Status
         /// <param name="fromCell"></param>
         /// <param name="pathIndex"></param>
         /// <param name="pathLength">When Length = -1, means not in a Path</param>
-        protected abstract void ApplyGroundStatus(PvMnBattleGeneralUnit unit, LevelCellBase fromCell, int pathIndex = 0,
+        protected abstract void ApplyGroundStatusOnPath(PvMnBattleGeneralUnit unit, LevelCellBase fromCell, int pathIndex = 0,
             int pathLength = -1);
+
+        protected abstract void ApplyGroundStatusOnUnit(PvMnBattleGeneralUnit unit);
     }
 }

@@ -23,7 +23,7 @@ namespace IndAssets.Scripts.Passives.Status
             // Reduce 100 Layer, no Duration to status list
             _dataPrefab.Layer = 100;
             _dataPrefab.Duration = 0;
-            RemoveStatusPrefab(unit, _dataPrefab);
+            MarkStatusPrefabRemoved(unit, _dataPrefab);
         }
 
         public override void AccumulateStatus(GridPawnUnit unit, int layer)
@@ -41,7 +41,7 @@ namespace IndAssets.Scripts.Passives.Status
             _dataPrefab.Duration = 0;
             
             // Reduce one Layer on Unit
-            RemoveStatusPrefab(unit, _dataPrefab);
+            MarkStatusPrefabRemoved(unit, _dataPrefab);
         }
 
         public override void OnStatusAppliedResponse(GridPawnUnit unit, IBattleStatus statusData)

@@ -1,4 +1,3 @@
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
@@ -21,9 +20,9 @@ namespace IndAssets.Scripts.Passives.Status
             unit.GetStatusEffectContainer().AddStatus(prefab);
         }
         
-        protected void RemoveStatusPrefab(GridPawnUnit unit, PvStatusData prefab)
+        protected void MarkStatusPrefabRemoved(GridPawnUnit unit, PvStatusData prefab)
         {
-            unit.GetStatusEffectContainer().RemoveStatus(prefab);
+            unit.GetStatusEffectContainer().MarkDeductStatus(prefab);
         }
     }
 }

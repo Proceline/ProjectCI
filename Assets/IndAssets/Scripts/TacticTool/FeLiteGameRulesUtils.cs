@@ -22,6 +22,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUnitStatusUpdated;
         
+        [SerializeField] 
+        private UnityEvent<PvMnBattleGeneralUnit> onRoundEndedForEachUnit;
+        
         private void OnPathDeterminedResponse(List<LevelCellBase> path)
         {
             if (!_selectedUnit) return;
@@ -39,8 +42,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             foreach (var unitPair in _unitIdToBattleUnitHash)
             {
                 var unit = unitPair.Value;
-                var statusList = unit.GetStatusEffectContainer();
-                var statusDataCollection = statusList.GetStatusList();
+                var statusContainer = unit.GetStatusEffectContainer();
+                var statusDataCollection = statusContainer.GetStatusList();
                 var toRemoveIndexList = new Stack<int>();
                 for (var i = 0; i < statusDataCollection.Count; i++)
                 {
@@ -56,18 +59,30 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     }
                 }
 
-                var isUpdateRequired = false;
                 while (toRemoveIndexList.TryPop(out var index))
                 {
-                    statusDataCollection.RemoveAt(index);
-                    isUpdateRequired = true;
-                }
-
-                if (isUpdateRequired)
-                {
-                    onUnitStatusUpdated.Invoke(unit);
+                    statusContainer.RemoveStatusByIndex(index);
                 }
             }
+        }
+
+        public void OnTeamRoundEndResponse(BattleTeam team)
+        {
+            var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
+            foreach (var unit in allUnitsInBattle)
+            {
+                if (unit.IsDead()) continue;
+                if (unit.GetTeam() == team)
+                {
+                    ArchiveUnitBehaviourPoints(unit, true, true);
+                }
+
+                onRoundEndedForEachUnit.Invoke(unit);
+                onUnitStatusUpdated.Invoke(unit);
+            }
+
+            CurrentTeam = team == BattleTeam.Friendly? BattleTeam.Hostile : BattleTeam.Friendly;
+            BeginTeamTurn(CurrentTeam);
         }
     }
 }

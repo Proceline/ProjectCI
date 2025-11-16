@@ -34,7 +34,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private int _currentMovementPoints;
         private int _currentActionPoints = 1;
 
-        private PvStatusDataCollection _statusCollection = new PvStatusDataCollection();
+        private PvStatusDataCollection _statusCollection;
 
         public PvSoUnitAbility EquippedAbility
         {
@@ -205,7 +205,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Friendly);
         }
 
-        public override IStatusEffectContainer GetStatusEffectContainer() => _statusCollection;
+        public override IStatusEffectContainer GetStatusEffectContainer()
+        {
+            return _statusCollection ??= new PvStatusDataCollection(ID, name);
+        }
 
         public override UnitBattleState GetCurrentState()
         {

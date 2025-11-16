@@ -69,6 +69,15 @@ namespace IndAssets.Scripts.Passives.Status
     {
         private readonly List<IBattleStatus> _battleStatusList = new();
         private readonly Dictionary<string, PvStatusData> _uniqueStatusTracker = new();
+        
+        private readonly string _id;
+        private readonly string _targetName;
+
+        public PvStatusDataCollection(string unitId, string targetName)
+        {
+            _id = unitId;
+            _targetName = targetName;
+        }
 
         public List<IBattleStatus> GetStatusList() => _battleStatusList;
 
@@ -95,6 +104,44 @@ namespace IndAssets.Scripts.Passives.Status
         }
 
         public void RemoveStatus(IBattleStatus statusPrefab)
+        {
+            if (!_uniqueStatusTracker.TryGetValue(statusPrefab.StatusTag, out var uniqueStatus))
+            {
+                return;
+            }
+
+            uniqueStatus.Duration -= statusPrefab.Duration;
+            uniqueStatus.Layer -= statusPrefab.Layer;
+            
+            if (uniqueStatus.IsBeingDisposed())
+            {
+                _uniqueStatusTracker.Remove(statusPrefab.StatusTag);
+            }
+        }
+
+        public void RemoveStatusDirectly(IBattleStatus statusPrefab)
+        {
+            if (!_uniqueStatusTracker.TryGetValue(statusPrefab.StatusTag, out var uniqueStatus))
+            {
+                return;
+            }
+
+            _uniqueStatusTracker.Remove(uniqueStatus.StatusTag);
+            _battleStatusList.Remove(uniqueStatus);
+        }
+
+        public void RemoveStatusByIndex(int index)
+        {
+            var status = _battleStatusList[index];
+            if (!_uniqueStatusTracker.Remove(status.StatusTag))
+            {
+                return;
+            }
+
+            _battleStatusList.RemoveAt(index);
+        }
+
+        public void MarkDeductStatus(IBattleStatus statusPrefab)
         {
             if (!_uniqueStatusTracker.TryGetValue(statusPrefab.StatusTag, out var uniqueStatus))
             {

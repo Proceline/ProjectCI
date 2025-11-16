@@ -197,29 +197,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 Debug.Log("All Units finished actions");
                 // TODO: Register Team Round End Event
-                XRaiserTeamRoundEndEvent.Raise(CurrentTeam);
+                RaiserTeamRoundEndEvent.Raise(CurrentTeam);
             }
-        }
-
-        private void OnTeamRoundEndResponse(BattleTeam team)
-        {
-            var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
-            foreach (var unit in allUnitsInBattle)
-            {
-                if (unit.GetTeam() == team && !unit.IsDead())
-                {
-                    ArchiveUnitBehaviourPoints(unit, true, true);
-                }
-            }
-
-            CurrentTeam = team == BattleTeam.Friendly? BattleTeam.Hostile : BattleTeam.Friendly;
-            BeginTeamTurn(CurrentTeam);
         }
         
         #if UNITY_EDITOR
         public void EndRoundDontUseEditorOnly()
         {
-            XRaiserTeamRoundEndEvent.Raise(CurrentTeam);
+            RaiserTeamRoundEndEvent.Raise(CurrentTeam);
         }
         #endif
     }
