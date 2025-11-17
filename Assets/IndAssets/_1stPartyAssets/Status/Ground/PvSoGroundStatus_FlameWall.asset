@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5100bba1fa9f41cbb70aa69785ee3649, type: 3}
   m_Name: PvSoGroundStatus_FlameWall
   m_EditorClassIdentifier: 
+  initDuration: 2
+  groundEffectPrefab: {fileID: 8791249539364231146, guid: 466e5a233d541de498c6a3bd4a0e6e03, type: 3}
   relatedDeBuff: {fileID: 11400000, guid: 1b6df440799798c4e8c0504b0b569ce7, type: 2}
   raiserStatusApplyEvent: {fileID: 11400000, guid: 03c8bb9555aff5d428728681a0fb6943, type: 2}

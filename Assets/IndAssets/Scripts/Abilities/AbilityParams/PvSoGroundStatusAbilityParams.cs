@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Status;
-using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Events;
-using ProjectCI.Utilities.Runtime.Pools;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,9 +17,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         
         [SerializeField]
         private PvSoTurnViewEndEvent onTurnAnimationEndEvent;
-
-        [SerializeField]
-        private PvMnVisualEffect groundEffectPrefab;
 
         private readonly Queue<UnityAction> _pendingVisualActions = new();
 
@@ -39,12 +34,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             UnityAction groundVisualAction = () =>
             {
-                foreach (var cell in effectedCells)
-                {
-                    var effect = MnObjectPool.Instance.Get(groundEffectPrefab.gameObject);
-                    effect.transform.position = cell.transform.position;
-                }
-
+                relatedGroundStatus.RefreshVisualGroundStatus(effectedCells);
                 while (_pendingVisualActions.TryDequeue(out var pendingAction))
                 {
                     onTurnAnimationEndEvent.UnregisterCallback(pendingAction);
