@@ -17,40 +17,28 @@ MonoBehaviour:
   originalAttributes:
   - m_AttributeType:
       value: 0
-    m_Value: 29
+    m_Value: 12
     m_GainValue: 40
   - m_AttributeType:
       value: 1
-    m_Value: 13
+    m_Value: 10
     m_GainValue: 55
   - m_AttributeType:
       value: 2
-    m_Value: 6
+    m_Value: 10
     m_GainValue: 45
   - m_AttributeType:
       value: 3
-    m_Value: 5
+    m_Value: 10
     m_GainValue: 45
   - m_AttributeType:
       value: 4
-    m_Value: 8
+    m_Value: 10
     m_GainValue: 40
   - m_AttributeType:
-      value: 5
-    m_Value: 5
-    m_GainValue: 30
-  - m_AttributeType:
       value: 6
-    m_Value: 6
-    m_GainValue: 35
-  - m_AttributeType:
-      value: 7
-    m_Value: 4
-    m_GainValue: 35
-  - m_AttributeType:
-      value: 8
     m_Value: 10
-    m_GainValue: 60
+    m_GainValue: 35
   - m_AttributeType:
       value: 17
     m_Value: 5

@@ -38147,7 +38147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFriendly: 0
-  unitData: {fileID: 11400000, guid: c4e443c2858f5054899aac03e65ee8dd, type: 2}
+  unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   extraAttributes:
@@ -42637,7 +42637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFriendly: 0
-  unitData: {fileID: 11400000, guid: c4e443c2858f5054899aac03e65ee8dd, type: 2}
+  unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
   unitAbilities:
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   extraAttributes:

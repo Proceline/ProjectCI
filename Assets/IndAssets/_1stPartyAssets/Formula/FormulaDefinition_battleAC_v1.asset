@@ -10,34 +10,55 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_Accuracy_v1
+  m_Name: FormulaDefinition_battleAC_v1
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 10
+    value: 11
   formulaNodes:
   - type: 0
     attributeType:
-      value: 3
+      value: 4
     operatorSymbol: 
     constantValue: 0
   - type: 2
     attributeType:
-      value: 3
+      value: 4
     operatorSymbol: 
-    constantValue: 2
+    constantValue: 10
   - type: 1
     attributeType:
-      value: 3
+      value: 4
+    operatorSymbol: '-'
+    constantValue: 10
+  - type: 2
+    attributeType:
+      value: 4
+    operatorSymbol: '-'
+    constantValue: 5
+  - type: 1
+    attributeType:
+      value: 4
     operatorSymbol: '*'
-    constantValue: 2
+    constantValue: 0
   - type: 0
     attributeType:
-      value: 18
-    operatorSymbol: +
-    constantValue: 2
+      value: 20
+    operatorSymbol: '*'
+    constantValue: 0
   - type: 1
     attributeType:
-      value: 19
+      value: 4
     operatorSymbol: +
-    constantValue: 2
+    constantValue: 0
+  - type: 2
+    attributeType:
+      value: 4
+    operatorSymbol: +
+    constantValue: 10
+  - type: 1
+    attributeType:
+      value: 4
+    operatorSymbol: +
+    constantValue: 0
   preventNegativeSubResult: 1
+  preventFloatDuringCalculation: 0

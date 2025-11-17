@@ -20,14 +20,35 @@ MonoBehaviour:
       value: 4
     operatorSymbol: 
     constantValue: 0
+  - type: 2
+    attributeType:
+      value: 4
+    operatorSymbol: 
+    constantValue: 2
+  - type: 1
+    attributeType:
+      value: 4
+    operatorSymbol: '*'
+    constantValue: 0
+  - type: 2
+    attributeType:
+      value: 4
+    operatorSymbol: '*'
+    constantValue: 10
+  - type: 1
+    attributeType:
+      value: 4
+    operatorSymbol: '-'
+    constantValue: 10
   - type: 0
     attributeType:
       value: 16
-    operatorSymbol: 
-    constantValue: 0
+    operatorSymbol: '-'
+    constantValue: 10
   - type: 1
     attributeType:
-      value: 17
+      value: 4
     operatorSymbol: '-'
-    constantValue: 0
+    constantValue: 10
   preventNegativeSubResult: 1
+  preventFloatDuringCalculation: 0

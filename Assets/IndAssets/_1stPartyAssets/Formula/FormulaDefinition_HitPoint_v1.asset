@@ -22,74 +22,49 @@ MonoBehaviour:
     constantValue: 2
   - type: 0
     attributeType:
-      value: 6
-    operatorSymbol: +
-    constantValue: 0
+      value: 2
+    operatorSymbol: /
+    constantValue: 2
   - type: 1
     attributeType:
-      value: 2
+      value: 1
     operatorSymbol: +
-    constantValue: 0
-  - type: 2
-    attributeType:
-      value: 2
-    operatorSymbol: +
-    constantValue: 3
-  - type: 1
-    attributeType:
-      value: 2
-    operatorSymbol: '*'
-    constantValue: 0
-  - type: 0
-    attributeType:
-      value: 2
-    operatorSymbol: '*'
-    constantValue: 0
+    constantValue: 2
   - type: 0
     attributeType:
       value: 3
-    operatorSymbol: '*'
-    constantValue: 0
-  - type: 1
-    attributeType:
-      value: 4
     operatorSymbol: +
-    constantValue: 0
-  - type: 1
-    attributeType:
-      value: 4
-    operatorSymbol: +
-    constantValue: 0
+    constantValue: 2
   - type: 0
-    attributeType:
-      value: 4
-    operatorSymbol: +
-    constantValue: 0
-  - type: 2
     attributeType:
       value: 4
     operatorSymbol: +
     constantValue: 2
   - type: 1
     attributeType:
-      value: 4
-    operatorSymbol: '*'
-    constantValue: 0
+      value: 1
+    operatorSymbol: +
+    constantValue: 2
   - type: 1
     attributeType:
-      value: 4
+      value: 1
     operatorSymbol: +
-    constantValue: 0
+    constantValue: 2
+  - type: 0
+    attributeType:
+      value: 6
+    operatorSymbol: +
+    constantValue: 2
   - type: 0
     attributeType:
       value: 0
     operatorSymbol: +
-    constantValue: 0
+    constantValue: 2
   - type: 2
     attributeType:
       value: 0
     operatorSymbol: +
-    constantValue: 6
+    constantValue: 2
   - type: 1
     attributeType:
       value: 0
@@ -100,14 +75,20 @@ MonoBehaviour:
       value: 0
     operatorSymbol: +
     constantValue: 0
+  - type: 1
+    attributeType:
+      value: 0
+    operatorSymbol: +
+    constantValue: 0
   - type: 2
     attributeType:
       value: 0
     operatorSymbol: +
-    constantValue: 6
+    constantValue: 50
   - type: 1
     attributeType:
       value: 0
-    operatorSymbol: /
-    constantValue: 6
+    operatorSymbol: '-'
+    constantValue: 70
   preventNegativeSubResult: 1
+  preventFloatDuringCalculation: 0

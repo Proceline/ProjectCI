@@ -10,23 +10,45 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_CriticalAvoid_v2
+  m_Name: FormulaDefinition_battleDC_v1
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 22
+    value: 10
   formulaNodes:
   - type: 0
     attributeType:
-      value: 23
+      value: 3
     operatorSymbol: 
+    constantValue: 0
+  - type: 2
+    attributeType:
+      value: 3
+    operatorSymbol: 
+    constantValue: 10
+  - type: 1
+    attributeType:
+      value: 3
+    operatorSymbol: '-'
+    constantValue: 10
+  - type: 2
+    attributeType:
+      value: 3
+    operatorSymbol: '-'
+    constantValue: 5
+  - type: 1
+    attributeType:
+      value: 3
+    operatorSymbol: '*'
     constantValue: 0
   - type: 0
     attributeType:
-      value: 5
-    operatorSymbol: +
+      value: 18
+    operatorSymbol: '*'
     constantValue: 0
   - type: 1
     attributeType:
-      value: 5
+      value: 18
     operatorSymbol: +
     constantValue: 0
+  preventNegativeSubResult: 1
+  preventFloatDuringCalculation: 0
