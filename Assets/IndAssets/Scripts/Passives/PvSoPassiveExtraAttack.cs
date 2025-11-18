@@ -1,5 +1,6 @@
 using System;
 using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
@@ -45,7 +46,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             var caster = usingParam.unit;
             var target = usingParam.target;
             
-            FeLiteGameRules.HandleAbilityParam(ability, caster, target, results);
+            ability.HandleAbilityParam(caster, target, results);
         }
     }
 }

@@ -2,7 +2,6 @@
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using IndAssets.Scripts.Commands;
@@ -114,7 +113,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var victim = combatActionContext.IsCounter ? abilityOwner : targetUnit;
                 if (!combatAbility) continue;
                 RaiserOnCombatingQueryStartEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
-                HandleAbilityParam(combatAbility, caster, victim, results);
+                combatAbility.HandleAbilityParam(caster, victim, results);
                 RaiserOnCombatingQueryEndEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
             }
         }
@@ -140,22 +139,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             HandleAbilityParam(ability, abilityOwner, targetUnit, ability, results);
         }
 */
-        public static void HandleAbilityParam(UnitAbilityCore inAbility, GridPawnUnit caster, GridPawnUnit target,
-            Queue<CommandResult> results)
-        {
-            if (caster.IsDead())
-            {
-                return;
-            }
 
-            var resultId = Guid.NewGuid().ToString();
-            foreach (AbilityParamBase param in inAbility.GetParameters())
-            {
-                param.Execute(resultId, inAbility, caster, target, results);
-            }
-        }
-        
-        public async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
+        private async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
             LevelCellBase target, Queue<CommandResult> commands)
         {
             if (ability.GetShape())

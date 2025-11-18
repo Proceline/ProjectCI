@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using UnityEngine;
@@ -15,15 +17,13 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
     {
         public AttributeType carryOverAttribute;
 
-        public override string GetAbilityInfo()
-        {
-            // TODO: Description
-            return base.GetAbilityInfo();
-        }
-
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit toUnit, Queue<CommandResult> results)
+            GridPawnUnit toUnit, LevelCellBase currentTarget, Queue<CommandResult> results, int passValue)
         {
+            if (toUnit.GetCell() != currentTarget)
+            {
+                return;
+            }
             
             var toContainer = toUnit.RuntimeAttributes;
             var fromContainer = fromUnit.RuntimeAttributes;

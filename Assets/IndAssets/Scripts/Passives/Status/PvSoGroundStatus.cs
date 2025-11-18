@@ -110,11 +110,16 @@ namespace IndAssets.Scripts.Passives.Status
         {
             foreach (var cell in effectedCells)
             {
-                if (_recordedVisualObjects.ContainsKey(cell.GetIndex())) continue;
-                var newEffect = MnObjectPool.Instance.Get(groundEffectPrefab.gameObject);
-                newEffect.transform.position = cell.transform.position;
-                _recordedVisualObjects.Add(cell.GetIndex(), newEffect);
+                RefreshVisualGroundStatus(cell);
             }
+        }
+
+        public void RefreshVisualGroundStatus(LevelCellBase cell)
+        {
+            if (_recordedVisualObjects.ContainsKey(cell.GetIndex())) return;
+            var newEffect = MnObjectPool.Instance.Get(groundEffectPrefab.gameObject);
+            newEffect.transform.position = cell.transform.position;
+            _recordedVisualObjects.Add(cell.GetIndex(), newEffect);
         }
 
         public void RefreshVisualGroundStatus()

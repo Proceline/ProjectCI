@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Status;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Commands;
+using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
@@ -15,33 +15,20 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
     {
         [SerializeField] private PvSoGroundStatus relatedGroundStatus;
         
-        [SerializeField]
-        private PvSoTurnViewEndEvent onTurnAnimationEndEvent;
-
-        private readonly Queue<UnityAction> _pendingVisualActions = new();
-
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit toUnit, Queue<CommandResult> results)
+            GridPawnUnit mainTarget, LevelCellBase targetCell, Queue<CommandResult> results, int passValue)
         {
-            // TODO: effectedCells should be different
-            List<LevelCellBase> effectedCells = ability.GetEffectedCells(fromUnit, toUnit.GetCell());
-
-            foreach (var cell in effectedCells)
+            // ground status should always be hit
+            relatedGroundStatus.AddGroundStatus(targetCell);
+            var groundStatusCommand = new PvGroundStatusCommand
             {
-                // ground status should always be hit
-                relatedGroundStatus.AddGroundStatus(cell);
-            }
-
-            UnityAction groundVisualAction = () =>
-            {
-                relatedGroundStatus.RefreshVisualGroundStatus(effectedCells);
-                while (_pendingVisualActions.TryDequeue(out var pendingAction))
-                {
-                    onTurnAnimationEndEvent.UnregisterCallback(pendingAction);
-                }
+                ResultId = resultId,
+                AbilityId = ability.ID,
+                OwnerId = fromUnit.ID,
+                TargetCellIndex = targetCell.GetIndex(),
+                RelatedGroundStatus = relatedGroundStatus
             };
-            _pendingVisualActions.Enqueue(groundVisualAction);
-            onTurnAnimationEndEvent.RegisterCallback(groundVisualAction);
+            results.Enqueue(groundStatusCommand);
         }
     }
 }

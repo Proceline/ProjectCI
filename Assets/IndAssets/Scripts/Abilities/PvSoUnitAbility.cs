@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -26,6 +27,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         [SerializeField]
         private bool isAbilityWeapon = true;
+        
+        [SerializeField] private AttributeType dcAttribute = 10;    // Accurate
+        [SerializeField] private AttributeType acAttribute = 11;    // Dodge
+        public AttributeType DcAttribute => dcAttribute;
+        public AttributeType AcAttribute => acAttribute;
 
         [SerializeField] 
         private PvMnProjectile projectilePrefab;

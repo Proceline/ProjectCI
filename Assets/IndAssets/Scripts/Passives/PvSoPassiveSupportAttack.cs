@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -64,7 +65,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
                 reachableCells.Count > 0 && reachableCells.Contains(target.GetCell());
             if (bIsAbleToSupport)
             {
-                FeLiteGameRules.HandleAbilityParam(ability, ownerUnit, target, results);
+                ability.HandleAbilityParam(ownerUnit, target, results);
             }
         }
     }

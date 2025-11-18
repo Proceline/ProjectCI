@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
-using IndAssets.Scripts.Commands;
+using IndAssets.Scripts.Random;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.Commands;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Functions;
 using UnityEngine;
 
@@ -17,9 +19,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
         public const string CriticalExtraInfoHint = "Critical";
         public const string MissExtraInfoHint = "Miss";
         public const string HealExtraInfoHint = "Heal";
+
+        public const string AlwaysHitCondition = "AlwaysHit";
         
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
-        public static PvSoOutBooleanFunction GetRaiserIsAnimatingProgressFunc => _raiserIsAnimatingProgressFunc;
+        private static readonly ServiceLocator<PvSoRandomSeedCentre> RandomSeedProvider = new();
         
         private const float AnimatingPendingInterval = 0.125f;
 
@@ -47,51 +51,36 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
             return firstExecuteTime;
         }
-
-        public static async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
-            LevelCellBase target, Queue<CommandResult> commands, IDictionary<string, PvMnBattleGeneralUnit> idCollection)
+        
+        public static void HandleAbilityParam(this PvSoUnitAbility ability, GridPawnUnit caster, GridPawnUnit mainTarget,
+            Queue<CommandResult> results)
         {
-            if (ability.GetShape())
+            if (caster.IsDead())
             {
-                casterUnit.LookAtCell(target);
+                return;
+            }
+
+            var resultId = Guid.NewGuid().ToString();
+            
+            var fromContainer = caster.RuntimeAttributes;
+            var dcFinal = fromContainer.GetAttributeValue(ability.DcAttribute) +
+                          RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
                 
-                while (_raiserIsAnimatingProgressFunc.Get(casterUnit))
+            List<LevelCellBase> effectedCells = ability.GetEffectedCells(caster, mainTarget.GetCell());
+            foreach (AbilityParamBase param in ability.GetParameters())
+            {
+                foreach (var cell in effectedCells)
                 {
-                    await Awaitable.WaitForSecondsAsync(AnimatingPendingInterval);
+                    var cellUnit = cell.GetUnitOnCell();
+                    int delta = 0;
+                    if (cellUnit)
+                    {
+                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
+                        delta = dcFinal - acFinal;
+                    }
+
+                    param.Execute(resultId, ability, caster, mainTarget, cell, results, delta);
                 }
-
-                UnitAbilityAnimation abilityAnimation = ability.abilityAnimation;
-                abilityAnimation?.PlayAnimation(casterUnit);
-
-                float firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
-                await Awaitable.WaitForSecondsAsync(firstExecuteTime);
-
-                if (ability.ProjectilePrefab)
-                {
-                    var projectile = PvMnProjectilePool.InstantiateProjectile(ability.ProjectilePrefab);
-                    await ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
-                    firstExecuteTime += projectile.ProgressDuration;
-                }
-
-                // TODO: Handle Audio
-                // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
-                // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
-
-                while (commands.TryDequeue(out var toDoCommand))
-                {
-                    // toDoCommand.ApplyResultOnVisual(idCollection);
-                }
-
-                if (abilityAnimation)
-                {
-                    float timeRemaining = abilityAnimation.GetAnimationLength() - firstExecuteTime;
-                    timeRemaining = Mathf.Max(0, timeRemaining);
-
-                    await Awaitable.WaitForSecondsAsync(timeRemaining);
-                }
-
-                // TODO: Need a end of lock
-                // TacticBattleManager.RemoveActionBeingPerformed();
             }
         }
 

@@ -62,6 +62,9 @@ namespace IndAssets.Scripts.Commands
                 case PvDieCommand:
                     PvDieCommand.GetRaiserUnitDyingEvent.Raise(caster);
                     break;
+                case PvGroundStatusCommand:
+                    commandResult.ApplyCommand(caster, targetCell);
+                    break;
             }
         }
     }
