@@ -16,6 +16,8 @@ MonoBehaviour:
     value: 29
   m_MovementAttributeType:
     value: 26
+  criticalAttributeType:
+    value: 9
   m_Formulas:
   - {fileID: 11400000, guid: f76cf5bea54c9ce47954b60defd9c11f, type: 2}
   - {fileID: 11400000, guid: ac654dae09e246c42b8aafacff9a01a8, type: 2}

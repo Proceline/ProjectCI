@@ -26247,10 +26247,6 @@ MonoBehaviour:
       value: 26
     m_Value: 3
     m_GainValue: 0
-  - m_AttributeType:
-      value: 10
-    m_Value: 1000
-    m_GainValue: 0
   ownedWeapons:
   - {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
 --- !u!4 &747133205
@@ -42648,10 +42644,6 @@ MonoBehaviour:
   - m_AttributeType:
       value: 16
     m_Value: 2
-    m_GainValue: 0
-  - m_AttributeType:
-      value: 18
-    m_Value: 100
     m_GainValue: 0
   - m_AttributeType:
       value: 19

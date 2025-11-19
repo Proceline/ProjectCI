@@ -11,7 +11,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
@@ -31,8 +30,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [Header("Critical")]
         [SerializeField]
         private bool isCriticalEnabledByDefault;
-        [SerializeField]
-        private AttributeType criticalAttribute;
 
         [Header("Accuracy")] 
         [SerializeField] 
@@ -64,15 +61,10 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var isReallyHit = isAlwaysHitByDefault || passValue > 0;
 
             var isCritical = false;
-            if (isCriticalEnabledByDefault && isReallyHit && damage > 0)
+            if (isCriticalEnabledByDefault && passValue == 100)
             {
-                var criticalThreshold = fromContainer.GetAttributeValue(criticalAttribute);
-                var randomValue = Random.Range(0, 10000) % 100;
-                if (randomValue < criticalThreshold)
-                {
-                    damage *= 2;
-                    isCritical = true;
-                }
+                damage *= 2;
+                isCritical = true;
             }
 
             var deltaDamage =

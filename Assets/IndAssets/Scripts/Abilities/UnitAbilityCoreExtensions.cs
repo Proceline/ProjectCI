@@ -8,6 +8,7 @@ using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
+using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Functions;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
         
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
         private static readonly ServiceLocator<PvSoRandomSeedCentre> RandomSeedProvider = new();
+        private static readonly ServiceLocator<FormulaCollection> FormulaCollection = new();
         
         private const float AnimatingPendingInterval = 0.125f;
 
@@ -51,8 +53,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
             return firstExecuteTime;
         }
-        
-        public static void HandleAbilityParam(this PvSoUnitAbility ability, GridPawnUnit caster, GridPawnUnit mainTarget,
+
+        public static void HandleAbilityParam(this PvSoUnitAbility ability, GridPawnUnit caster,
+            GridPawnUnit mainTarget,
             Queue<CommandResult> results)
         {
             if (caster.IsDead())
@@ -61,11 +64,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             }
 
             var resultId = Guid.NewGuid().ToString();
-            
+
             var fromContainer = caster.RuntimeAttributes;
-            var dcFinal = fromContainer.GetAttributeValue(ability.DcAttribute) +
-                          RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
-                
+            var caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
+            var dcFinal = fromContainer.GetAttributeValue(ability.DcAttribute) + caughtSeedValue;
+
             List<LevelCellBase> effectedCells = ability.GetEffectedCells(caster, mainTarget.GetCell());
             foreach (AbilityParamBase param in ability.GetParameters())
             {
@@ -75,8 +78,18 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                     int delta = 0;
                     if (cellUnit)
                     {
-                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
+                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute) + 10;
                         delta = dcFinal - acFinal;
+                    }
+
+                    if (delta > 0)
+                    {
+                        var criticalAttribute =
+                            100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
+                        if (caughtSeedValue >= criticalAttribute)
+                        {
+                            delta = 100;
+                        }
                     }
 
                     param.Execute(resultId, ability, caster, mainTarget, cell, results, delta);

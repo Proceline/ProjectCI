@@ -50,5 +50,5 @@ MonoBehaviour:
       value: 18
     operatorSymbol: +
     constantValue: 0
-  preventNegativeSubResult: 1
+  preventNegativeSubResult: 0
   preventFloatDuringCalculation: 0
