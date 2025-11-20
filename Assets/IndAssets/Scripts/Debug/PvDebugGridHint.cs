@@ -11,7 +11,6 @@ public class PvDebugGridHint : MonoBehaviour
     public GridPawnUnit inSceneUnit;
     public int presetRange;
     public bool bAllowBlocked;
-    public BattleTeam teamRelation = BattleTeam.Friendly;
 
     public TextMeshPro textValueHint;
     
@@ -29,7 +28,7 @@ public class PvDebugGridHint : MonoBehaviour
             Caster = startUnit,
             bAllowBlocked = bAllowBlocked,
             bStopAtBlockedCell = true,
-            EffectedTeam = teamRelation
+            EffectedTeam = BattleTeam.Friendly
         };
         
         var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);

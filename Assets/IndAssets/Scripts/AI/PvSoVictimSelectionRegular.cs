@@ -2,7 +2,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using UnityEngine;
 
-namespace ProjectCI.CoreSystem.Runtime.AI
+namespace IndAssets.Scripts.AI
 {
     [CreateAssetMenu(fileName = "PvSoVictimSelection", menuName = "ProjectCI Tools/AI/Create VictimSelectionRegular")]
     public abstract class PvSoVictimSelectionRegular : PvSoVictimSelection
