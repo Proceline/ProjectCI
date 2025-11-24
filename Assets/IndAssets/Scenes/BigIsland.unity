@@ -38100,6 +38100,7 @@ GameObject:
   - component: {fileID: 1137085769}
   - component: {fileID: 1137085768}
   - component: {fileID: 1137085767}
+  - component: {fileID: 1137085770}
   m_Layer: 0
   m_Name: TestEnemy2
   m_TagString: Untagged
@@ -38149,7 +38150,7 @@ MonoBehaviour:
   extraAttributes:
   - m_AttributeType:
       value: 15
-    m_Value: 100
+    m_Value: 10
     m_GainValue: 0
   - m_AttributeType:
       value: 16
@@ -38196,6 +38197,22 @@ Transform:
   - {fileID: 994641763}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1137085770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137085766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc37f4653344f07b0444c3ab84f9c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyUnitThought
+  targetSelectionStrategy: 0
+  movementStrategy: 0
+  defensiveRange: 5
+  useCustomAbilitySelector: 0
 --- !u!4 &1137706724 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}
@@ -42590,6 +42607,7 @@ GameObject:
   - component: {fileID: 1275341774}
   - component: {fileID: 1275341773}
   - component: {fileID: 1275341772}
+  - component: {fileID: 1275341775}
   m_Layer: 0
   m_Name: TestEnemy1
   m_TagString: Untagged
@@ -42686,6 +42704,22 @@ Transform:
   - {fileID: 1162727518}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1275341775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275341771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc37f4653344f07b0444c3ab84f9c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyUnitThought
+  targetSelectionStrategy: 0
+  movementStrategy: 0
+  defensiveRange: 5
+  useCustomAbilitySelector: 0
 --- !u!4 &1278883646 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}

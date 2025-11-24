@@ -25,6 +25,19 @@ namespace IndAssets.Scripts.AI
 
         private PvMnBattleGeneralUnit _unit;
 
+        private PvMnBattleGeneralUnit Unit
+        {
+            get
+            {
+                if (!_unit)
+                {
+                    _unit = GetComponent<PvMnBattleGeneralUnit>();
+                }
+
+                return _unit;
+            }
+        }
+
         private void Awake()
         {
             _unit = GetComponent<PvMnBattleGeneralUnit>();
@@ -35,14 +48,16 @@ namespace IndAssets.Scripts.AI
         /// </summary>
         public PvMnAIDecisionResult CalculateBestAction()
         {
-            if (!_unit || _unit.IsDead())
+            if (!Unit || Unit.IsDead())
             {
+                Debug.LogError("Unit not exist or dead" + (Unit == null));
                 return new PvMnAIDecisionResult { ShouldTakeRest = true };
             }
 
             // Check if unit has any action points
             if (_unit.GetCurrentMovementPoints() <= 0 && _unit.GetCurrentActionPoints() <= 0)
             {
+                Debug.LogError("Can Move!" + _unit.GetCurrentMovementPoints() + " " + _unit.GetCurrentActionPoints());
                 return new PvMnAIDecisionResult { ShouldTakeRest = true };
             }
 

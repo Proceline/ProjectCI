@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
@@ -9,9 +10,9 @@ namespace IndAssets.Scripts.AI
     {
         private readonly List<(int chargeValue, PvMnBattleGeneralUnit unit)> _orderedEnemies = new();
         private readonly Dictionary<string, PvMnEnemyUnitThought> _enemyThoughtsHash = new();
-        private int _currentIndex = 0;
-
-        [SerializeField] private FeLiteGameRules gameModel;
+        [NonSerialized] private int _currentIndex = 0;
+        
+        public IDictionary<string, PvMnEnemyUnitThought> EnemyThoughtsCollection => _enemyThoughtsHash;
 
         public void AddEnemy(PvMnBattleGeneralUnit enemyUnit, int chargeValue)
         {
@@ -29,24 +30,6 @@ namespace IndAssets.Scripts.AI
 
             _orderedEnemies.Insert(index, enemyPair);
             _enemyThoughtsHash.Add(enemyUnit.ID, thought);
-        }
-
-        public async Awaitable ApplyAction()
-        {
-            var nextEnemy = GetNextEnemy();
-            if (_enemyThoughtsHash.TryGetValue(nextEnemy.ID, out var enemyThought))
-            {
-                gameModel.ApplyCellUnitToSelectedUnit(nextEnemy.GetCell());
-                var result = enemyThought.CalculateBestAction();
-                var targetCell = result.MoveToCell;
-                var targetVictim = result.AttackTargetCell;
-                gameModel.ApplyMovementToCellForSelectedUnit(targetCell);
-                while (nextEnemy.GetCell() != targetCell)
-                {
-                    await Awaitable.WaitForSecondsAsync(0.25f);
-                }
-                Debug.LogError("<Enemy AI>: Get Destination!");
-            }
         }
 
         public PvMnBattleGeneralUnit GetNextEnemy()

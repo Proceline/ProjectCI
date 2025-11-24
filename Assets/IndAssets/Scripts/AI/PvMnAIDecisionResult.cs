@@ -28,7 +28,7 @@ namespace IndAssets.Scripts.AI
         /// </summary>
         public bool ShouldTakeRest { get; set; }
 
-        public bool HasAction => !ShouldTakeRest && (MoveToCell != null || AttackTargetCell != null);
+        public bool HasAction => !ShouldTakeRest && (MoveToCell || AttackTargetCell);
     }
 }
 
