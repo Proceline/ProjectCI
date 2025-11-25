@@ -1,5 +1,6 @@
 ﻿using IndAssets.Scripts.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -21,31 +22,43 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
             }
 #endif
-            var nextEnemy = aiArrangement.GetNextEnemy();
-            Debug.LogError("Next Enemy exists: " + (nextEnemy == null));
-            if (aiArrangement.EnemyThoughtsCollection.TryGetValue(nextEnemy.ID, out var enemyThought))
+            while (aiArrangement.TryGetNextEnemy(out var nextEnemy))
             {
+                Debug.LogError("Next Enemy exists: " + (nextEnemy == null));
+                if (!aiArrangement.EnemyThoughtsCollection.TryGetValue(nextEnemy.ID, out var enemyThought))
+                {
+                    continue;
+                }
+
                 ApplyCellUnitToSelectedUnit(nextEnemy.GetCell());
                 var result = enemyThought.CalculateBestAction();
-                
+
                 if (!result.HasAction)
                 {
-                    Debug.LogError(result.ShouldTakeRest + " " + (result.MoveToCell == null) + " " + (result.AttackTargetCell == null));
+                    Debug.LogError(result.ShouldTakeRest + " " + (result.MoveToCell == null) + " " +
+                                   (result.AttackTargetCell == null));
                     return;
                 }
 
                 await Awaitable.WaitForSecondsAsync(0.5f);
-                
+
                 var targetCell = result.MoveToCell;
                 var targetVictim = result.AttackTargetCell;
-                
+
                 ApplyMovementToCellForSelectedUnit(targetCell);
                 while (nextEnemy.GetCell() != targetCell)
                 {
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
-                
+
                 ApplyAbilityToTargetCell(targetVictim);
+
+                while (nextEnemy.GetCurrentState() == UnitBattleState.AbilityConfirming)
+                {
+                    await Awaitable.WaitForSecondsAsync(0.25f);
+                }
+
+                Debug.LogError("Finished");
             }
         }
         

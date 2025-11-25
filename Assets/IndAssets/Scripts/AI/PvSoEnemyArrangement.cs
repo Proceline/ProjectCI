@@ -32,10 +32,13 @@ namespace IndAssets.Scripts.AI
             _enemyThoughtsHash.Add(enemyUnit.ID, thought);
         }
 
-        public PvMnBattleGeneralUnit GetNextEnemy()
+        public bool TryGetNextEnemy(out PvMnBattleGeneralUnit outUnit)
         {
             if (_currentIndex >= _orderedEnemies.Count)
-                return null;
+            {
+                outUnit = null;
+                return false;
+            }
 
             // Skip dead or units with no action points
             while (_currentIndex < _orderedEnemies.Count)
@@ -44,12 +47,14 @@ namespace IndAssets.Scripts.AI
                 if (!enemy.IsDead() && 
                     (enemy.GetCurrentMovementPoints() > 0 || enemy.GetCurrentActionPoints() > 0))
                 {
-                    return enemy;
+                    outUnit = enemy;
+                    return true;
                 }
                 _currentIndex++;
             }
 
-            return null;
+            outUnit = null;
+            return false;
         }
 
         public void MarkCurrentEnemyFinished()
