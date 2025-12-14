@@ -1,13 +1,16 @@
 using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Passives;
+using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     [CreateAssetMenu(fileName = "NewUnitData", menuName = "ProjectCI Tools/Create PvSoUnitData", order = 1)]
-    public class PvSoBattleUnitData : SoUnitData
+    public class PvSoBattleUnitData : SoUnitData, IPvSaveEntry
     {
+        [SerializeField] private string unitIdentifier;
+        
         [SerializeField] 
         private PvSoPassiveBase[] personalPassives;
 
@@ -23,5 +26,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 passive.InstallPassive(pawnUnit);
             }
         }
+
+        public string EntryId => unitIdentifier;
     }
 } 

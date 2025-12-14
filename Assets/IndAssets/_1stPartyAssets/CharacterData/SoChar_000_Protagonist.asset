@@ -53,6 +53,7 @@ MonoBehaviour:
   m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
   m_SpawnOnHeal: []
   m_AbilityPoints: 5
+  unitIdentifier: PlayerChar00
   personalPassives:
   - {fileID: 11400000, guid: 8c15b9589f8bdea45962484d95647273, type: 2}
   - {fileID: 11400000, guid: 3b063152081af37438052cf8d900a05b, type: 2}
