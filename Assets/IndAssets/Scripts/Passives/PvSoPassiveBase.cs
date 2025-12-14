@@ -17,6 +17,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         
         [SerializeField] private string passiveName;
         public string PassiveName => passiveName;
+        public string description;
 
         [NonSerialized] private readonly HashSet<string> _recordedOwners = new();
         public void InstallPassive(GridPawnUnit unit)

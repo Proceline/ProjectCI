@@ -19,7 +19,7 @@ MonoBehaviour:
   prefabLocalRotation: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
   prefabLocalPosition: {x: 0, y: 0, z: 0}
   prefabLocalScale: {x: 1, y: 1, z: 1}
-  weaponName: Hammer0
+  weaponName: '[Bow0]'
   description: Hammer0Description
   attributes:
   - type:
