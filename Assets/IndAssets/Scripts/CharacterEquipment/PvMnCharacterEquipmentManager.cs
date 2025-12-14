@@ -4,6 +4,7 @@ using IndAssets.Scripts.Weapons;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
 using ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
 {
@@ -16,10 +17,12 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         [Header("UI References")]
         [SerializeField] private PvMnCharacterPortraitPanel portraitPanel;
         [SerializeField] private PvMnCharacterEquipmentPanel equipmentPanel;
+
+        [SerializeField] private List<PvSoBattleUnitData> collectedCharacters = new();
         
         [Header("Data")]
         // Runtime data list - not serialized in inspector, managed at runtime
-        private List<PvCharacterEquipmentData> characterDataList = new List<PvCharacterEquipmentData>();
+        private readonly List<PvCharacterEquipmentData> _characterDataList = new List<PvCharacterEquipmentData>();
         
         [Header("Available Equipment")]
         [SerializeField] private List<PvSoWeaponData> availableWeapons = new();
@@ -35,12 +38,22 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         
         private void Awake()
         {
+            RefreshCharactersList();
             BuildEquipmentDictionaries();
         }
         
         private void Start()
         {
             InitializeUI();
+        }
+
+        private void RefreshCharactersList()
+        {
+            foreach (var charData in collectedCharacters)
+            {
+                var charTextData = CreateCharacterData(charData.m_UnitName);
+                AddCharacter(charTextData);
+            }
         }
         
         /// <summary>
@@ -81,7 +94,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         {
             if (portraitPanel != null)
             {
-                portraitPanel.Initialize(characterDataList, OnCharacterSelected);
+                portraitPanel.Initialize(_characterDataList, OnCharacterSelected);
             }
             
             if (equipmentPanel != null)
@@ -117,9 +130,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         {
             if (characterData == null) return;
             
-            if (!characterDataList.Contains(characterData))
+            if (!_characterDataList.Contains(characterData))
             {
-                characterDataList.Add(characterData);
+                _characterDataList.Add(characterData);
             }
             
             if (portraitPanel != null)
@@ -135,7 +148,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         {
             if (characterData == null) return;
             
-            characterDataList.Remove(characterData);
+            _characterDataList.Remove(characterData);
             
             if (portraitPanel != null)
             {
@@ -236,7 +249,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         /// </summary>
         public List<PvCharacterEquipmentData> GetAllCharacterData()
         {
-            return new List<PvCharacterEquipmentData>(characterDataList);
+            return new List<PvCharacterEquipmentData>(_characterDataList);
         }
         
         /// <summary>
@@ -244,7 +257,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         /// </summary>
         public PvCharacterEquipmentData GetCharacterDataByName(string characterName)
         {
-            return characterDataList.Find(data => data.CharacterName == characterName);
+            return _characterDataList.Find(data => data.CharacterName == characterName);
         }
         
         /// <summary>
@@ -253,7 +266,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         public PvCharacterEquipmentData CreateCharacterData(string characterName)
         {
             var newData = new PvCharacterEquipmentData(characterName);
-            AddCharacter(newData);
             return newData;
         }
         

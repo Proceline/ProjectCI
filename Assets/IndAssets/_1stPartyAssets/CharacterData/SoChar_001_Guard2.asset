@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
   m_Name: SoChar_001_Guard2
   m_EditorClassIdentifier: 
-  m_UnitName: Guard2
+  m_UnitName: '[Guard2]'
   m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
   originalAttributes:
   - m_AttributeType:
