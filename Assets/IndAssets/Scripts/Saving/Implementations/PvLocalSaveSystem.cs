@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
+using ProjectCI.CoreSystem.Runtime.Saving.Utilities;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
 {
@@ -19,10 +20,21 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
         private const string DetailsFileName = "details.json";
         private const string SaveDataFileName = "saveData.json";
         
+        private bool _enableEncryption = true; // Enable encryption for save files
+        
         private string _saveDirectoryPath;
         private bool _isInitialized;
         
         public bool IsInitialized => _isInitialized;
+        
+        /// <summary>
+        /// Enable or disable encryption for save files
+        /// </summary>
+        public bool EnableEncryption
+        {
+            get => _enableEncryption;
+            set => _enableEncryption = value;
+        }
         
         /// <summary>
         /// Initialize the local save system
@@ -111,11 +123,15 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
                 }
                 File.Move(tempDetailsPath, detailsPath);
                 
-                // Save saveData.json
+                // Save saveData.json (with optional encryption)
                 string saveDataJson = JsonUtility.ToJson(saveData, true);
+                string dataToSave = _enableEncryption 
+                    ? PvSaveEncryption.EncryptSaveData(saveDataJson) 
+                    : saveDataJson;
+                
                 string saveDataPath = GetSaveDataFilePath(saveFolderGuid);
                 string tempSaveDataPath = saveDataPath + ".tmp";
-                await File.WriteAllTextAsync(tempSaveDataPath, saveDataJson);
+                await File.WriteAllTextAsync(tempSaveDataPath, dataToSave);
                 if (File.Exists(saveDataPath))
                 {
                     File.Delete(saveDataPath);
@@ -182,7 +198,26 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
                     return null;
                 }
                 
-                string json = await File.ReadAllTextAsync(saveDataPath);
+                string fileContent = await File.ReadAllTextAsync(saveDataPath);
+                
+                // Auto-detect encryption by checking for checksum separator
+                string json;
+                if (fileContent.Contains("|CHECKSUM|"))
+                {
+                    // File is encrypted, decrypt it
+                    json = PvSaveEncryption.DecryptSaveData(fileContent);
+                    if (string.IsNullOrEmpty(json))
+                    {
+                        Debug.LogError("Failed to decrypt save data or integrity check failed. File may have been tampered with.");
+                        return null;
+                    }
+                }
+                else
+                {
+                    // File is not encrypted (plain text), use as-is
+                    json = fileContent;
+                }
+                
                 PvSaveData saveData = JsonUtility.FromJson<PvSaveData>(json);
                 
                 if (saveData == null)

@@ -9,7 +9,6 @@ using ProjectCI.CoreSystem.Runtime.Saving.Implementations;
 using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Passives.Relics;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving
 {
@@ -25,6 +24,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         [Header("Save System Configuration")]
         [SerializeField] private bool useCloudSave = false; // Toggle between local and cloud storage
         [SerializeField] private string defaultSaveSlot = "default";
+        [SerializeField] private bool enableSaveEncryption = true; // Enable encryption for save files
         
         private IPvSaveSystem _saveSystem;
         private PvSaveData _currentSaveData;
@@ -38,7 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         public bool IsInitialized => _isInitialized;
 
         public PvSaveData CurrentSaveData => _currentSaveData ??= new PvSaveData();
-        public UnityEvent<List<PvSaveDetails>> onAllSaveDataListed;
+        public static event Action<List<PvSaveDetails>> onAllSaveDataListed;
 
         private void Awake()
         {
@@ -66,7 +66,9 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
             else
             {
-                _saveSystem = new PvLocalSaveSystem();
+                var localSaveSystem = new PvLocalSaveSystem();
+                localSaveSystem.EnableEncryption = enableSaveEncryption;
+                _saveSystem = localSaveSystem;
             }
             
             bool success = await _saveSystem.InitializeAsync();
@@ -75,7 +77,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 _isInitialized = true;
                 Debug.Log("Save system initialized successfully");
                 // Initialize save data list after system is ready
-                InitializeSaveDataList();
+                await InitializeSaveDataList();
             }
             else
             {
@@ -87,7 +89,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// Initialize and load all save slot details for display in load menu
         /// Can be called manually to refresh the list
         /// </summary>
-        public async void InitializeSaveDataList()
+        public async Awaitable InitializeSaveDataList()
         {
             if (!_isInitialized || _saveSystem == null)
             {
@@ -95,16 +97,9 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 return;
             }
             
-            try
-            {
-                var saveDetailsList = await _saveSystem.GetAllSaveDetailsAsync();
-                onAllSaveDataListed?.Invoke(saveDetailsList);
-                Debug.Log($"Loaded {saveDetailsList.Count} save slot(s)");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Failed to initialize save data list: {ex.Message}");
-            }
+            var saveDetailsList = await _saveSystem.GetAllSaveDetailsAsync();
+            onAllSaveDataListed?.Invoke(saveDetailsList);
+            Debug.Log($"Loaded {saveDetailsList.Count} save slot(s)");
         }
         
         /// <summary>
@@ -194,6 +189,19 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         public async void SaveDefaultGame()
         {
             await SaveGameAsync(defaultSaveSlot);
+        }
+
+        public async Awaitable CreateNewGameAsync(string slotName = null)
+        {
+            if (!_isInitialized || _saveSystem == null)
+            {
+                Debug.LogError("Save system not initialized");
+                return;
+            }
+            
+            slotName = slotName ?? defaultSaveSlot;
+            _currentSaveData = new PvSaveData();
+            await SaveGameAsync(slotName);
         }
         
         /// <summary>
