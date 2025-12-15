@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
 
@@ -53,6 +54,19 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Interfaces
         /// </summary>
         /// <returns>Array of save slot names</returns>
         Task<string[]> GetSaveSlotsAsync();
+        
+        /// <summary>
+        /// Get all save slot details (lightweight info for load menu)
+        /// </summary>
+        /// <returns>List of save details containing slot name, time, play time, etc.</returns>
+        Task<List<PvSaveDetails>> GetAllSaveDetailsAsync();
+        
+        /// <summary>
+        /// Load game data by save folder GUID
+        /// </summary>
+        /// <param name="saveFolderGuid">GUID of the save folder</param>
+        /// <returns>Loaded save data, or null if load failed</returns>
+        Task<PvSaveData> LoadByGuidAsync(string saveFolderGuid);
         
         /// <summary>
         /// Cleanup resources

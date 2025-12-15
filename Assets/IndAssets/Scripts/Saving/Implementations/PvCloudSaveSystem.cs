@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectCI.CoreSystem.Runtime.Saving.Data;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
@@ -118,6 +120,46 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
             // TODO: Implement cloud save slot enumeration
             await Task.Delay(50);
             return new string[0];
+        }
+        
+        /// <summary>
+        /// Get all save slot details from cloud (lightweight info for load menu)
+        /// </summary>
+        public async Task<List<PvSaveDetails>> GetAllSaveDetailsAsync()
+        {
+            if (!_isInitialized)
+            {
+                return new List<PvSaveDetails>();
+            }
+            
+            // TODO: Implement cloud save details enumeration
+            // Example:
+            // 1. List all save folders in cloud storage
+            // 2. Download details.json from each folder
+            // 3. Deserialize and return list
+            await Task.Delay(50);
+            return new List<PvSaveDetails>();
+        }
+        
+        /// <summary>
+        /// Load game data by save folder GUID from cloud
+        /// </summary>
+        public async Task<PvSaveData> LoadByGuidAsync(string saveFolderGuid)
+        {
+            if (!_isInitialized)
+            {
+                UnityEngine.Debug.LogError("Cloud save system not initialized. Call InitializeAsync first.");
+                return null;
+            }
+            
+            // TODO: Implement cloud load by GUID
+            // Example:
+            // 1. Download saveData.json from GUID folder in cloud storage
+            // 2. Deserialize JSON/Binary to PvSaveData
+            // 3. Handle download progress and errors
+            await Task.Delay(100);
+            UnityEngine.Debug.LogWarning("Cloud load by GUID not implemented yet. This is a placeholder.");
+            return null;
         }
         
         /// <summary>

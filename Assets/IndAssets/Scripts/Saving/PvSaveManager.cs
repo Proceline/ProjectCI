@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IndAssets.Scripts.Managers;
@@ -8,6 +9,7 @@ using ProjectCI.CoreSystem.Runtime.Saving.Implementations;
 using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Passives.Relics;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving
 {
@@ -36,6 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         public bool IsInitialized => _isInitialized;
 
         public PvSaveData CurrentSaveData => _currentSaveData ??= new PvSaveData();
+        public UnityEvent<List<PvSaveDetails>> onAllSaveDataListed;
 
         private void Awake()
         {
@@ -71,10 +74,36 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             {
                 _isInitialized = true;
                 Debug.Log("Save system initialized successfully");
+                // Initialize save data list after system is ready
+                InitializeSaveDataList();
             }
             else
             {
                 Debug.LogError("Failed to initialize save system");
+            }
+        }
+
+        /// <summary>
+        /// Initialize and load all save slot details for display in load menu
+        /// Can be called manually to refresh the list
+        /// </summary>
+        public async void InitializeSaveDataList()
+        {
+            if (!_isInitialized || _saveSystem == null)
+            {
+                Debug.LogError("Save system not initialized");
+                return;
+            }
+            
+            try
+            {
+                var saveDetailsList = await _saveSystem.GetAllSaveDetailsAsync();
+                onAllSaveDataListed?.Invoke(saveDetailsList);
+                Debug.Log($"Loaded {saveDetailsList.Count} save slot(s)");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to initialize save data list: {ex.Message}");
             }
         }
         
@@ -105,7 +134,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         }
         
         /// <summary>
-        /// Load game data from save file
+        /// Load game data from save file by slot name
         /// </summary>
         public async Task<bool> LoadGameAsync(string slotName = null)
         {
@@ -130,6 +159,35 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 Debug.Log("Game data loaded successfully");
             }
             
+            return true;
+        }
+        
+        /// <summary>
+        /// Load game data from save file by GUID (for load menu)
+        /// </summary>
+        public async Task<bool> LoadGameByGuidAsync(string saveFolderGuid)
+        {
+            if (!_isInitialized || _saveSystem == null)
+            {
+                Debug.LogError("Save system not initialized");
+                return false;
+            }
+            
+            if (string.IsNullOrEmpty(saveFolderGuid))
+            {
+                Debug.LogError("Save folder GUID is null or empty");
+                return false;
+            }
+            
+            _currentSaveData = await _saveSystem.LoadByGuidAsync(saveFolderGuid);
+            
+            if (_currentSaveData == null)
+            {
+                Debug.LogError("Failed to load save data");
+                return false;
+            }
+            
+            Debug.Log("Game data loaded successfully");
             return true;
         }
 
