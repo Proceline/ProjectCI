@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
 using TMPro;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.UI
 {
@@ -19,6 +20,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
         [SerializeField] private TextMeshProUGUI emptyStateText; // Text for empty state
         
         private List<PvSaveSlotUI> _saveSlotUIs = new List<PvSaveSlotUI>();
+        [SerializeField] private UnityEvent onLoadedGameConfirmed;
         
         /// <summary>
         /// Update the UI with the list of save slots
@@ -112,7 +114,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
         /// <summary>
         /// Load a save by its details
         /// </summary>
-        public async void LoadSave(PvSaveDetails saveDetails)
+        private async void LoadSave(PvSaveDetails saveDetails)
         {
             if (saveDetails == null)
             {
@@ -125,6 +127,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
             {
                 Debug.Log($"Loaded save: {saveDetails.SaveSlotName}");
                 // You can add additional logic here, like closing the load menu or triggering scene transitions
+                onLoadedGameConfirmed.Invoke();
             }
             else
             {

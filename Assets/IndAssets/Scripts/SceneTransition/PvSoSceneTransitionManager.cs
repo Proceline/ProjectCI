@@ -79,7 +79,7 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
             await SceneManager.LoadSceneAsync(loadingSceneName);
 
             var textHint = FindObjectsByType<TextMeshProUGUI>(FindObjectsSortMode.None);
-            Debug.LogError(textHint);
+            Debug.LogError(textHint.Length);
 
             // Step 2: Load target scene asynchronously
             AsyncOperation loadTargetScene = SceneManager.LoadSceneAsync(_targetSceneName, LoadSceneMode.Additive);

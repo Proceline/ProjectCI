@@ -748,6 +748,23 @@ MonoBehaviour:
   saveSlotPrefab: {fileID: 2648935328937802321, guid: aac8fe0d23e2efd47baa282135233d0f, type: 3}
   emptyStatePanel: {fileID: 318239520}
   emptyStateText: {fileID: 318239522}
+  onLoadedGameConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 147f1877811f053429cc9c1a57a73a77, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneManagerConfig,
+          Assembly-CSharp
+        m_MethodName: TransitionToScene
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: f418f8f1cb2afbf459b405ecb2879e9f, type: 2}
+          m_ObjectArgumentAssemblyTypeName: ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneConfig,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &437525879
 GameObject:
   m_ObjectHideFlags: 0
