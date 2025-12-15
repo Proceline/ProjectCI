@@ -26,9 +26,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         private readonly List<string> _availableWeaponNames = new List<string>();
         private readonly List<string> _availableRelicNames = new List<string>();
         
-        private void Start()
+        public void InitializeAndUpdateEquipmentUI()
         {
-            portraitPanel.RefreshPortraits();
             BuildEquipmentDictionaries();
             InitializeUI();
         }
@@ -100,10 +99,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         /// </summary>
         public void RefreshAllUI()
         {
-            if (portraitPanel != null)
-            {
-                portraitPanel.RefreshPortraits();
-            }
+            RefreshPortraitPanel();
             
             if (equipmentPanel != null)
             {

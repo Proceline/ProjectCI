@@ -7,6 +7,7 @@ using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 using ProjectCI.CoreSystem.Runtime.Saving.Implementations;
 using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Passives.Relics;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving
 {
@@ -175,9 +176,11 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Unlock a character
         /// </summary>
-        public void UnlockCharacter(string characterId)
+        public void UnlockCharacter(PvSoBattleUnitData unitData)
         {
-            CurrentSaveData.AddUnlockedCharacter(characterId);
+            CurrentSaveData.AddUnlockedCharacter(unitData.EntryId);
+            var newCharData = new PvCharacterSaveData(unitData);
+            SetCharacterEquipmentData(newCharData);
         }
         
         /// <summary>

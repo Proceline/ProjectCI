@@ -71,6 +71,8 @@ MonoBehaviour:
     Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Abilities.PvSoDirectDamageAbilityParams, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterPortraitItem,
+    Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterEquipmentPanel,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.PvMnCharacterEquipmentManager,

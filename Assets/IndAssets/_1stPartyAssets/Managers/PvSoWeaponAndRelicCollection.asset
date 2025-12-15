@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e477552d89e4341b3a585d661ef83b, type: 3}
   m_Name: PvSoWeaponAndRelicCollection
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Managers.PvSoWeaponAndRelicCollection
+  availableUnits:
+  - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
+  - {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   weapons:
   - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
   - {fileID: 11400000, guid: b5ef5386526e0e3489c56f702a6c9152, type: 2}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.Data
@@ -36,10 +37,10 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PvCharacterSaveData()
+        public PvCharacterSaveData(PvSoBattleUnitData unitData)
         {
-            characterName = string.Empty;
-            characterId = Guid.NewGuid().ToString();
+            characterName = unitData.m_UnitName;
+            characterId = unitData.EntryId;
             weaponInstanceIds = new List<string>();
             relicInstanceIds = new List<string>();
         }

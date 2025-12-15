@@ -45,6 +45,9 @@ namespace IndAssets.Editor.Scripts.Managers
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space(10);
+            
+            EditorGUILayout.PropertyField(
+                serializedObject.FindProperty(PvSoWeaponAndRelicCollection.UnitsPropertyName));
 
             // Display collected items
             EditorGUILayout.LabelField($"Weapons Count: {_weaponsProperty.arraySize}", EditorStyles.boldLabel);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Relics;
 using IndAssets.Scripts.Weapons;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
 namespace IndAssets.Scripts.Managers
@@ -11,18 +12,40 @@ namespace IndAssets.Scripts.Managers
     [CreateAssetMenu(fileName = "WeaponAndRelicCollection", menuName = "ProjectCI Tools/Weapon and Relic Collection")]
     public class PvSoWeaponAndRelicCollection : ScriptableObject
     {
+        #if UNITY_EDITOR
+        public static string UnitsPropertyName => nameof(availableUnits);
+        #endif
+        
+        [SerializeField] private List<PvSoBattleUnitData> availableUnits = new();
+        
         [Header("Weapons")]
         [SerializeField] private List<PvSoWeaponData> weapons = new List<PvSoWeaponData>();
         
         [Header("Relics")]
         [SerializeField] private List<PvSoPassiveRelic> relics = new List<PvSoPassiveRelic>();
 
+        private readonly Dictionary<string, PvSoBattleUnitData> _availableUnitsDict = new();
         private readonly Dictionary<string, PvSoWeaponData> _weaponsDict = new();
         private readonly Dictionary<string, PvSoPassiveRelic> _relicsDict = new();
 
         public List<PvSoWeaponData> Weapons => weapons;
         public List<PvSoPassiveRelic> Relics => relics;
 
+        public Dictionary<string, PvSoBattleUnitData> UnitDataDict
+        {
+            get
+            {
+                if (_availableUnitsDict.Count == availableUnits.Count) return _availableUnitsDict;
+                _availableUnitsDict.Clear();
+                foreach (var unitData in availableUnits)
+                {
+                    _availableUnitsDict.Add(unitData.EntryId, unitData);
+                }
+
+                return _availableUnitsDict;
+            }
+        }
+        
         public Dictionary<string, PvSoWeaponData> WeaponsDict
         {
             get

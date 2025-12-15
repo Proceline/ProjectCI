@@ -1,3 +1,5 @@
+using IndAssets.Scripts.Managers;
+using ProjectCI.CoreSystem.DependencyInjection;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -8,6 +10,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
     /// <summary>
     /// Single character portrait item in the portrait panel
     /// </summary>
+    [StaticInjectableTarget]
     public class PvMnCharacterPortraitItem : MonoBehaviour
     {
         [SerializeField] private Image portraitImage;
@@ -15,6 +18,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         private PvCharacterSaveData _characterData;
         private UnityAction<PvCharacterSaveData> _onPortraitClicked;
+
+        [Inject] private static PvSoWeaponAndRelicCollection _validCharactersCol;
         
         private void Awake()
         {
@@ -48,7 +53,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// </summary>
         public void UpdateDisplay()
         {
-            // Empty
+            if (_validCharactersCol.UnitDataDict.TryGetValue(_characterData.CharacterId, out var unitData))
+            {
+                portraitImage.sprite = unitData.GetIcon;
+            }
         }
         
         /// <summary>
