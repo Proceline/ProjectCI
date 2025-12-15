@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e103d5d537a9f3469c299f04e8aafd3, type: 3}
+  m_Name: SceneManagerConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneManagerConfig
+  loadingSceneAsset: {fileID: 102900000, guid: 2463f53039ed8704397655fc7a0bf2a3, type: 3}
+  sceneConfigs:
+  - {fileID: 11400000, guid: 75abb68561fe13140a487daec34c36a1, type: 2}
+  - {fileID: 11400000, guid: f418f8f1cb2afbf459b405ecb2879e9f, type: 2}
