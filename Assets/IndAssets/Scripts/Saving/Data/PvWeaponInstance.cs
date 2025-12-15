@@ -1,4 +1,5 @@
 using System;
+using IndAssets.Scripts.Weapons;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.Data
@@ -11,7 +12,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
     public class PvWeaponInstance
     {
         [SerializeField] private string instanceId; // Unique GUID for this instance
-        [SerializeField] private string weaponDataName; // Reference to PvSoWeaponData.weaponName
+        [SerializeField] private string weaponDataId; // Reference to PvSoWeaponData.weaponName
         [SerializeField] private bool isEquipped; // Whether this instance is currently equipped
         [SerializeField] private string equippedToCharacterName; // Which character has this equipped (empty if not equipped)
         
@@ -21,10 +22,10 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             set => instanceId = value;
         }
         
-        public string WeaponDataName
+        public string WeaponDataId
         {
-            get => weaponDataName;
-            set => weaponDataName = value;
+            get => weaponDataId;
+            set => weaponDataId = value;
         }
         
         public bool IsEquipped => isEquipped;
@@ -34,21 +35,10 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PvWeaponInstance()
+        public PvWeaponInstance(PvSoWeaponData originData)
         {
             instanceId = Guid.NewGuid().ToString();
-            weaponDataName = string.Empty;
-            isEquipped = false;
-            equippedToCharacterName = string.Empty;
-        }
-        
-        /// <summary>
-        /// Constructor with weapon data name
-        /// </summary>
-        public PvWeaponInstance(string weaponDataName)
-        {
-            instanceId = Guid.NewGuid().ToString();
-            this.weaponDataName = weaponDataName;
+            weaponDataId = originData.EntryId;
             isEquipped = false;
             equippedToCharacterName = string.Empty;
         }

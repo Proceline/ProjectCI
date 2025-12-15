@@ -54,6 +54,7 @@ MonoBehaviour:
   m_SpawnOnHeal: []
   m_AbilityPoints: 5
   unitIdentifier: PlayerChar01
+  icon: {fileID: -149152826, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   personalPassives:
   - {fileID: 11400000, guid: a36832e32baf01c4598c7725e7958e48, type: 2}
   - {fileID: 11400000, guid: d3217b9726d277b4696a2466e6ce00dc, type: 2}

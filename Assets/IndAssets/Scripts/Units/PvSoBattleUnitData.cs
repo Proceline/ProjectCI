@@ -10,6 +10,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public class PvSoBattleUnitData : SoUnitData, IPvSaveEntry
     {
         [SerializeField] private string unitIdentifier;
+        [SerializeField] private Sprite icon;
         
         [SerializeField] 
         private PvSoPassiveBase[] personalPassives;
@@ -28,5 +29,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         public string EntryId => unitIdentifier;
+        public Sprite GetIcon => icon;
     }
 } 

@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
   m_Name: Weapon_000_SHS
   m_EditorClassIdentifier: 
-  weaponIdentifier: 0
   animator: {fileID: 11400000, guid: 491723784bff23a4b9775801fad7fe11, type: 2}
   bindingAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponPrefab: {fileID: 1544745192496040, guid: 092b3560b76f6ee4089747437e2a38bc, type: 3}

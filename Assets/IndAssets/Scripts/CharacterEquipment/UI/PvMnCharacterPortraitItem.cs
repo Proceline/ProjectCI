@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
+using ProjectCI.CoreSystem.Runtime.Saving.Data;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -13,8 +13,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private Image portraitImage;
         [SerializeField] private Button portraitButton;
         
-        private PvCharacterEquipmentData _characterData;
-        private UnityAction<PvCharacterEquipmentData> _onPortraitClicked;
+        private PvCharacterSaveData _characterData;
+        private UnityAction<PvCharacterSaveData> _onPortraitClicked;
         
         private void Awake()
         {
@@ -35,7 +35,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Initialize portrait item with character data
         /// </summary>
-        public void Initialize(PvCharacterEquipmentData characterData, UnityAction<PvCharacterEquipmentData> onPortraitClicked)
+        public void Initialize(PvCharacterSaveData characterData, UnityAction<PvCharacterSaveData> onPortraitClicked)
         {
             _characterData = characterData;
             _onPortraitClicked = onPortraitClicked;
@@ -70,7 +70,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Get associated character data
         /// </summary>
-        public PvCharacterEquipmentData GetCharacterData()
+        public PvCharacterSaveData GetCharacterData()
         {
             return _characterData;
         }

@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Relics;
 using IndAssets.Scripts.Weapons;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
 using TMPro;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI

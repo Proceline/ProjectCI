@@ -12,16 +12,11 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
     {
         [Header("Version Info")]
         [SerializeField] private string saveVersion = "1.0.0"; // For future compatibility
-        
-        [Header("Unlocked Characters")]
-        [SerializeField] private List<string> unlockedCharacterIds = new List<string>();
-        
-        [Header("Character Equipment Data")]
-        [SerializeField] private List<PvCharacterSaveData> characterEquipmentData = new List<PvCharacterSaveData>();
-        
-        [Header("Equipment Instances")]
-        [SerializeField] private List<PvWeaponInstance> weaponInstances = new List<PvWeaponInstance>();
-        [SerializeField] private List<PvRelicInstance> relicInstances = new List<PvRelicInstance>();
+
+        [SerializeField] private List<string> unlockedCharacterIds;
+        [SerializeField] private List<PvCharacterSaveData> characterEquipmentData;
+        [SerializeField] private List<PvWeaponInstance> weaponInstances;
+        [SerializeField] private List<PvRelicInstance> relicInstances;
         
         public string SaveVersion
         {
@@ -167,17 +162,17 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         /// <summary>
         /// Get weapon instances by data name
         /// </summary>
-        public List<PvWeaponInstance> GetWeaponInstancesByDataName(string weaponDataName)
+        public List<PvWeaponInstance> GetWeaponInstancesByDataName(string weaponDataId)
         {
-            return weaponInstances.FindAll(instance => instance.WeaponDataName == weaponDataName);
+            return weaponInstances.FindAll(instance => instance.WeaponDataId == weaponDataId);
         }
         
         /// <summary>
         /// Get relic instances by data name
         /// </summary>
-        public List<PvRelicInstance> GetRelicInstancesByDataName(string relicDataName)
+        public List<PvRelicInstance> GetRelicInstancesById(string relicDataId)
         {
-            return relicInstances.FindAll(instance => instance.RelicDataName == relicDataName);
+            return relicInstances.FindAll(instance => instance.RelicDataId == relicDataId);
         }
     }
 }

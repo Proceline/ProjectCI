@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
   m_Name: Weapon_003_BOW
   m_EditorClassIdentifier: 
-  weaponIdentifier: 2
   animator: {fileID: 11400000, guid: dcf21fe4e3a2f4343aa08eebffff34e4, type: 2}
   bindingAbility: {fileID: 11400000, guid: 723740be6830b974a86483b5b7ccdf61, type: 2}
   weaponPrefab: {fileID: 2686595505039807149, guid: 354c4587aeae2644ea56ef362d368836, type: 3}

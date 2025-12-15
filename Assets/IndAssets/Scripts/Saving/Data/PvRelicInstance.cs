@@ -1,4 +1,5 @@
 using System;
+using IndAssets.Scripts.Passives.Relics;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.Data
@@ -11,7 +12,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
     public class PvRelicInstance
     {
         [SerializeField] private string instanceId; // Unique GUID for this instance
-        [SerializeField] private string relicDataName; // Reference to PvSoPassiveRelic.PassiveName
+        [SerializeField] private string relicDataId; // Reference to PvSoPassiveRelic.PassiveName
         [SerializeField] private bool isEquipped; // Whether this instance is currently equipped
         [SerializeField] private string equippedToCharacterName; // Which character has this equipped (empty if not equipped)
         
@@ -21,10 +22,10 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             set => instanceId = value;
         }
         
-        public string RelicDataName
+        public string RelicDataId
         {
-            get => relicDataName;
-            set => relicDataName = value;
+            get => relicDataId;
+            set => relicDataId = value;
         }
         
         public bool IsEquipped => isEquipped;
@@ -34,21 +35,10 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PvRelicInstance()
+        public PvRelicInstance(PvSoPassiveRelic relic)
         {
             instanceId = Guid.NewGuid().ToString();
-            relicDataName = string.Empty;
-            isEquipped = false;
-            equippedToCharacterName = string.Empty;
-        }
-        
-        /// <summary>
-        /// Constructor with relic data name
-        /// </summary>
-        public PvRelicInstance(string relicDataName)
-        {
-            instanceId = Guid.NewGuid().ToString();
-            this.relicDataName = relicDataName;
+            relicDataId = relic.EntryId;
             isEquipped = false;
             equippedToCharacterName = string.Empty;
         }

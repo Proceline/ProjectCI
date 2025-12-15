@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Saving;
 using UnityEngine;
 using UnityEngine.UI;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
+using ProjectCI.CoreSystem.Runtime.Saving.Data;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -15,50 +17,15 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private GridLayoutGroup gridLayoutGroup;
         
         private List<PvMnCharacterPortraitItem> _portraitItems = new List<PvMnCharacterPortraitItem>();
-        private List<PvCharacterEquipmentData> _characterDataList = new List<PvCharacterEquipmentData>();
-        private System.Action<PvCharacterEquipmentData> _onCharacterSelected;
+        [SerializeField] private UnityEvent<PvCharacterSaveData> onCharacterSelected;
         
         /// <summary>
         /// Initialize panel with list of character data
         /// </summary>
-        public void Initialize(List<PvCharacterEquipmentData> characterDataList, System.Action<PvCharacterEquipmentData> onCharacterSelected)
+        public void Initialize(UnityAction<PvCharacterSaveData> onCharacterSelectedAction)
         {
-            _characterDataList = characterDataList ?? new List<PvCharacterEquipmentData>();
-            _onCharacterSelected = onCharacterSelected;
-            
+            onCharacterSelected.AddListener(onCharacterSelectedAction);
             RefreshPortraits();
-        }
-        
-        /// <summary>
-        /// Add a character to the panel
-        /// </summary>
-        public void AddCharacter(PvCharacterEquipmentData characterData)
-        {
-            if (characterData == null) return;
-            
-            if (!_characterDataList.Contains(characterData))
-            {
-                _characterDataList.Add(characterData);
-            }
-            
-            CreatePortraitItem(characterData);
-        }
-        
-        /// <summary>
-        /// Remove a character from the panel
-        /// </summary>
-        public void RemoveCharacter(PvCharacterEquipmentData characterData)
-        {
-            if (characterData == null) return;
-            
-            _characterDataList.Remove(characterData);
-            
-            var itemToRemove = _portraitItems.Find(item => item.GetCharacterData() == characterData);
-            if (itemToRemove != null)
-            {
-                _portraitItems.Remove(itemToRemove);
-                Destroy(itemToRemove.gameObject);
-            }
         }
         
         /// <summary>
@@ -75,15 +42,20 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 }
             }
             _portraitItems.Clear();
+
+            if (!PvSaveManager.Instance)
+            {
+                return;
+            }
             
             // Create new portraits
-            foreach (var characterData in _characterDataList)
+            foreach (var characterData in PvSaveManager.Instance.GetUnlockedCharacters())
             {
                 CreatePortraitItem(characterData);
             }
         }
         
-        private void CreatePortraitItem(PvCharacterEquipmentData characterData)
+        private void CreatePortraitItem(PvCharacterSaveData characterData)
         {
             if (portraitItemPrefab == null || portraitContainer == null)
             {
@@ -96,9 +68,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             _portraitItems.Add(itemObj);
         }
         
-        private void OnPortraitClicked(PvCharacterEquipmentData characterData)
+        private void OnPortraitClicked(PvCharacterSaveData characterData)
         {
-            _onCharacterSelected?.Invoke(characterData);
+            onCharacterSelected?.Invoke(characterData);
         }
         
         /// <summary>

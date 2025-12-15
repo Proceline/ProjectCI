@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using IndAssets.Scripts.Passives.Relics;
-using IndAssets.Scripts.Weapons;
+using IndAssets.Scripts.Managers;
+using ProjectCI.CoreSystem.DependencyInjection;
 using UnityEngine;
 using UnityEngine.UI;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
+using ProjectCI.CoreSystem.Runtime.Saving.Data;
 using TMPro;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
@@ -12,6 +12,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
     /// Panel for displaying and editing character equipment information
     /// Supports both editable and read-only modes
     /// </summary>
+    [StaticInjectableTarget]
     public class PvMnCharacterEquipmentPanel : MonoBehaviour
     {
         [Header("UI References")]
@@ -25,16 +26,16 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private Button closeButton;
         
         [Header("Data")]
-        private PvCharacterEquipmentData currentCharacterData;
+        private PvCharacterSaveData _characterData;
+
+        [Inject] private static PvSoWeaponAndRelicCollection _equipmentsCollection;
         
         private bool _isEditable = true;
         private bool _isInBattle = false;
         
         // Available options for dropdowns
-        private List<string> _availableWeapons = new List<string>();
-        private List<string> _availableRelics = new List<string>();
-        private Dictionary<string, PvSoWeaponData> _weaponInfoDict;
-        private Dictionary<string, PvSoPassiveRelic> _relicInfoDict;
+        private List<string> _availableWeapons;
+        private List<string> _availableRelics;
         
         private System.Action _onPanelClosed;
         private System.Action _onDataChanged;
@@ -63,18 +64,15 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Initialize panel with character data and available options
         /// </summary>
-        public void Initialize(PvCharacterEquipmentData characterData, 
+        public void Initialize(PvCharacterSaveData characterData, 
             List<string> availableWeapons, List<string> availableRelics,
-            Dictionary<string, PvSoWeaponData> weaponInfoDict = null,
-            Dictionary<string, PvSoPassiveRelic> relicInfoDict = null,
             System.Action onPanelClosed = null,
             System.Action onDataChanged = null)
         {
-            currentCharacterData = characterData;
+            _characterData = characterData;
             _availableWeapons = availableWeapons ?? new List<string>();
             _availableRelics = availableRelics ?? new List<string>();
-            _weaponInfoDict = weaponInfoDict ?? new Dictionary<string, PvSoWeaponData>();
-            _relicInfoDict = relicInfoDict ?? new Dictionary<string, PvSoPassiveRelic>();
+            
             _onPanelClosed = onPanelClosed;
             _onDataChanged = onDataChanged;
             
@@ -137,63 +135,63 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// </summary>
         public void RefreshDisplay()
         {
-            if (currentCharacterData == null) return;
+            if (_characterData == null) return;
             
             // Update character name
             if (characterNameText != null)
             {
-                characterNameText.text = currentCharacterData.CharacterName;
+                characterNameText.text = _characterData.CharacterName;
+            }
+
+            void InitializeDropDown(PvMnEquipmentDropdown dropdown, List<string> dropdownContexts)
+            {
+                dropdown.Initialize(dropdownContexts, _equipmentsCollection.WeaponsDict,
+                    _equipmentsCollection.RelicsDict);
+            }
+
+            void SetDropdownEquipment(int targetIndex, List<string> holdingIndices)
+            {
+                if (holdingIndices.Count > targetIndex)
+                {
+                    weaponDropdown1.SetValue(holdingIndices[targetIndex]);
+                }
             }
             
             // Update weapon dropdowns
-            if (weaponDropdown1 != null)
+            if (weaponDropdown1)
             {
-                weaponDropdown1.Initialize(_availableWeapons, _weaponInfoDict, _relicInfoDict);
-                if (currentCharacterData.Weapons.Count > 0)
-                {
-                    weaponDropdown1.SetValue(currentCharacterData.Weapons[0]);
-                }
+                InitializeDropDown(weaponDropdown1, _availableWeapons);
+                SetDropdownEquipment(0, _characterData.WeaponInstanceIds);
                 weaponDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
-            
-            if (weaponDropdown2 != null)
+
+            if (weaponDropdown2)
             {
-                weaponDropdown2.Initialize(_availableWeapons, _weaponInfoDict, _relicInfoDict);
-                if (currentCharacterData.Weapons.Count > 1)
-                {
-                    weaponDropdown2.SetValue(currentCharacterData.Weapons[1]);
-                }
+                InitializeDropDown(weaponDropdown2, _availableWeapons);
+                SetDropdownEquipment(1, _characterData.WeaponInstanceIds);
+
                 weaponDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
-            
+
             // Update relic dropdowns
-            if (relicDropdown1 != null)
+            if (relicDropdown1)
             {
-                relicDropdown1.Initialize(_availableRelics, _weaponInfoDict, _relicInfoDict);
-                if (currentCharacterData.Relics.Count > 0)
-                {
-                    relicDropdown1.SetValue(currentCharacterData.Relics[0]);
-                }
+                InitializeDropDown(relicDropdown1, _availableRelics);
+                SetDropdownEquipment(0, _characterData.RelicInstanceIds);
                 relicDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
             
-            if (relicDropdown2 != null)
+            if (relicDropdown2)
             {
-                relicDropdown2.Initialize(_availableRelics, _weaponInfoDict, _relicInfoDict);
-                if (currentCharacterData.Relics.Count > 1)
-                {
-                    relicDropdown2.SetValue(currentCharacterData.Relics[1]);
-                }
+                InitializeDropDown(relicDropdown2, _availableRelics);
+                SetDropdownEquipment(1, _characterData.RelicInstanceIds);
                 relicDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
             
-            if (relicDropdown3 != null)
+            if (relicDropdown3)
             {
-                relicDropdown3.Initialize(_availableRelics, _weaponInfoDict, _relicInfoDict);
-                if (currentCharacterData.Relics.Count > 2)
-                {
-                    relicDropdown3.SetValue(currentCharacterData.Relics[2]);
-                }
+                InitializeDropDown(relicDropdown2, _availableRelics);
+                SetDropdownEquipment(2, _characterData.RelicInstanceIds);
                 relicDropdown3.SetInteractable(_isEditable && !_isInBattle);
             }
         }
@@ -203,38 +201,38 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// </summary>
         public void SaveToCharacterData()
         {
-            if (currentCharacterData == null || !_isEditable || _isInBattle) return;
+            if (_characterData == null || !_isEditable || _isInBattle) return;
             
             // Save weapons
-            if (weaponDropdown1 != null)
+            if (weaponDropdown1)
             {
                 string weapon1 = weaponDropdown1.GetValue();
-                currentCharacterData.SetWeapon(0, weapon1);
+                _characterData.SetWeaponInstanceId(0, weapon1);
             }
             
-            if (weaponDropdown2 != null)
+            if (weaponDropdown2)
             {
                 string weapon2 = weaponDropdown2.GetValue();
-                currentCharacterData.SetWeapon(1, weapon2);
+                _characterData.SetWeaponInstanceId(1, weapon2);
             }
             
             // Save relics
-            if (relicDropdown1 != null)
+            if (relicDropdown1)
             {
                 string relic1 = relicDropdown1.GetValue();
-                currentCharacterData.SetRelic(0, relic1);
+                _characterData.SetRelicInstanceId(0, relic1);
             }
             
-            if (relicDropdown2 != null)
+            if (relicDropdown2)
             {
                 string relic2 = relicDropdown2.GetValue();
-                currentCharacterData.SetRelic(1, relic2);
+                _characterData.SetRelicInstanceId(1, relic2);
             }
             
-            if (relicDropdown3 != null)
+            if (relicDropdown3)
             {
                 string relic3 = relicDropdown3.GetValue();
-                currentCharacterData.SetRelic(2, relic3);
+                _characterData.SetRelicInstanceId(2, relic3);
             }
             
             _onDataChanged?.Invoke();
@@ -249,14 +247,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (relicDropdown1 != null) relicDropdown1.SetInteractable(canEdit);
             if (relicDropdown2 != null) relicDropdown2.SetInteractable(canEdit);
             if (relicDropdown3 != null) relicDropdown3.SetInteractable(canEdit);
-        }
-        
-        /// <summary>
-        /// Get current character data
-        /// </summary>
-        public PvCharacterEquipmentData GetCharacterData()
-        {
-            return currentCharacterData;
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.Data
 {
@@ -54,28 +53,6 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             characterId = Guid.NewGuid().ToString();
             weaponInstanceIds = new List<string>();
             relicInstanceIds = new List<string>();
-        }
-        
-        /// <summary>
-        /// Constructor from PvCharacterEquipmentData
-        /// </summary>
-        public PvCharacterSaveData(PvCharacterEquipmentData equipmentData)
-        {
-            if (equipmentData == null)
-            {
-                characterName = string.Empty;
-                characterId = Guid.NewGuid().ToString();
-                weaponInstanceIds = new List<string>();
-                relicInstanceIds = new List<string>();
-                return;
-            }
-            
-            characterName = equipmentData.CharacterName;
-            characterId = Guid.NewGuid().ToString();
-            
-            // Convert weapon names to instance IDs (will be resolved during save/load)
-            weaponInstanceIds = new List<string>(equipmentData.Weapons);
-            relicInstanceIds = new List<string>(equipmentData.Relics);
         }
         
         /// <summary>

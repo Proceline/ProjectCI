@@ -6,13 +6,13 @@ using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Interfaces;
 using UnityEngine;
+using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 
 namespace IndAssets.Scripts.Weapons
 {
     [CreateAssetMenu(fileName = "NewWeapon", menuName = "ProjectCI Tools/Weapon")]
-    public class PvSoWeaponData : ScriptableObject, IIdentifier
+    public class PvSoWeaponData : ScriptableObject, IPvSaveEntry
     {
-        
 #if UNITY_EDITOR
         
         /// <summary>
@@ -25,9 +25,6 @@ namespace IndAssets.Scripts.Weapons
         /// </summary>
         public static string BindingAbilityPropertyName => nameof(bindingAbility);
 #endif
-        
-        [SerializeField] private int weaponIdentifier;
-        [NonSerialized] private string _weaponId = string.Empty;
         
         [SerializeField]
         private PvSoAnimationSupportAsset animator;
@@ -43,22 +40,7 @@ namespace IndAssets.Scripts.Weapons
         public AnimationPlayableSupportBase Animator => animator;
         public PvSoUnitAbility DefaultAttackAbility => bindingAbility;
         
-        public string ID
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_weaponId))
-                {
-                    GenerateNewID();
-                }
-                return _weaponId;
-            }
-        }
-
-        public void GenerateNewID()
-        {
-            _weaponId = weaponIdentifier.ToString("X6");
-        }
+        public string EntryId => name;
 
         [Serializable]
         public class AttributePair

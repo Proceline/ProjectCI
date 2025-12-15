@@ -46,3 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Saving.PvSaveManager
   useCloudSave: 0
   defaultSaveSlot: default
+  equipmentsCollection: {fileID: 11400000, guid: a4e86cc0b9238324cbcdc6209321b9e2, type: 2}

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using IndAssets.Scripts.Passives.Relics;
-using IndAssets.Scripts.Weapons;
+using IndAssets.Scripts.Managers;
+using ProjectCI.CoreSystem.DependencyInjection;
 using UnityEngine;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
 using ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.Saving;
+using ProjectCI.CoreSystem.Runtime.Saving.Data;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
 {
@@ -12,48 +12,25 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
     /// Manager for character equipment system
     /// Handles data management and UI coordination
     /// </summary>
+    [StaticInjectableTarget]
     public class PvMnCharacterEquipmentManager : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private PvMnCharacterPortraitPanel portraitPanel;
         [SerializeField] private PvMnCharacterEquipmentPanel equipmentPanel;
-
-        [SerializeField] private List<PvSoBattleUnitData> collectedCharacters = new();
         
-        [Header("Data")]
-        // Runtime data list - not serialized in inspector, managed at runtime
-        private readonly List<PvCharacterEquipmentData> _characterDataList = new List<PvCharacterEquipmentData>();
-        
-        [Header("Available Equipment")]
-        [SerializeField] private List<PvSoWeaponData> availableWeapons = new();
-        [SerializeField] private List<PvSoPassiveRelic> availableRelics = new();
+        [Inject] private static PvSoWeaponAndRelicCollection _equipmentsCollection;
         
         private bool _isInBattle = false;
         
-        // Cached dictionaries for quick lookup
-        private readonly Dictionary<string, PvSoWeaponData> _weaponsDict = new();
-        private readonly Dictionary<string, PvSoPassiveRelic> _relicsDict = new();
         private readonly List<string> _availableWeaponNames = new List<string>();
         private readonly List<string> _availableRelicNames = new List<string>();
         
-        private void Awake()
-        {
-            RefreshCharactersList();
-            BuildEquipmentDictionaries();
-        }
-        
         private void Start()
         {
+            portraitPanel.RefreshPortraits();
+            BuildEquipmentDictionaries();
             InitializeUI();
-        }
-
-        private void RefreshCharactersList()
-        {
-            foreach (var charData in collectedCharacters)
-            {
-                var charTextData = CreateCharacterData(charData.m_UnitName);
-                AddCharacter(charTextData);
-            }
         }
         
         /// <summary>
@@ -61,28 +38,23 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         /// </summary>
         private void BuildEquipmentDictionaries()
         {
-            _weaponsDict.Clear();
-            _relicsDict.Clear();
             _availableWeaponNames.Clear();
             _availableRelicNames.Clear();
-            
-            foreach (var weaponInfo in availableWeapons)
+
+            if (PvSaveManager.Instance)
             {
-                if (weaponInfo != null)
+                var allWeaponInstances = PvSaveManager.Instance.GetAvailableWeaponInstances();
+                foreach (var weaponInstance in allWeaponInstances)
                 {
-                    var weaponName = weaponInfo.weaponName;
-                    _weaponsDict[weaponName] = weaponInfo;
-                    _availableWeaponNames.Add(weaponName);
+                    var weaponData = _equipmentsCollection.GetWeaponData(weaponInstance.WeaponDataId);
+                    _availableWeaponNames.Add(weaponData.weaponName);
                 }
-            }
-            
-            foreach (var relicInfo in availableRelics)
-            {
-                if (relicInfo != null)
+
+                var allRelicInstances = PvSaveManager.Instance.GetAvailableRelicInstances();
+                foreach (var relicInstance in allRelicInstances)
                 {
-                    string relicName = relicInfo.PassiveName;
-                    _relicsDict[relicName] = relicInfo;
-                    _availableRelicNames.Add(relicName);
+                    var relicData = _equipmentsCollection.GetRelicData(relicInstance.RelicDataId);
+                    _availableRelicNames.Add(relicData.PassiveName);
                 }
             }
         }
@@ -92,9 +64,11 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         /// </summary>
         private void InitializeUI()
         {
+            if (!PvSaveManager.Instance) return;
+            
             if (portraitPanel != null)
             {
-                portraitPanel.Initialize(_characterDataList, OnCharacterSelected);
+                portraitPanel.Initialize(OnCharacterSelected);
             }
             
             if (equipmentPanel != null)
@@ -103,8 +77,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
                     null,
                     _availableWeaponNames,
                     _availableRelicNames,
-                    _weaponsDict,
-                    _relicsDict,
                     OnEquipmentPanelClosed,
                     OnEquipmentDataChanged);
             }
@@ -120,39 +92,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
             if (equipmentPanel != null)
             {
                 equipmentPanel.SetBattleState(isInBattle);
-            }
-        }
-        
-        /// <summary>
-        /// Add a character to the system
-        /// </summary>
-        public void AddCharacter(PvCharacterEquipmentData characterData)
-        {
-            if (characterData == null) return;
-            
-            if (!_characterDataList.Contains(characterData))
-            {
-                _characterDataList.Add(characterData);
-            }
-            
-            if (portraitPanel != null)
-            {
-                portraitPanel.AddCharacter(characterData);
-            }
-        }
-        
-        /// <summary>
-        /// Remove a character from the system
-        /// </summary>
-        public void RemoveCharacter(PvCharacterEquipmentData characterData)
-        {
-            if (characterData == null) return;
-            
-            _characterDataList.Remove(characterData);
-            
-            if (portraitPanel != null)
-            {
-                portraitPanel.RemoveCharacter(characterData);
             }
         }
         
@@ -197,18 +136,15 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         /// <summary>
         /// Update available equipment lists and rebuild dictionaries
         /// </summary>
-        public void UpdateAvailableEquipment(List<PvSoWeaponData> weaponInfos, List<PvSoPassiveRelic> relicInfos)
+        public void UpdateAvailableEquipment()
         {
-            availableWeapons = weaponInfos ?? new List<PvSoWeaponData>();
-            availableRelics = relicInfos ?? new List<PvSoPassiveRelic>();
-            
             BuildEquipmentDictionaries();
             
             // Refresh UI with new equipment lists
             RefreshAllUI();
         }
         
-        private void OnCharacterSelected(PvCharacterEquipmentData characterData)
+        private void OnCharacterSelected(PvCharacterSaveData characterData)
         {
             if (equipmentPanel != null && characterData != null)
             {
@@ -216,8 +152,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
                     characterData,
                     _availableWeaponNames,
                     _availableRelicNames,
-                    _weaponsDict,
-                    _relicsDict,
                     OnEquipmentPanelClosed,
                     OnEquipmentDataChanged);
                 equipmentPanel.ShowPanel();
@@ -242,31 +176,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
             {
                 portraitPanel.UpdateAllPortraits();
             }
-        }
-        
-        /// <summary>
-        /// Get all character data
-        /// </summary>
-        public List<PvCharacterEquipmentData> GetAllCharacterData()
-        {
-            return new List<PvCharacterEquipmentData>(_characterDataList);
-        }
-        
-        /// <summary>
-        /// Get character data by name
-        /// </summary>
-        public PvCharacterEquipmentData GetCharacterDataByName(string characterName)
-        {
-            return _characterDataList.Find(data => data.CharacterName == characterName);
-        }
-        
-        /// <summary>
-        /// Create a new character data instance
-        /// </summary>
-        public PvCharacterEquipmentData CreateCharacterData(string characterName)
-        {
-            var newData = new PvCharacterEquipmentData(characterName);
-            return newData;
         }
         
         /// <summary>

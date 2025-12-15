@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using IndAssets.Scripts.Managers;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 using ProjectCI.CoreSystem.Runtime.Saving.Implementations;
-using ProjectCI.CoreSystem.Runtime.CharacterEquipment.Data;
 using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Passives.Relics;
 
@@ -18,6 +17,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
     public class PvSaveManager : MonoBehaviour
     {
         private static PvSaveManager _instance;
+        public static PvSaveManager Instance => _instance;
         
         [Header("Save System Configuration")]
         [SerializeField] private bool useCloudSave = false; // Toggle between local and cloud storage
@@ -26,14 +26,16 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         private IPvSaveSystem _saveSystem;
         private PvSaveData _currentSaveData;
         private bool _isInitialized;
-        
+
+        [SerializeField] private PvSoWeaponAndRelicCollection equipmentsCollection;
         // Equipment data references (for resolving instance names to data)
-        private Dictionary<string, PvSoWeaponData> _weaponDataDict = new Dictionary<string, PvSoWeaponData>();
-        private Dictionary<string, PvSoPassiveRelic> _relicDataDict = new Dictionary<string, PvSoPassiveRelic>();
+        private readonly Dictionary<string, PvSoWeaponData> _weaponDataDict = new Dictionary<string, PvSoWeaponData>();
+        private readonly Dictionary<string, PvSoPassiveRelic> _relicDataDict = new Dictionary<string, PvSoPassiveRelic>();
         
         public bool IsInitialized => _isInitialized;
-        public PvSaveData CurrentSaveData => _currentSaveData;
-        
+
+        public PvSaveData CurrentSaveData => _currentSaveData ??= new PvSaveData();
+
         private void Awake()
         {
             if (_instance)
@@ -43,6 +45,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
 
             _instance = this;
+            SetEquipmentDataReferences();
             InitializeSaveSystem();
             DontDestroyOnLoad(gameObject);
         }
@@ -77,12 +80,27 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Set equipment data dictionaries for resolving instance names
         /// </summary>
-        public void SetEquipmentDataReferences(
-            Dictionary<string, PvSoWeaponData> weaponDataDict,
-            Dictionary<string, PvSoPassiveRelic> relicDataDict)
+        private void SetEquipmentDataReferences()
         {
-            _weaponDataDict = weaponDataDict ?? new Dictionary<string, PvSoWeaponData>();
-            _relicDataDict = relicDataDict ?? new Dictionary<string, PvSoPassiveRelic>();
+            if (!equipmentsCollection)
+            {
+                return;
+            }
+            
+            foreach (var weaponData in equipmentsCollection.Weapons)
+            {
+                _weaponDataDict.Add(weaponData.EntryId, weaponData);
+            }
+
+            foreach (var relicData in equipmentsCollection.Relics)
+            {
+                _relicDataDict.Add(relicData.EntryId, relicData);
+            }
+        }
+        
+        public async void LoadDefaultGame(string slotName)
+        {
+            await LoadGameAsync(slotName);
         }
         
         /// <summary>
@@ -152,15 +170,6 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             return success;
         }
         
-        /// <summary>
-        /// Create new save data (for new game)
-        /// </summary>
-        public void CreateNewSaveData()
-        {
-            _currentSaveData = new PvSaveData();
-            Debug.Log("New save data created");
-        }
-        
         #region Character Management
         
         /// <summary>
@@ -168,12 +177,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public void UnlockCharacter(string characterId)
         {
-            if (_currentSaveData == null)
-            {
-                CreateNewSaveData();
-            }
-            
-            _currentSaveData.AddUnlockedCharacter(characterId);
+            CurrentSaveData.AddUnlockedCharacter(characterId);
         }
         
         /// <summary>
@@ -181,17 +185,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public bool IsCharacterUnlocked(string characterId)
         {
-            if (_currentSaveData == null) return false;
-            return _currentSaveData.IsCharacterUnlocked(characterId);
-        }
-        
-        /// <summary>
-        /// Get all unlocked character IDs
-        /// </summary>
-        public List<string> GetUnlockedCharacters()
-        {
-            if (_currentSaveData == null) return new List<string>();
-            return new List<string>(_currentSaveData.UnlockedCharacterIds);
+            return _currentSaveData != null && _currentSaveData.IsCharacterUnlocked(characterId);
         }
         
         /// <summary>
@@ -199,12 +193,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public void SetCharacterEquipmentData(PvCharacterSaveData characterData)
         {
-            if (_currentSaveData == null)
-            {
-                CreateNewSaveData();
-            }
-            
-            _currentSaveData.SetCharacterData(characterData);
+            CurrentSaveData.SetCharacterData(characterData);
         }
         
         /// <summary>
@@ -212,8 +201,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public PvCharacterSaveData GetCharacterEquipmentData(string characterName)
         {
-            if (_currentSaveData == null) return null;
-            return _currentSaveData.GetCharacterDataByName(characterName);
+            return _currentSaveData?.GetCharacterDataByName(characterName);
         }
         
         #endregion
@@ -225,15 +213,20 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public PvWeaponInstance AddWeaponInstance(string weaponDataName)
         {
-            if (_currentSaveData == null)
-            {
-                CreateNewSaveData();
-            }
-            
-            var instance = new PvWeaponInstance(weaponDataName);
-            _currentSaveData.AddWeaponInstance(instance);
+            if (!_weaponDataDict.TryGetValue(weaponDataName, out var weaponData)) return null;
+            var instance = new PvWeaponInstance(weaponData);
+            CurrentSaveData.AddWeaponInstance(instance);
             Debug.Log($"Added weapon instance: {instance.InstanceId} ({weaponDataName})");
+            
             return instance;
+
+        }
+        
+        public void AddWeaponInstance(PvSoWeaponData weaponData)
+        {
+            var instance = new PvWeaponInstance(weaponData);
+            CurrentSaveData.AddWeaponInstance(instance);
+            Debug.Log($"Added weapon instance: {instance.InstanceId} ({weaponData.name})");
         }
         
         /// <summary>
@@ -241,16 +234,21 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public PvRelicInstance AddRelicInstance(string relicDataName)
         {
-            if (_currentSaveData == null)
-            {
-                CreateNewSaveData();
-            }
-            
-            var instance = new PvRelicInstance(relicDataName);
-            _currentSaveData.AddRelicInstance(instance);
+            if (!_relicDataDict.TryGetValue(relicDataName, out var relicData)) return null;
+            var instance = new PvRelicInstance(relicData);
+            CurrentSaveData.AddRelicInstance(instance);
             Debug.Log($"Added relic instance: {instance.InstanceId} ({relicDataName})");
             return instance;
         }
+        
+        public void AddRelicInstance(PvSoPassiveRelic relicData)
+        {
+            var instance = new PvRelicInstance(relicData);
+            CurrentSaveData.AddRelicInstance(instance);
+            Debug.Log($"Added relic instance: {instance.InstanceId} ({relicData.name})");
+        }
+
+        public List<PvCharacterSaveData> GetUnlockedCharacters() => CurrentSaveData.CharacterEquipmentData;
         
         /// <summary>
         /// Get available weapon instances (not equipped)
@@ -268,24 +266,6 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         {
             if (_currentSaveData == null) return new List<PvRelicInstance>();
             return _currentSaveData.GetAvailableRelicInstances();
-        }
-        
-        /// <summary>
-        /// Get weapon instances by data name
-        /// </summary>
-        public List<PvWeaponInstance> GetWeaponInstancesByDataName(string weaponDataName)
-        {
-            if (_currentSaveData == null) return new List<PvWeaponInstance>();
-            return _currentSaveData.GetWeaponInstancesByDataName(weaponDataName);
-        }
-        
-        /// <summary>
-        /// Get relic instances by data name
-        /// </summary>
-        public List<PvRelicInstance> GetRelicInstancesByDataName(string relicDataName)
-        {
-            if (_currentSaveData == null) return new List<PvRelicInstance>();
-            return _currentSaveData.GetRelicInstancesByDataName(relicDataName);
         }
         
         /// <summary>
@@ -440,58 +420,6 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
             
             return false;
-        }
-        
-        #endregion
-        
-        #region Conversion Helpers
-        
-        /// <summary>
-        /// Convert PvCharacterEquipmentData to PvCharacterSaveData
-        /// This resolves weapon/relic names to instance IDs
-        /// </summary>
-        public PvCharacterSaveData ConvertEquipmentDataToSaveData(
-            PvCharacterEquipmentData equipmentData,
-            Dictionary<string, PvSoWeaponData> weaponDataDict,
-            Dictionary<string, PvSoPassiveRelic> relicDataDict)
-        {
-            if (equipmentData == null) return null;
-            
-            var saveData = new PvCharacterSaveData(equipmentData.CharacterName);
-            
-            // Convert weapon names to instance IDs
-            for (int i = 0; i < equipmentData.Weapons.Count && i < 2; i++)
-            {
-                string weaponName = equipmentData.Weapons[i];
-                if (string.IsNullOrEmpty(weaponName)) continue;
-                
-                // Find an available instance of this weapon
-                var availableInstances = GetWeaponInstancesByDataName(weaponName)
-                    .Where(inst => inst.IsAvailable()).ToList();
-                
-                if (availableInstances.Count > 0)
-                {
-                    saveData.SetWeaponInstanceId(i, availableInstances[0].InstanceId);
-                }
-            }
-            
-            // Convert relic names to instance IDs
-            for (int i = 0; i < equipmentData.Relics.Count && i < 3; i++)
-            {
-                string relicName = equipmentData.Relics[i];
-                if (string.IsNullOrEmpty(relicName)) continue;
-                
-                // Find an available instance of this relic
-                var availableInstances = GetRelicInstancesByDataName(relicName)
-                    .Where(inst => inst.IsAvailable()).ToList();
-                
-                if (availableInstances.Count > 0)
-                {
-                    saveData.SetRelicInstanceId(i, availableInstances[0].InstanceId);
-                }
-            }
-            
-            return saveData;
         }
         
         #endregion
