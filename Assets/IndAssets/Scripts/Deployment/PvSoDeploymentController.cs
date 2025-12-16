@@ -84,6 +84,12 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 bodyMesh.InstantiatePartPrefab("head", headPrefab);
             }
 
+            // Load equipment from save system if available
+            if (PvSaveManager.Instance && PvSaveManager.Instance.IsInitialized)
+            {
+                LoadEquipmentFromSave(sceneUnit, unitData);
+            }
+
             slot.OccupiedUnit = sceneUnit;
             _slotToUnitMap[slot.SlotIndex] = sceneUnit;
             _unitToSlotMap[sceneUnit] = slot.SlotIndex;
@@ -242,12 +248,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             // Set unit data
             sceneUnit.UnitData = unitData;
             sceneUnit.IsFriendly = true;
-            
-            // Load equipment from save system if available
-            if (PvSaveManager.Instance != null && PvSaveManager.Instance.IsInitialized)
-            {
-                LoadEquipmentFromSave(sceneUnit, unitData);
-            }
             
             // Initialize unit
             sceneUnit.GenerateNewID();

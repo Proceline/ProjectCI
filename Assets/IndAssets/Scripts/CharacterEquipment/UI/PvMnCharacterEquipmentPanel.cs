@@ -148,19 +148,21 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 characterNameText.text = _characterData.CharacterName;
             }
 
-            void InitializeWeaponDropDown(PvMnEquipmentDropdown dropdown)
+            void InitializeWeaponDropDown(PvMnEquipmentDropdown dropdown, int slotIndex)
             {
                 dropdown.Initialize(_availableWeaponInstanceIds, _availableWeaponDisplayNames,
-                    _equipmentsCollection.WeaponsDict, _equipmentsCollection.RelicsDict);
+                    _equipmentsCollection.WeaponsDict, _equipmentsCollection.RelicsDict,
+                    _characterData?.CharacterId, slotIndex);
             }
             
-            void InitializeRelicDropDown(PvMnEquipmentDropdown dropdown)
+            void InitializeRelicDropDown(PvMnEquipmentDropdown dropdown, int slotIndex)
             {
                 dropdown.Initialize(_availableRelicInstanceIds, _availableRelicDisplayNames,
-                    _equipmentsCollection.WeaponsDict, _equipmentsCollection.RelicsDict);
+                    _equipmentsCollection.WeaponsDict, _equipmentsCollection.RelicsDict,
+                    _characterData?.CharacterId, slotIndex);
             }
 
-            void SetDropdownEquipment(PvMnEquipmentDropdown dropdown, int targetIndex, List<string> holdingIndices)
+            void InitializeDropdownEquipment(PvMnEquipmentDropdown dropdown, int targetIndex, List<string> holdingIndices)
             {
                 if (dropdown == null) return;
                 
@@ -168,49 +170,49 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 // If index doesn't exist, set to empty
                 if (holdingIndices != null && holdingIndices.Count > targetIndex)
                 {
-                    dropdown.SetValue(holdingIndices[targetIndex]);
+                    dropdown.SetValueWithoutNotify(holdingIndices[targetIndex]);
                 }
                 else
                 {
                     // Index doesn't exist, set to empty
-                    dropdown.SetValue(string.Empty);
+                    dropdown.SetValueWithoutNotify(string.Empty);
                 }
             }
             
             // Update weapon dropdowns
             if (weaponDropdown1)
             {
-                InitializeWeaponDropDown(weaponDropdown1);
-                SetDropdownEquipment(weaponDropdown1, 0, _characterData.WeaponInstanceIds);
+                InitializeWeaponDropDown(weaponDropdown1, 0);
+                InitializeDropdownEquipment(weaponDropdown1, 0, _characterData.WeaponInstanceIds);
                 weaponDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
 
             if (weaponDropdown2)
             {
-                InitializeWeaponDropDown(weaponDropdown2);
-                SetDropdownEquipment(weaponDropdown2, 1, _characterData.WeaponInstanceIds);
+                InitializeWeaponDropDown(weaponDropdown2, 1);
+                InitializeDropdownEquipment(weaponDropdown2, 1, _characterData.WeaponInstanceIds);
                 weaponDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
 
             // Update relic dropdowns
             if (relicDropdown1)
             {
-                InitializeRelicDropDown(relicDropdown1);
-                SetDropdownEquipment(relicDropdown1, 0, _characterData.RelicInstanceIds);
+                InitializeRelicDropDown(relicDropdown1, 0);
+                InitializeDropdownEquipment(relicDropdown1, 0, _characterData.RelicInstanceIds);
                 relicDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
             
             if (relicDropdown2)
             {
-                InitializeRelicDropDown(relicDropdown2);
-                SetDropdownEquipment(relicDropdown2, 1, _characterData.RelicInstanceIds);
+                InitializeRelicDropDown(relicDropdown2, 1);
+                InitializeDropdownEquipment(relicDropdown2, 1, _characterData.RelicInstanceIds);
                 relicDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
             
             if (relicDropdown3)
             {
-                InitializeRelicDropDown(relicDropdown3);
-                SetDropdownEquipment(relicDropdown3, 2, _characterData.RelicInstanceIds);
+                InitializeRelicDropDown(relicDropdown3, 2);
+                InitializeDropdownEquipment(relicDropdown3, 2, _characterData.RelicInstanceIds);
                 relicDropdown3.SetInteractable(_isEditable && !_isInBattle);
             }
         }

@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.Runtime.Saving;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -26,6 +27,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         private Dictionary<string, PvSoWeaponData> _weaponInfoDict = new Dictionary<string, PvSoWeaponData>();
         private Dictionary<string, PvSoPassiveRelic> _relicInfoDict = new Dictionary<string, PvSoPassiveRelic>();
         private string _currentHoveredOption;
+        private string _currentCharacterId; // Current character ID for this dropdown
+        private int _slotIndex = -1; // Slot index for this dropdown (0, 1 for weapons; 0, 1, 2 for relics)
+
+        [SerializeField] private UnityEvent<string, string, int> onEquipmentEquipped;
         
         private void Awake()
         {
@@ -47,13 +52,15 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// Initialize dropdown with instanceIds and display names
         /// </summary>
         public void Initialize(List<string> instanceIds, List<string> displayNames, 
-            Dictionary<string, PvSoWeaponData> weaponInfoDict = null, 
-            Dictionary<string, PvSoPassiveRelic> relicInfoDict = null)
+            Dictionary<string, PvSoWeaponData> weaponInfoDict, 
+            Dictionary<string, PvSoPassiveRelic> relicInfoDict, string currentCharacterId, int slotIndex = -1)
         {
             _instanceIds = instanceIds ?? new List<string>();
             _displayNames = displayNames ?? new List<string>();
             _weaponInfoDict = weaponInfoDict ?? new Dictionary<string, PvSoWeaponData>();
             _relicInfoDict = relicInfoDict ?? new Dictionary<string, PvSoPassiveRelic>();
+            _currentCharacterId = currentCharacterId;
+            _slotIndex = slotIndex;
             
             // Ensure both lists have the same count
             if (_instanceIds.Count != _displayNames.Count)
@@ -77,14 +84,14 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Set current selected value by instanceId
         /// </summary>
-        public void SetValue(string instanceId)
+        public void SetValueWithoutNotify(string instanceId)
         {
             if (dropdown == null) return;
             
             // If instanceId is empty or null, set to empty option (index 0)
             if (string.IsNullOrEmpty(instanceId))
             {
-                dropdown.value = 0;
+                dropdown.SetValueWithoutNotify(0);
                 return;
             }
             
@@ -92,12 +99,12 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             int index = _instanceIds.IndexOf(instanceId);
             if (index >= 0)
             {
-                dropdown.value = index + 1; // +1 because first option is empty
+                dropdown.SetValueWithoutNotify(index + 1); // +1 because first option is empty
             }
             else
             {
                 // InstanceId not found, set to empty
-                dropdown.value = 0;
+                dropdown.SetValueWithoutNotify(0);
             }
         }
         
@@ -140,7 +147,19 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         private void OnDropdownValueChanged(int index)
         {
-            // Handle value change if needed
+            if (index == 0)
+            {
+                Debug.LogWarning("Equipment unequipped");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_currentCharacterId))
+            {
+                Debug.LogError("Character ID is null or empty");
+                return;
+            }
+
+            onEquipmentEquipped?.Invoke(_instanceIds[index - 1], _currentCharacterId, _slotIndex);
         }
         
         public void OnPointerEnter(PointerEventData eventData)

@@ -972,6 +972,22 @@ MonoBehaviour:
   dropdown: {fileID: 5913924671614637286}
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
+  onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6380136987885106805, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.Saving.PvSaveManager,
+          Assembly-CSharp
+        m_MethodName: EquipWeaponToCharacter
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1204496779834638816
 GameObject:
   m_ObjectHideFlags: 0
@@ -2800,6 +2816,22 @@ MonoBehaviour:
   dropdown: {fileID: 4479882842270327874}
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
+  onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6380136987885106805, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.Saving.PvSaveManager,
+          Assembly-CSharp
+        m_MethodName: EquipWeaponToCharacter
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2551356605526574013
 GameObject:
   m_ObjectHideFlags: 0
@@ -3067,6 +3099,9 @@ MonoBehaviour:
   dropdown: {fileID: 3080833817924812394}
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
+  onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2916299033531270825
 GameObject:
   m_ObjectHideFlags: 0
@@ -5544,6 +5579,9 @@ MonoBehaviour:
   dropdown: {fileID: 390666020143789034}
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
+  onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5740816256194678090
 GameObject:
   m_ObjectHideFlags: 0
@@ -6567,6 +6605,9 @@ MonoBehaviour:
   dropdown: {fileID: 7404972416383083332}
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
+  onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8027258130057394588
 GameObject:
   m_ObjectHideFlags: 0
