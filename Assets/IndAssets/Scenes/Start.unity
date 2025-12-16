@@ -751,15 +751,14 @@ MonoBehaviour:
   onLoadedGameConfirmed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: 147f1877811f053429cc9c1a57a73a77, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneManagerConfig,
+      - m_Target: {fileID: 1226903307}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.Saving.UI.PvMainMenuUI,
           Assembly-CSharp
-        m_MethodName: TransitionToScene
-        m_Mode: 2
+        m_MethodName: LoadSave
+        m_Mode: 0
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: f418f8f1cb2afbf459b405ecb2879e9f, type: 2}
-          m_ObjectArgumentAssemblyTypeName: ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneConfig,
-            Assembly-CSharp
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2252,6 +2251,23 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onLoadedGameSucceeded:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 147f1877811f053429cc9c1a57a73a77, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneManagerConfig,
+          Assembly-CSharp
+        m_MethodName: TransitionToScene
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: f418f8f1cb2afbf459b405ecb2879e9f, type: 2}
+          m_ObjectArgumentAssemblyTypeName: ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneConfig,
+            Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -4000,11 +4016,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 62362514171940228, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 786.62195
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 62362514171940228, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 516.5321
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 62362514171940228, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
       propertyPath: m_LocalPosition.z

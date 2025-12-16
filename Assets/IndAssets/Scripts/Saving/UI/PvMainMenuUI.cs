@@ -37,6 +37,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
         private bool _isRefreshing = false; // Track if we're currently refreshing save list
 
         [SerializeField] private UnityEvent<List<PvSaveDetails>> onSaveDataListRefreshRequested;
+        [SerializeField] private UnityEvent<PvSaveDetails> onLoadedGameSucceeded;
         [NonSerialized] private PvSaveDetails _lastUsedSave;
         
         private void Start()
@@ -317,7 +318,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
         /// <summary>
         /// Handle continue game button click
         /// </summary>
-        private async void OnContinueGameClicked()
+        private void OnContinueGameClicked()
         {
             if (!PvSaveManager.Instance)
             {
@@ -337,20 +338,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
                 // You can show a message to the user here
                 return;
             }
-            
-            // Load the last used save
-            bool success = await PvSaveManager.Instance.LoadGameByGuidAsync(_lastUsedSave.SaveFolderGuid);
-            
-            if (success)
-            {
-                Debug.Log($"Continued game: {_lastUsedSave.SaveSlotName}");
-                // You can add scene transition logic here
-                // For example: SceneManager.LoadScene("GameScene");
-            }
-            else
-            {
-                Debug.LogError($"Failed to continue game: {_lastUsedSave.SaveSlotName}");
-            }
+
+            LoadSave(_lastUsedSave);
         }
         
         /// <summary>
@@ -516,6 +505,27 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
             if (saveListUI != null)
             {
                 saveListUI.gameObject.SetActive(false);
+            }
+        }
+
+        public async void LoadSave(PvSaveDetails saveDetails)
+        {
+            if (saveDetails == null)
+            {
+                Debug.LogError("Save details is null");
+                return;
+            }
+            
+            bool success = await PvSaveManager.Instance.LoadGameByGuidAsync(saveDetails);
+            if (success)
+            {
+                Debug.Log($"Loaded save: {saveDetails.SaveSlotName}");
+                // You can add additional logic here, like closing the load menu or triggering scene transitions
+                onLoadedGameSucceeded.Invoke(saveDetails);
+            }
+            else
+            {
+                Debug.LogError($"Failed to load save: {saveDetails.SaveSlotName}");
             }
         }
     }

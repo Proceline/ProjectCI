@@ -20,7 +20,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
         [SerializeField] private TextMeshProUGUI emptyStateText; // Text for empty state
         
         private List<PvSaveSlotUI> _saveSlotUIs = new List<PvSaveSlotUI>();
-        [SerializeField] private UnityEvent onLoadedGameConfirmed;
+        [SerializeField] private UnityEvent<PvSaveDetails> onLoadedGameConfirmed;
         
         /// <summary>
         /// Update the UI with the list of save slots
@@ -107,32 +107,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
                 return;
             }
             
-            // Load the selected save
-            LoadSave(saveDetails);
-        }
-        
-        /// <summary>
-        /// Load a save by its details
-        /// </summary>
-        private async void LoadSave(PvSaveDetails saveDetails)
-        {
-            if (saveDetails == null)
-            {
-                Debug.LogError("Save details is null");
-                return;
-            }
-            
-            bool success = await PvSaveManager.Instance.LoadGameByGuidAsync(saveDetails.SaveFolderGuid);
-            if (success)
-            {
-                Debug.Log($"Loaded save: {saveDetails.SaveSlotName}");
-                // You can add additional logic here, like closing the load menu or triggering scene transitions
-                onLoadedGameConfirmed.Invoke();
-            }
-            else
-            {
-                Debug.LogError($"Failed to load save: {saveDetails.SaveSlotName}");
-            }
+            onLoadedGameConfirmed.Invoke(saveDetails);
         }
     }
 }

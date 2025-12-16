@@ -23,11 +23,12 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         
         [Header("Save System Configuration")]
         [SerializeField] private bool useCloudSave = false; // Toggle between local and cloud storage
-        [SerializeField] private string defaultSaveSlot = "default";
         [SerializeField] private bool enableSaveEncryption = true; // Enable encryption for save files
         
         private IPvSaveSystem _saveSystem;
         private PvSaveData _currentSaveData;
+        private PvSaveDetails _currentSaveDetails;
+
         private bool _isInitialized;
 
         [SerializeField] private PvSoWeaponAndRelicCollection equipmentsCollection;
@@ -37,7 +38,15 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         
         public bool IsInitialized => _isInitialized;
 
-        public PvSaveData CurrentSaveData => _currentSaveData ??= new PvSaveData();
+        public PvSaveData CurrentSaveData 
+        {
+            get 
+            {
+                if (_currentSaveData == null) throw new Exception("Save data is not initialized");
+                return _currentSaveData;
+            }
+        }
+
         public static event Action<List<PvSaveDetails>> onAllSaveDataListed;
 
         private void Awake()
@@ -123,44 +132,10 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
         }
         
-        public async void LoadDefaultGame(string slotName)
-        {
-            await LoadGameAsync(slotName);
-        }
-        
-        /// <summary>
-        /// Load game data from save file by slot name
-        /// </summary>
-        public async Task<bool> LoadGameAsync(string slotName = null)
-        {
-            if (!_isInitialized || _saveSystem == null)
-            {
-                Debug.LogError("Save system not initialized");
-                return false;
-            }
-            
-            slotName = slotName ?? defaultSaveSlot;
-            
-            _currentSaveData = await _saveSystem.LoadAsync(slotName);
-            
-            if (_currentSaveData == null)
-            {
-                // Create new save data if no save exists
-                _currentSaveData = new PvSaveData();
-                Debug.Log("No save file found, created new save data");
-            }
-            else
-            {
-                Debug.Log("Game data loaded successfully");
-            }
-            
-            return true;
-        }
-        
         /// <summary>
         /// Load game data from save file by GUID (for load menu)
         /// </summary>
-        public async Task<bool> LoadGameByGuidAsync(string saveFolderGuid)
+        public async Task<bool> LoadGameByGuidAsync(PvSaveDetails saveDetails)
         {
             if (!_isInitialized || _saveSystem == null)
             {
@@ -168,13 +143,14 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 return false;
             }
             
-            if (string.IsNullOrEmpty(saveFolderGuid))
+            if (string.IsNullOrEmpty(saveDetails.SaveFolderGuid))
             {
                 Debug.LogError("Save folder GUID is null or empty");
                 return false;
             }
             
-            _currentSaveData = await _saveSystem.LoadByGuidAsync(saveFolderGuid);
+            _currentSaveData = await _saveSystem.LoadByGuidAsync(saveDetails.SaveFolderGuid);
+            _currentSaveDetails = saveDetails;
             
             if (_currentSaveData == null)
             {
@@ -186,20 +162,31 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             return true;
         }
 
-        public async void SaveDefaultGame()
+        public async void SaveCurrentGame()
         {
-            await SaveGameAsync(defaultSaveSlot);
+            if (_currentSaveData == null || _currentSaveDetails == null)
+            {
+                Debug.LogError("No save data to save");
+                return;
+            }
+
+            await SaveGameAsync(_currentSaveDetails.SaveSlotName);
         }
 
-        public async Awaitable CreateNewGameAsync(string slotName = null)
+        public async Awaitable CreateNewGameAsync(string slotName)
         {
             if (!_isInitialized || _saveSystem == null)
             {
                 Debug.LogError("Save system not initialized");
                 return;
             }
+
+            if (string.IsNullOrEmpty(slotName))
+            {
+                Debug.LogError("Save slot name is null or empty");
+                return;
+            }
             
-            slotName = slotName ?? defaultSaveSlot;
             _currentSaveData = new PvSaveData();
             await SaveGameAsync(slotName);
         }
@@ -207,7 +194,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Save game data to file
         /// </summary>
-        public async Task<bool> SaveGameAsync(string slotName = null)
+        public async Task<bool> SaveGameAsync(string slotName)
         {
             if (!_isInitialized || _saveSystem == null)
             {
@@ -221,7 +208,11 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 _currentSaveData = new PvSaveData();
             }
             
-            slotName = slotName ?? defaultSaveSlot;
+            if (string.IsNullOrEmpty(slotName))
+            {
+                Debug.LogError("Save Data Name cannot be Empty!");
+                return false;
+            }
             
             bool success = await _saveSystem.SaveAsync(_currentSaveData, slotName);
             

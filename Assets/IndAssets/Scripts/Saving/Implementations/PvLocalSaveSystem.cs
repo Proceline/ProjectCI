@@ -311,7 +311,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
             {
                 return new string[0];
             }
-            
+
             try
             {
                 if (!Directory.Exists(_saveDirectoryPath))
@@ -332,6 +332,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
                         guids.Add(folderName);
                     }
                 }
+                
+                await Awaitable.EndOfFrameAsync();
                 
                 return guids.ToArray();
             }
