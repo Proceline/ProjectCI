@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8e0279e33a25a94f834f49e1769c1d6, type: 3}
+  m_Name: AnimSupport_NoWeapon
+  m_EditorClassIdentifier: 
+  defaultAnimationClipInfos:
+  - {fileID: 11400000, guid: a3bc590e9c63fbd46b125e5ced9bce48, type: 2}
+  - {fileID: 11400000, guid: 769d19eb71492d64db3e0c9fc27f7ad8, type: 2}
+  - {fileID: 11400000, guid: 27f13843f5a5c754e85a0f540ab74dc8, type: 2}
+  - {fileID: 11400000, guid: 544a4970b935e0f43b078e04d61a7339, type: 2}
+  - {fileID: 11400000, guid: 2e9bb31994bd52b408ca01ff84c1eb75, type: 2}
+  - {fileID: 11400000, guid: 0955329f2650add4f9a16628d972d9e4, type: 2}
+  - {fileID: 11400000, guid: be04487fb8baced478a6a79427618ef8, type: 2}
+  - {fileID: 11400000, guid: f189183758f3cff47bb3ce9562dd78f1, type: 2}

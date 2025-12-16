@@ -48,6 +48,8 @@ namespace IndAssets.Editor.Scripts.Managers
             
             EditorGUILayout.PropertyField(
                 serializedObject.FindProperty(PvSoWeaponAndRelicCollection.UnitsPropertyName));
+            EditorGUILayout.PropertyField(
+                serializedObject.FindProperty(PvSoWeaponAndRelicCollection.BodyMeshPrefabsPropertyName));
 
             // Display collected items
             EditorGUILayout.LabelField($"Weapons Count: {_weaponsProperty.arraySize}", EditorStyles.boldLabel);

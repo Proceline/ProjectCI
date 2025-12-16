@@ -63,3 +63,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3902bb95af16f544f86fd057948d363e, type: 2}
   - {fileID: 11400000, guid: 5d486b566b6dec7489061936e688cd1d, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
+  headMeshPrefab: {fileID: 7201506655171250344, guid: 3495d8b6be766db4bbaa466ca51af608, type: 3}

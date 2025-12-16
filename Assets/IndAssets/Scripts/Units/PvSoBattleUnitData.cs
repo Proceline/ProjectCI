@@ -20,6 +20,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public UnitAnimationManager PresetAnimatedMount => animatedMountForm;
 
+        [SerializeField]
+        private GameObject headMeshPrefab;
+
+        public GameObject HeadMeshPrefab => headMeshPrefab;
+
         public override void InitializeUnitDataToGridUnit(GridPawnUnit pawnUnit)
         {
             foreach (var passive in personalPassives)

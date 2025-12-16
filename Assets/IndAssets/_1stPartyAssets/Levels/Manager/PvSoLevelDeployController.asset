@@ -14,9 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Deployment.PvSoDeploymentController
   levelData: {fileID: 11400000, guid: 949b1e469e307cc408561ba8d2f0ba62, type: 2}
   sceneUnitPrefab: {fileID: 3356841814951682856, guid: dfdd06b7100942341afb9af43a189030, type: 3}
-  deployedUnits:
-  - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
-  - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
-  - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
-  - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
-  unitToSlotMapping: 00000000000000000000000000000000
+  deployedUnits: []
+  unitToSlotMapping: 

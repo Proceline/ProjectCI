@@ -71,7 +71,19 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 Debug.LogError("Failed to spawn unit!");
                 return;
             }
-            
+
+            var bodyMeshPrefab = WeaponAndRelicCollection.GetDefaultBodyMeshPrefab();
+            if (bodyMeshPrefab)
+            {
+                var bodyMesh = Instantiate(bodyMeshPrefab, sceneUnit.transform);
+                bodyMesh.transform.localPosition = Vector3.zero;
+                bodyMesh.transform.localRotation = Quaternion.identity;
+                bodyMesh.transform.localScale = new Vector3(1.75f, 1.75f, 1.75f);
+
+                var headPrefab = unitData.HeadMeshPrefab;
+                bodyMesh.InstantiatePartPrefab("head", headPrefab);
+            }
+
             slot.OccupiedUnit = sceneUnit;
             _slotToUnitMap[slot.SlotIndex] = sceneUnit;
             _unitToSlotMap[sceneUnit] = slot.SlotIndex;
@@ -228,7 +240,14 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             var sceneUnit = Instantiate(sceneUnitPrefab, spawnPosition, Quaternion.identity, parent);
             
             // Set unit data
-            SetUnitData(sceneUnit, unitData);
+            sceneUnit.UnitData = unitData;
+            sceneUnit.IsFriendly = true;
+            
+            // Load equipment from save system if available
+            if (PvSaveManager.Instance != null && PvSaveManager.Instance.IsInitialized)
+            {
+                LoadEquipmentFromSave(sceneUnit, unitData);
+            }
             
             // Initialize unit
             sceneUnit.GenerateNewID();
@@ -258,21 +277,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             
             // Fallback to world position or grid position as world position
             return slot.WorldPosition != Vector3.zero ? slot.WorldPosition : new Vector3(slot.GridPosition.x, 0, slot.GridPosition.y);
-        }
-        
-        /// <summary>
-        /// Set unit data and equipment from save system
-        /// </summary>
-        private void SetUnitData(PvMnSceneUnit sceneUnit, PvSoBattleUnitData unitData)
-        {
-            sceneUnit.UnitData = unitData;
-            sceneUnit.IsFriendly = true;
-            
-            // Load equipment from save system if available
-            if (PvSaveManager.Instance != null && PvSaveManager.Instance.IsInitialized)
-            {
-                LoadEquipmentFromSave(sceneUnit, unitData);
-            }
         }
         
         /// <summary>

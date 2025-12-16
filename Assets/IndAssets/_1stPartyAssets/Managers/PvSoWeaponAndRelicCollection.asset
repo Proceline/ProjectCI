@@ -37,3 +37,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 76a30a010ac528a43855312d4c864e6d, type: 2}
   - {fileID: 11400000, guid: e056745e590394c4e9b0a1c897aab693, type: 2}
   - {fileID: 11400000, guid: 8a599316c80d7a940b6fabc5b928cb37, type: 2}
+  bodyMeshPrefabs:
+  - {fileID: 6089969660927558297, guid: 626f91f3ce89e6f4983c357449528628, type: 3}
