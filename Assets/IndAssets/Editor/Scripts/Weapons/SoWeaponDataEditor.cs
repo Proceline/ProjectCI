@@ -14,7 +14,6 @@ namespace IndAssets.Editor.Scripts.Weapons
 
         private void OnEnable()
         {
-            _mWeaponNumberIdentifier = serializedObject.FindProperty("weaponIdentifier");
             _mWeaponName = serializedObject.FindProperty("weaponName");
             _mDescription = serializedObject.FindProperty("description");
             _mAttributes = serializedObject.FindProperty("attributes");
@@ -24,7 +23,6 @@ namespace IndAssets.Editor.Scripts.Weapons
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_mWeaponNumberIdentifier);
             EditorGUILayout.PropertyField(_mWeaponName);
             EditorGUILayout.PropertyField(_mDescription);
 

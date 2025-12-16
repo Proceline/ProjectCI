@@ -332,6 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc24fda586ec88e4e83bc29e4d4067ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.PvMnCharacterEquipmentManager
+  setupWhileSpawned: 1
   portraitPanel: {fileID: 8466938452109928424}
   equipmentPanel: {fileID: 2341247752196286576}
 --- !u!1 &536098519287661674

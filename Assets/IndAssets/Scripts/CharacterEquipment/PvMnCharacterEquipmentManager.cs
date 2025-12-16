@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.DependencyInjection;
@@ -15,6 +16,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
     [StaticInjectableTarget]
     public class PvMnCharacterEquipmentManager : MonoBehaviour
     {
+        [SerializeField] private bool setupWhileSpawned = false;
+        
         [Header("UI References")]
         [SerializeField] private PvMnCharacterPortraitPanel portraitPanel;
         [SerializeField] private PvMnCharacterEquipmentPanel equipmentPanel;
@@ -25,7 +28,15 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         
         private readonly List<string> _availableWeaponNames = new List<string>();
         private readonly List<string> _availableRelicNames = new List<string>();
-        
+
+        private void Start()
+        {
+            if (setupWhileSpawned)
+            {
+                InitializeAndUpdateEquipmentUI();
+            }
+        }
+
         public void InitializeAndUpdateEquipmentUI()
         {
             BuildEquipmentDictionaries();

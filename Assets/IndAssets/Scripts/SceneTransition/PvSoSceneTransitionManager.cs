@@ -79,7 +79,6 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
             await SceneManager.LoadSceneAsync(loadingSceneName);
 
             var textHint = FindObjectsByType<TextMeshProUGUI>(FindObjectsSortMode.None);
-            Debug.LogError(textHint.Length);
 
             // Step 2: Load target scene asynchronously
             AsyncOperation loadTargetScene = SceneManager.LoadSceneAsync(_targetSceneName, LoadSceneMode.Additive);
@@ -109,20 +108,6 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
                 await Awaitable.EndOfFrameAsync();
             }
 
-            // Step 3: Instantiate prefabs after scene is loaded
-            await Awaitable.EndOfFrameAsync();
-
-            if (_targetSceneConfig != null && _targetSceneConfig.PrefabsToInstantiate != null)
-            {
-                foreach (var prefab in _targetSceneConfig.PrefabsToInstantiate)
-                {
-                    if (prefab != null)
-                    {
-                        Instantiate(prefab);
-                    }
-                }
-            }
-
             // Update to 100%
             if (textHint.Length > 0)
             {
@@ -130,6 +115,17 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
             }
             
             await SceneManager.UnloadSceneAsync(loadingSceneName);
+            
+            if (_targetSceneConfig && _targetSceneConfig.PrefabsToInstantiate != null)
+            {
+                foreach (var prefab in _targetSceneConfig.PrefabsToInstantiate)
+                {
+                    if (prefab)
+                    {
+                        Instantiate(prefab);
+                    }
+                }
+            }
             
             _isTransitioning = false;
         }
