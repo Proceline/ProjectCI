@@ -259,9 +259,9 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Get character equipment data by name
         /// </summary>
-        public PvCharacterSaveData GetCharacterEquipmentData(string characterName)
+        public PvCharacterSaveData GetCharacterEquipmentData(string characterId)
         {
-            return _currentSaveData?.GetCharacterDataByName(characterName);
+            return _currentSaveData?.GetCharacterDataById(characterId);
         }
         
         #endregion
@@ -331,7 +331,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Equip weapon instance to character
         /// </summary>
-        public static void EquipWeaponToCharacter(string weaponInstanceId, string characterName, int slotIndex)
+        public static void EquipWeaponToCharacter(string weaponInstanceId, string characterId, int slotIndex)
         {
             if (!Instance) 
             {
@@ -355,12 +355,12 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             
             if (!instance.IsAvailable())
             {
-                Debug.LogError($"Weapon instance {weaponInstanceId} is already equipped to {instance.EquippedToCharacterName}");
+                Debug.LogError($"Weapon instance {weaponInstanceId} is already equipped to {instance.EquippedToCharacterId}");
                 return;
             }
             
             // Unequip any existing weapon in this slot
-            var characterData = currentSaveData.GetCharacterDataByName(characterName);
+            var characterData = currentSaveData.GetCharacterDataById(characterId);
             if (characterData != null && characterData.WeaponInstanceIds.Count > slotIndex)
             {
                 string existingInstanceId = characterData.WeaponInstanceIds[slotIndex];
@@ -372,12 +372,12 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
             
             // Equip new weapon
-            if (instance.EquipTo(characterName))
+            if (instance.EquipTo(characterId))
             {
                 if (characterData == null)
                 {
-                    characterData = new PvCharacterSaveData(characterName);
-                    currentSaveData.SetCharacterData(characterData);
+                    Debug.LogError($"Character data not found: {characterId}");
+                    return;
                 }
                 
                 characterData.SetWeaponInstanceId(slotIndex, weaponInstanceId);
@@ -387,7 +387,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Equip relic instance to character
         /// </summary>
-        public bool EquipRelicToCharacter(string relicInstanceId, string characterName, int slotIndex)
+        public bool EquipRelicToCharacter(string relicInstanceId, string characterId, int slotIndex)
         {
             if (_currentSaveData == null) return false;
             
@@ -405,7 +405,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
             
             // Unequip any existing relic in this slot
-            var characterData = _currentSaveData.GetCharacterDataByName(characterName);
+            var characterData = _currentSaveData.GetCharacterDataById(characterId);
             if (characterData != null && characterData.RelicInstanceIds.Count > slotIndex)
             {
                 string existingInstanceId = characterData.RelicInstanceIds[slotIndex];
@@ -417,29 +417,28 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             }
             
             // Equip new relic
-            if (instance.EquipTo(characterName))
+            if (instance.EquipTo(characterId))
             {
                 if (characterData == null)
                 {
-                    characterData = new PvCharacterSaveData(characterName);
-                    _currentSaveData.SetCharacterData(characterData);
+                    Debug.LogError($"Character data not found: {characterId}");
+                    return false;
                 }
                 
                 characterData.SetRelicInstanceId(slotIndex, relicInstanceId);
-                return true;
             }
-            
-            return false;
+
+            return true;
         }
         
         /// <summary>
         /// Unequip weapon from character
         /// </summary>
-        public bool UnequipWeaponFromCharacter(string characterName, int slotIndex)
+        public bool UnequipWeaponFromCharacter(string characterId, int slotIndex)
         {
             if (_currentSaveData == null) return false;
             
-            var characterData = _currentSaveData.GetCharacterDataByName(characterName);
+            var characterData = _currentSaveData.GetCharacterDataById(characterId);
             if (characterData == null || characterData.WeaponInstanceIds.Count <= slotIndex)
             {
                 return false;
@@ -464,11 +463,11 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Unequip relic from character
         /// </summary>
-        public bool UnequipRelicFromCharacter(string characterName, int slotIndex)
+        public bool UnequipRelicFromCharacter(string characterId, int slotIndex)
         {
             if (_currentSaveData == null) return false;
             
-            var characterData = _currentSaveData.GetCharacterDataByName(characterName);
+            var characterData = _currentSaveData.GetCharacterDataById(characterId);
             if (characterData == null || characterData.RelicInstanceIds.Count <= slotIndex)
             {
                 return false;

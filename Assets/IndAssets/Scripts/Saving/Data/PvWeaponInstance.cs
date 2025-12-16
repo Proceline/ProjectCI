@@ -14,7 +14,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         [SerializeField] private string instanceId; // Unique GUID for this instance
         [SerializeField] private string weaponDataId; // Reference to PvSoWeaponData.weaponName
         [SerializeField] private bool isEquipped; // Whether this instance is currently equipped
-        [SerializeField] private string equippedToCharacterName; // Which character has this equipped (empty if not equipped)
+        [SerializeField] private string equippedToCharacterId; // Which character has this equipped (empty if not equipped)
         
         public string InstanceId
         {
@@ -30,7 +30,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         
         public bool IsEquipped => isEquipped;
         
-        public string EquippedToCharacterName => equippedToCharacterName;
+        public string EquippedToCharacterId => equippedToCharacterId;
         
         /// <summary>
         /// Default constructor
@@ -40,22 +40,22 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             instanceId = Guid.NewGuid().ToString();
             weaponDataId = originData.EntryId;
             isEquipped = false;
-            equippedToCharacterName = string.Empty;
+            equippedToCharacterId = string.Empty;
         }
         
         /// <summary>
         /// Equip this weapon instance to a character
         /// </summary>
-        public bool EquipTo(string characterName)
+        public bool EquipTo(string characterId)
         {
             if (isEquipped)
             {
-                Debug.LogWarning($"Weapon instance {instanceId} is already equipped to {equippedToCharacterName}");
+                Debug.LogWarning($"Weapon instance {instanceId} is already equipped to {equippedToCharacterId}");
                 return false;
             }
             
             isEquipped = true;
-            equippedToCharacterName = characterName;
+            equippedToCharacterId = characterId;
             return true;
         }
         
@@ -71,7 +71,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             }
             
             isEquipped = false;
-            equippedToCharacterName = string.Empty;
+            equippedToCharacterId = string.Empty;
             return true;
         }
         

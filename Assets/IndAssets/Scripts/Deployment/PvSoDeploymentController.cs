@@ -285,11 +285,11 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         private void LoadEquipmentFromSave(PvMnSceneUnit sceneUnit, PvSoBattleUnitData unitData)
         {
             var saveManager = PvSaveManager.Instance;
-            var characterData = saveManager.GetCharacterEquipmentData(unitData.m_UnitName);
+            var characterData = saveManager.GetCharacterEquipmentData(unitData.EntryId);
             
             if (characterData == null)
             {
-                Debug.LogWarning($"No save data found for character: {unitData.m_UnitName}");
+                Debug.LogWarning($"No save data found for character: {unitData.EntryId}");
                 return;
             }
             

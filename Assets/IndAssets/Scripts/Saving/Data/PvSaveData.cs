@@ -69,14 +69,6 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         }
         
         /// <summary>
-        /// Get character save data by name
-        /// </summary>
-        public PvCharacterSaveData GetCharacterDataByName(string characterName)
-        {
-            return characterEquipmentData.Find(data => data.CharacterName == characterName);
-        }
-        
-        /// <summary>
         /// Get character save data by ID
         /// </summary>
         public PvCharacterSaveData GetCharacterDataById(string characterId)

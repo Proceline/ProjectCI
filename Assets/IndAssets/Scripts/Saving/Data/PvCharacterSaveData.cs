@@ -46,17 +46,6 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         }
         
         /// <summary>
-        /// Constructor with character name
-        /// </summary>
-        public PvCharacterSaveData(string name)
-        {
-            characterName = name;
-            characterId = Guid.NewGuid().ToString();
-            weaponInstanceIds = new List<string>();
-            relicInstanceIds = new List<string>();
-        }
-        
-        /// <summary>
         /// Set weapon instance ID at specific index (0 or 1)
         /// </summary>
         public void SetWeaponInstanceId(int index, string instanceId)

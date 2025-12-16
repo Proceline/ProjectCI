@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Relics;
 using IndAssets.Scripts.Weapons;
+using ProjectCI.CoreSystem.Runtime.Saving;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
@@ -18,7 +19,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         private const string EMPTY_OPTION_TEXT = "(Empty)";
         
-        private List<string> _availableOptions = new List<string>();
+        // Store instanceIds for each option (index 0 is empty, so instanceIds[0] is empty string)
+        private List<string> _instanceIds = new List<string>();
+        // Store display names for dropdown
+        private List<string> _displayNames = new List<string>();
         private Dictionary<string, PvSoWeaponData> _weaponInfoDict = new Dictionary<string, PvSoWeaponData>();
         private Dictionary<string, PvSoPassiveRelic> _relicInfoDict = new Dictionary<string, PvSoPassiveRelic>();
         private string _currentHoveredOption;
@@ -40,49 +44,65 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         }
         
         /// <summary>
-        /// Initialize dropdown with available options
+        /// Initialize dropdown with instanceIds and display names
         /// </summary>
-        public void Initialize(List<string> options, Dictionary<string, PvSoWeaponData> weaponInfoDict = null, 
+        public void Initialize(List<string> instanceIds, List<string> displayNames, 
+            Dictionary<string, PvSoWeaponData> weaponInfoDict = null, 
             Dictionary<string, PvSoPassiveRelic> relicInfoDict = null)
         {
-            _availableOptions = options ?? new List<string>();
+            _instanceIds = instanceIds ?? new List<string>();
+            _displayNames = displayNames ?? new List<string>();
             _weaponInfoDict = weaponInfoDict ?? new Dictionary<string, PvSoWeaponData>();
             _relicInfoDict = relicInfoDict ?? new Dictionary<string, PvSoPassiveRelic>();
+            
+            // Ensure both lists have the same count
+            if (_instanceIds.Count != _displayNames.Count)
+            {
+                Debug.LogWarning($"InstanceIds count ({_instanceIds.Count}) doesn't match DisplayNames count ({_displayNames.Count})");
+                int minCount = Mathf.Min(_instanceIds.Count, _displayNames.Count);
+                if (_instanceIds.Count > minCount) _instanceIds.RemoveRange(minCount, _instanceIds.Count - minCount);
+                if (_displayNames.Count > minCount) _displayNames.RemoveRange(minCount, _displayNames.Count - minCount);
+            }
             
             if (dropdown != null)
             {
                 dropdown.ClearOptions();
-                // Add empty option at the beginning
+                // Add empty option at the beginning (index 0)
                 dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
-                // Add available equipment options
-                dropdown.AddOptions(_availableOptions);
+                // Add available equipment options with display names
+                dropdown.AddOptions(_displayNames);
             }
         }
         
         /// <summary>
-        /// Set current selected value
+        /// Set current selected value by instanceId
         /// </summary>
-        public void SetValue(string value)
+        public void SetValue(string instanceId)
         {
             if (dropdown == null) return;
             
-            // If value is empty or null, set to empty option (index 0)
-            if (string.IsNullOrEmpty(value))
+            // If instanceId is empty or null, set to empty option (index 0)
+            if (string.IsNullOrEmpty(instanceId))
             {
                 dropdown.value = 0;
                 return;
             }
             
-            // Find the index in available options (offset by 1 because index 0 is empty option)
-            int index = _availableOptions.IndexOf(value);
+            // Find the index in instanceIds list (offset by 1 because index 0 is empty option)
+            int index = _instanceIds.IndexOf(instanceId);
             if (index >= 0)
             {
                 dropdown.value = index + 1; // +1 because first option is empty
             }
+            else
+            {
+                // InstanceId not found, set to empty
+                dropdown.value = 0;
+            }
         }
         
         /// <summary>
-        /// Get current selected value
+        /// Get current selected instanceId
         /// </summary>
         public string GetValue()
         {
@@ -99,9 +119,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             
             // Adjust index (subtract 1 because first option is empty)
             int adjustedIndex = dropdown.value - 1;
-            if (adjustedIndex >= 0 && adjustedIndex < _availableOptions.Count)
+            if (adjustedIndex >= 0 && adjustedIndex < _instanceIds.Count)
             {
-                return _availableOptions[adjustedIndex];
+                return _instanceIds[adjustedIndex];
             }
             
             return string.Empty;
@@ -152,23 +172,55 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         {
             if (tooltip == null || dropdown == null) return;
             
-            string optionName = GetValue();
-            if (string.IsNullOrEmpty(optionName)) return;
+            string instanceId = GetValue();
+            if (string.IsNullOrEmpty(instanceId)) return;
+            
+            UpdateTooltipForInstanceId(instanceId);
+        }
+        
+        /// <summary>
+        /// Update tooltip for a specific instanceId
+        /// </summary>
+        private void UpdateTooltipForInstanceId(string instanceId)
+        {
+            if (tooltip == null || string.IsNullOrEmpty(instanceId)) return;
             
             string name = string.Empty;
             string description = string.Empty;
             
-            if (isWeaponDropdown && _weaponInfoDict.ContainsKey(optionName))
+            if (isWeaponDropdown)
             {
-                var weaponInfo = _weaponInfoDict[optionName];
-                name = weaponInfo.weaponName;
-                description = weaponInfo.description;
+                // Get weapon instance from save manager
+                if (PvSaveManager.Instance != null && PvSaveManager.Instance.CurrentSaveData != null)
+                {
+                    var weaponInstance = PvSaveManager.Instance.CurrentSaveData.GetWeaponInstance(instanceId);
+                    if (weaponInstance != null)
+                    {
+                        // Get weapon data using WeaponDataId
+                        if (_weaponInfoDict.TryGetValue(weaponInstance.WeaponDataId, out var weaponData))
+                        {
+                            name = weaponData.weaponName;
+                            description = weaponData.description;
+                        }
+                    }
+                }
             }
-            else if (!isWeaponDropdown && _relicInfoDict.ContainsKey(optionName))
+            else
             {
-                var relicInfo = _relicInfoDict[optionName];
-                name = relicInfo.PassiveName;
-                description = relicInfo.description;
+                // Get relic instance from save manager
+                if (PvSaveManager.Instance != null && PvSaveManager.Instance.CurrentSaveData != null)
+                {
+                    var relicInstance = PvSaveManager.Instance.CurrentSaveData.GetRelicInstance(instanceId);
+                    if (relicInstance != null)
+                    {
+                        // Get relic data using RelicDataId
+                        if (_relicInfoDict.TryGetValue(relicInstance.RelicDataId, out var relicData))
+                        {
+                            name = relicData.PassiveName;
+                            description = relicData.description;
+                        }
+                    }
+                }
             }
             
             if (!string.IsNullOrEmpty(name))
@@ -180,35 +232,14 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Call this when dropdown option is hovered (from dropdown item)
         /// </summary>
-        public void OnOptionHovered(string optionName)
+        public void OnOptionHovered(string displayName)
         {
-            _currentHoveredOption = optionName;
-            UpdateTooltipForOption(optionName);
-        }
-        
-        private void UpdateTooltipForOption(string optionName)
-        {
-            if (tooltip == null || string.IsNullOrEmpty(optionName)) return;
-            
-            string name = string.Empty;
-            string description = string.Empty;
-            
-            if (isWeaponDropdown && _weaponInfoDict.ContainsKey(optionName))
+            _currentHoveredOption = displayName;
+            // Find instanceId by displayName
+            int index = _displayNames.IndexOf(displayName);
+            if (index >= 0 && index < _instanceIds.Count)
             {
-                var weaponInfo = _weaponInfoDict[optionName];
-                name = weaponInfo.weaponName;
-                description = weaponInfo.description;
-            }
-            else if (!isWeaponDropdown && _relicInfoDict.ContainsKey(optionName))
-            {
-                var relicInfo = _relicInfoDict[optionName];
-                name = relicInfo.PassiveName;
-                description = relicInfo.description;
-            }
-            
-            if (!string.IsNullOrEmpty(name))
-            {
-                tooltip.ShowTooltip(name, description, Input.mousePosition);
+                UpdateTooltipForInstanceId(_instanceIds[index]);
             }
         }
     }
