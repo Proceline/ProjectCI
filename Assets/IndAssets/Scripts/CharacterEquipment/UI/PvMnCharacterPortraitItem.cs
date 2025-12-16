@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -18,6 +19,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         private PvCharacterSaveData _characterData;
         private UnityAction<PvCharacterSaveData> _onPortraitClicked;
+
+        [SerializeField] private UnityEvent<PvSoBattleUnitData> onPortraitClickedToDeploy;
+        public bool deployMode = false;
 
         [Inject] private static PvSoWeaponAndRelicCollection _validCharactersCol;
         
@@ -72,7 +76,17 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         private void OnPortraitClicked()
         {
-            _onPortraitClicked?.Invoke(_characterData);
+            if (!deployMode)
+            {
+                _onPortraitClicked?.Invoke(_characterData);
+                return;
+            }
+            
+            if (_validCharactersCol.UnitDataDict.TryGetValue(_characterData.CharacterId, out var unitData))
+            {
+                onPortraitClickedToDeploy?.Invoke(unitData);
+                return;
+            }
         }
         
         /// <summary>

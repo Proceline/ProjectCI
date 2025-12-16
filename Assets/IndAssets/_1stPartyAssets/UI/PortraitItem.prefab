@@ -60,6 +60,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterPortraitItem
   portraitImage: {fileID: 6323943261712702499}
   portraitButton: {fileID: 7213195729417568304}
+  onPortraitClickedToDeploy:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 4eb7c339aad621d4ea6f3ad6552292ef, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.Deployment.PvSoDeploymentController,
+          Assembly-CSharp
+        m_MethodName: DeployUnit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  deployMode: 0
 --- !u!1 &5590366479087084009
 GameObject:
   m_ObjectHideFlags: 0

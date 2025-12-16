@@ -13,8 +13,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public class PvMnSceneUnit : MonoBehaviour, ISceneUnit
     {
         [SerializeField]
+        private bool isSceneMode;
+
+        [SerializeField]
         private bool isFriendly;
-        public bool IsFriendly => isFriendly;
+        public bool IsFriendly { get => isFriendly; set => isFriendly = value; }
 
         [SerializeField]
         protected SoUnitData unitData;
@@ -22,7 +25,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         protected List<PvSoUnitAbility> unitAbilities;
 
-        public SoUnitData UnitData => unitData;
+        public SoUnitData UnitData { get => unitData; set => unitData = value; }
         public List<PvSoUnitAbility> UnitAbilities => unitAbilities;
 
         [SerializeField]
@@ -50,30 +53,34 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void Start()
         {
-            Initialize();
+            if (isSceneMode)
+            {
+                Initialize();
+            }
         }
 
         #region SceneUnit Methods
 
         public void Initialize()
         {
+            Initialize(new List<PvSoWeaponData>(ownedWeapons));
+        }
+
+        public void Initialize(List<PvSoWeaponData> weapons)
+        {
             AnimationPlayableSupportBase animator = null;
             PvSoUnitAbility defaultAbility = null;
             
             for (var i = 0; i <= 1; i++)
             {
-                if (i >= ownedWeapons.Length)
+                if (i >= weapons.Count)
                 {
                     break;
                 }
 
-                var weaponData = ownedWeapons[i];
-                var prefab = weaponData.weaponPrefab;
+                var weaponData = weapons[i];
                 var weaponRoot = FindChild(transform, i == 0? "weapon_r" : "weapon_l");
-                var weaponInstance = Instantiate(prefab, weaponRoot);
-                weaponInstance.transform.localPosition = weaponData.prefabLocalPosition;
-                weaponInstance.transform.localRotation = weaponData.prefabLocalRotation;
-                weaponInstance.transform.localScale = weaponData.prefabLocalScale;
+                RefreshWeapon(weaponRoot, weaponData);
 
                 animator = weaponData.Animator;
                 defaultAbility = weaponData.DefaultAttackAbility;
@@ -89,6 +96,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 unitAbilities.Insert(0, defaultAbility);
             }
+        }
+
+        public void RefreshWeapon(Transform weaponRoot, PvSoWeaponData weaponData)
+        {
+            if (weaponRoot.childCount > 0)
+            {
+                Destroy(weaponRoot.GetChild(0).gameObject);
+                weaponRoot.DetachChildren();
+            }
+            var prefab = weaponData.weaponPrefab;
+            var weaponInstance = Instantiate(prefab, weaponRoot);
+            weaponInstance.transform.localPosition = weaponData.prefabLocalPosition;
+            weaponInstance.transform.localRotation = weaponData.prefabLocalRotation;
+            weaponInstance.transform.localScale = weaponData.prefabLocalScale;
         }
 
         public void PostInitialize()

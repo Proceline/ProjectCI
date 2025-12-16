@@ -2,25 +2,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.Saving;
-using ProjectCI.CoreSystem.Runtime.Saving.Data;
 using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Managers;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using System.Linq;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
-using ProjectCI.CoreSystem.Runtime.Abilities;
+using ProjectCI.CoreSystem.DependencyInjection;
 
 namespace ProjectCI.CoreSystem.Runtime.Deployment
 {
     /// <summary>
     /// Deployment controller that manages which units are deployed and their positions
     /// </summary>
+    [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "NewDeploymentController", menuName = "ProjectCI/Deployment/Deployment Controller", order = 1)]
     public class PvSoDeploymentController : ScriptableObject
     {
         [Header("Deployment Configuration")]
         [SerializeField] private PvSoLevelData levelData;
-        [SerializeField] private GameObject sceneUnitPrefab;
+        [SerializeField] private PvMnSceneUnit sceneUnitPrefab;
         
         [Header("Deployed Units")]
         [SerializeField] private List<PvSoBattleUnitData> deployedUnits = new List<PvSoBattleUnitData>();
@@ -35,6 +33,9 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         [System.NonSerialized]
         private Dictionary<PvMnSceneUnit, int> _unitToSlotMap = new Dictionary<PvMnSceneUnit, int>();
         
+        [Inject]
+        private static PvSoWeaponAndRelicCollection WeaponAndRelicCollection;
+
         /// <summary>
         /// Get level data
         /// </summary>
@@ -46,65 +47,36 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         public List<PvSoBattleUnitData> DeployedUnits => deployedUnits;
         
         /// <summary>
-        /// Get scene unit prefab
+        /// Deploy unit to available friendly slot
         /// </summary>
-        public GameObject SceneUnitPrefab => sceneUnitPrefab;
-        
-        /// <summary>
-        /// Deploy all units to their assigned slots
-        /// </summary>
-        /// <param name="parent">Parent transform for spawned units</param>
-        /// <param name="levelGrid">Optional level grid for grid-based positioning</param>
-        /// <returns>List of spawned scene units</returns>
-        public List<PvMnSceneUnit> DeployUnits(Transform parent = null, LevelGridBase levelGrid = null)
+        /// <param name="unitData">Unit data to deploy</param>
+        public void DeployUnit(PvSoBattleUnitData unitData)
         {
-            if (levelData == null)
+            if (!levelData || !unitData)
             {
-                Debug.LogError("Level data is not assigned!");
-                return new List<PvMnSceneUnit>();
+                Debug.LogError("Level data or unit data is null!");
+                return;
+            }
+
+            var slot = levelData.GetAvailableFriendlySlot();
+            if (slot == null)
+            {
+                Debug.LogError("No available slot found!");
+                return;
             }
             
-            if (sceneUnitPrefab == null)
+            var sceneUnit = SpawnUnitAtSlot(unitData, slot, null, null);
+            if (sceneUnit == null)
             {
-                Debug.LogError("Scene unit prefab is not assigned!");
-                return new List<PvMnSceneUnit>();
+                Debug.LogError("Failed to spawn unit!");
+                return;
             }
             
-            List<PvMnSceneUnit> spawnedUnits = new List<PvMnSceneUnit>();
-            
-            for (int i = 0; i < deployedUnits.Count; i++)
-            {
-                var unitData = deployedUnits[i];
-                if (unitData == null) continue;
-                
-                // Get slot index for this unit
-                int slotIndex = GetSlotIndexForUnit(i);
-                var slot = levelData.GetSlotByIndex(slotIndex, true);
-                
-                if (slot == null)
-                {
-                    Debug.LogWarning($"No available slot found for unit {i} ({unitData.m_UnitName})");
-                    continue;
-                }
-                
-                if (!slot.IsAvailable || slot.IsOccupied())
-                {
-                    Debug.LogWarning($"Slot {slotIndex} is not available or already occupied");
-                    continue;
-                }
-                
-                // Spawn unit at slot position
-                var sceneUnit = SpawnUnitAtSlot(unitData, slot, parent, levelGrid);
-                if (sceneUnit != null)
-                {
-                    spawnedUnits.Add(sceneUnit);
-                    slot.OccupiedUnit = sceneUnit;
-                    _slotToUnitMap[slotIndex] = sceneUnit;
-                    _unitToSlotMap[sceneUnit] = slotIndex;
-                }
-            }
-            
-            return spawnedUnits;
+            slot.OccupiedUnit = sceneUnit;
+            _slotToUnitMap[slot.SlotIndex] = sceneUnit;
+            _unitToSlotMap[sceneUnit] = slot.SlotIndex;
+            deployedUnits.Add(unitData);
+            unitToSlotMapping.Add(slot.SlotIndex);
         }
         
         /// <summary>
@@ -253,15 +225,7 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             Vector3 spawnPosition = CalculateSpawnPosition(slot, levelGrid);
             
             // Instantiate scene unit
-            GameObject unitObj = Instantiate(sceneUnitPrefab, spawnPosition, Quaternion.identity, parent);
-            PvMnSceneUnit sceneUnit = unitObj.GetComponent<PvMnSceneUnit>();
-            
-            if (sceneUnit == null)
-            {
-                Debug.LogError($"Scene unit prefab does not have PvMnSceneUnit component!");
-                Destroy(unitObj);
-                return null;
-            }
+            var sceneUnit = Instantiate(sceneUnitPrefab, spawnPosition, Quaternion.identity, parent);
             
             // Set unit data
             SetUnitData(sceneUnit, unitData);
@@ -301,30 +265,14 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         /// </summary>
         private void SetUnitData(PvMnSceneUnit sceneUnit, PvSoBattleUnitData unitData)
         {
-            // Set basic data using reflection or serialized field access
-            // Since fields are protected, we'll need to use a helper method or make them public
-            SetUnitDataInternal(sceneUnit, unitData);
+            sceneUnit.UnitData = unitData;
+            sceneUnit.IsFriendly = true;
             
             // Load equipment from save system if available
             if (PvSaveManager.Instance != null && PvSaveManager.Instance.IsInitialized)
             {
                 LoadEquipmentFromSave(sceneUnit, unitData);
             }
-        }
-        
-        /// <summary>
-        /// Set unit data using reflection (since fields are protected)
-        /// </summary>
-        private void SetUnitDataInternal(PvMnSceneUnit sceneUnit, PvSoBattleUnitData unitData)
-        {
-            // Use reflection to set protected fields
-            var unitDataField = typeof(PvMnSceneUnit).GetField("unitData", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            unitDataField?.SetValue(sceneUnit, unitData);
-            
-            var isFriendlyField = typeof(PvMnSceneUnit).GetField("isFriendly",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            isFriendlyField?.SetValue(sceneUnit, true);
         }
         
         /// <summary>
@@ -343,8 +291,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             
             // Load weapons
             var weaponsList = new List<PvSoWeaponData>();
-            var weaponsField = typeof(PvMnSceneUnit).GetField("ownedWeapons",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             
             foreach (var weaponInstanceId in characterData.WeaponInstanceIds)
             {
@@ -353,42 +299,15 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 var weaponInstance = saveManager.CurrentSaveData.GetWeaponInstance(weaponInstanceId);
                 if (weaponInstance != null)
                 {
-                    // Get weapon data from collection - need to find collection in resources or use a reference
-                    // For now, we'll try to find it via Resources or use a static reference
-                    var collection = Resources.FindObjectsOfTypeAll<PvSoWeaponAndRelicCollection>().FirstOrDefault();
-                    if (collection != null)
+                    var weaponData = WeaponAndRelicCollection.GetWeaponData(weaponInstance.WeaponDataId);
+                    if (weaponData != null)
                     {
-                        var weaponData = collection.GetWeaponData(weaponInstance.WeaponDataId);
-                        if (weaponData != null)
-                        {
-                            weaponsList.Add(weaponData);
-                        }
+                        weaponsList.Add(weaponData);
                     }
                 }
             }
             
-            if (weaponsField != null && weaponsList.Count > 0)
-            {
-                weaponsField.SetValue(sceneUnit, weaponsList.ToArray());
-            }
-            
-            // Load abilities from weapons
-            var abilitiesList = new List<PvSoUnitAbility>();
-            var abilitiesField = typeof(PvMnSceneUnit).GetField("unitAbilities",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            
-            foreach (var weapon in weaponsList)
-            {
-                if (weapon.DefaultAttackAbility != null)
-                {
-                    abilitiesList.Add(weapon.DefaultAttackAbility);
-                }
-            }
-            
-            if (abilitiesField != null && abilitiesList.Count > 0)
-            {
-                abilitiesField.SetValue(sceneUnit, abilitiesList);
-            }
+            sceneUnit.Initialize(weaponsList);
         }
         
         /// <summary>

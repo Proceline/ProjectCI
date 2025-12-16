@@ -4968,6 +4968,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneMode: 1
   isFriendly: 1
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
   unitAbilities:
@@ -26238,6 +26239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneMode: 1
   isFriendly: 1
   unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
   unitAbilities:
@@ -38143,6 +38145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneMode: 1
   isFriendly: 0
   unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
   unitAbilities:
@@ -42650,6 +42653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecd51d4c9bef489694db1c70a774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneMode: 1
   isFriendly: 0
   unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
   unitAbilities:
