@@ -149,11 +149,20 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                     _equipmentsCollection.RelicsDict);
             }
 
-            void SetDropdownEquipment(int targetIndex, List<string> holdingIndices)
+            void SetDropdownEquipment(PvMnEquipmentDropdown dropdown, int targetIndex, List<string> holdingIndices)
             {
-                if (holdingIndices.Count > targetIndex)
+                if (dropdown == null) return;
+                
+                // If index exists in list, use that value (could be empty string)
+                // If index doesn't exist, set to empty
+                if (holdingIndices != null && holdingIndices.Count > targetIndex)
                 {
-                    weaponDropdown1.SetValue(holdingIndices[targetIndex]);
+                    dropdown.SetValue(holdingIndices[targetIndex]);
+                }
+                else
+                {
+                    // Index doesn't exist, set to empty
+                    dropdown.SetValue(string.Empty);
                 }
             }
             
@@ -161,15 +170,14 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (weaponDropdown1)
             {
                 InitializeDropDown(weaponDropdown1, _availableWeapons);
-                SetDropdownEquipment(0, _characterData.WeaponInstanceIds);
+                SetDropdownEquipment(weaponDropdown1, 0, _characterData.WeaponInstanceIds);
                 weaponDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
 
             if (weaponDropdown2)
             {
                 InitializeDropDown(weaponDropdown2, _availableWeapons);
-                SetDropdownEquipment(1, _characterData.WeaponInstanceIds);
-
+                SetDropdownEquipment(weaponDropdown2, 1, _characterData.WeaponInstanceIds);
                 weaponDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
 
@@ -177,21 +185,21 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (relicDropdown1)
             {
                 InitializeDropDown(relicDropdown1, _availableRelics);
-                SetDropdownEquipment(0, _characterData.RelicInstanceIds);
+                SetDropdownEquipment(relicDropdown1, 0, _characterData.RelicInstanceIds);
                 relicDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
             
             if (relicDropdown2)
             {
                 InitializeDropDown(relicDropdown2, _availableRelics);
-                SetDropdownEquipment(1, _characterData.RelicInstanceIds);
+                SetDropdownEquipment(relicDropdown2, 1, _characterData.RelicInstanceIds);
                 relicDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
             
             if (relicDropdown3)
             {
-                InitializeDropDown(relicDropdown2, _availableRelics);
-                SetDropdownEquipment(2, _characterData.RelicInstanceIds);
+                InitializeDropDown(relicDropdown3, _availableRelics);
+                SetDropdownEquipment(relicDropdown3, 2, _characterData.RelicInstanceIds);
                 relicDropdown3.SetInteractable(_isEditable && !_isInBattle);
             }
         }

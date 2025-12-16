@@ -16,6 +16,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private bool isWeaponDropdown; // true for weapon, false for relic
         [SerializeField] private PvMnEquipmentTooltip tooltip;
         
+        private const string EMPTY_OPTION_TEXT = "(Empty)";
+        
         private List<string> _availableOptions = new List<string>();
         private Dictionary<string, PvSoWeaponData> _weaponInfoDict = new Dictionary<string, PvSoWeaponData>();
         private Dictionary<string, PvSoPassiveRelic> _relicInfoDict = new Dictionary<string, PvSoPassiveRelic>();
@@ -50,6 +52,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (dropdown != null)
             {
                 dropdown.ClearOptions();
+                // Add empty option at the beginning
+                dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
+                // Add available equipment options
                 dropdown.AddOptions(_availableOptions);
             }
         }
@@ -59,12 +64,20 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// </summary>
         public void SetValue(string value)
         {
-            if (dropdown == null || string.IsNullOrEmpty(value)) return;
+            if (dropdown == null) return;
             
+            // If value is empty or null, set to empty option (index 0)
+            if (string.IsNullOrEmpty(value))
+            {
+                dropdown.value = 0;
+                return;
+            }
+            
+            // Find the index in available options (offset by 1 because index 0 is empty option)
             int index = _availableOptions.IndexOf(value);
             if (index >= 0)
             {
-                dropdown.value = index;
+                dropdown.value = index + 1; // +1 because first option is empty
             }
         }
         
@@ -73,12 +86,25 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// </summary>
         public string GetValue()
         {
-            if (dropdown == null || dropdown.value < 0 || dropdown.value >= _availableOptions.Count)
+            if (dropdown == null || dropdown.value < 0)
             {
                 return string.Empty;
             }
             
-            return _availableOptions[dropdown.value];
+            // Index 0 is the empty option
+            if (dropdown.value == 0)
+            {
+                return string.Empty;
+            }
+            
+            // Adjust index (subtract 1 because first option is empty)
+            int adjustedIndex = dropdown.value - 1;
+            if (adjustedIndex >= 0 && adjustedIndex < _availableOptions.Count)
+            {
+                return _availableOptions[adjustedIndex];
+            }
+            
+            return string.Empty;
         }
         
         /// <summary>
