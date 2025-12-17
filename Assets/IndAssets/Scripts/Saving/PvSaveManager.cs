@@ -9,6 +9,8 @@ using ProjectCI.CoreSystem.Runtime.Saving.Implementations;
 using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Passives.Relics;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving
 {
@@ -16,6 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
     /// Main save/load manager for the game
     /// Handles saving and loading game progress, character equipment, and equipment instances
     /// </summary>
+    [StaticInjectableTarget]
     public class PvSaveManager : MonoBehaviour
     {
         private static PvSaveManager _instance;
@@ -48,6 +51,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         }
 
         public static event Action<List<PvSaveDetails>> onAllSaveDataListed;
+        [Inject] private static PvSoWeaponAndRelicCollection _equipmentsCollection;
+        [SerializeField] private PvSoEquipDataUpdateEvent raiserEquipWeaponUpdateEvent;
 
         private void Awake()
         {
@@ -381,7 +386,48 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 }
                 
                 characterData.SetWeaponInstanceId(slotIndex, weaponInstanceId);
+                BroadcastEquipWeaponsData();
             }
+        }
+
+        /// <summary>
+        /// Equip weapon instance to character
+        /// </summary>
+        public static void BroadcastEquipWeaponsData()
+        {
+            if (!Instance)
+            {
+                Debug.LogError("Save manager not initialized");
+                return;
+            }
+
+            var currentSaveData = Instance.CurrentSaveData;
+            if (currentSaveData == null)
+            {
+                Debug.LogError("No save data found");
+                return;
+            }
+            
+            var instanceIds = new List<string>();
+            var displayNames = new List<string>();
+            var equippedInstanceInfos = new Dictionary<string, string>();
+
+            foreach (var weaponInstance in currentSaveData.WeaponInstances)
+            {
+                var weaponData = _equipmentsCollection.GetWeaponData(weaponInstance.WeaponDataId);
+                if (weaponData != null)
+                {
+                    instanceIds.Add(weaponInstance.InstanceId);
+                    displayNames.Add(weaponData.weaponName);
+
+                    if (weaponInstance.IsEquipped)
+                    {
+                        equippedInstanceInfos.Add(weaponInstance.InstanceId, weaponInstance.EquippedToCharacterId);
+                    }
+                }
+            }
+            
+            Instance.raiserEquipWeaponUpdateEvent.Raise(instanceIds, displayNames, equippedInstanceInfos);
         }
         
         /// <summary>

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a5afef2c0386024bad80d6fcd1dd9c2, type: 3}
-  m_Name: _OnEquipDataUpdateEvent
+  m_Name: _OnEquipWeaponDataUpdateEvent
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.Utilities.Runtime.Events.PvSoEquipDataUpdateEvent
   onPreInstalledEvent:
     m_PersistentCalls:

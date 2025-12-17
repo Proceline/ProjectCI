@@ -89,6 +89,8 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveEnhanceAttribute, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Saving.PvSaveManager, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.Runtime.GUI.Battle.PvMnBattleResourceContainer, Assembly-CSharp, Version=0.0.0.0,

@@ -744,7 +744,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eb8bacd46357fb4418b3d529965e7b08, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -810,7 +810,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1157464902305400833
@@ -970,7 +970,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 5913924671614637286}
-  isWeaponDropdown: 1
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls:
@@ -2591,7 +2590,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eb8bacd46357fb4418b3d529965e7b08, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2657,7 +2656,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &2515193794435844353
@@ -2817,7 +2816,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 4479882842270327874}
-  isWeaponDropdown: 1
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls:
@@ -3103,14 +3101,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 3080833817924812394}
-  isWeaponDropdown: 0
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
-  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: 67075682c67a43a4e95f5e3ac2ff9b84, type: 2}
 --- !u!1 &2916299033531270825
 GameObject:
   m_ObjectHideFlags: 0
@@ -3286,7 +3283,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eb8bacd46357fb4418b3d529965e7b08, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3352,7 +3349,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &2996422610797301067
@@ -5586,14 +5583,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 390666020143789034}
-  isWeaponDropdown: 0
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
-  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: 67075682c67a43a4e95f5e3ac2ff9b84, type: 2}
 --- !u!1 &5740816256194678090
 GameObject:
   m_ObjectHideFlags: 0
@@ -6615,14 +6611,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 7404972416383083332}
-  isWeaponDropdown: 0
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
-  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: 67075682c67a43a4e95f5e3ac2ff9b84, type: 2}
 --- !u!1 &8027258130057394588
 GameObject:
   m_ObjectHideFlags: 0
@@ -7284,7 +7279,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eb8bacd46357fb4418b3d529965e7b08, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7350,7 +7345,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &9019062188066099440
@@ -7420,7 +7415,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eb8bacd46357fb4418b3d529965e7b08, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7486,7 +7481,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &9045398389202844463
