@@ -17,8 +17,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
     public class PvMnEquipmentDropdown : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private TMP_Dropdown dropdown;
-        [SerializeField] private bool isWeaponDropdown; // true for weapon, false for relic
-        [SerializeField] private PvMnEquipmentTooltip tooltip;
+        [SerializeField] private bool isWeaponDropdown;
         
         private const string EMPTY_OPTION_TEXT = "(Empty)";
         
@@ -26,9 +25,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         private List<string> _instanceIds = new List<string>();
         // Store display names for dropdown
         private List<string> _displayNames = new List<string>();
-        private Dictionary<string, PvSoWeaponData> _weaponInfoDict = new Dictionary<string, PvSoWeaponData>();
-        private Dictionary<string, PvSoPassiveRelic> _relicInfoDict = new Dictionary<string, PvSoPassiveRelic>();
-        private string _currentHoveredOption;
         private string _currentCharacterId; // Current character ID for this dropdown
         private int _slotIndex = -1; // Slot index for this dropdown (0, 1 for weapons; 0, 1, 2 for relics)
         [NonSerialized] private bool _isDropdownOpen = false; // Track if dropdown is currently open
@@ -57,14 +53,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Initialize dropdown with instanceIds and display names
         /// </summary>
-        public void Initialize(List<string> instanceIds, List<string> displayNames, 
-            Dictionary<string, PvSoWeaponData> weaponInfoDict, 
-            Dictionary<string, PvSoPassiveRelic> relicInfoDict, string currentCharacterId, int slotIndex = -1)
+        public void Initialize(List<string> instanceIds, List<string> displayNames, string currentCharacterId, int slotIndex = -1)
         {
             _instanceIds = instanceIds ?? new List<string>();
             _displayNames = displayNames ?? new List<string>();
-            _weaponInfoDict = weaponInfoDict ?? new Dictionary<string, PvSoWeaponData>();
-            _relicInfoDict = relicInfoDict ?? new Dictionary<string, PvSoPassiveRelic>();
             _currentCharacterId = currentCharacterId;
             _slotIndex = slotIndex;
             
@@ -170,88 +162,17 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (tooltip == null || dropdown == null) return;
-            
-            // Get hovered option from dropdown template
-            var template = dropdown.template;
-            if (template != null && template.gameObject.activeSelf)
-            {
-                // Try to find which option is being hovered
-                // This is a simplified version - you may need to enhance this based on your UI setup
-                UpdateTooltipForCurrentOption();
-            }
+            if (!dropdown) return;
+
+            string instanceId = GetValue();
+            if (string.IsNullOrEmpty(instanceId)) return;
+
+            onSlotHovered?.Invoke(instanceId);
         }
         
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (tooltip != null)
-            {
-                tooltip.HideTooltip();
-            }
-        }
-        
-        /// <summary>
-        /// Update tooltip for currently selected or hovered option
-        /// </summary>
-        private void UpdateTooltipForCurrentOption()
-        {
-            if (tooltip == null || dropdown == null) return;
-            
-            string instanceId = GetValue();
-            if (string.IsNullOrEmpty(instanceId)) return;
-            
-            UpdateTooltipForInstanceId(instanceId);
-        }
-        
-        /// <summary>
-        /// Update tooltip for a specific instanceId
-        /// </summary>
-        private void UpdateTooltipForInstanceId(string instanceId)
-        {
-            if (tooltip == null || string.IsNullOrEmpty(instanceId)) return;
-            
-            string name = string.Empty;
-            string description = string.Empty;
-            
-            if (isWeaponDropdown)
-            {
-                // Get weapon instance from save manager
-                if (PvSaveManager.Instance != null && PvSaveManager.Instance.CurrentSaveData != null)
-                {
-                    var weaponInstance = PvSaveManager.Instance.CurrentSaveData.GetWeaponInstance(instanceId);
-                    if (weaponInstance != null)
-                    {
-                        // Get weapon data using WeaponDataId
-                        if (_weaponInfoDict.TryGetValue(weaponInstance.WeaponDataId, out var weaponData))
-                        {
-                            name = weaponData.weaponName;
-                            description = weaponData.description;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // Get relic instance from save manager
-                if (PvSaveManager.Instance != null && PvSaveManager.Instance.CurrentSaveData != null)
-                {
-                    var relicInstance = PvSaveManager.Instance.CurrentSaveData.GetRelicInstance(instanceId);
-                    if (relicInstance != null)
-                    {
-                        // Get relic data using RelicDataId
-                        if (_relicInfoDict.TryGetValue(relicInstance.RelicDataId, out var relicData))
-                        {
-                            name = relicData.PassiveName;
-                            description = relicData.description;
-                        }
-                    }
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(name))
-            {
-                tooltip.ShowTooltip(name, description, Input.mousePosition);
-            }
+            // Empty
         }
         
         /// <summary>
@@ -262,11 +183,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             // dropdownItemIndex: 0 = empty, 1+ = actual equipment
             if (dropdownItemIndex == 0)
             {
-                // Empty option, hide tooltip
-                if (tooltip != null)
-                {
-                    tooltip.HideTooltip();
-                }
                 return;
             }
             
@@ -276,7 +192,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             {
                 string instanceId = _instanceIds[instanceIndex];
                 onSlotHovered?.Invoke(instanceId);
-                UpdateTooltipForInstanceId(instanceId);
             }
         }
         
@@ -299,11 +214,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             else if (!isOpen && _isDropdownOpen)
             {
                 _isDropdownOpen = false;
-                // Hide tooltip when dropdown closes
-                if (tooltip != null)
-                {
-                    tooltip.HideTooltip();
-                }
+                //TODO: Hide tooltip when dropdown closes
             }
         }
         
@@ -352,10 +263,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 pointerExit.eventID = EventTriggerType.PointerExit;
                 pointerExit.callback.AddListener((eventData) => 
                 { 
-                    if (tooltip != null)
-                    {
-                        tooltip.HideTooltip();
-                    }
+                    //TODO: Hide tooltip when dropdown closes
                 });
                 trigger.triggers.Add(pointerExit);
             }

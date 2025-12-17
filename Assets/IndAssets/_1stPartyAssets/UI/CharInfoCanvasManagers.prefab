@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 5913924671614637286}
-  isWeaponDropdown: 0
+  isWeaponDropdown: 1
   tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
@@ -988,6 +988,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onSlotHovered:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1204496779834638816
 GameObject:
   m_ObjectHideFlags: 0
@@ -2814,7 +2817,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 4479882842270327874}
-  isWeaponDropdown: 0
+  isWeaponDropdown: 1
   tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
@@ -2832,6 +2835,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onSlotHovered:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2551356605526574013
 GameObject:
   m_ObjectHideFlags: 0
@@ -3100,6 +3106,9 @@ MonoBehaviour:
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
   onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls: []
+  onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &2916299033531270825
@@ -5582,6 +5591,9 @@ MonoBehaviour:
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
+  onSlotHovered:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5740816256194678090
 GameObject:
   m_ObjectHideFlags: 0
@@ -6606,6 +6618,9 @@ MonoBehaviour:
   isWeaponDropdown: 0
   tooltip: {fileID: 0}
   onEquipmentEquipped:
+    m_PersistentCalls:
+      m_Calls: []
+  onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8027258130057394588

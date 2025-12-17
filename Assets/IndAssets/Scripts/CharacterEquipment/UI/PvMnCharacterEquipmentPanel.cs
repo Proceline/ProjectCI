@@ -151,14 +151,12 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             void InitializeWeaponDropDown(PvMnEquipmentDropdown dropdown, int slotIndex)
             {
                 dropdown.Initialize(_availableWeaponInstanceIds, _availableWeaponDisplayNames,
-                    _equipmentsCollection.WeaponsDict, _equipmentsCollection.RelicsDict,
                     _characterData?.CharacterId, slotIndex);
             }
             
             void InitializeRelicDropDown(PvMnEquipmentDropdown dropdown, int slotIndex)
             {
                 dropdown.Initialize(_availableRelicInstanceIds, _availableRelicDisplayNames,
-                    _equipmentsCollection.WeaponsDict, _equipmentsCollection.RelicsDict,
                     _characterData?.CharacterId, slotIndex);
             }
 
