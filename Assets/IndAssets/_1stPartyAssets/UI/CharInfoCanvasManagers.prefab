@@ -971,7 +971,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 5913924671614637286}
   isWeaponDropdown: 1
-  tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls:
@@ -991,6 +990,7 @@ MonoBehaviour:
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
 --- !u!1 &1204496779834638816
 GameObject:
   m_ObjectHideFlags: 0
@@ -2818,7 +2818,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 4479882842270327874}
   isWeaponDropdown: 1
-  tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls:
@@ -2838,6 +2837,7 @@ MonoBehaviour:
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
 --- !u!1 &2551356605526574013
 GameObject:
   m_ObjectHideFlags: 0
@@ -3104,13 +3104,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 3080833817924812394}
   isWeaponDropdown: 0
-  tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
 --- !u!1 &2916299033531270825
 GameObject:
   m_ObjectHideFlags: 0
@@ -5587,13 +5587,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 390666020143789034}
   isWeaponDropdown: 0
-  tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
 --- !u!1 &5740816256194678090
 GameObject:
   m_ObjectHideFlags: 0
@@ -6616,13 +6616,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 7404972416383083332}
   isWeaponDropdown: 0
-  tooltip: {fileID: 0}
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
   onSlotHovered:
     m_PersistentCalls:
       m_Calls: []
+  onEquipDataUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
 --- !u!1 &8027258130057394588
 GameObject:
   m_ObjectHideFlags: 0

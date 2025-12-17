@@ -1,13 +1,11 @@
 using System.Collections.Generic;
-using IndAssets.Scripts.Passives.Relics;
-using IndAssets.Scripts.Weapons;
-using ProjectCI.CoreSystem.Runtime.Saving;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using System;
+using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -32,7 +30,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 
         [SerializeField] private UnityEvent<string, string, int> onEquipmentEquipped;
         [SerializeField] private UnityEvent<string> onSlotHovered;
-        
+        [SerializeField] private PvSoEquipDataUpdateEvent onEquipDataUpdateEvent;
+
         private void Awake()
         {
             if (dropdown)
@@ -40,6 +39,16 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
                 _closedChildrenCount = dropdown.transform.childCount;
             }
+        }
+
+        void OnEnable()
+        {
+            onEquipDataUpdateEvent.RegisterCallback(RefreshWithEquippedStatus);
+        }
+
+        void OnDisable()
+        {
+            onEquipDataUpdateEvent.UnregisterCallback(RefreshWithEquippedStatus);
         }
         
         private void OnDestroy()
@@ -215,6 +224,65 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             {
                 _isDropdownOpen = false;
                 //TODO: Hide tooltip when dropdown closes
+            }
+        }
+        
+        /// <summary>
+        /// Refresh dropdown with new instanceIds, displayNames and equipped status
+        /// </summary>
+        /// <param name="instanceIds">List of instance IDs</param>
+        /// <param name="displayNames">List of display names corresponding to instanceIds</param>
+        /// <param name="equippedInstanceIds">Dictionary of instance IDs that are currently equipped and the character they are equipped to</param>
+        private void RefreshWithEquippedStatus(List<string> instanceIds, List<string> displayNames, Dictionary<string, string> equippedInstanceIds)
+        {
+            if (!dropdown) return;
+            
+            // Save current selected value before refresh
+            string currentSelectedInstanceId = GetValue();
+            
+            // Ensure both lists have the same count
+            if (instanceIds.Count != displayNames.Count)
+            {
+                Debug.LogError($"InstanceIds count ({instanceIds.Count}) doesn't match DisplayNames count ({displayNames.Count})");
+                return;
+            }
+            
+            // Update internal lists
+            _instanceIds = instanceIds;
+            _displayNames = displayNames;
+            
+            // Update display names to show equipped status
+            for (int i = 0; i < _displayNames.Count; i++)
+            {
+                string instanceId = _instanceIds[i];
+                if (!string.IsNullOrEmpty(instanceId) && equippedInstanceIds.TryGetValue(instanceId, out string equippedToCharacterId))
+                {
+                    // Check if equipped to current character or other character
+                    bool isEquippedToCurrentCharacter = equippedToCharacterId == _currentCharacterId;
+                    
+                    // Add equipped status marker to display name
+                    if (isEquippedToCurrentCharacter)
+                    {
+                        _displayNames[i] = $"{_displayNames[i]} [已装备]";
+                    }
+                    else
+                    {
+                        _displayNames[i] = $"{_displayNames[i]} [已被装备]";
+                    }
+                }
+            }
+            
+            // Update dropdown options
+            dropdown.ClearOptions();
+            // Add empty option at the beginning (index 0)
+            dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
+            // Add available equipment options with updated display names
+            dropdown.AddOptions(_displayNames);
+            
+            // Restore previous selection
+            if (!string.IsNullOrEmpty(currentSelectedInstanceId))
+            {
+                SetValueWithoutNotify(currentSelectedInstanceId);
             }
         }
         
