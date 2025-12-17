@@ -15,7 +15,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
     public class PvMnEquipmentDropdown : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private TMP_Dropdown dropdown;
-        [SerializeField] private bool isWeaponDropdown;
         
         private const string EMPTY_OPTION_TEXT = "(Empty)";
         
