@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Events;
+using UnityEngine.UI;
+using System;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -29,14 +31,18 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         private string _currentHoveredOption;
         private string _currentCharacterId; // Current character ID for this dropdown
         private int _slotIndex = -1; // Slot index for this dropdown (0, 1 for weapons; 0, 1, 2 for relics)
+        [NonSerialized] private bool _isDropdownOpen = false; // Track if dropdown is currently open
+        [NonSerialized] private int _closedChildrenCount;
 
         [SerializeField] private UnityEvent<string, string, int> onEquipmentEquipped;
+        [SerializeField] private UnityEvent<string> onSlotHovered;
         
         private void Awake()
         {
             if (dropdown)
             {
                 dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
+                _closedChildrenCount = dropdown.transform.childCount;
             }
         }
         
@@ -249,16 +255,109 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         }
         
         /// <summary>
-        /// Call this when dropdown option is hovered (from dropdown item)
+        /// Call this when dropdown option is hovered (by dropdown item index)
         /// </summary>
-        public void OnOptionHovered(string displayName)
+        public void OnOptionHoveredByIndex(int dropdownItemIndex)
         {
-            _currentHoveredOption = displayName;
-            // Find instanceId by displayName
-            int index = _displayNames.IndexOf(displayName);
-            if (index >= 0 && index < _instanceIds.Count)
+            // dropdownItemIndex: 0 = empty, 1+ = actual equipment
+            if (dropdownItemIndex == 0)
             {
-                UpdateTooltipForInstanceId(_instanceIds[index]);
+                // Empty option, hide tooltip
+                if (tooltip != null)
+                {
+                    tooltip.HideTooltip();
+                }
+                return;
+            }
+            
+            // Convert dropdown index to instanceIds index (subtract 1 because index 0 is empty)
+            int instanceIndex = dropdownItemIndex - 1;
+            if (instanceIndex >= 0 && instanceIndex < _instanceIds.Count)
+            {
+                string instanceId = _instanceIds[instanceIndex];
+                onSlotHovered?.Invoke(instanceId);
+                UpdateTooltipForInstanceId(instanceId);
+            }
+        }
+        
+        /// <summary>
+        /// Update method to monitor dropdown state and setup hover events when opened
+        /// </summary>
+        private void Update()
+        {
+            if (!dropdown) return;
+            
+            bool isOpen = dropdown.transform.childCount > _closedChildrenCount;
+            
+            // If dropdown just opened, setup hover events
+            if (isOpen && !_isDropdownOpen)
+            {
+                SetupDropdownItemHoverEvents();
+                _isDropdownOpen = true;
+            }
+            // If dropdown just closed, reset state
+            else if (!isOpen && _isDropdownOpen)
+            {
+                _isDropdownOpen = false;
+                // Hide tooltip when dropdown closes
+                if (tooltip != null)
+                {
+                    tooltip.HideTooltip();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Setup hover events for dropdown items
+        /// </summary>
+        private void SetupDropdownItemHoverEvents()
+        {
+            if (!dropdown) return;
+            
+            // Find the content area where items are located
+            // Structure: template -> Viewport -> Content -> Items
+            Transform viewport = dropdown.transform.GetChild(_closedChildrenCount).Find("Viewport");
+            if (viewport == null) return;
+            
+            Transform content = viewport.Find("Content");
+            if (content == null) return;
+            
+            // Get all item toggles
+            Toggle[] itemToggles = content.GetComponentsInChildren<Toggle>();
+            
+            for (int i = 0; i < itemToggles.Length; i++)
+            {
+                int itemIndex = i; // Capture index for closure
+                Toggle itemToggle = itemToggles[i];
+                
+                // Get or add EventTrigger component
+                EventTrigger trigger = itemToggle.gameObject.GetComponent<EventTrigger>();
+                if (trigger == null)
+                {
+                    trigger = itemToggle.gameObject.AddComponent<EventTrigger>();
+                }
+                
+                // Remove existing PointerEnter entry if any
+                trigger.triggers.RemoveAll(entry => entry.eventID == EventTriggerType.PointerEnter);
+                trigger.triggers.RemoveAll(entry => entry.eventID == EventTriggerType.PointerExit);
+                
+                // Add PointerEnter event
+                EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
+                pointerEnter.eventID = EventTriggerType.PointerEnter;
+                pointerEnter.callback.AddListener((eventData) => { OnOptionHoveredByIndex(itemIndex); });
+                trigger.triggers.Add(pointerEnter);
+                
+                // Add PointerExit event to hide tooltip
+                EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+                pointerExit.eventID = EventTriggerType.PointerExit;
+                pointerExit.callback.AddListener((eventData) => 
+                { 
+                    if (tooltip != null)
+                    {
+                        tooltip.HideTooltip();
+                    }
+                });
+                trigger.triggers.Add(pointerExit);
             }
         }
     }
