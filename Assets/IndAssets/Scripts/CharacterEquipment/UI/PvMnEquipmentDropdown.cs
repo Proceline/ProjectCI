@@ -250,8 +250,15 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             _instanceIds = instanceIds;
             _displayNames = displayNames;
             
+            // Update dropdown options
+            dropdown.ClearOptions();
+            // Add empty option at the beginning (index 0)
+            dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
+            // Add available equipment options with updated display names
+            dropdown.AddOptions(displayNames);
+
             // Update display names to show equipped status
-            for (int i = 0; i < _displayNames.Count; i++)
+            for (int i = 0; i < displayNames.Count; i++)
             {
                 string instanceId = _instanceIds[i];
                 if (!string.IsNullOrEmpty(instanceId) && equippedInstanceIds.TryGetValue(instanceId, out string equippedToCharacterId))
@@ -259,24 +266,18 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                     // Check if equipped to current character or other character
                     bool isEquippedToCurrentCharacter = equippedToCharacterId == _currentCharacterId;
                     
+                    var targetDropdownItem = dropdown.options[i + 1];
                     // Add equipped status marker to display name
                     if (isEquippedToCurrentCharacter)
                     {
-                        _displayNames[i] = $"{_displayNames[i]} [已装备]";
+                        targetDropdownItem.text = $"{displayNames[i]} [已装备]";
                     }
                     else
                     {
-                        _displayNames[i] = $"{_displayNames[i]} [已被装备]";
+                        targetDropdownItem.text = $"{displayNames[i]} [已被装备]";
                     }
                 }
             }
-            
-            // Update dropdown options
-            dropdown.ClearOptions();
-            // Add empty option at the beginning (index 0)
-            dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
-            // Add available equipment options with updated display names
-            dropdown.AddOptions(_displayNames);
             
             // Restore previous selection
             if (!string.IsNullOrEmpty(currentSelectedInstanceId))
