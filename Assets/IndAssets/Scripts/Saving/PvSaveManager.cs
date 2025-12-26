@@ -53,6 +53,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         public static event Action<List<PvSaveDetails>> onAllSaveDataListed;
         [Inject] private static PvSoWeaponAndRelicCollection _equipmentsCollection;
         [SerializeField] private PvSoEquipDataUpdateEvent raiserEquipWeaponUpdateEvent;
+        [SerializeField] private PvSoEquipEntryEvent raiserEquipWeaponEntryEvent;
 
         private void Awake()
         {
@@ -386,6 +387,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 }
                 
                 characterData.SetWeaponInstanceId(slotIndex, weaponInstanceId);
+                Instance.raiserEquipWeaponEntryEvent.Raise(weaponInstanceId, characterId, slotIndex);
+                
                 BroadcastEquipWeaponsData();
             }
         }
