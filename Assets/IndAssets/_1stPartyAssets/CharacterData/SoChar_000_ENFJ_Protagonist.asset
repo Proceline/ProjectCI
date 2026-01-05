@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
-  m_Name: SoChar_001_Guard2
+  m_Name: SoChar_000_ENFJ_Protagonist
   m_EditorClassIdentifier: 
-  m_UnitName: '[Guard2]'
+  m_UnitName: '[Protagonist]'
   m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
   originalAttributes:
   - m_AttributeType:
       value: 0
-    m_Value: 17
+    m_Value: 16
     m_GainValue: 40
   - m_AttributeType:
       value: 1
@@ -25,19 +25,19 @@ MonoBehaviour:
     m_GainValue: 55
   - m_AttributeType:
       value: 2
-    m_Value: 8
+    m_Value: 10
     m_GainValue: 45
   - m_AttributeType:
       value: 3
-    m_Value: 12
+    m_Value: 14
     m_GainValue: 45
   - m_AttributeType:
       value: 4
-    m_Value: 8
+    m_Value: 10
     m_GainValue: 40
   - m_AttributeType:
       value: 6
-    m_Value: 14
+    m_Value: 8
     m_GainValue: 35
   - m_AttributeType:
       value: 17
@@ -53,10 +53,21 @@ MonoBehaviour:
   m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
   m_SpawnOnHeal: []
   m_AbilityPoints: 5
-  unitIdentifier: PlayerChar01
-  icon: {fileID: -149152826, guid: 1538c5afb130f444784879ec5163389d, type: 3}
+  unitIdentifier: PlayerChar00
+  icon: {fileID: -982961584, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   personalPassives:
-  - {fileID: 11400000, guid: a36832e32baf01c4598c7725e7958e48, type: 2}
-  - {fileID: 11400000, guid: d3217b9726d277b4696a2466e6ce00dc, type: 2}
+  - {fileID: 11400000, guid: 8c15b9589f8bdea45962484d95647273, type: 2}
+  - {fileID: 11400000, guid: 3b063152081af37438052cf8d900a05b, type: 2}
+  - {fileID: 11400000, guid: 907e7abc95ab0cf4791c5e25e3155e50, type: 2}
+  - {fileID: 11400000, guid: 44e5ce403f919384bb81d69c659a74d0, type: 2}
+  - {fileID: 11400000, guid: 3902bb95af16f544f86fd057948d363e, type: 2}
+  - {fileID: 11400000, guid: 5d486b566b6dec7489061936e688cd1d, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
   headMeshPrefab: {fileID: 7201506655171250344, guid: 3495d8b6be766db4bbaa466ca51af608, type: 3}
+  talentedAbilities: []
+  personality:
+    energyLevel: 1
+    informationLevel: -2
+    decisionLevel: -3
+    styleLevel: 3
+    identityLevel: 2

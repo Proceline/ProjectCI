@@ -1,4 +1,6 @@
+using IndAssets.Scripts.Units;
 using ProjectCI_Animation.Runtime;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -15,7 +17,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] 
         private PvSoPassiveBase[] personalPassives;
 
-        [SerializeField] 
+        [SerializeField]
         private UnitAnimationManager animatedMountForm;
 
         public UnitAnimationManager PresetAnimatedMount => animatedMountForm;
@@ -24,6 +26,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private GameObject headMeshPrefab;
 
         public GameObject HeadMeshPrefab => headMeshPrefab;
+
+        [SerializeField]
+        private PvSoUnitAbility[] talentedAbilities;
+
+        [SerializeField] private PvPersonalitiesCombination personality;
 
         public override void InitializeUnitDataToGridUnit(GridPawnUnit pawnUnit)
         {
