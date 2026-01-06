@@ -15,6 +15,9 @@ namespace ProjectCI.TacticTool.Formula.Concrete
 
         [SerializeField]
         private AttributeType criticalAttributeType;
+
+        [SerializeField] private AttributeType attackSpeedType;
+        public AttributeType AttackSpeedType => attackSpeedType;
         
         [SerializeField]
         private FormulaDefinition[] m_Formulas;

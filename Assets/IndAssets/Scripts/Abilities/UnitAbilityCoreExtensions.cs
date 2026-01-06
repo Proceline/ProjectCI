@@ -78,7 +78,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                     int delta = 0;
                     if (cellUnit)
                     {
-                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute) + 10;
+                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
                         delta = dcFinal - acFinal;
                     }
 

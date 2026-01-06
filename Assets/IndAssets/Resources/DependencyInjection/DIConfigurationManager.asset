@@ -101,5 +101,7 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicEnforceFollowUp, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Passives.PvSoPassiveTeammateHit, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
