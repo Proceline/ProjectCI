@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 
@@ -17,21 +15,15 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
     {
         [Inject] private static IUnitCombatLogicPreEvent _logicPreStartedEvent;
 
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
-            if (unit is PvMnBattleGeneralUnit castedUnit)
-            {
-                _logicPreStartedEvent.RegisterCallback(castedUnit.AddSupportFollowUp);
-            }
+            _logicPreStartedEvent.RegisterCallback(unit.AddSupportFollowUp);
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            if (unit is PvMnBattleGeneralUnit castedUnit)
-            {
-                _logicPreStartedEvent.UnregisterCallback(castedUnit.AddSupportFollowUp);
-            }
+            _logicPreStartedEvent.UnregisterCallback(unit.AddSupportFollowUp);
         }
     }
     

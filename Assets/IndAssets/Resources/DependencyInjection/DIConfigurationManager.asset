@@ -64,6 +64,9 @@ MonoBehaviour:
   - serviceTypeName: IndAssets.Scripts.Managers.PvSoWeaponAndRelicCollection, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: a4e86cc0b9238324cbcdc6209321b9e2, type: 2}
+  - serviceTypeName: IndAssets.Scripts.Events.PvSoUnitHeldQueryEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 958e02467043c8c4baeeaf1105c89177, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -95,6 +98,8 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.Runtime.GUI.Battle.PvMnBattleResourceContainer, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Events.PvSoUnitHeldQueryEvent, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Modifiers.PvSoModifierSupportObject, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicHurryCounter, Assembly-CSharp,
@@ -102,6 +107,8 @@ MonoBehaviour:
   - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicEnforceFollowUp, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.PvSoPassiveTeammateHit, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Passives.PvSoPassiveFollowEncourage, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

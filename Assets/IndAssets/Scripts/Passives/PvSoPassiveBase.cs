@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
@@ -20,7 +20,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         public string description;
 
         [NonSerialized] private readonly HashSet<string> _recordedOwners = new();
-        public void InstallPassive(GridPawnUnit unit)
+        public void InstallPassive(PvMnBattleGeneralUnit unit)
         {
             if (!_recordedOwners.Add(unit.ID))
             {
@@ -31,7 +31,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             InstallPassiveInternally(unit);
         }
 
-        public void DisposePassive(GridPawnUnit unit)
+        public void DisposePassive(PvMnBattleGeneralUnit unit)
         {
             if (IsOwner(unit.ID))
             {
@@ -44,7 +44,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         protected bool IsOwner(string unitId) => _recordedOwners.Contains(unitId);
 
-        protected abstract void InstallPassiveInternally(GridPawnUnit unit);
-        protected abstract void DisposePassiveInternally(GridPawnUnit unit);
+        protected abstract void InstallPassiveInternally(PvMnBattleGeneralUnit unit);
+        protected abstract void DisposePassiveInternally(PvMnBattleGeneralUnit unit);
     }
 }

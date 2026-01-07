@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
@@ -35,7 +36,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private readonly Dictionary<string, UnityAction<IEventOwner, IAttributeModifierContainer>>
             _loadedModifierActions = new();
 
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
             if (!_loadedModifierActions.ContainsKey(unit.ID))
@@ -52,7 +53,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
             if (_loadedModifierActions.TryGetValue(unit.ID, out var modifierAction))
             {

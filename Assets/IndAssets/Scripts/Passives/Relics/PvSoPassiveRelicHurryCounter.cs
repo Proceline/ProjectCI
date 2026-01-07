@@ -19,32 +19,30 @@ namespace IndAssets.Scripts.Passives.Relics
         
         [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.RegisterCallback(ReorderCombatingList);
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.UnregisterCallback(ReorderCombatingList);
         }
 
-        protected virtual void ReorderCombatingList(IEventOwner raiser, UnitCombatingEventParam combatingParam)
+        protected virtual void ReorderCombatingList(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
+            List<CombatingQueryContext> queryContexts)
         {
-            var list = combatingParam.CombatingList;
-            var caster = combatingParam.unit;
-            var victim = combatingParam.target;
-            if (!IsResponsiveOwner(caster, victim))
+            if (!IsResponsiveOwner(inUnit, inTarget))
             {
                 return;
             }
 
-            var casterSpeed = caster.RuntimeAttributes.GetAttributeValue(targetAttributeType);
-            var victimSpeed = victim.RuntimeAttributes.GetAttributeValue(targetAttributeType);
+            var casterSpeed = inUnit.RuntimeAttributes.GetAttributeValue(targetAttributeType);
+            var victimSpeed = inTarget.RuntimeAttributes.GetAttributeValue(targetAttributeType);
 
             if (IsAttributeCheckPassed(casterSpeed, victimSpeed))
             {
-                AdjustQueryList(list);
+                AdjustQueryList(queryContexts);
             }
         }
 

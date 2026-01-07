@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using System;
 using IndAssets.Scripts.Commands;
+using IndAssets.Scripts.Events;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.Utilities.Runtime.Events;
@@ -113,7 +114,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var victim = combatActionContext.IsCounter ? abilityOwner : targetUnit;
                 if (!combatAbility) continue;
                 RaiserOnCombatingQueryStartEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
-                combatAbility.HandleAbilityParam(caster, victim, results);
+                
+                if (combatActionContext.QueryType == CombatingQueryType.ReplacedFollowUp)
+                {
+                    caster.ApplyAdjustedAction(combatActionContext, victim, results);
+                }
+                else
+                {
+                    combatAbility.HandleAbilityParam(caster, victim, results);
+                }
+
                 RaiserOnCombatingQueryEndEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
             }
         }

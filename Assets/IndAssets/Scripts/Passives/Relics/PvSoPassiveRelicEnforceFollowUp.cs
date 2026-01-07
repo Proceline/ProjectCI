@@ -17,17 +17,15 @@ namespace IndAssets.Scripts.Passives.Relics
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onEffectAppliedEvent;
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onEffectDisposedEvent;
         
-        protected override void ReorderCombatingList(IEventOwner raiser, UnitCombatingEventParam combatingParam)
+        protected override void ReorderCombatingList(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
+            List<CombatingQueryContext> queryContexts)
         {
-            var list = combatingParam.CombatingList;
-            var caster = combatingParam.unit;
-            var victim = combatingParam.target;
-            if (!IsResponsiveOwner(caster, victim))
+            if (!IsResponsiveOwner(inUnit, inTarget))
             {
                 return;
             }
             
-            AdjustQueryList(list);
+            AdjustQueryList(queryContexts);
         }
         
         protected override bool IsResponsiveOwner(PvMnBattleGeneralUnit caster, PvMnBattleGeneralUnit victim)
@@ -53,36 +51,36 @@ namespace IndAssets.Scripts.Passives.Relics
             Debug.Log($"Successfully Load Effect from <{nameof(PvSoPassiveRelicEnforceFollowUp)}>");
         }
 
-        private void OnSingleCombatingQueryListReceived(IEventOwner raiser, UnitCombatingEventParam combatingParam)
+        private void OnSingleCombatingQueryListReceived(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
+            List<CombatingQueryContext> queryContexts)
         {
-            var caster = combatingParam.unit;
-            if (!IsOwner(caster.EventIdentifier))
+            if (!IsOwner(inUnit.EventIdentifier))
             {
                 return;
             }
 
-            var query = combatingParam.CombatingList[0];
+            var query = queryContexts[0];
             if (query.QueryType == CombatingQueryType.ExtraFollowUp)
             {
-                onEffectAppliedEvent.Invoke(caster);
+                onEffectAppliedEvent.Invoke(inUnit);
             }
         }
 
-        private void OnSingleCombatingQueryListLeft(IEventOwner raiser, UnitCombatingEventParam combatingParam)
+        private void OnSingleCombatingQueryListLeft(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
+            List<CombatingQueryContext> queryContexts)
         {
-            var caster = combatingParam.unit;
-            if (!IsOwner(caster.EventIdentifier))
+            if (!IsOwner(inUnit.EventIdentifier))
             {
                 return;
             }
 
-            var query = combatingParam.CombatingList[0];
+            var query = queryContexts[0];
             if (query.QueryType != CombatingQueryType.ExtraFollowUp)
             {
                 return;
             }
 
-            onEffectDisposedEvent.Invoke(caster);
+            onEffectDisposedEvent.Invoke(inUnit);
 
             OnCombatingQueryStartedEvent.UnregisterCallback(OnSingleCombatingQueryListReceived);
             OnCombatingQueryEndedEvent.UnregisterCallback(OnSingleCombatingQueryListLeft);

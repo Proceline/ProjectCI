@@ -2,6 +2,7 @@ using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -20,13 +21,13 @@ namespace IndAssets.Scripts.Passives
         private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
         internal static FormulaCollection FormulaColInstance => FormulaService.Service;
         
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
             _logicFinishedEvent.RegisterCallback(unit.AskTeammateToFollow);
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
             _logicFinishedEvent.UnregisterCallback(unit.AskTeammateToFollow);
         }

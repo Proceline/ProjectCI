@@ -36,7 +36,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             foreach (var passive in personalPassives)
             {
-                passive.InstallPassive(pawnUnit);
+                passive.InstallPassive(pawnUnit as PvMnBattleGeneralUnit);
             }
         }
 

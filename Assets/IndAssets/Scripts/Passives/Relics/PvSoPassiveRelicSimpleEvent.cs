@@ -11,20 +11,14 @@ namespace IndAssets.Scripts.Passives.Relics
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onRelicSettledForUnit;
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onRelicWithdrawFromUnit;
         
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            if (unit is PvMnBattleGeneralUnit battleUnit)
-            {
-                onRelicSettledForUnit.Invoke(battleUnit);
-            }
+            onRelicSettledForUnit.Invoke(unit);
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            if (unit is PvMnBattleGeneralUnit battleUnit)
-            {
-                onRelicWithdrawFromUnit.Invoke(battleUnit);
-            }
+            onRelicWithdrawFromUnit.Invoke(unit);
         }
     }
 }

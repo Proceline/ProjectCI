@@ -1,7 +1,6 @@
 ﻿using ProjectCI.CoreSystem.Runtime.Passives;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
-using UnityEngine;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 
 namespace IndAssets.Scripts.Passives.Relics
 {
@@ -9,12 +8,12 @@ namespace IndAssets.Scripts.Passives.Relics
     {
         public string EntryId => name;
 
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
             
         }

@@ -52,12 +52,9 @@ MonoBehaviour:
   unitIdentifier: PlayerChar00
   icon: {fileID: -982961584, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   personalPassives:
+  - {fileID: 11400000, guid: 827571ef749b63642bb79769a85ce627, type: 2}
   - {fileID: 11400000, guid: 8c15b9589f8bdea45962484d95647273, type: 2}
   - {fileID: 11400000, guid: 3b063152081af37438052cf8d900a05b, type: 2}
-  - {fileID: 11400000, guid: 907e7abc95ab0cf4791c5e25e3155e50, type: 2}
-  - {fileID: 11400000, guid: 44e5ce403f919384bb81d69c659a74d0, type: 2}
-  - {fileID: 11400000, guid: 3902bb95af16f544f86fd057948d363e, type: 2}
-  - {fileID: 11400000, guid: 5d486b566b6dec7489061936e688cd1d, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
   headMeshPrefab: {fileID: 7201506655171250344, guid: 3495d8b6be766db4bbaa466ca51af608, type: 3}
   talentedAbilities: []

@@ -14,13 +14,13 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
     {
         [Inject] private static IUnitCombatLogicFinishedEvent _logicFinishedEvent;
         
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
             _logicFinishedEvent.RegisterCallback(unit.AddExtraFollowUp);
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
             _logicFinishedEvent.UnregisterCallback(unit.AddExtraFollowUp);
         }
