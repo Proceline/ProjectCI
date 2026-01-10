@@ -14,7 +14,7 @@ namespace IndAssets.Scripts.Passives
 {
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "New Extra Attack Passive", menuName = "ProjectCI Passives/ExtraAttack", order = 1)]
-    public class PvSoPassiveTeammateHit : PvSoPassiveBase
+    public class PvSoPassiveTeammateHit : PvSoPassiveIndividual
     {
         [Inject] private static IUnitCombatLogicFinishedEvent _logicFinishedEvent;
         

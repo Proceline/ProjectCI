@@ -11,7 +11,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "New Support Attack Passive", menuName = "ProjectCI Passives/SupportAttack", order = 1)]
-    public class PvSoPassiveSupportAttack : PvSoPassiveBase
+    public class PvSoPassiveSupportAttack : PvSoPassiveIndividual
     {
         [Inject] private static IUnitCombatLogicPreEvent _logicPreStartedEvent;
 

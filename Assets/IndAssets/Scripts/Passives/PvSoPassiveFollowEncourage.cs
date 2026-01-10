@@ -14,7 +14,7 @@ namespace IndAssets.Scripts.Passives
 {
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "Protagonist Passive", menuName = "ProjectCI Passives/MBTI/Protagonist_ENFJ", order = 1)]
-    public class PvSoPassiveFollowEncourage : PvSoPassiveBase
+    public class PvSoPassiveFollowEncourage : PvSoPassiveIndividual
     {
         [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         

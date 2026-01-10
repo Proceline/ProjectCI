@@ -11,7 +11,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     
     [CreateAssetMenu(fileName = "SoPassiveCustomValueModifier", menuName = "ProjectCI Passives/CustomValueModifier", order = 1)]
-    public class PvSoPassiveCustomValueModifier : PvSoPassiveBase
+    public class PvSoPassiveCustomValueModifier : PvSoPassiveIndividual
     {
         [Header("Modifier Details"), SerializeField] 
         private PvSoCustomValueModifier customValueModifier;

@@ -4,7 +4,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 
 namespace IndAssets.Scripts.Passives.Relics
 {
-    public class PvSoPassiveRelic : PvSoPassiveBase, IPvSaveEntry
+    public class PvSoPassiveRelic : PvSoPassiveIndividual, IPvSaveEntry
     {
         public string EntryId => name;
 
