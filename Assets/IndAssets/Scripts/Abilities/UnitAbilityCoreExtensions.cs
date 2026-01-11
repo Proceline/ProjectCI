@@ -78,17 +78,15 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                     int delta = 0;
                     if (cellUnit)
                     {
-                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
-                        delta = dcFinal - acFinal;
-                    }
-
-                    if (delta > 0)
-                    {
-                        var criticalAttribute =
-                            100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
+                        var criticalAttribute = 100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
                         if (caughtSeedValue >= criticalAttribute)
                         {
                             delta = 100;
+                        }
+                        else 
+                        {
+                            var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
+                            delta = dcFinal - acFinal;
                         }
                     }
 

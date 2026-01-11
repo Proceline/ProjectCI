@@ -17,13 +17,9 @@ MonoBehaviour:
   defenderAttribute:
     value: 31
   damageType: 7
+  criticalAmountAttribute:
+    value: 31
   isHealValue: 1
   basicAddon: 10
   isCriticalEnabledByDefault: 0
-  criticalAttribute:
-    value: 9
   isAlwaysHitByDefault: 1
-  hitAttribute:
-    value: 10
-  dodgeAttribute:
-    value: 11

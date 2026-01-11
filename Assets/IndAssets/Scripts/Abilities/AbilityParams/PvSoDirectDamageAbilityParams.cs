@@ -23,6 +23,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public PvEnDamageType damageType;
 
         [SerializeField]
+        private AttributeType criticalAmountAttribute;
+
+        [SerializeField]
         private bool isHealValue;
 
         [SerializeField] private int basicAddon;
@@ -63,7 +66,15 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var isCritical = false;
             if (isCriticalEnabledByDefault && passValue == 100)
             {
-                damage *= 2;
+                var criticalAmountAdjustor = fromContainer.GetAttributeValue(criticalAmountAttribute);
+                criticalAmountAdjustor += 100;
+                if (criticalAmountAdjustor > 100)
+                {
+                    criticalAmountAdjustor = 100;
+                }
+                
+                var extraDamage = damage * criticalAmountAdjustor / 100;
+                damage += extraDamage;
                 isCritical = true;
             }
 
