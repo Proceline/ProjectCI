@@ -1,4 +1,5 @@
 using System;
+using ProjectCI.CoreSystem.Runtime.Attributes;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -45,5 +46,12 @@ namespace IndAssets.Scripts.Units
                     return 0;
             }
         }
+    }
+
+    [Serializable]
+    public struct PvPersonalityRedirectionPair
+    {
+        public EPvPersonalityName personalityName;
+        public AttributeType redirectToAttribute;
     }
 }

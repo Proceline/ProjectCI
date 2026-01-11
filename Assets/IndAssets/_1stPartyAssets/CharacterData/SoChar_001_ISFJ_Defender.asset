@@ -14,31 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UnitName: '[Defender]'
   m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
-  originalAttributes:
-  - m_AttributeType:
-      value: 0
-    m_Value: 20
-    m_GainValue: 40
-  - m_AttributeType:
-      value: 1
-    m_Value: 15
-    m_GainValue: 55
-  - m_AttributeType:
-      value: 2
-    m_Value: 15
-    m_GainValue: 45
-  - m_AttributeType:
-      value: 3
-    m_Value: 20
-    m_GainValue: 45
-  - m_AttributeType:
-      value: 4
-    m_Value: 20
-    m_GainValue: 40
-  - m_AttributeType:
-      value: 6
-    m_Value: 10
-    m_GainValue: 35
+  originalAttributes: []
   m_TravelSound: {fileID: 0}
   m_DamagedSound: {fileID: 0}
   m_HealSound: {fileID: 0}

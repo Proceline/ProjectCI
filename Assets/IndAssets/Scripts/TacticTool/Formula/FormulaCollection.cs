@@ -1,6 +1,8 @@
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using UnityEngine;
+using IndAssets.Scripts.Units;
+using System.Collections.Generic;
 
 namespace ProjectCI.TacticTool.Formula.Concrete
 {
@@ -18,6 +20,36 @@ namespace ProjectCI.TacticTool.Formula.Concrete
 
         [SerializeField] private AttributeType attackSpeedType;
         public AttributeType AttackSpeedType => attackSpeedType;
+
+        [SerializeField] private PvPersonalityRedirectionPair[] personalityRedirections;
+        private readonly Dictionary<EPvPersonalityName, AttributeType> _personalityRedirectionDic = new();
+        private Dictionary<EPvPersonalityName, AttributeType> PersonalityRedirectionDic
+        {
+            get
+            {
+                if (_personalityRedirectionDic.Count != personalityRedirections.Length)
+                {
+                    _personalityRedirectionDic.Clear();
+                    foreach (var pair in personalityRedirections)
+                    {
+                        _personalityRedirectionDic.Add(pair.personalityName, pair.redirectToAttribute);
+                    }
+                }
+
+                return _personalityRedirectionDic;
+            }
+        }
+
+        public AttributeType GetPersonalityAttribute(EPvPersonalityName personalityName)
+        {
+            if (PersonalityRedirectionDic.TryGetValue(personalityName, out var attributeType))
+            {
+                return attributeType;
+            }
+
+            Debug.LogError($"Personality {personalityName} not found in redirection dictionary.");
+            return attackSpeedType; // Return a default value to avoid null reference
+        }
         
         [SerializeField]
         private FormulaDefinition[] m_Formulas;

@@ -1,11 +1,12 @@
-using System;
 using System.Collections.Generic;
+using IndAssets.Scripts.Units;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
@@ -22,19 +23,19 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         [Header("Parameters"), SerializeField] 
         private AttributeType targetAttribute;
 
-        [SerializeField] 
-        private int radius = 1;
-
-        [Header("Modifier Details"), SerializeField] 
-        private AttributeModifier attributeModifier;
-
         [SerializeField]
         private BattleTeam teamCondition;
 
-        [Inject] private static readonly PvSoModifiersManager ModifiersManager;
+        [SerializeField]
+        private int noPeopleEneryMultiplier = -10;
 
-        private readonly Dictionary<string, UnityAction<IEventOwner, IAttributeModifierContainer>>
-            _loadedModifierActions = new();
+        [SerializeField]
+        private int hasPeopleEneryMultiplier = 4;
+
+        [Inject] private static readonly PvSoModifiersManager ModifiersManager;
+        
+        private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
+        internal static FormulaCollection FormulaColInstance => FormulaService.Service;
 
         
         private void Initialize()
@@ -48,15 +49,22 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         }
 
         private void ModifyAttribute(IEventOwner attributeOwner, IAttributeModifierContainer container)
-        {
-            if (!(attributeOwner is GridPawnUnit gridPawnUnit))
+        {   
+            var cell = TacticBattleManager.GetGrid()[attributeOwner.GridPosition];
+            var ownerUnit = cell.GetUnitOnCell();
+
+            if (!ownerUnit)
             {
                 return;
             }
-            
-            AIRadiusInfo radiusInfo = new AIRadiusInfo(gridPawnUnit.GetCell(), radius)
+
+            var energyAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Energy);
+            var energyLevel = ownerUnit.RuntimeAttributes.GetAttributeValue(energyAttribute);
+            var radius = energyLevel >= 0? 2 : 1;
+
+            AIRadiusInfo radiusInfo = new AIRadiusInfo(cell, radius)
             {
-                Caster = gridPawnUnit,
+                Caster = ownerUnit,
                 bAllowBlocked = false,
                 bStopAtBlockedCell = false,
                 EffectedTeam = teamCondition
@@ -65,16 +73,26 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             List<LevelCellBase> radCells = AStarAlgorithmUtils.GetRadius(radiusInfo);
 
             Debug.LogError($"Number of Teammates in Radius: {radCells.Count}!!!!");
-
             var numOfTeammates = radCells.Count;
+
+            var noPeopleModifier = new AttributeModifier
+            {
+                flatValue = energyLevel * noPeopleEneryMultiplier
+            };
+
+            var hasPeopleModifier = new AttributeModifier
+            {
+                flatValue = energyLevel * hasPeopleEneryMultiplier * numOfTeammates
+            };
 
             if (numOfTeammates == 0)
             {
+                container.AddModifier(noPeopleModifier);
                 return;
             }
-            else if (numOfTeammates == 1)
+            else
             {
-                container.AddModifier(attributeModifier);
+                container.AddModifier(hasPeopleModifier);
             }
         }
 

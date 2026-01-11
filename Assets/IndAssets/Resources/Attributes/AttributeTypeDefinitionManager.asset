@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attributeTypeNames:
   - Health
-  - Strength
-  - Psychic
-  - Dexterity
-  - Agility
-  - Luck
+  - Energy
+  - Information
+  - Decisions
+  - Style
+  - Identity
   - Defense
   - Resistance
   - Charm
