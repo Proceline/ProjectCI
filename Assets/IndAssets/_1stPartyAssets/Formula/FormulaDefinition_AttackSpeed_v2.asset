@@ -15,30 +15,20 @@ MonoBehaviour:
   targetAttribute:
     value: 14
   formulaNodes:
-  - type: 0
+  - type: 2
     attributeType:
-      value: 4
+      value: 0
     operatorSymbol: 
     constantValue: 0
   - type: 0
     attributeType:
-      value: 3
-    operatorSymbol: '-'
-    constantValue: 10
+      value: 16
+    operatorSymbol: 
+    constantValue: 0
   - type: 1
     attributeType:
-      value: 4
-    operatorSymbol: +
-    constantValue: 10
-  - type: 0
-    attributeType:
-      value: 16
-    operatorSymbol: +
-    constantValue: 10
-  - type: 1
-    attributeType:
-      value: 16
+      value: 0
     operatorSymbol: '-'
-    constantValue: 10
+    constantValue: 0
   preventNegativeSubResult: 1
   preventFloatDuringCalculation: 0

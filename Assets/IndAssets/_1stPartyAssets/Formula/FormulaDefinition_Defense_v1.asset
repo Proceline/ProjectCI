@@ -17,17 +17,8 @@ MonoBehaviour:
   formulaNodes:
   - type: 0
     attributeType:
-      value: 6
-    operatorSymbol: 
-    constantValue: 0
-  - type: 0
-    attributeType:
       value: 30
     operatorSymbol: 
     constantValue: 0
-  - type: 1
-    attributeType:
-      value: 6
-    operatorSymbol: +
-    constantValue: 0
   preventNegativeSubResult: 1
+  preventFloatDuringCalculation: 0
