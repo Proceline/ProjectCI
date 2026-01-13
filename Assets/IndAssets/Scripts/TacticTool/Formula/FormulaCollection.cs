@@ -10,7 +10,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
     public class FormulaCollection : ScriptableObject, IService
     {
         [SerializeField]
-        private AttributeType m_HealthAttributeType;
+        private AttributeType hitPointAttribute;
 
         [SerializeField]
         private AttributeType m_MovementAttributeType;
@@ -56,7 +56,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
 
         public FormulaDefinition[] Formulas => m_Formulas;
 
-        public AttributeType HealthAttributeType => m_HealthAttributeType;
+        public AttributeType HealthAttributeType => hitPointAttribute;
         public AttributeType MovementAttributeType => m_MovementAttributeType;
         public AttributeType CriticalAttributeType => criticalAttributeType;
 

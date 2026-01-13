@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ec66185db545d249b3bdcd4b92bfc97, type: 3}
   m_Name: _FormulaCollection
   m_EditorClassIdentifier: 
-  m_HealthAttributeType:
+  hitPointAttribute:
     value: 29
   m_MovementAttributeType:
     value: 26

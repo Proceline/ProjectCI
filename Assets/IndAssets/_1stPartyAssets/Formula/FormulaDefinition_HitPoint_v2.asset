@@ -19,6 +19,26 @@ MonoBehaviour:
     attributeType:
       value: 0
     operatorSymbol: +
+    constantValue: 50
+  - type: 0
+    attributeType:
+      value: 3
+    operatorSymbol: +
     constantValue: 20
-  preventNegativeSubResult: 1
+  - type: 2
+    attributeType:
+      value: 3
+    operatorSymbol: +
+    constantValue: 5
+  - type: 1
+    attributeType:
+      value: 3
+    operatorSymbol: '*'
+    constantValue: 0
+  - type: 1
+    attributeType:
+      value: 3
+    operatorSymbol: '-'
+    constantValue: 0
+  preventNegativeSubResult: 0
   preventFloatDuringCalculation: 0

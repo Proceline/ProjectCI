@@ -1,4 +1,3 @@
-using System;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
@@ -6,9 +5,11 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
 using ProjectCI.Runtime.GUI.Battle;
+using ProjectCI.TacticTool.Formula.Concrete;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-using Unity.VisualScripting;
 
 namespace ProjectCI.CoreSystem.Runtime.Battleground
 {
@@ -39,6 +40,9 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
         [SerializeField]
         private GameObject resourceContainerPrefab;
+
+        [SerializeField]
+        private FormulaCollection formulaCollection;
 
         public UnityEvent<RaycastHit, Vector2Int, LevelGridBase> gridCreatingRule;
 
@@ -106,6 +110,10 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     sceneUnit.UnitData.InitializeUnitDataToGridUnit(unit);
                     
                     sceneUnit.InitializeAttributes(unit.RuntimeAttributes);
+
+                    int hitPoint = unit.RuntimeAttributes.GetAttributeValue(formulaCollection.HealthAttributeType);
+                    unit.RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
+
                     unit.AddComponent<PvMnBattleResourceContainer>();
                     unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
                     

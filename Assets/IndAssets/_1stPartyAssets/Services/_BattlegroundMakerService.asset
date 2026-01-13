@@ -26,6 +26,7 @@ MonoBehaviour:
   battleManagerPrefab: {fileID: 1352712205622167666, guid: 5821f100d73104740b501a66875c831c, type: 3}
   detectMaxResults: 10
   resourceContainerPrefab: {fileID: 6909603433851531995, guid: f455cd3e31fd9d046864be440a4b0357, type: 3}
+  formulaCollection: {fileID: 11400000, guid: cd0d657ce42bfbd48b2d25b6d44f8e18, type: 2}
   gridCreatingRule:
     m_PersistentCalls:
       m_Calls:

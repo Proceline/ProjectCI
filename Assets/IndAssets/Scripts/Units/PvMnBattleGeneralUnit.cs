@@ -20,8 +20,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public partial class PvMnBattleGeneralUnit : GridPawnUnit, IEventOwner
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
-        [NonSerialized] private FormulaCollection _formulaCollection;
-        private FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
+        private static FormulaCollection _formulaCollection;
+        private static FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
 
         private readonly Stack<UnitBattleState> _unitStates = new();
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
@@ -162,26 +162,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             return 0;
-        }
-
-        public override void SetUnitData(SoUnitData unitData)
-        {
-            base.SetUnitData(unitData);
-
-            foreach (var attribute in unitData.originalAttributes)
-            {
-                RuntimeAttributes.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
-            }
-
-            if (FormulaCollection != null)
-            {
-                int hitPoint = RuntimeAttributes.GetAttributeValue(FormulaCollection.HealthAttributeType);
-                RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
-            }
-            else
-            {
-                RuntimeAttributes.Health.SetValue(10, 10);
-            }
         }
         
         public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)
