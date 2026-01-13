@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "ProjectCI.sln"
+    "dotnet.defaultSolution": "ProjectCI.slnx"
 }
