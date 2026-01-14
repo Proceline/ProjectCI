@@ -4,11 +4,12 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
-{   
+{
     public abstract class PvSoPassiveIndividual : PvSoPassiveBase
     {
         [NonSerialized] private readonly HashSet<string> _recordedOwners = new();
-        
+        protected int OwnerCount => _recordedOwners.Count;
+
         public override void InstallPassive(PvMnBattleGeneralUnit unit)
         {
             if (!_recordedOwners.Add(unit.ID))

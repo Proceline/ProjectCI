@@ -11,16 +11,17 @@ using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using UnityEngine;
-using UnityEngine.Events;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using System;
 using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifier;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     [StaticInjectableTarget]
-    [CreateAssetMenu(fileName = "New EnhanceAttribute Passive", menuName = "ProjectCI Passives/EnhanceAttribute", order = 1)]
-    public sealed class PvSoPassivePerEneryRule : PvSoPassiveGlobal
+    [CreateAssetMenu(fileName = "New EnergyRule Passive", menuName = "ProjectCI Passives/EnergyRule", order = 1)]
+    public sealed class PvSoPassivePerEneryRule : PvSoPassiveIndividual
     {
-        [Header("Parameters"), SerializeField] 
+        [Header("Parameters"), SerializeField]
         private AttributeType targetAttribute;
 
         [SerializeField]
@@ -33,23 +34,38 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private int hasPeopleEneryMultiplier = 4;
 
         [Inject] private static readonly PvSoModifiersManager ModifiersManager;
-        
+
         private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
         internal static FormulaCollection FormulaColInstance => FormulaService.Service;
 
-        
-        private void Initialize()
+        [NonSerialized] private bool _isRegistered = false;
+
+        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            ModifiersManager.RegisterModifier(targetAttribute, ModifyAttribute);
+            Debug.Log($"Initialize Passive <{name}> to {unit.name}");
+            if (!_isRegistered)
+            {
+                ModifiersManager.RegisterModifier(targetAttribute, ModifyAttribute);
+                _isRegistered = true;
+            }
         }
 
-        private void Dispose()
+        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            ModifiersManager.UnregisterModifier(targetAttribute, ModifyAttribute);
+            if (_isRegistered && OwnerCount == 1)
+            {
+                ModifiersManager.UnregisterModifier(targetAttribute, ModifyAttribute);
+                _isRegistered = false;
+            }
         }
 
         private void ModifyAttribute(IEventOwner attributeOwner, IAttributeModifierContainer container)
-        {   
+        {
+            if (!IsOwner(attributeOwner.EventIdentifier))
+            {
+                return;
+            }
+
             var cell = TacticBattleManager.GetGrid()[attributeOwner.GridPosition];
             var ownerUnit = cell.GetUnitOnCell();
 
@@ -60,7 +76,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
             var energyAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Energy);
             var energyLevel = ownerUnit.RuntimeAttributes.GetAttributeValue(energyAttribute);
-            var radius = energyLevel >= 0? 2 : 1;
+            var radius = energyLevel >= 0 ? 2 : 1;
 
             AIRadiusInfo radiusInfo = new AIRadiusInfo(cell, radius)
             {
@@ -71,8 +87,6 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             };
 
             List<LevelCellBase> radCells = AStarAlgorithmUtils.GetRadius(radiusInfo);
-
-            Debug.LogError($"Number of Teammates in Radius: {radCells.Count}!!!!");
             var numOfTeammates = radCells.Count;
 
             var noPeopleModifier = new AttributeModifier
