@@ -42,7 +42,7 @@ MonoBehaviour:
     constantValue: 10
   - type: 0
     attributeType:
-      value: 2
+      value: 3
     operatorSymbol: +
     constantValue: 0
   - type: 1
