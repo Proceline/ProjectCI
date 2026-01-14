@@ -38,4 +38,7 @@ MonoBehaviour:
     value: 0
   - type:
       value: 30
-    value: 10
+    value: 1
+  - type:
+      value: 23
+    value: 2

@@ -19,6 +19,6 @@ MonoBehaviour:
     attributeType:
       value: 0
     operatorSymbol: 
-    constantValue: 0
+    constantValue: 10
   preventNegativeSubResult: 1
   preventFloatDuringCalculation: 0
