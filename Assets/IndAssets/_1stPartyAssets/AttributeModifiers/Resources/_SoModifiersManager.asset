@@ -34,3 +34,6 @@ MonoBehaviour:
   - attributeType:
       value: 12
     modifier: {fileID: 11400000, guid: 4432a5bf177c7a847a28d05b1afd63a7, type: 2}
+  - attributeType:
+      value: 14
+    modifier: {fileID: 11400000, guid: 4313147eb3f10a24a88e1ae541c4bd3b, type: 2}

@@ -19,11 +19,21 @@ MonoBehaviour:
     attributeType:
       value: 0
     operatorSymbol: 
+    constantValue: 15
+  - type: 0
+    attributeType:
+      value: 1
+    operatorSymbol: 
+    constantValue: 10
+  - type: 1
+    attributeType:
+      value: 15
+    operatorSymbol: '-'
     constantValue: 10
   - type: 0
     attributeType:
       value: 15
-    operatorSymbol: 
+    operatorSymbol: +
     constantValue: 10
   - type: 1
     attributeType:

@@ -1,25 +1,26 @@
-using System.Collections.Generic;
 using IndAssets.Scripts.Units;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
-using UnityEngine;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifier;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "New EnergyRule Passive", menuName = "ProjectCI Passives/EnergyRule", order = 1)]
-    public sealed class PvSoPassivePerEneryRule : PvSoPassiveIndividual
+    public class PvSoPassivePerEneryRule : PvSoPassiveIndividual
     {
         [Header("Parameters"), SerializeField]
         private AttributeType targetAttribute;
@@ -32,6 +33,12 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         [SerializeField]
         private int hasPeopleEneryMultiplier = 4;
+
+        [SerializeField]
+        private int energyPositiveRadius = 2;
+
+        [SerializeField]
+        private int energyNegativeRadius = 1;
 
         [Inject] private static readonly PvSoModifiersManager ModifiersManager;
 
@@ -76,7 +83,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
             var energyAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Energy);
             var energyLevel = ownerUnit.RuntimeAttributes.GetAttributeValue(energyAttribute);
-            var radius = energyLevel >= 0 ? 2 : 1;
+            var radius = energyLevel >= 0 ? energyPositiveRadius : energyNegativeRadius;
 
             AIRadiusInfo radiusInfo = new AIRadiusInfo(cell, radius)
             {
@@ -87,7 +94,22 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             };
 
             List<LevelCellBase> radCells = AStarAlgorithmUtils.GetRadius(radiusInfo);
-            var numOfTeammates = radCells.Count;
+
+            var numOfTeammates = 0;
+            for (int i = radCells.Count - 1; i >= 0; i--)
+            {
+                var unitOnCell = radCells[i].GetUnitOnCell();
+                if (unitOnCell)
+                {
+                    BattleTeam relationToCaster =
+                        TacticBattleManager.GetTeamAffinity(ownerUnit.GetTeam(), unitOnCell.GetTeam());
+                    if (relationToCaster == teamCondition)
+                    {
+                        // radCells.RemoveAt(i);    // Not removing cells as we just need the count
+                        numOfTeammates++;
+                    }
+                }
+            }
 
             var noPeopleModifier = new AttributeModifier
             {
@@ -96,13 +118,12 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
             var hasPeopleModifier = new AttributeModifier
             {
-                flatValue = energyLevel * hasPeopleEneryMultiplier * numOfTeammates
+                flatValue = hasPeopleEneryMultiplier * Mathf.Max(energyLevel, numOfTeammates)
             };
 
             if (numOfTeammates == 0)
             {
                 container.AddModifier(noPeopleModifier);
-                return;
             }
             else
             {

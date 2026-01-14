@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc6c768c05be42d6a57fc985eb4d218, type: 3}
   m_Name: PvSoEnergy_AtkSpeed
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Passives.PvSoPassivePerEneryRule
-  passiveTiming: 0
+  passiveTiming: 1
   passiveName: 
   description: 
   targetAttribute:
-    value: 10
+    value: 14
   teamCondition: 1
-  noPeopleEneryMultiplier: -10
-  hasPeopleEneryMultiplier: 4
+  noPeopleEneryMultiplier: -2
+  hasPeopleEneryMultiplier: 2
+  energyPositiveRadius: 2
+  energyNegativeRadius: 1
