@@ -69,7 +69,7 @@ namespace IndAssets.Scripts.Passives
                 return;
             }
 
-            var ability = fromUnit.GetSupportAbilities()[0];
+            var ability = fromUnit.SupportAbility;
 
             var resultId = Guid.NewGuid().ToString();
             var effectedCells = fromUnit.GetCell().GetAllAdjacentCells();

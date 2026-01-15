@@ -16,13 +16,6 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private PvMnAIMovementStrategy movementStrategy = PvMnAIMovementStrategy.Aggressive;
         [SerializeField] private int defensiveRange = 5;
 
-        [Header("Ability Selection")]
-        [SerializeField] private bool useCustomAbilitySelector = false;
-        
-        // Custom evaluators for extensibility
-        public Func<PvMnBattleGeneralUnit, LevelCellBase, float> CustomAttributeEvaluator { get; set; }
-        public Func<PvMnBattleGeneralUnit, PvSoUnitAbility, LevelCellBase, bool> CustomAbilitySelector { get; set; }
-
         private PvMnBattleGeneralUnit _unit;
 
         private PvMnBattleGeneralUnit Unit
@@ -111,8 +104,7 @@ namespace IndAssets.Scripts.AI
                     _unit,
                     allVictims,
                     victimsFromCells,
-                    targetSelectionStrategy,
-                    CustomAttributeEvaluator
+                    targetSelectionStrategy
                 );
             }
 
@@ -173,20 +165,8 @@ namespace IndAssets.Scripts.AI
         /// </summary>
         private PvSoUnitAbility SelectAbility()
         {
-            if (useCustomAbilitySelector && CustomAbilitySelector != null)
-            {
-                var abilities = _unit.GetAttackAbilities();
-                foreach (var ability in abilities)
-                {
-                    // Custom selector would need target cell, but we don't have it yet
-                    // For now, return first available ability if custom selector is set
-                    if (ability != null)
-                        return ability;
-                }
-            }
-
             // Default: use EquippedAbility
-            return _unit.EquippedAbility;
+            return _unit.AttackAbility;
         }
 
         // Legacy method kept for compatibility
@@ -217,7 +197,7 @@ namespace IndAssets.Scripts.AI
                 var value = pair.Value;
             }
 
-            var ability = startUnit.EquippedAbility;
+            var ability = startUnit.AttackAbility;
             if (ability)
             {
                 var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);

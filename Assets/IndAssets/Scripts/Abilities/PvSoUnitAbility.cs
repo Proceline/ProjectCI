@@ -69,11 +69,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public virtual List<CombatingQueryContext> OnCombatingQueryListCreated(PvMnBattleGeneralUnit caster,
             PvMnBattleGeneralUnit victim, bool casterSpeedExceed, bool victimSpeedExceed)
         {
-            var targetAbility = victim.EquippedAbility;
+            var targetCounterAbility = victim.CounterAbility;
             
             OnLogicallyEndedInTurn.RegisterCallback(OnCombatedTurnLogicallyEndedResponse);
             onUnitEnteredInCombating.Invoke(caster);
-            targetAbility.onUnitEnteredInCombatingAsTarget.Invoke(victim);
+            targetCounterAbility.onUnitEnteredInCombatingAsTarget.Invoke(victim);
             
             // You can register on Combating status before this calculation
             XRaiserCombatingOnStarted.Raise(caster, victim);
@@ -88,7 +88,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             {
                 return combatContextList;
             }
-            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(victim);
+            List<LevelCellBase> targetAbilityCells = targetCounterAbility.GetAbilityCells(victim);
             var bIsTargetAbilityAbleToCounter =
                 targetAbilityCells.Count > 0 && targetAbilityCells.Contains(caster.GetCell());
 
@@ -103,7 +103,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 combatContextList.Add(new CombatingQueryContext
                     { IsCounter = false, QueryType = CombatingQueryType.AutoFollowUp });
             }
-            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetAbility.isAutoFollowUpAllowed)
+            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetCounterAbility.isAutoFollowUpAllowed)
             {
                 combatContextList.Add(new CombatingQueryContext
                     { IsCounter = true, QueryType = CombatingQueryType.AutoFollowUp });
@@ -115,10 +115,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         protected virtual void OnCombatedTurnLogicallyEndedResponse(PvMnBattleGeneralUnit caster,
             PvMnBattleGeneralUnit victim)
         {
-            var targetAbility = victim.EquippedAbility;
             onUnitEnteredInCombatingAsTarget.Invoke(victim);
             
-            targetAbility.onUnitLeftFromCombating.Invoke(caster);
+            victim.CounterAbility.onUnitLeftFromCombating.Invoke(caster);
             OnLogicallyEndedInTurn.UnregisterCallback(OnCombatedTurnLogicallyEndedResponse);
         }
 

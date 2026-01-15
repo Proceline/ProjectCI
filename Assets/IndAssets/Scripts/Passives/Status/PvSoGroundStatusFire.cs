@@ -46,7 +46,7 @@ namespace IndAssets.Scripts.Passives.Status
 
             switch (state)
             {
-                case UnitBattleState.UsingAbility when stateBehaviour == UnitStateBehaviour.Popping:
+                case UnitBattleState.AbilityTargeting when stateBehaviour == UnitStateBehaviour.Popping:
                     _pendingActionsCollection.Remove(owner);
                     break;
                 case UnitBattleState.Finished when stateBehaviour == UnitStateBehaviour.Clear:

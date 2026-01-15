@@ -163,7 +163,7 @@ public class PvMnBattleCamera : MonoBehaviour
                 case UnitBattleState.Moving:
                     StartToMoveCamera(owner.Position, 0f);
                     break;
-                case UnitBattleState.UsingAbility:
+                //case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
                     StartToMoveCamera(owner.Position, 20f);
                     break;

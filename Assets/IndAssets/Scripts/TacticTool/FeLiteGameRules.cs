@@ -21,8 +21,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
         private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
-        private GameObject _pawnMarkObject;
-
         [SerializeField]
         private AttributeType abilitySpeedAttributeType;
         
@@ -35,24 +33,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         #region Static Action Variables
 
         [SerializeField] private List<PvSoUnitAbility> preloadedAbilities;
-        
+
         #endregion
-
-        [SerializeField] 
-        private UnityEvent<PvSoUnitAbility, PvMnBattleGeneralUnit> onAbilitySelectedPostSupport;
-
-        private PvSoUnitAbility CurrentAbility
-        {
-            get => _selectedAbility;
-            set
-            {
-                _selectedAbility = value;
-                if (value)
-                {
-                    onAbilitySelectedPostSupport?.Invoke(_selectedAbility, _selectedUnit);
-                }
-            }
-        }
 
         [SerializeField] 
         private LayerMask[] layerMasksRuleList;
@@ -68,7 +50,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupport;
 
         [SerializeField] 
-        private UnityEvent<PvMnBattleGeneralUnit, PvSoUnitAbility> onUpdateSupportWithAbility;
+        private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupportWithAbility;
 
         [Header("Select Support")]
         
@@ -236,12 +218,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _selectedUnit = selectingUnit;
-            CurrentAbility = _selectedUnit.EquippedAbility;
             _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
 
             ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
                 ? UnitBattleState.Moving
-                : UnitBattleState.UsingAbility);
+                : UnitBattleState.AbilityTargeting);//UsingAbility);
             onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
             raiserOnOwnerSelectedEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
         }
@@ -258,7 +239,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
             raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
-            CurrentAbility = null;
         }
 
         /// <summary>
@@ -276,7 +256,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             if (_selectedUnit.GetCurrentActionPoints() > 0)
             {
-                ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
+                ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);//UsingAbility);
             }
             else
             {
@@ -303,15 +283,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 case UnitBattleState.MovingProgress:
                     Debug.LogError("State change doesn't work during Moving Progress!");
                     break;
-                case UnitBattleState.UsingAbility:
+                //case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
-                    if (state == UnitBattleState.UsingAbility)
+                    //if (state == UnitBattleState.UsingAbility)
+                    if (_selectedUnitLastCell)
                     {
-                        if (_selectedUnitLastCell)
-                        {
-                            // TODO: Consider clean up movement buff, Consider if NEED rotation RESET (Maybe not since rotation not matter)
-                            _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
-                        }
+                        // TODO: Consider clean up movement buff, Consider if NEED rotation RESET (Maybe not since rotation not matter)
+                        _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
                     }
 
                     // ONLY Place really to cancel State
@@ -350,10 +328,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             switch (CurrentBattleState)
             {
-                case UnitBattleState.UsingAbility:
+                //case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
                     // TODO: Consider ability option
-                    onUpdateSupportWithAbility.Invoke(_selectedUnit, CurrentAbility);
+                    onUpdateSupportWithAbility.Invoke(_selectedUnit);//, CurrentAbility);
                     break;
                 case UnitBattleState.Moving:
                 case UnitBattleState.Finished:

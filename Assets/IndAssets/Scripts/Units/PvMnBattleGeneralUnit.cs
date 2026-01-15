@@ -25,9 +25,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private readonly Stack<UnitBattleState> _unitStates = new();
         private readonly List<PvSoUnitAbility> _battleAbilities = new();
-        
+
         [NonSerialized]
-        private PvSoUnitAbility _defaultAttackAbility;
+        private PvSoUnitAbility _attackAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _followUpAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _counterAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _supportAbility;
+
+        public PvSoUnitAbility AttackAbility => _attackAbility;
+        public PvSoUnitAbility FollowUpAbility => _followUpAbility;
+        public PvSoUnitAbility CounterAbility => _counterAbility;
+        public PvSoUnitAbility SupportAbility => _supportAbility;
 
         private Coroutine _rotatingCoroutine;
 
@@ -35,21 +49,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private int _currentActionPoints = 1;
 
         private PvStatusDataCollection _statusCollection;
-
-        public PvSoUnitAbility EquippedAbility
-        {
-            get
-            {
-                if (_defaultAttackAbility)
-                {
-                    return _defaultAttackAbility;
-                }
-
-                _defaultAttackAbility = _battleAbilities.Find(ability =>
-                    ability.IsAbilityWeapon() && ability.GetEffectedTeam() == BattleTeam.Hostile);
-                return _defaultAttackAbility;
-            }
-        }
 
         private void SetFormulaCollection()
         {
@@ -163,27 +162,35 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             return 0;
         }
-        
-        public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)
+
+        public void SetupAttackAbility(PvSoUnitAbility ability)
         {
-            _battleAbilities.Clear();
-            foreach (var ability in abilities)
-            {
-                _battleAbilities.Add(ability);
-            }
+            _attackAbility = ability;
         }
 
-        public List<PvSoUnitAbility> GetUsableAbilities() => _battleAbilities;
+        public void SetupFollowUpAbility(PvSoUnitAbility ability)
+        {
+            _followUpAbility = ability;
+        }
 
-        public List<PvSoUnitAbility> GetAttackAbilities()
+        public void SetupCounterAbility(PvSoUnitAbility ability)
         {
-            return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Hostile);
+            _counterAbility = ability;
         }
-        
-        public List<PvSoUnitAbility> GetSupportAbilities()
+
+        public void SetupSupportAbility(PvSoUnitAbility ability)
         {
-            return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Friendly);
+            _supportAbility = ability;
         }
+
+        /// <summary>
+        /// Do not use in undeprecated Scripts
+        /// </summary>
+        /// <returns></returns>
+        public List<PvSoUnitAbility> GetUsableAbilities() => new List<PvSoUnitAbility>()
+        {
+            _attackAbility, _followUpAbility, _counterAbility, _supportAbility
+        };
 
         public override IStatusEffectContainer GetStatusEffectContainer()
         {

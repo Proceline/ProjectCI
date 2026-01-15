@@ -80,23 +80,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         /// <summary>
-        /// 开始进行对峙,主要攻击角色将会对目标角色发起Ability,需要取到主要角色的CurrentAbility以及可能出现目标角色的反击EquippedAbility
+        /// 开始进行对峙,主要攻击角色将会对目标角色发起Ability
         /// </summary>
         /// <param name="abilityOwner">发起进攻/辅助/行动的角色</param>
         /// <param name="targetUnit">被标记的目标角色</param>
         /// <param name="results"></param>
         /// <returns></returns>
-        private void HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit,
+        private void HandleAbilityCombatingLogic(PvSoUnitAbility ability, PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit,
             ref Queue<CommandResult> results)
         {
-            PvSoUnitAbility ability = CurrentAbility;
-            PvSoUnitAbility targetAbility = targetUnit.EquippedAbility;
-
-            if (!ability || !targetAbility)
-            {
-                throw new NullReferenceException("ERROR: One of these two pawns missing ability!");
-            }
-
             int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
             int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
 
@@ -108,8 +100,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             foreach (CombatingQueryContext combatActionContext in combatContextList)
             {
                 _singleCombatQueryAlloc[0] = combatActionContext;
-                
-                var combatAbility = combatActionContext.IsCounter ? targetAbility : ability;
+
+                PvSoUnitAbility combatAbility = null;
+
+                switch (combatActionContext.QueryType)
+                {
+                    case CombatingQueryType.FirstAttempt:
+                        combatAbility = combatActionContext.IsCounter ? targetUnit.CounterAbility : ability;
+                        break;
+                    case CombatingQueryType.AutoFollowUp:
+                        combatAbility = combatActionContext.IsCounter ? targetUnit.FollowUpAbility : abilityOwner.FollowUpAbility;
+                        break;
+                    case CombatingQueryType.ExtraFollowUp:
+                    case CombatingQueryType.ReplacedFollowUp:
+                        combatAbility = combatActionContext.IsCounter ? targetUnit.FollowUpAbility : abilityOwner.FollowUpAbility;
+                        break;
+                }
+
                 var caster = combatActionContext.IsCounter ? targetUnit : abilityOwner;
                 var victim = combatActionContext.IsCounter ? abilityOwner : targetUnit;
                 if (!combatAbility) continue;

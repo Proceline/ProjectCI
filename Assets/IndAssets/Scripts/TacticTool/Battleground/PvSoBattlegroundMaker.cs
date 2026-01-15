@@ -101,7 +101,13 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                         _levelGrid,
                         sceneUnit.UnitData,
                         team,
-                        spawnedUnit => spawnedUnit.SetupAbilities(sceneUnit.UnitAbilities),
+                        spawnedUnit =>
+                        {
+                            spawnedUnit.SetupAttackAbility(sceneUnit.WeaponAttackAbility);
+                            spawnedUnit.SetupFollowUpAbility(sceneUnit.WeaponFollowUpAbility);
+                            spawnedUnit.SetupCounterAbility(sceneUnit.WeaponCounterAbility);
+                            spawnedUnit.SetupSupportAbility(sceneUnit.UnitData.TalentedSupportAbility);
+                        },
                         1,
                         pawnDetectLayerMask
                     );

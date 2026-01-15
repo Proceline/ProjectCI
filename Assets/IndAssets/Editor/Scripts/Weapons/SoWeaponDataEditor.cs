@@ -26,10 +26,10 @@ namespace IndAssets.Editor.Scripts.Weapons
             EditorGUILayout.PropertyField(_mWeaponName);
             EditorGUILayout.PropertyField(_mDescription);
 
-            var animatorProperty = serializedObject.FindProperty(PvSoWeaponData.AnimatorPropertyName);
-            var abilityProperty = serializedObject.FindProperty(PvSoWeaponData.BindingAbilityPropertyName);
-            EditorGUILayout.PropertyField(animatorProperty);
-            EditorGUILayout.PropertyField(abilityProperty);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.AnimatorPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.BindingAbilityPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.FollowUpAbilityPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.CounterAbilityPropertyName));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponPrefab)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalRotation)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalPosition)));

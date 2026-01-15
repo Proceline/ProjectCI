@@ -47,7 +47,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
                 return;
             }
 
-            var ability = ownerUnit.EquippedAbility;
+            var ability = ownerUnit.FollowUpAbility;
             var results = usingParam.ResultsReference;
 
             var target = usingParam.target;

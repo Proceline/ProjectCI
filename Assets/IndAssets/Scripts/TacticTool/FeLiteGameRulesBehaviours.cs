@@ -100,21 +100,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            var effectTeam = CurrentAbility.GetEffectedTeam();
-            var cellState = selectedCell.GetCellState();
-            if ((effectTeam == BattleTeam.Hostile && cellState != CellState.eNegative) ||
-                (effectTeam == BattleTeam.Friendly && cellState != CellState.ePositive))
-            {
-                return;
-            }
-
             var state = _selectedUnit.GetCurrentState();
-            if (state != UnitBattleState.AbilityTargeting && state != UnitBattleState.UsingAbility)
+            if (state != UnitBattleState.AbilityTargeting) //&& state != UnitBattleState.UsingAbility)
             {
                 throw new Exception("State ERROR: Must during Ability Targeting");
             }
-
-            ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
 
             var gridPawnUnit = selectedCell.GetUnitOnCell();
             if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
@@ -122,12 +112,26 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            var commandResults = new Queue<CommandResult>();
-            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, commandResults);
+            var teamCondition = TacticBattleManager.GetTeamAffinity(_selectedUnit.GetTeam(), targetUnit.GetTeam());
+            var usingAbility = teamCondition == BattleTeam.Friendly ? _selectedUnit.SupportAbility : _selectedUnit.AttackAbility;
+
+            var effectTeam = usingAbility.GetEffectedTeam();
+            var cellState = selectedCell.GetCellState();
+            if ((effectTeam == BattleTeam.Hostile && cellState != CellState.eNegative) ||
+                (effectTeam == BattleTeam.Friendly && cellState != CellState.ePositive))
             {
-                HandleAbilityCombatingLogic(_selectedUnit, targetUnit, ref commandResults);
+                return;
             }
-            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, CurrentAbility, targetUnit, commandResults);
+
+            var commandResults = new Queue<CommandResult>();
+            ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
+
+
+            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, usingAbility, targetUnit, commandResults);
+            {
+                HandleAbilityCombatingLogic(usingAbility, _selectedUnit, targetUnit, ref commandResults);
+            }
+            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, usingAbility, targetUnit, commandResults);
             RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
             ArchiveUnitBehaviourPoints(_selectedUnit);
             
@@ -141,7 +145,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 throw new NullReferenceException("ERROR: No selected unit!");
             }
-            CurrentAbility = ability;
+
+            // Empty
+            // TODO: TBD
         }
 
         /// <summary>

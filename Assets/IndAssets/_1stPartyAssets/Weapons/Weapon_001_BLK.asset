@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 11400000, guid: 491723784bff23a4b9775801fad7fe11, type: 2}
   bindingAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  followUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  counterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponPrefab: {fileID: 1483447435328282, guid: 6c0ccdc6d657c0c4595db29f9f50b136, type: 3}
   prefabLocalRotation: {x: 0.49999997, y: 0.49999997, z: -0.49999997, w: -0.49999997}
   prefabLocalPosition: {x: -0.039, y: 0, z: 0}

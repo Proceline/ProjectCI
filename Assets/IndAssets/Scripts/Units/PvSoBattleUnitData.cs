@@ -30,7 +30,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public GameObject HeadMeshPrefab => headMeshPrefab;
 
         [SerializeField]
-        private PvSoUnitAbility[] talentedAbilities;
+        private PvSoUnitAbility talentedSupportAbility;
+
+        public PvSoUnitAbility TalentedSupportAbility => talentedSupportAbility;
 
         [SerializeField] private PvPersonalitiesCombination personality;
 

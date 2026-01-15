@@ -103,7 +103,7 @@ MonoBehaviour:
       - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
         m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
           Assembly-CSharp
-        m_MethodName: UpdateHoverCells
+        m_MethodName: UpdateHoverCellsWithGeneralAbilities
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

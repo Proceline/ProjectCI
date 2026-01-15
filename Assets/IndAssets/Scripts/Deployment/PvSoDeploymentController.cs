@@ -135,7 +135,7 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 _unitToSlotMap[newUnit] = slotIndex;
                 
                 // Update deployed units list if this slot was already assigned
-                int unitIndex = deployedUnits.FindIndex(u => u == oldUnit?.UnitData as PvSoBattleUnitData);
+                int unitIndex = deployedUnits.FindIndex(u => u == oldUnit?.UnitData);
                 if (unitIndex >= 0 && unitIndex < deployedUnits.Count)
                 {
                     deployedUnits[unitIndex] = newUnitData;

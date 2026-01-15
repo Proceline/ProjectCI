@@ -204,7 +204,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 TogglePendingSelectUnitAction(true);
                 ToggleSelectedUnitCancelAction(false);
             }
-            else if (state == UnitBattleState.UsingAbility)
+            else if (state == UnitBattleState.AbilityTargeting) // (state == UnitBattleState.UsingAbility)
             {
                 switch (stateBehaviour)
                 {
@@ -277,7 +277,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 case UnitBattleState.Moving:
                     onCellSelectedForMovement.InputAction.Enable();
                     break;
-                case UnitBattleState.UsingAbility:
+                //case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
                     onCellSelectedWhileTargeting.InputAction.Enable();
                     break;
@@ -300,7 +300,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 case UnitBattleState.Idle:
                 case UnitBattleState.Moving:
-                case UnitBattleState.UsingAbility:
+                //case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
                 case UnitBattleState.Finished:
                     IsBasicControllerEnabled = true;

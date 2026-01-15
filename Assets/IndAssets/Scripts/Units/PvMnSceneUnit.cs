@@ -20,13 +20,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public bool IsFriendly { get => isFriendly; set => isFriendly = value; }
 
         [SerializeField]
-        protected SoUnitData unitData;
+        protected PvSoBattleUnitData unitData;
 
         [SerializeField]
-        protected List<PvSoUnitAbility> unitAbilities;
+        private PvSoUnitAbility weaponAttackAbility;
 
-        public SoUnitData UnitData { get => unitData; set => unitData = value; }
-        public List<PvSoUnitAbility> UnitAbilities => unitAbilities;
+        [SerializeField]
+        private PvSoUnitAbility weaponFollowUpAbility;
+
+        [SerializeField]
+        private PvSoUnitAbility weaponCounterAbility;
+
+        public PvSoBattleUnitData UnitData { get => unitData; set => unitData = value; }
+        public PvSoUnitAbility WeaponAttackAbility => weaponAttackAbility;
+        public PvSoUnitAbility WeaponFollowUpAbility => weaponFollowUpAbility;
+        public PvSoUnitAbility WeaponCounterAbility => weaponCounterAbility;
 
         [SerializeField]
         private AttributeValuePair[] extraAttributes;
@@ -69,8 +77,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void Initialize(List<PvSoWeaponData> weapons)
         {
             AnimationPlayableSupportBase animator = null;
-            PvSoUnitAbility defaultAbility = null;
-            
+
             for (var i = 0; i <= 1; i++)
             {
                 if (i >= weapons.Count)
@@ -79,22 +86,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
 
                 var weaponData = weapons[i];
-                var weaponRoot = FindChild(transform, i == 0? "weapon_r" : "weapon_l");
+                var weaponRoot = FindChild(transform, i == 0 ? "weapon_r" : "weapon_l");
                 RefreshWeapon(weaponRoot, weaponData);
 
                 animator = weaponData.Animator;
-                defaultAbility = weaponData.DefaultAttackAbility;
+
+                weaponAttackAbility = weaponData.DefaultAttackAbility;
+                weaponFollowUpAbility = weaponData.DefaultFollowUpAbility;
+                weaponCounterAbility = weaponData.DefaultCounterAbility;
             }
             
             if (animator)
             {
                 var animatorController = GetComponentInChildren<UnitAnimationManager>();
                 animatorController.SetupAnimationGraphDetails(animator, false);
-            }
-
-            if (defaultAbility)
-            {
-                unitAbilities.Insert(0, defaultAbility);
             }
         }
 

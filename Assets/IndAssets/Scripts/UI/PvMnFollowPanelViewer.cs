@@ -8,6 +8,7 @@ using UnityEngine.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
+    // Deprecated
     public class PvMnFollowPanelViewer : MonoBehaviour
     {
         [SerializeField] 
@@ -70,21 +71,22 @@ namespace ProjectCI.Runtime.GUI.Battle
                 {
                     switch (state)
                     {
-                        case UnitBattleState.UsingAbility:
-                            _determinedUnit = battleUnit;
+                        //case UnitBattleState.UsingAbility:
+                        //    _determinedUnit = battleUnit;
                             
-                            canvasGameObject.SetActive(true);
-                            canvasGameObject.transform.position = owner.Position;
-                            SetupCorrectRotation(controlUiCamera);
-                            mainControlPanel.gameObject.SetActive(true);
-                            sideControlPanel.gameObject.SetActive(false);
-                            break;
+                            //canvasGameObject.SetActive(true);
+                            //canvasGameObject.transform.position = owner.Position;
+                            //SetupCorrectRotation(controlUiCamera);
+                            //mainControlPanel.gameObject.SetActive(true);
+                            //sideControlPanel.gameObject.SetActive(false);
+                            //break;
                         case UnitBattleState.Moving:
                             _determinedUnit = battleUnit;
                             DisableFollowingCanvas();
                             break;
                         case UnitBattleState.AbilityTargeting:
-                            ToggleSideControlPanelAndMainControlPanel(false);
+                            _determinedUnit = battleUnit;
+                            //ToggleSideControlPanelAndMainControlPanel(false);
                             DisableFollowingCanvas();
                             break;
                         case UnitBattleState.AbilityConfirming:
@@ -101,11 +103,11 @@ namespace ProjectCI.Runtime.GUI.Battle
                     // while Popping, the state in parameter is the state TO BE REMOVED (already removed)
                     switch (state)
                     {
-                        case UnitBattleState.UsingAbility:
-                            mainControlPanel.gameObject.SetActive(false);
-                            // TODO: Consider side
-                            DisableFollowingCanvas();
-                            break;
+                        //case UnitBattleState.UsingAbility:
+                        //    mainControlPanel.gameObject.SetActive(false);
+                        //    // TODO: Consider side
+                        //    DisableFollowingCanvas();
+                            //break;
                         case UnitBattleState.Moving:
                             _determinedUnit = null;
                             DisableFollowingCanvas();
@@ -149,7 +151,10 @@ namespace ProjectCI.Runtime.GUI.Battle
             }
 
             ToggleSideControlPanelAndMainControlPanel(true);
-            var abilities = isHostile ? _determinedUnit.GetAttackAbilities() : _determinedUnit.GetSupportAbilities();
+            //var abilities = isHostile ? _determinedUnit.GetAttackAbilities() : _determinedUnit.GetSupportAbilities();
+            // TODO: Modify if still need to be used
+            var abilities = _determinedUnit.GetUsableAbilities();   // TODO: Not to use
+
             sideControlPanel.NumOfSlots = abilities.Count;
             sideControlPanel.ControlButtons.ForEach(customButton =>
             {
