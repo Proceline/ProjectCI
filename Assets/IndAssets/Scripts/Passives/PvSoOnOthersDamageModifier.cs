@@ -65,6 +65,12 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         private void ModifyValueForOwner(int[] allocatedValues, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
         {
+            PvEnDamageForm damageForm = (PvEnDamageForm)extraInfo;
+            if (damageForm.HasFlag(PvEnDamageForm.Support))
+            {
+                return;
+            }
+
             var receivedCell = receiver.GetCell();
             bool validTarget = false;
             GridPawnUnit determinedOwner = null;

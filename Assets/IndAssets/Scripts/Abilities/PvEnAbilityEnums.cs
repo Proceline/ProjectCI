@@ -1,4 +1,6 @@
-﻿namespace IndAssets.Scripts.Abilities
+﻿using System;
+
+namespace IndAssets.Scripts.Abilities
 {
     public enum PvEnDamageType
     {
@@ -12,5 +14,15 @@
         NatureC = 7,
         Dark = 8,
         Light = 9
+    }
+
+    [Flags]
+    public enum PvEnDamageForm : uint
+    {
+        None = 0,
+        Aggressive = 1 << 0,
+        Support = 1 << 1,
+        Physical = 1 << 2,
+        Magical = 1 << 3
     }
 }

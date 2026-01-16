@@ -20,6 +20,7 @@ MonoBehaviour:
   criticalAmountAttribute:
     value: 31
   isHealValue: 1
+  damageForm: 2
   basicAddon: 10
   isCriticalEnabledByDefault: 0
   isAlwaysHitByDefault: 1

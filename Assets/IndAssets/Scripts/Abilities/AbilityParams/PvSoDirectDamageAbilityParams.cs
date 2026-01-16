@@ -27,7 +27,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private AttributeType criticalAmountAttribute;
 
         [SerializeField]
-        private bool isHealValue;
+        private PvEnDamageForm damageForm;
 
         [SerializeField] private int basicAddon;
         
@@ -93,8 +93,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             if (isReallyHit)
             {
-                var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, 0);
-                if (!isHealValue)
+                var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+                if (!damageForm.HasFlag(PvEnDamageForm.Support))
                 {
                     toContainer.Health.ModifyValue(-adjustedFinalDeltaDmg);
                 }
@@ -120,7 +120,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 DamageType = damageType
             };
 
-            if (isHealValue)
+            if (damageForm.HasFlag(PvEnDamageForm.Support))
             {
                 savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
             }
