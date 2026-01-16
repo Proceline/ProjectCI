@@ -7,7 +7,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using System;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
@@ -20,55 +19,54 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         [SerializeField]
         private PvSoUnitAbility[] allAbilities;
-
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
         private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
 
-        [SerializeField] 
+        [SerializeField]
         private LayerMask[] layerMasksRuleList;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private UnityEvent onGameStarted;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private UnityEvent onGameEnded;
 
         [Header("Update Support")]
-        [SerializeField] 
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupport;
 
-        [SerializeField] 
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupportWithAbility;
 
         [Header("Select Support")]
-        
-        [SerializeField] 
+
+        [SerializeField]
         private PvSoUnitSelectEvent raiserOnOwnerSelectedEvent;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerSelectedPreview;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
 
         [Header("On Turn Support"), SerializeField]
         private PvSoTurnViewEndEvent raiserTurnAnimationEndEvent;
-        
+
         [Header("State Support")]
-        
+
         [SerializeField]
         private PvSoUnitBattleStateEvent raiserOnStateChangedBeforeUEvent;
-        
+
         /// <summary>
         /// Used for Controller and Models to show range and enable/disable input actions
         /// </summary>
-        [SerializeField] 
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
         public UnitBattleState CurrentBattleState =>
             _selectedUnit ? _selectedUnit.GetCurrentState() : UnitBattleState.Finished;
-        
+
         #region Injected Fields
 
         public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent
@@ -91,22 +89,22 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] private static readonly ITeamRoundEndEvent RaiserTeamRoundEndEvent;
         [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicPostEvent;
         [Inject] private static readonly IUnitCombatLogicPreEvent RaiserOnCombatLogicPreEvent;
-        
+
         [Inject] private static readonly IUnitGeneralCombatingEvent RaiserOnCombatingListCreatedEvent;
         [Inject] private static readonly IUnitCombatingQueryStartEvent RaiserOnCombatingQueryStartEvent;
         [Inject] private static readonly IUnitCombatingQueryEndEvent RaiserOnCombatingQueryEndEvent;
-        
+
         [Inject] private static readonly ICombatingTurnEndEvent RaiserCombatingTurnEndLogically;
-        
+
         #endregion
-        
+
         protected override void StartGame()
         {
             onGameStarted?.Invoke();
 
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
-            
+
             CurrentTeam = BattleTeam.Friendly;
 
             foreach (var singleAbility in allAbilities)
@@ -117,13 +115,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
                 _abilityIdToAbilityHash.TryAdd(singleAbility.ID, singleAbility);
             }
-            
+
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
                 _unitIdToBattleUnitHash.TryAdd(unit.ID, unit);
             }
-            
+
             TacticBattleManager.HandleGameStarted();
 
             BeginTeamTurn(CurrentTeam);
@@ -139,7 +137,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
             ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
         }
-        
+
         private void ChangeStateForSelectedUnit(UnitBattleState state)
         {
             var stateBehaviour = UnitStateBehaviour.Emphasis;
@@ -213,7 +211,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 return;
             }
-            
+
             _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
             onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
             raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
@@ -357,4 +355,4 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
     }
-} 
+}
