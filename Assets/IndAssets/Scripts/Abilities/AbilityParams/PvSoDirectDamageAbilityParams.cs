@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
@@ -37,6 +38,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [Header("Accuracy")] 
         [SerializeField] 
         private bool isAlwaysHitByDefault;
+
+        [SerializeField]
+        private PvSoNotifyDamageBeforeRevEvent raiserNotifyDamageBeforeRev;
 
         [Inject]
         private static IFinalReceiveDamageModifier _receiveDamageModifier;
@@ -89,14 +93,17 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             if (isReallyHit)
             {
+                var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, 0);
                 if (!isHealValue)
                 {
-                    toContainer.Health.ModifyValue(-finalDeltaDamage);
+                    toContainer.Health.ModifyValue(-adjustedFinalDeltaDmg);
                 }
                 else
                 {
-                    toContainer.Health.ModifyValue(finalDeltaDamage);
+                    toContainer.Health.ModifyValue(adjustedFinalDeltaDmg);
                 }
+
+                finalDeltaDamage = adjustedFinalDeltaDmg;
             }
 
             var afterHealth = toContainer.Health.CurrentValue;
@@ -140,6 +147,69 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             {
                 ResultId = resultId,
                 AbilityId = ability.ID,
+                OwnerId = targetUnit.ID,
+                TargetCellIndex = targetUnit.GetCell().GetIndex()
+            };
+
+            results.Enqueue(dieCommand);
+
+        }
+
+        public static void Execute(GridPawnUnit fromUnit, GridPawnUnit targetUnit, Queue<CommandResult> results, 
+            int executeValue, bool isHeal, PvEnDamageType damageType)
+        {
+            var resultId = Guid.NewGuid().ToString();
+
+            var toContainer = targetUnit.RuntimeAttributes;
+            var fromContainer = fromUnit.RuntimeAttributes;
+
+            if (targetUnit.IsDead())
+            {
+                return;
+            }
+
+            var beforeHealth = toContainer.Health.CurrentValue;
+            if (!isHeal)
+            {
+                toContainer.Health.ModifyValue(-executeValue);
+            }
+            else
+            {
+                toContainer.Health.ModifyValue(executeValue);
+            }
+            var afterHealth = toContainer.Health.CurrentValue;
+
+            var savingCommand = new PvSimpleDamageCommand
+            {
+                ResultId = resultId,
+                AbilityId = string.Empty,
+                OwnerId = fromUnit.ID,
+                TargetCellIndex = targetUnit.GetCell().GetIndex(),
+                BeforeValue = beforeHealth,
+                AfterValue = afterHealth,
+                Value = executeValue,
+                DamageType = damageType
+            };
+
+            if (isHeal)
+            {
+                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
+            }
+
+            results.Enqueue(savingCommand);
+
+            // Add Die Command if Health is 0
+            if (!targetUnit.IsDead())
+            {
+                return;
+            }
+
+            Debug.Log($"<color=red>{targetUnit.name} is Dead!</color>");
+
+            var dieCommand = new PvDieCommand
+            {
+                ResultId = resultId,
+                AbilityId = string.Empty,
                 OwnerId = targetUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex()
             };

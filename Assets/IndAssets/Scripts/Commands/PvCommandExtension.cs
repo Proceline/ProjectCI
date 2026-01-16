@@ -21,10 +21,9 @@ namespace IndAssets.Scripts.Commands
                 return;
             }
 
-            if (!abilityIdCollection.TryGetValue(commandResult.AbilityId, out var ability))
-            {
-                return;
-            }
+            var ability = string.IsNullOrEmpty(commandResult.AbilityId) || !abilityIdCollection.ContainsKey(commandResult.AbilityId)
+                ? null
+                : abilityIdCollection[commandResult.AbilityId];
 
             var targetCell = TacticBattleManager.GetGrid()[commandResult.TargetCellIndex];
             var targetUnit = targetCell.GetUnitOnCell();
@@ -37,8 +36,7 @@ namespace IndAssets.Scripts.Commands
                         targetUnit.LookAtCell(caster.GetCell());
                     }
 
-                    if (commandResult.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint &&
-                        !string.IsNullOrEmpty(commandResult.AbilityId))
+                    if (commandResult.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && ability)
                     {
                         foreach (var effectPrefab in ability.GetTargetParticles())
                         {

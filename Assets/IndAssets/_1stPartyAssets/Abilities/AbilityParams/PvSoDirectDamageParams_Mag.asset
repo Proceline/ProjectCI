@@ -23,3 +23,4 @@ MonoBehaviour:
   basicAddon: 10
   isCriticalEnabledByDefault: 0
   isAlwaysHitByDefault: 0
+  raiserNotifyDamageBeforeRev: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}

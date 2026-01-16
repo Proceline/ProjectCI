@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
-using ProjectCI.CoreSystem.Runtime.Commands;
-using System;
-using IndAssets.Scripts.Commands;
+﻿using IndAssets.Scripts.Commands;
 using IndAssets.Scripts.Events;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
-using ProjectCI.Utilities.Runtime.Events;
-using UnityEngine;
-using ProjectCI.TacticTool.Formula.Concrete;
+using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.TacticTool.Formula.Concrete;
+using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
+using UnityEditor.Playables;
+using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -41,54 +42,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <exception cref="NullReferenceException"></exception>
         private async void HandleCommandResultsCoroutine(Queue<CommandResult> commandResults)
         {
-            var bSequenceHead = true;
-            CommandResult lastResult = null;
-            LevelCellBase lastAimCell = null;
-            GridPawnUnit owner = null;
             var commandsToApply = new Queue<CommandResult>();
 
             while (commandResults.TryDequeue(out var commandResult))
             {
-                if (!_abilityIdToAbilityHash.TryGetValue(commandResult.AbilityId, out var ability))
-                {
-                    continue;
-                }
-
-                var isNewSequence = !bSequenceHead && commandResult.ResultId != lastResult.ResultId;
-
-                // If enter new sequence, then APPLY all reactions
-                if (isNewSequence)
-                {
-                    await ApplyAnimationProcess(ability, owner, lastAimCell, commandsToApply);
-                    bSequenceHead = true;
-                }
-
-                if (bSequenceHead)
-                {
-                    bSequenceHead = false;
-                    commandsToApply.Clear();
-                    lastResult = commandResult;
-                    try
-                    {
-                        lastAimCell = TacticBattleManager.GetGrid()[commandResult.TargetCellIndex];
-                        owner = _unitIdToBattleUnitHash[commandResult.OwnerId];
-                    }
-                    catch
-                    {
-                        throw new NullReferenceException();
-                    }
-                }
-
                 commandsToApply.Enqueue(commandResult);
-
-                // If last result founded, directly apply the process
-                if (commandResults.Count != 0)
+                var requireApply = commandResults.Count == 0;
+                if (!requireApply && commandResults.TryPeek(out var nextResult) 
+                    && nextResult.ResultId != commandResult.ResultId)
                 {
-                    continue;
+                    requireApply = true;
                 }
 
-                await ApplyAnimationProcess(ability, owner, lastAimCell, commandsToApply);
-                break;
+                if (requireApply)
+                {
+                    var ability = _abilityIdToAbilityHash.ContainsKey(commandResult.AbilityId)
+                        ? _abilityIdToAbilityHash[commandResult.AbilityId] : null;
+                    await ApplyAnimationProcess(ability, 
+                        _unitIdToBattleUnitHash[commandResult.OwnerId], 
+                        TacticBattleManager.GetGrid()[commandResult.TargetCellIndex], 
+                        commandsToApply);
+                    commandsToApply.Clear();
+                }
             }
 
             raiserTurnAnimationEndEvent.Raise();
@@ -178,33 +153,37 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
             LevelCellBase target, Queue<CommandResult> commands)
         {
-            if (ability.GetShape())
+            if (casterUnit.GetCell() != target)
             {
                 casterUnit.LookAtCell(target);
+            }
 
-                await UnitAbilityCoreExtensions.WaitUntilLockReleased(casterUnit);
-                var executedTime = await ability.WaitUntilProjectileFinished(casterUnit, target);
+            await UnitAbilityCoreExtensions.WaitUntilLockReleased(casterUnit);
 
-                // TODO: Handle Audio
-                // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
-                // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
+            var executedTime = ability ? await ability.WaitUntilProjectileFinished(casterUnit, target) : 0;
 
-                while (commands.TryDequeue(out var toDoCommand))
-                {
-                    toDoCommand.ApplyResultOnVisual(_unitIdToBattleUnitHash, _abilityIdToAbilityHash);
-                }
+            // TODO: Handle Audio
+            // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
+            // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
 
-                var abilityAnimation = ability.abilityAnimation;
-                if (abilityAnimation)
-                {
-                    var timeRemaining = abilityAnimation.GetAnimationLength() - executedTime;
-                    timeRemaining = Mathf.Max(0, timeRemaining);
+            while (commands.TryDequeue(out var toDoCommand))
+            {
+                toDoCommand.ApplyResultOnVisual(_unitIdToBattleUnitHash, _abilityIdToAbilityHash);
+            }
 
-                    await Awaitable.WaitForSecondsAsync(timeRemaining);
-                }
+            if (!ability)
+            {
+                await Awaitable.WaitForSecondsAsync(0.25f);
+                return;
+            }
 
-                // TODO: Need a end of lock
-                // TacticBattleManager.RemoveActionBeingPerformed();
+            var abilityAnimation = ability.abilityAnimation;
+            if (abilityAnimation)
+            {
+                var timeRemaining = abilityAnimation.GetAnimationLength() - executedTime;
+                timeRemaining = Mathf.Max(0, timeRemaining);
+
+                await Awaitable.WaitForSecondsAsync(timeRemaining);
             }
         }
     }
