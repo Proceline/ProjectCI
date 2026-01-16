@@ -10,6 +10,8 @@ using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using ProjectCI.TacticTool.Formula.Concrete;
+using ProjectCI.CoreSystem.Runtime.Services;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -17,6 +19,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     {
         private readonly List<CombatingQueryContext> _singleCombatQueryAlloc =
             new(1) { new CombatingQueryContext { QueryType = CombatingQueryType.None } };
+
+        private FormulaCollection _formulaCollectionInstance;
+        private FormulaCollection FormulaCollectionInstance
+        {
+            get
+            {
+                if (!_formulaCollectionInstance)
+                {
+                    var service = new ServiceLocator<FormulaCollection>();
+                    _formulaCollectionInstance = service.Service;
+                }
+                return _formulaCollectionInstance;
+            }
+        }
 
         /// <summary>
         /// This function applied after you get all results from logic level, after HandleAbilityCombatingLogic
@@ -89,12 +105,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void HandleAbilityCombatingLogic(PvSoUnitAbility ability, PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit,
             ref Queue<CommandResult> results)
         {
-            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
-            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(abilitySpeedAttributeType);
+            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
+            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
+
+            var speedDifference = FormulaCollectionInstance.AttackSpeedDifference;
 
             var combatContextList = ability.OnCombatingQueryListCreated(abilityOwner, targetUnit,
-                abilitySpeed >= targetAbilitySpeed + followAttackSpeedThreshold,
-                targetAbilitySpeed >= abilitySpeed + followAttackSpeedThreshold);
+                abilitySpeed >= targetAbilitySpeed + speedDifference,
+                targetAbilitySpeed >= abilitySpeed + speedDifference);
             RaiserOnCombatingListCreatedEvent.Raise(abilityOwner, targetUnit, combatContextList);
 
             foreach (CombatingQueryContext combatActionContext in combatContextList)

@@ -55,7 +55,7 @@ namespace IndAssets.Scripts.Passives
             var target = usingParam.target;
             var targetSpeed = target.RuntimeAttributes.GetAttributeValue(attribute);
 
-            if (ownerSpeed < targetSpeed + 5) return;
+            if (ownerSpeed < targetSpeed + PvSoPassiveTeammateHit.FormulaColInstance.AttackSpeedDifference) return;
             
             var results = usingParam.ResultsReference;
             

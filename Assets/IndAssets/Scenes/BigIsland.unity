@@ -4971,7 +4971,6 @@ MonoBehaviour:
   isSceneMode: 1
   isFriendly: 1
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
-  unitAbilities: []
   weaponAttackAbility: {fileID: 0}
   weaponFollowUpAbility: {fileID: 0}
   weaponCounterAbility: {fileID: 0}
@@ -26143,7 +26142,6 @@ MonoBehaviour:
   isSceneMode: 1
   isFriendly: 1
   unitData: {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
-  unitAbilities: []
   weaponAttackAbility: {fileID: 0}
   weaponFollowUpAbility: {fileID: 0}
   weaponCounterAbility: {fileID: 0}
@@ -38051,7 +38049,6 @@ MonoBehaviour:
   isSceneMode: 1
   isFriendly: 0
   unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
-  unitAbilities: []
   weaponAttackAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponFollowUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponCounterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
@@ -38062,7 +38059,7 @@ MonoBehaviour:
     m_GainValue: 0
   - m_AttributeType:
       value: 16
-    m_Value: 2
+    m_Value: 5
     m_GainValue: 0
   - m_AttributeType:
       value: 26
@@ -38100,7 +38097,6 @@ MonoBehaviour:
   targetSelectionStrategy: 0
   movementStrategy: 0
   defensiveRange: 5
-  useCustomAbilitySelector: 0
 --- !u!4 &1137706724 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}
@@ -42541,7 +42537,6 @@ MonoBehaviour:
   isSceneMode: 1
   isFriendly: 0
   unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
-  unitAbilities: []
   weaponAttackAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponFollowUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponCounterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
@@ -42552,7 +42547,7 @@ MonoBehaviour:
     m_GainValue: 0
   - m_AttributeType:
       value: 16
-    m_Value: 2
+    m_Value: 5
     m_GainValue: 0
   - m_AttributeType:
       value: 26
@@ -42594,7 +42589,6 @@ MonoBehaviour:
   targetSelectionStrategy: 0
   movementStrategy: 0
   defensiveRange: 5
-  useCustomAbilitySelector: 0
 --- !u!4 &1278883646 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}

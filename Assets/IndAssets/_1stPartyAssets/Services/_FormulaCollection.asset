@@ -20,6 +20,7 @@ MonoBehaviour:
     value: 9
   attackSpeedType:
     value: 14
+  attackSpeedDifference: 3
   personalityRedirections:
   - personalityName: 0
     redirectToAttribute:

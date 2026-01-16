@@ -21,12 +21,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
         private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
-        [SerializeField]
-        private AttributeType abilitySpeedAttributeType;
-        
-        [SerializeField]
-        private int followAttackSpeedThreshold = 5;
-
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
         [NonSerialized] private PvSoUnitAbility _selectedAbility;
         

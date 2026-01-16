@@ -18,8 +18,11 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         [SerializeField]
         private AttributeType criticalAttributeType;
 
-        [SerializeField] private AttributeType attackSpeedType;
-        public AttributeType AttackSpeedType => attackSpeedType;
+        [SerializeField]
+        private AttributeType attackSpeedType;
+
+        [SerializeField]
+        private int attackSpeedDifference = 5;
 
         [SerializeField] private PvPersonalityRedirectionPair[] personalityRedirections;
         private readonly Dictionary<EPvPersonalityName, AttributeType> _personalityRedirectionDic = new();
@@ -59,6 +62,8 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         public AttributeType HealthAttributeType => hitPointAttribute;
         public AttributeType MovementAttributeType => m_MovementAttributeType;
         public AttributeType CriticalAttributeType => criticalAttributeType;
+        public AttributeType AttackSpeedType => attackSpeedType;
+        public int AttackSpeedDifference => attackSpeedDifference;
 
         public void Initialize()
         {
