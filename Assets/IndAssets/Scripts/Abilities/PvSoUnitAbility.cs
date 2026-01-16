@@ -27,11 +27,15 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         [SerializeField]
         private bool isAbilityWeapon = true;
-        
+
+        [SerializeField]
+        private bool isAppliedOnSelf = false;
+
         [SerializeField] private AttributeType dcAttribute = 10;    // Accurate
         [SerializeField] private AttributeType acAttribute = 11;    // Dodge
         public AttributeType DcAttribute => dcAttribute;
         public AttributeType AcAttribute => acAttribute;
+        public bool IsAppliedOnSelf => isAppliedOnSelf;
 
         [SerializeField] 
         private PvMnProjectile projectilePrefab;

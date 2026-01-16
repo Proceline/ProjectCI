@@ -38054,16 +38054,12 @@ MonoBehaviour:
   weaponCounterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   extraAttributes:
   - m_AttributeType:
-      value: 14
-    m_Value: 20
+      value: 26
+    m_Value: 5
     m_GainValue: 0
   - m_AttributeType:
       value: 16
-    m_Value: 5
-    m_GainValue: 0
-  - m_AttributeType:
-      value: 26
-    m_Value: 5
+    m_Value: 10
     m_GainValue: 0
   ownedWeapons: []
 --- !u!4 &1137085769

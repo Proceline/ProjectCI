@@ -12,40 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 952e45cbb643aad4f82b873786c0b3c8, type: 3}
   m_Name: FelikeRulesModel
   m_EditorClassIdentifier: 
-  abilitySpeedAttributeType:
-    value: 14
-  followAttackSpeedThreshold: 5
-  preloadedAbilities:
-  - {fileID: 11400000, guid: 846dda27c0e92e34095e3715671b3027, type: 2}
-  onAbilitySelectedPostSupport:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
-          Assembly-CSharp
-        m_MethodName: AssignAbilityOnView
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
-          Assembly-CSharp
-        m_MethodName: ReHighlightAbilityRange
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  allAbilities:
+  - {fileID: 11400000, guid: caf29f875bb54304997efacc76d82843, type: 2}
+  - {fileID: 11400000, guid: 723740be6830b974a86483b5b7ccdf61, type: 2}
+  - {fileID: 11400000, guid: 7e6b92df314062d41907bc2699620556, type: 2}
+  - {fileID: 11400000, guid: 830481975ca9f8f49936f550d79f5f00, type: 2}
+  - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  - {fileID: 11400000, guid: 0158f3010c61177409240e90205a20ee, type: 2}
+  - {fileID: 11400000, guid: 900f189504bcc3544a77dde1be45f9ca, type: 2}
+  - {fileID: 11400000, guid: 96e87934a5feed94bafdfa0305e462c4, type: 2}
+  - {fileID: 11400000, guid: 15f4a455953cd2142ad1458d7c19bf34, type: 2}
   layerMasksRuleList:
   - serializedVersion: 2
     m_Bits: 64

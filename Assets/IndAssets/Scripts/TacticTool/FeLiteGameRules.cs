@@ -18,17 +18,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "NewGameRules", menuName = "ProjectCI Tools/GameRules/Create FeLiteGameRules", order = 1)]
     public partial class FeLiteGameRules : BattleGameRules
     {
+        [SerializeField]
+        private PvSoUnitAbility[] allAbilities;
+
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
         private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
-        [NonSerialized] private PvSoUnitAbility _selectedAbility;
-        
-        #region Static Action Variables
-
-        [SerializeField] private List<PvSoUnitAbility> preloadedAbilities;
-
-        #endregion
 
         [SerializeField] 
         private LayerMask[] layerMasksRuleList;
@@ -113,30 +109,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             
             CurrentTeam = BattleTeam.Friendly;
 
-            foreach (var staticAbility in preloadedAbilities)
+            foreach (var singleAbility in allAbilities)
             {
-                if (string.IsNullOrEmpty(staticAbility.ID))
+                if (string.IsNullOrEmpty(singleAbility.ID))
                 {
-                    staticAbility.GenerateNewID();
+                    singleAbility.GenerateNewID();
                 }
-                _abilityIdToAbilityHash.TryAdd(staticAbility.ID, staticAbility);
+                _abilityIdToAbilityHash.TryAdd(singleAbility.ID, singleAbility);
             }
             
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
-                if (_unitIdToBattleUnitHash.TryAdd(unit.ID, unit))
-                {
-                    foreach (var ability in unit.GetUsableAbilities())
-                    {
-                        // TODO: Consider whether initialize ID here
-                        if (string.IsNullOrEmpty(ability.ID))
-                        {
-                            ability.GenerateNewID();
-                        }
-                        _abilityIdToAbilityHash.TryAdd(ability.ID, ability);
-                    }
-                }
+                _unitIdToBattleUnitHash.TryAdd(unit.ID, unit);
             }
             
             TacticBattleManager.HandleGameStarted();

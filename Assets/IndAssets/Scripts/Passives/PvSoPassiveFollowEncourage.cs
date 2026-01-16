@@ -16,7 +16,7 @@ namespace IndAssets.Scripts.Passives
     [CreateAssetMenu(fileName = "Protagonist Passive", menuName = "ProjectCI Passives/MBTI/Protagonist_ENFJ", order = 1)]
     public class PvSoPassiveFollowEncourage : PvSoPassiveIndividual
     {
-        [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
+        [Inject] internal static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {

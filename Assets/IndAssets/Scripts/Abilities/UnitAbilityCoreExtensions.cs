@@ -74,6 +74,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             {
                 foreach (var cell in effectedCells)
                 {
+                    if (!ability.IsAppliedOnSelf && cell == caster.GetCell())
+                    {
+                        continue;
+                    }
+
                     var cellUnit = cell.GetUnitOnCell();
                     int delta = 0;
                     if (cellUnit)
