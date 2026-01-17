@@ -3,6 +3,7 @@ using IndAssets.Scripts.Events;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Commands;
+using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -42,15 +43,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private async void HandleCommandResultsCoroutine(Queue<CommandResult> commandResults)
         {
             var commandsToApply = new Queue<CommandResult>();
+            var currentDieCommands = new List<CommandResult>();
 
             while (commandResults.TryDequeue(out var commandResult))
             {
                 commandsToApply.Enqueue(commandResult);
                 var requireApply = commandResults.Count == 0;
-                if (!requireApply && commandResults.TryPeek(out var nextResult) 
-                    && nextResult.ResultId != commandResult.ResultId)
+                if (!requireApply && commandResults.TryPeek(out var nextResult))
                 {
-                    requireApply = true;
+                    if (nextResult is PvDieCommand)
+                    {
+                        currentDieCommands.Add(nextResult);
+                        commandResults.Dequeue();
+                        if (!commandResults.TryPeek(out nextResult))
+                        {
+                            requireApply = true;
+                        }
+                    }
+
+                    if (!requireApply && nextResult.ResultId != commandResult.ResultId)
+                    {
+                        requireApply = true;
+                    }
                 }
 
                 if (requireApply)
@@ -61,6 +75,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         _unitIdToBattleUnitHash[commandResult.OwnerId], 
                         TacticBattleManager.GetGrid()[commandResult.TargetCellIndex], 
                         commandsToApply);
+
+                    if (currentDieCommands.Count > 0)
+                    {
+                        await Awaitable.WaitForSecondsAsync(0.25f);
+                        foreach (var dieCommand in currentDieCommands)
+                        {
+                            dieCommand.ApplyResultOnVisual(_unitIdToBattleUnitHash, _abilityIdToAbilityHash);
+                        }
+                        currentDieCommands.Clear();
+                        await Awaitable.WaitForSecondsAsync(0.25f);
+                    }
+
                     commandsToApply.Clear();
                 }
             }
@@ -95,7 +121,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                 PvSoUnitAbility combatAbility = null;
 
-                switch (combatActionContext.QueryType)
+                var queryType = combatActionContext.QueryType;
+                switch (queryType)
                 {
                     case CombatingQueryType.FirstAttempt:
                         combatAbility = combatActionContext.IsCounter ? targetUnit.CounterAbility : ability;
@@ -111,10 +138,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                 var caster = combatActionContext.IsCounter ? targetUnit : abilityOwner;
                 var victim = combatActionContext.IsCounter ? abilityOwner : targetUnit;
-                if (!combatAbility) continue;
+                if (!combatAbility && queryType != CombatingQueryType.Additional)
+                {
+                    continue;
+                }
+
                 RaiserOnCombatingQueryStartEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
                 
-                if (combatActionContext.QueryType == CombatingQueryType.ReplacedFollowUp)
+                if (queryType == CombatingQueryType.ReplacedFollowUp || queryType == CombatingQueryType.Additional)
                 {
                     caster.ApplyAdjustedAction(combatActionContext, victim, results);
                 }

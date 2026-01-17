@@ -3,11 +3,9 @@ using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Passives;
-using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,9 +15,6 @@ namespace IndAssets.Scripts.Passives
     [CreateAssetMenu(fileName = "PvSoPassiveFollowAoe", menuName = "ProjectCI Passives/PvSoPassiveFollowAoe", order = 1)]
     public class PvSoPassiveFollowAoe : PvSoPassiveIndividual
     {
-        private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
-        internal static FormulaCollection FormulaColInstance => FormulaService.Service;
-
         [SerializeField]
         private PvSoUnitAbility followUpAbility;
 

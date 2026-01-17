@@ -33,7 +33,7 @@ namespace IndAssets.Scripts.Events
         }
 
         public void RegisterCallback(CombatingQueryContext info, PvMnBattleGeneralUnit owner,
-            Action<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, Queue<CommandResult>> callback)
+            Action<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, Queue<CommandResult>> callback, bool isMultiple)
         {
             if (!_unitHeldActionColHash.TryGetValue(owner.ID, out var col))
             {
@@ -44,7 +44,14 @@ namespace IndAssets.Scripts.Events
             var index = col.FindIndex(action => action.QueryContextKey == info);
             if (index >= 0)
             {
-                col[index].UnitQueryAction = callback;
+                if (isMultiple)
+                {
+                    col[index].UnitQueryAction += callback;
+                }
+                else
+                {
+                    col[index].UnitQueryAction = callback;
+                }
             }
             else
             {
@@ -74,19 +81,49 @@ namespace IndAssets.Scripts.Events
                 Debug.LogError($"ERROR: No such QueryApplier/duplicated registered from <{owner.name}>");
             }
         }
+
+        public void UnregisterCallback(CombatingQueryContext info, PvMnBattleGeneralUnit owner,
+            Action<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, Queue<CommandResult>> callback)
+        {
+            if (!_unitHeldActionColHash.TryGetValue(owner.ID, out var col))
+            {
+                Debug.LogError($"ERROR: No such QueryApplier registered from <{owner.name}>");
+                return;
+            }
+
+            var index = col.FindIndex(action => action.QueryContextKey == info);
+            if (index >= 0)
+            {
+                col[index].UnitQueryAction -= callback;
+                if (col[index].UnitQueryAction == null)
+                {
+                    col.RemoveAt(index);
+                }
+            }
+            else
+            {
+                Debug.LogError($"ERROR: No such QueryApplier/duplicated registered from <{owner.name}>");
+            }
+        }
     }
 
     public static class PvUnitHeldQueryExt
     {
         public static void RegisterQueryApply(this PvMnBattleGeneralUnit owner, CombatingQueryContext info,
-            Action<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, Queue<CommandResult>> callback)
+            Action<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, Queue<CommandResult>> callback, bool isMultiple = false)
         {
-            PvSoUnitHeldQueryEvent.InjectedInstance.RegisterCallback(info, owner, callback);
+            PvSoUnitHeldQueryEvent.InjectedInstance.RegisterCallback(info, owner, callback, isMultiple);
         }
         
         public static void UnregisterQueryApply(this PvMnBattleGeneralUnit owner, CombatingQueryContext info)
         {
             PvSoUnitHeldQueryEvent.InjectedInstance.UnregisterCallback(info, owner);
+        }
+
+        public static void UnregisterQueryApply(this PvMnBattleGeneralUnit owner, CombatingQueryContext info,
+            Action<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, Queue<CommandResult>> callback)
+        {
+            PvSoUnitHeldQueryEvent.InjectedInstance.UnregisterCallback(info, owner, callback);
         }
 
         public static void ApplyAdjustedAction(this PvMnBattleGeneralUnit owner, CombatingQueryContext info,

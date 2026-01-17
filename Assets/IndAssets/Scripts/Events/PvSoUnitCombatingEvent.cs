@@ -12,7 +12,8 @@ namespace ProjectCI.Utilities.Runtime.Events
         FirstAttempt,
         AutoFollowUp,
         ExtraFollowUp,
-        ReplacedFollowUp
+        ReplacedFollowUp,
+        Additional
     }
     
     public struct CombatingQueryContext
