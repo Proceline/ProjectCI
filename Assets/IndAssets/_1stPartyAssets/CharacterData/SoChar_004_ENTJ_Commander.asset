@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
-  m_Name: SoChar_003_INTP_Logician
+  m_Name: SoChar_004_ENTJ_Commander
   m_EditorClassIdentifier: 
-  m_UnitName: '[Logician]'
+  m_UnitName: '[Commander]'
   m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
   originalAttributes: []
   m_TravelSound: {fileID: 0}
@@ -25,10 +25,10 @@ MonoBehaviour:
   m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
   m_SpawnOnHeal: []
   m_AbilityPoints: 5
-  unitIdentifier: PlayerChar03
+  unitIdentifier: PlayerChar04
   icon: {fileID: -149152826, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   personalPassives:
-  - {fileID: 11400000, guid: 0abaab6e3b0ea9a47b367fbbadeb2076, type: 2}
+  - {fileID: 11400000, guid: 1b6f0ce3b1339534a830606697266eb9, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
   headMeshPrefab: {fileID: 7201506655171250344, guid: 3495d8b6be766db4bbaa466ca51af608, type: 3}
   talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}

@@ -21,7 +21,7 @@ MonoBehaviour:
   - Identity
   - Defense
   - Resistance
-  - Charm
+  - UnitType
   - CRTical
   - ACCuracy
   - AVOid

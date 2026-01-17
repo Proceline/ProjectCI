@@ -23,6 +23,8 @@ namespace IndAssets.Scripts.Abilities
         Aggressive = 1 << 0,
         Support = 1 << 1,
         Physical = 1 << 2,
-        Magical = 1 << 3
+        Magical = 1 << 3,
+        Melee = 1 << 4,
+        Ranged = 1 << 5
     }
 }

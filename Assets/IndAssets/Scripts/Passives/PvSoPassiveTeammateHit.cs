@@ -1,4 +1,5 @@
 using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Services;
@@ -13,53 +14,51 @@ using UnityEngine;
 namespace IndAssets.Scripts.Passives
 {
     [StaticInjectableTarget]
-    [CreateAssetMenu(fileName = "New Extra Attack Passive", menuName = "ProjectCI Passives/ExtraAttack", order = 1)]
+    [CreateAssetMenu(fileName = "ENTJ_Commander", menuName = "ProjectCI Passives/MBTI/ENTJ_Commander", order = 1)]
     public class PvSoPassiveTeammateHit : PvSoPassiveIndividual
     {
-        [Inject] private static IUnitCombatLogicFinishedEvent _logicFinishedEvent;
-        
+        [Inject] private static IUnitCombatLogicPreEvent _logicPreStartedEvent;
+        //[Inject] private static IUnitCombatLogicFinishedEvent _logicFinishedEvent;
+        [SerializeField] private PvSoUnitAbility followUpNormalAttack;
+
         private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
-        internal static FormulaCollection FormulaColInstance => FormulaService.Service;
+        private static FormulaCollection FormulaColInstance => FormulaService.Service;
         
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
-            _logicFinishedEvent.RegisterCallback(unit.AskTeammateToFollow);
+            if (OwnerCount == 1)
+            {
+                _logicPreStartedEvent.RegisterCallback(AskTeammateToFollow);
+            }
         }
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            _logicFinishedEvent.UnregisterCallback(unit.AskTeammateToFollow);
-        }
-    }
-    
-    internal static class ExtraAttackExtForUnitSelf
-    {
-        
-        internal static void AskTeammateToFollow(this GridPawnUnit ownerUnit, IEventOwner eventOwner,
-            UnitAndAbilityEventParam usingParam)
-        {
-            if (ownerUnit != usingParam.unit)
+            if (OwnerCount == 1)
             {
-                return;
+                _logicPreStartedEvent.UnregisterCallback(AskTeammateToFollow);
             }
-            
-            var ability = usingParam.ability;
-            if (!ability.IsFollowUpAllowed())
+        }
+
+        private void AskTeammateToFollow(IEventOwner eventOwner, UnitAndAbilityEventParam usingParam)
+        {
+            if (!IsOwner(eventOwner.EventIdentifier) || eventOwner.EventIdentifier != usingParam.unit.EventIdentifier)
             {
                 return;
             }
 
-            var attribute = PvSoPassiveTeammateHit.FormulaColInstance.AttackSpeedType;
-            var ownerSpeed = ownerUnit.RuntimeAttributes.GetAttributeValue(attribute);
+            var ownerUnit = usingParam.unit;
             var target = usingParam.target;
+            var attribute = FormulaColInstance.AttackSpeedType;
+            var ownerSpeed = ownerUnit.RuntimeAttributes.GetAttributeValue(attribute);
             var targetSpeed = target.RuntimeAttributes.GetAttributeValue(attribute);
 
-            if (ownerSpeed < targetSpeed + PvSoPassiveTeammateHit.FormulaColInstance.AttackSpeedDifference) return;
-            
-            var results = usingParam.ResultsReference;
-            
+            if (ownerSpeed < targetSpeed + FormulaColInstance.AttackSpeedDifference) return;
+
             var targetCell = target.GetCell();
+            GridPawnUnit determinedUnit = null;
+
             foreach (var cell in targetCell.GetAllAdjacentCells())
             {
                 var cellUnit = cell.GetUnitOnCell();
@@ -67,8 +66,31 @@ namespace IndAssets.Scripts.Passives
                 if (TacticBattleManager.GetTeamAffinity(ownerUnit.GetTeam(), cellUnit.GetTeam()) ==
                     BattleTeam.Friendly && ownerUnit != cellUnit)
                 {
-                    ability.HandleAbilityParam(cellUnit, target, results);
+                    var unitType = cellUnit.RuntimeAttributes.GetAttributeValue(FormulaColInstance.UnitTypeAttribute);
+                    if (unitType == (int)UnitTypeValue.Ranged)
+                    {
+                        continue;
+                    }
+
+                    if (!determinedUnit)
+                    {
+                        determinedUnit = cellUnit;
+                    }
+                    else
+                    {
+                        var determinedSpeed = determinedUnit.RuntimeAttributes.GetAttributeValue(attribute);
+                        var currentSpeed = cellUnit.RuntimeAttributes.GetAttributeValue(attribute);
+                        if (currentSpeed > determinedSpeed)
+                        {
+                            determinedUnit = cellUnit;
+                        }
+                    }
                 }
+            }
+
+            if (determinedUnit)
+            {
+                followUpNormalAttack.HandleAbilityParam(determinedUnit, target, usingParam.ResultsReference);
             }
         }
     }

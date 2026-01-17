@@ -20,6 +20,8 @@ MonoBehaviour:
     value: 9
   attackSpeedType:
     value: 14
+  unitTypeAttribute:
+    value: 8
   attackSpeedDifference: 3
   personalityRedirections:
   - personalityName: 0

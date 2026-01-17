@@ -17,6 +17,13 @@ using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
+    public enum UnitTypeValue : int
+    {
+        Melee = 0,
+        Ranged = 1,
+        Magic = 2
+    }
+
     public partial class PvMnBattleGeneralUnit : GridPawnUnit, IEventOwner
     {
         [NonSerialized] private UnitAnimationManager _animationManager;

@@ -4979,6 +4979,10 @@ MonoBehaviour:
       value: 26
     m_Value: 3
     m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 1
+    m_GainValue: 0
   ownedWeapons:
   - {fileID: 11400000, guid: 5d79286aa19323345986aaa6862f69e9, type: 2}
   - {fileID: 11400000, guid: eb7ec04af2c3fd94e91d8df2aa519385, type: 2}
@@ -26150,6 +26154,10 @@ MonoBehaviour:
       value: 26
     m_Value: 3
     m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 0
+    m_GainValue: 0
   ownedWeapons:
   - {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
 --- !u!4 &747133205
@@ -38061,6 +38069,10 @@ MonoBehaviour:
       value: 16
     m_Value: 10
     m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 0
+    m_GainValue: 0
   ownedWeapons: []
 --- !u!4 &1137085769
 Transform:
@@ -42553,6 +42565,10 @@ MonoBehaviour:
       value: 14
     m_Value: 100
     m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 0
+    m_GainValue: 0
   ownedWeapons: []
 --- !u!4 &1275341774
 Transform:
@@ -46043,6 +46059,10 @@ MonoBehaviour:
   - m_AttributeType:
       value: 26
     m_Value: 3
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 0
     m_GainValue: 0
   ownedWeapons:
   - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
@@ -57237,7 +57257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSceneMode: 1
   isFriendly: 1
-  unitData: {fileID: 11400000, guid: 650d5c26174f5454bac1422f0b24f022, type: 2}
+  unitData: {fileID: 11400000, guid: 3dbde1d4cae63d94d83c471b0c0e20cb, type: 2}
   weaponAttackAbility: {fileID: 0}
   weaponFollowUpAbility: {fileID: 0}
   weaponCounterAbility: {fileID: 0}
@@ -57245,6 +57265,10 @@ MonoBehaviour:
   - m_AttributeType:
       value: 26
     m_Value: 3
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 0
     m_GainValue: 0
   ownedWeapons:
   - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
