@@ -145,8 +145,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             var dieCommand = new PvDieCommand
             {
-                ResultId = resultId,
-                AbilityId = ability.ID,
+                ResultId = Guid.NewGuid().ToString(),
+                AbilityId = string.Empty,
                 OwnerId = targetUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex()
             };
@@ -208,7 +208,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             var dieCommand = new PvDieCommand
             {
-                ResultId = resultId,
+                ResultId = Guid.NewGuid().ToString(),
                 AbilityId = string.Empty,
                 OwnerId = targetUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex()

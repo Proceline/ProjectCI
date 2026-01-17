@@ -5,6 +5,8 @@ using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using System.Collections.Generic;
@@ -52,6 +54,21 @@ namespace IndAssets.Scripts.Passives
             List<CombatingQueryContext> queryContexts)
         {
             if (!IsOwner(inUnit.ID))
+            {
+                return;
+            }
+
+            var neighbors = inUnit.GetCell().GetAllAdjacentCells();
+            var friendlyNeighborsCount = 0;
+            foreach (var neighborCell in neighbors)
+            {
+                if (TacticBattleManager.GetTeamAffinity(inUnit.GetTeam(), neighborCell.GetCellTeam()) 
+                    == BattleTeam.Friendly)
+                {
+                    friendlyNeighborsCount++;
+                }
+            }
+            if (friendlyNeighborsCount < 2)
             {
                 return;
             }

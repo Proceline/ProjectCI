@@ -11,7 +11,6 @@ using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections.Generic;
-using UnityEditor.Playables;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -127,28 +126,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RaiserOnCombatingQueryEndEvent.Raise(abilityOwner, targetUnit, _singleCombatQueryAlloc);
             }
         }
-
-        // TODO: Electric Chain-like skill
-        /*
-        private void HandleAbilityCombatingLogic(PvMnBattleGeneralUnit abilityOwner, LevelCellBase targetCell,
-            List<CommandResult> results)
-        {
-            PvSoUnitAbility ability = CurrentAbility;
-
-            if (!ability)
-            {
-                throw new NullReferenceException("ERROR: Owner missing ability!");
-            }
-
-            var targetUnit = targetCell.GetUnitOnCell();
-            if (!targetUnit)
-            {
-                return;
-            }
-
-            HandleAbilityParam(ability, abilityOwner, targetUnit, ability, results);
-        }
-*/
 
         private async Awaitable ApplyAnimationProcess(PvSoUnitAbility ability, GridPawnUnit casterUnit,
             LevelCellBase target, Queue<CommandResult> commands)
