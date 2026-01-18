@@ -29,8 +29,6 @@ MonoBehaviour:
   icon: {fileID: -982961584, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   personalPassives:
   - {fileID: 11400000, guid: 827571ef749b63642bb79769a85ce627, type: 2}
-  - {fileID: 11400000, guid: 8c15b9589f8bdea45962484d95647273, type: 2}
-  - {fileID: 11400000, guid: 3b063152081af37438052cf8d900a05b, type: 2}
   - {fileID: 11400000, guid: 38e8fec6b87a47b4da1ce92cf90fb718, type: 2}
   animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
   headMeshPrefab: {fileID: 7201506655171250344, guid: 3495d8b6be766db4bbaa466ca51af608, type: 3}

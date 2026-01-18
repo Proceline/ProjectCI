@@ -57257,7 +57257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSceneMode: 1
   isFriendly: 1
-  unitData: {fileID: 11400000, guid: 3dbde1d4cae63d94d83c471b0c0e20cb, type: 2}
+  unitData: {fileID: 11400000, guid: 650d5c26174f5454bac1422f0b24f022, type: 2}
   weaponAttackAbility: {fileID: 0}
   weaponFollowUpAbility: {fileID: 0}
   weaponCounterAbility: {fileID: 0}

@@ -13,6 +13,11 @@ namespace IndAssets.Scripts.Random
             return Random.Range(0, 100000) % (toValueIncl - fromValueIncl) + fromValueIncl;
         }
 
+        public int GetUnrelatedRandomNumber(int fromValueIncl, int toValueIncl)
+        {
+            return Random.Range(0, 100000) % (toValueIncl - fromValueIncl) + fromValueIncl;
+        }
+
         public void Dispose()
         {
             // Empty

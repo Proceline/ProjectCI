@@ -35,6 +35,6 @@ MonoBehaviour:
   personality:
     energyLevel: -2
     informationLevel: 3
-    decisionLevel: -2
+    decisionLevel: -3
     styleLevel: 3
     identityLevel: -3
