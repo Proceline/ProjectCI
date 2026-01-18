@@ -7,7 +7,6 @@ namespace IndAssets.Editor.Scripts.Weapons
     [CustomEditor(typeof(PvSoWeaponData))]
     public class SoWeaponDataEditor : UnityEditor.Editor
     {
-        private SerializedProperty _mWeaponNumberIdentifier;
         private SerializedProperty _mWeaponName;
         private SerializedProperty _mDescription;
         private SerializedProperty _mAttributes;
@@ -30,10 +29,7 @@ namespace IndAssets.Editor.Scripts.Weapons
             EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.BindingAbilityPropertyName));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.FollowUpAbilityPropertyName));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.CounterAbilityPropertyName));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponPrefab)));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalRotation)));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalPosition)));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalScale)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponInfos)));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Attributes", EditorStyles.boldLabel);

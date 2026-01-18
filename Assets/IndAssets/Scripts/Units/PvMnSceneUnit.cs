@@ -40,7 +40,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private AttributeValuePair[] extraAttributes;
 
         [SerializeField]
-        private PvSoWeaponData[] ownedWeapons;
+        private PvSoWeaponData ownedWeapon;
 
         /// <summary>
         /// Gets the unique identifier of the object
@@ -71,29 +71,31 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public void Initialize()
         {
-            Initialize(new List<PvSoWeaponData>(ownedWeapons));
+            Initialize(ownedWeapon);
         }
 
-        public void Initialize(List<PvSoWeaponData> weapons)
+        public void Initialize(PvSoWeaponData weaponData)
         {
-            AnimationPlayableSupportBase animator = null;
-
-            for (var i = 0; i <= 1; i++)
+            if (!weaponData)
             {
-                if (i >= weapons.Count)
-                {
-                    break;
-                }
+                return;
+            }
 
-                var weaponData = weapons[i];
-                var weaponRoot = FindChild(transform, i == 0 ? "weapon_r" : "weapon_l");
-                RefreshWeapon(weaponRoot, weaponData);
+            if (!ownedWeapon)
+            {
+                ownedWeapon = weaponData;
+            }
 
-                animator = weaponData.Animator;
+            var animator = weaponData.Animator;
 
-                weaponAttackAbility = weaponData.DefaultAttackAbility;
-                weaponFollowUpAbility = weaponData.DefaultFollowUpAbility;
-                weaponCounterAbility = weaponData.DefaultCounterAbility;
+            weaponAttackAbility = weaponData.DefaultAttackAbility;
+            weaponFollowUpAbility = weaponData.DefaultFollowUpAbility;
+            weaponCounterAbility = weaponData.DefaultCounterAbility;
+
+            RefreshWeapon(FindChild(transform, "weapon_r"), weaponData.weaponInfos[0]);
+            if (weaponData.weaponInfos.Length > 1)
+            {
+                RefreshWeapon(FindChild(transform, "weapon_l"), weaponData.weaponInfos[1]);
             }
             
             if (animator)
@@ -103,18 +105,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public void RefreshWeapon(Transform weaponRoot, PvSoWeaponData weaponData)
+        private void RefreshWeapon(Transform weaponRoot, FPvWeaponInfo weaponInfo)
         {
             if (weaponRoot.childCount > 0)
             {
                 Destroy(weaponRoot.GetChild(0).gameObject);
                 weaponRoot.DetachChildren();
             }
-            var prefab = weaponData.weaponPrefab;
-            var weaponInstance = Instantiate(prefab, weaponRoot);
-            weaponInstance.transform.localPosition = weaponData.prefabLocalPosition;
-            weaponInstance.transform.localRotation = weaponData.prefabLocalRotation;
-            weaponInstance.transform.localScale = weaponData.prefabLocalScale;
+
+            var weaponInstance = Instantiate(weaponInfo.weaponPrefab, weaponRoot);
+            weaponInstance.transform.localPosition = weaponInfo.prefabLocalPosition;
+            weaponInstance.transform.localRotation = weaponInfo.prefabLocalRotation;
+            weaponInstance.transform.localScale = weaponInfo.prefabLocalScale;
         }
 
         public void PostInitialize()
@@ -140,12 +142,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 attributeContainer.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
             }
 
-            foreach (var weapon in ownedWeapons)
+            if (!ownedWeapon)
             {
-                foreach (var attributePair in weapon.attributes)
-                {
-                    attributeContainer.SetGeneralAttribute(attributePair.type, attributePair.value);
-                }
+                return;
+            }
+
+            foreach (var attributePair in ownedWeapon.attributes)
+            {
+                attributeContainer.SetGeneralAttribute(attributePair.type, attributePair.value);
             }
         }
 

@@ -4983,9 +4983,7 @@ MonoBehaviour:
       value: 8
     m_Value: 1
     m_GainValue: 0
-  ownedWeapons:
-  - {fileID: 11400000, guid: 5d79286aa19323345986aaa6862f69e9, type: 2}
-  - {fileID: 11400000, guid: eb7ec04af2c3fd94e91d8df2aa519385, type: 2}
+  ownedWeapon: {fileID: 11400000, guid: eb7ec04af2c3fd94e91d8df2aa519385, type: 2}
 --- !u!4 &130359352
 Transform:
   m_ObjectHideFlags: 0
@@ -26158,8 +26156,7 @@ MonoBehaviour:
       value: 8
     m_Value: 0
     m_GainValue: 0
-  ownedWeapons:
-  - {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
+  ownedWeapon: {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
 --- !u!4 &747133205
 Transform:
   m_ObjectHideFlags: 0
@@ -38073,7 +38070,7 @@ MonoBehaviour:
       value: 8
     m_Value: 0
     m_GainValue: 0
-  ownedWeapons: []
+  ownedWeapon: {fileID: 0}
 --- !u!4 &1137085769
 Transform:
   m_ObjectHideFlags: 0
@@ -42569,7 +42566,7 @@ MonoBehaviour:
       value: 8
     m_Value: 0
     m_GainValue: 0
-  ownedWeapons: []
+  ownedWeapon: {fileID: 0}
 --- !u!4 &1275341774
 Transform:
   m_ObjectHideFlags: 0
@@ -46064,8 +46061,7 @@ MonoBehaviour:
       value: 8
     m_Value: 0
     m_GainValue: 0
-  ownedWeapons:
-  - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
+  ownedWeapon: {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
 --- !u!4 &1363311593
 Transform:
   m_ObjectHideFlags: 0
@@ -57270,8 +57266,7 @@ MonoBehaviour:
       value: 8
     m_Value: 0
     m_GainValue: 0
-  ownedWeapons:
-  - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
+  ownedWeapon: {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
 --- !u!4 &1707871776
 Transform:
   m_ObjectHideFlags: 0

@@ -10,6 +10,15 @@ using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 
 namespace IndAssets.Scripts.Weapons
 {
+    [Serializable]
+    public struct FPvWeaponInfo
+    {
+        public GameObject weaponPrefab;
+        public Quaternion prefabLocalRotation;
+        public Vector3 prefabLocalPosition;
+        public Vector3 prefabLocalScale;
+    }
+
     [CreateAssetMenu(fileName = "NewWeapon", menuName = "ProjectCI Tools/Weapon")]
     public class PvSoWeaponData : ScriptableObject, IPvSaveEntry
     {
@@ -40,10 +49,7 @@ namespace IndAssets.Scripts.Weapons
         [SerializeField]
         private PvSoUnitAbility counterAbility;
 
-        public GameObject weaponPrefab;
-        public Quaternion prefabLocalRotation;
-        public Vector3 prefabLocalPosition;
-        public Vector3 prefabLocalScale = Vector3.one;
+        public FPvWeaponInfo[] weaponInfos;
 
         public AnimationPlayableSupportBase Animator => animator;
         public PvSoUnitAbility DefaultAttackAbility => bindingAbility;

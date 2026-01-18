@@ -310,8 +310,8 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                     }
                 }
             }
-            
-            sceneUnit.Initialize(weaponsList);
+
+            sceneUnit.Initialize(weaponsList[0]);
         }
         
         /// <summary>
