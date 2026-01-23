@@ -178,22 +178,21 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
                 // Add currently equipped weapons if not already in the list
                 if (PvSaveManager.Instance != null && PvSaveManager.Instance.CurrentSaveData != null)
                 {
-                    foreach (var weaponInstanceId in characterData.WeaponInstanceIds)
+                    var weaponInstanceId = characterData.WeaponInstanceId;
+                    if (!string.IsNullOrEmpty(weaponInstanceId) && !weaponInstanceIds.Contains(weaponInstanceId))
                     {
-                        if (!string.IsNullOrEmpty(weaponInstanceId) && !weaponInstanceIds.Contains(weaponInstanceId))
+                        var weaponInstance = PvSaveManager.Instance.CurrentSaveData.GetWeaponInstance(weaponInstanceId);
+                        if (weaponInstance != null)
                         {
-                            var weaponInstance = PvSaveManager.Instance.CurrentSaveData.GetWeaponInstance(weaponInstanceId);
-                            if (weaponInstance != null)
+                            var weaponData = _equipmentsCollection.GetWeaponData(weaponInstance.WeaponDataId);
+                            if (weaponData != null)
                             {
-                                var weaponData = _equipmentsCollection.GetWeaponData(weaponInstance.WeaponDataId);
-                                if (weaponData != null)
-                                {
-                                    weaponInstanceIds.Add(weaponInstanceId);
-                                    weaponDisplayNames.Add(weaponData.weaponName);
-                                }
+                                weaponInstanceIds.Add(weaponInstanceId);
+                                weaponDisplayNames.Add(weaponData.weaponName);
                             }
                         }
                     }
+                    
                     
                     // Add currently equipped relics if not already in the list
                     foreach (var relicInstanceId in characterData.RelicInstanceIds)

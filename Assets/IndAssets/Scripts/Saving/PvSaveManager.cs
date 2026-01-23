@@ -337,7 +337,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// <summary>
         /// Equip weapon instance to character
         /// </summary>
-        public static void EquipWeaponToCharacter(string weaponInstanceId, string characterId, int slotIndex)
+        public static void EquipWeaponToCharacter(string weaponInstanceId, string characterId)
         {
             if (!Instance) 
             {
@@ -367,14 +367,12 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             
             // Unequip any existing weapon in this slot
             var characterData = currentSaveData.GetCharacterDataById(characterId);
-            if (characterData != null && characterData.WeaponInstanceIds.Count > slotIndex)
+
+            string existingInstanceId = characterData.WeaponInstanceId;
+            if (!string.IsNullOrEmpty(existingInstanceId))
             {
-                string existingInstanceId = characterData.WeaponInstanceIds[slotIndex];
-                if (!string.IsNullOrEmpty(existingInstanceId))
-                {
-                    var existingInstance = currentSaveData.GetWeaponInstance(existingInstanceId);
-                    existingInstance?.Unequip();
-                }
+                var existingInstance = currentSaveData.GetWeaponInstance(existingInstanceId);
+                existingInstance?.Unequip();
             }
             
             // Equip new weapon
@@ -386,8 +384,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                     return;
                 }
                 
-                characterData.SetWeaponInstanceId(slotIndex, weaponInstanceId);
-                Instance.raiserEquipWeaponEntryEvent.Raise(weaponInstanceId, characterId, slotIndex);
+                characterData.SetWeaponInstanceId(weaponInstanceId);
+                Instance.raiserEquipWeaponEntryEvent.Raise(weaponInstanceId, characterId, 0);
                 
                 BroadcastEquipWeaponsData();
             }
@@ -488,12 +486,13 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             if (_currentSaveData == null) return false;
             
             var characterData = _currentSaveData.GetCharacterDataById(characterId);
-            if (characterData == null || characterData.WeaponInstanceIds.Count <= slotIndex)
+
+            if (characterData == null)
             {
                 return false;
             }
             
-            string instanceId = characterData.WeaponInstanceIds[slotIndex];
+            string instanceId = characterData.WeaponInstanceId;
             if (string.IsNullOrEmpty(instanceId))
             {
                 return false;
@@ -502,7 +501,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             var instance = _currentSaveData.GetWeaponInstance(instanceId);
             if (instance != null && instance.Unequip())
             {
-                characterData.SetWeaponInstanceId(slotIndex, string.Empty);
+                characterData.SetWeaponInstanceId(string.Empty);
                 return true;
             }
             

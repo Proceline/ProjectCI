@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Relics;
 using IndAssets.Scripts.Weapons;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 
@@ -14,7 +15,6 @@ namespace IndAssets.Scripts.Managers
     {
         #if UNITY_EDITOR
         public static string UnitsPropertyName => nameof(availableUnits);
-        public static string BodyMeshPrefabsPropertyName => nameof(bodyMeshPrefabs);
         #endif
         
         [SerializeField] private List<PvSoBattleUnitData> availableUnits = new();
@@ -25,13 +25,11 @@ namespace IndAssets.Scripts.Managers
         [Header("Relics")]
         [SerializeField] private List<PvSoPassiveRelic> relics = new List<PvSoPassiveRelic>();
 
-        [Header("Body Mesh Prefabs")]
-        [SerializeField]
-        private List<PvMnMeshPartController> bodyMeshPrefabs = new List<PvMnMeshPartController>();
-
         private readonly Dictionary<string, PvSoBattleUnitData> _availableUnitsDict = new();
         private readonly Dictionary<string, PvSoWeaponData> _weaponsDict = new();
         private readonly Dictionary<string, PvSoPassiveRelic> _relicsDict = new();
+
+        public PvSoUnitAbility[] emptyHandsAbilities;
 
         public List<PvSoWeaponData> Weapons => weapons;
         public List<PvSoPassiveRelic> Relics => relics;
@@ -83,22 +81,5 @@ namespace IndAssets.Scripts.Managers
 
         public PvSoWeaponData GetWeaponData(string entryId) => WeaponsDict.GetValueOrDefault(entryId);
         public PvSoPassiveRelic GetRelicData(string entryId) => RelicsDict.GetValueOrDefault(entryId);
-
-        public PvMnMeshPartController GetBodyMeshPrefab(string bodyTypeName)
-        {
-            var prefab = bodyMeshPrefabs.Find(p => p.name == bodyTypeName);
-            if (prefab == null)
-            {
-                Debug.LogError($"Body mesh prefab not found for {bodyTypeName}");
-                return bodyMeshPrefabs[0];
-            }
-
-            return prefab;
-        }
-
-        public PvMnMeshPartController GetDefaultBodyMeshPrefab()
-        {
-            return bodyMeshPrefabs[0];
-        }
     }
 }

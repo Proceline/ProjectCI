@@ -26,11 +26,12 @@ MonoBehaviour:
   m_SpawnOnHeal: []
   m_AbilityPoints: 5
   unitIdentifier: PlayerChar04
-  icon: {fileID: -149152826, guid: 1538c5afb130f444784879ec5163389d, type: 3}
+  icon: {fileID: 21300000, guid: 61c481cb294fa7d4484422c84693ebd5, type: 3}
   personalPassives:
   - {fileID: 11400000, guid: 1b6f0ce3b1339534a830606697266eb9, type: 2}
-  animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
-  headMeshPrefab: {fileID: 2568446364417295610, guid: 846affabb3d52594a89659284e6d492e, type: 3}
+  meshes:
+  - {fileID: 8001354749718593143, guid: ba0816ba64c19474791d66416b0d0286, type: 3}
+  - {fileID: 2568446364417295610, guid: 846affabb3d52594a89659284e6d492e, type: 3}
   talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   personality:
     energyLevel: 4

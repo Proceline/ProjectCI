@@ -48,9 +48,12 @@ MonoBehaviour:
   isSceneMode: 0
   isFriendly: 1
   unitData: {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
-  unitAbilities: []
+  weaponAttackAbility: {fileID: 0}
+  weaponFollowUpAbility: {fileID: 0}
+  weaponCounterAbility: {fileID: 0}
+  weaponRelicCollection: {fileID: 11400000, guid: a4e86cc0b9238324cbcdc6209321b9e2, type: 2}
   extraAttributes: []
-  ownedWeapons: []
+  ownedWeapon: {fileID: 0}
 --- !u!136 &785587150156156040
 CapsuleCollider:
   m_ObjectHideFlags: 0

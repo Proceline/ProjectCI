@@ -19,7 +19,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private GameObject panelObject;
         [SerializeField] private TextMeshProUGUI characterNameText;
         [SerializeField] private PvMnEquipmentDropdown weaponDropdown1;
-        [SerializeField] private PvMnEquipmentDropdown weaponDropdown2;
         [SerializeField] private PvMnEquipmentDropdown relicDropdown1;
         [SerializeField] private PvMnEquipmentDropdown relicDropdown2;
         [SerializeField] private PvMnEquipmentDropdown relicDropdown3;
@@ -181,15 +180,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (weaponDropdown1)
             {
                 InitializeWeaponDropDown(weaponDropdown1, 0);
-                InitializeDropdownEquipment(weaponDropdown1, 0, _characterData.WeaponInstanceIds);
+                weaponDropdown1.SetValueWithoutNotify(_characterData.WeaponInstanceId);
                 weaponDropdown1.SetInteractable(_isEditable && !_isInBattle);
-            }
-
-            if (weaponDropdown2)
-            {
-                InitializeWeaponDropDown(weaponDropdown2, 1);
-                InitializeDropdownEquipment(weaponDropdown2, 1, _characterData.WeaponInstanceIds);
-                weaponDropdown2.SetInteractable(_isEditable && !_isInBattle);
             }
 
             // Update relic dropdowns
@@ -226,13 +218,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (weaponDropdown1)
             {
                 string weapon1 = weaponDropdown1.GetValue();
-                _characterData.SetWeaponInstanceId(0, weapon1);
-            }
-            
-            if (weaponDropdown2)
-            {
-                string weapon2 = weaponDropdown2.GetValue();
-                _characterData.SetWeaponInstanceId(1, weapon2);
+                _characterData.SetWeaponInstanceId(weapon1);
             }
             
             // Save relics
@@ -262,7 +248,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             bool canEdit = _isEditable && !_isInBattle;
             
             if (weaponDropdown1 != null) weaponDropdown1.SetInteractable(canEdit);
-            if (weaponDropdown2 != null) weaponDropdown2.SetInteractable(canEdit);
             if (relicDropdown1 != null) relicDropdown1.SetInteractable(canEdit);
             if (relicDropdown2 != null) relicDropdown2.SetInteractable(canEdit);
             if (relicDropdown3 != null) relicDropdown3.SetInteractable(canEdit);

@@ -72,10 +72,15 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 return;
             }
 
-            var bodyMeshPrefab = WeaponAndRelicCollection.GetDefaultBodyMeshPrefab();
+            var bodyMeshPrefab = unitData.BodyMeshPrefab;
             if (bodyMeshPrefab)
             {
-                var bodyMesh = Instantiate(bodyMeshPrefab, sceneUnit.transform);
+                var bodyMesh = Instantiate(bodyMeshPrefab, sceneUnit.transform).GetComponent<PvMnMeshPartController>();
+                if (!bodyMesh)
+                {
+                    throw new System.Exception($"ERROR: This Mesh doesn't have {nameof(PvMnMeshPartController)}");
+                }
+
                 bodyMesh.transform.localPosition = Vector3.zero;
                 bodyMesh.transform.localRotation = Quaternion.identity;
                 bodyMesh.transform.localScale = new Vector3(1.75f, 1.75f, 1.75f);
@@ -292,26 +297,23 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 Debug.LogWarning($"No save data found for character: {unitData.EntryId}");
                 return;
             }
-            
+
             // Load weapons
-            var weaponsList = new List<PvSoWeaponData>();
-            
-            foreach (var weaponInstanceId in characterData.WeaponInstanceIds)
+            var weaponInstanceId = characterData.WeaponInstanceId;
+            if (string.IsNullOrEmpty(weaponInstanceId))
             {
-                if (string.IsNullOrEmpty(weaponInstanceId)) continue;
-                
-                var weaponInstance = saveManager.CurrentSaveData.GetWeaponInstance(weaponInstanceId);
-                if (weaponInstance != null)
-                {
-                    var weaponData = WeaponAndRelicCollection.GetWeaponData(weaponInstance.WeaponDataId);
-                    if (weaponData != null)
-                    {
-                        weaponsList.Add(weaponData);
-                    }
-                }
+                return;
             }
 
-            sceneUnit.Initialize(weaponsList[0]);
+            var weaponInstance = saveManager.CurrentSaveData.GetWeaponInstance(weaponInstanceId);
+            if (weaponInstance != null)
+            {
+                var weaponData = WeaponAndRelicCollection.GetWeaponData(weaponInstance.WeaponDataId);
+                if (weaponData)
+                {
+                    sceneUnit.Initialize(weaponData);
+                }
+            }
         }
         
         /// <summary>

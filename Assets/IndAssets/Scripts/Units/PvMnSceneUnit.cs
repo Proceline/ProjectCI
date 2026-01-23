@@ -1,3 +1,4 @@
+using IndAssets.Scripts.Managers;
 using IndAssets.Scripts.Weapons;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
@@ -5,7 +6,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.Units.Interfaces;
 using ProjectCI_Animation.Runtime;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -31,10 +31,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private PvSoUnitAbility weaponCounterAbility;
 
+        [SerializeField]
+        private PvSoWeaponAndRelicCollection weaponRelicCollection;
+
         public PvSoBattleUnitData UnitData { get => unitData; set => unitData = value; }
-        public PvSoUnitAbility WeaponAttackAbility => weaponAttackAbility;
-        public PvSoUnitAbility WeaponFollowUpAbility => weaponFollowUpAbility;
-        public PvSoUnitAbility WeaponCounterAbility => weaponCounterAbility;
+        public PvSoUnitAbility WeaponAttackAbility 
+            => weaponAttackAbility? weaponAttackAbility : weaponRelicCollection.emptyHandsAbilities[0];
+
+        public PvSoUnitAbility WeaponFollowUpAbility 
+            => weaponFollowUpAbility? weaponFollowUpAbility : weaponRelicCollection.emptyHandsAbilities[1];
+
+        public PvSoUnitAbility WeaponCounterAbility 
+            => weaponCounterAbility? weaponCounterAbility : weaponRelicCollection.emptyHandsAbilities[2];
 
         [SerializeField]
         private AttributeValuePair[] extraAttributes;

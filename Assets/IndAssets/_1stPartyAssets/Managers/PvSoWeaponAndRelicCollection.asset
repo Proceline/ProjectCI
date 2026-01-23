@@ -15,6 +15,9 @@ MonoBehaviour:
   availableUnits:
   - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
   - {fileID: 11400000, guid: 45c045a26c2e1aa4c901a48ccdb00525, type: 2}
+  - {fileID: 11400000, guid: 650d5c26174f5454bac1422f0b24f022, type: 2}
+  - {fileID: 11400000, guid: 3dbde1d4cae63d94d83c471b0c0e20cb, type: 2}
+  - {fileID: 11400000, guid: aa3c59ec7a3e07f4b8c22898e520b057, type: 2}
   weapons:
   - {fileID: 11400000, guid: 024f2c1d5e15a334f974400133d7b9ba, type: 2}
   - {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
@@ -35,5 +38,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 76a30a010ac528a43855312d4c864e6d, type: 2}
   - {fileID: 11400000, guid: e056745e590394c4e9b0a1c897aab693, type: 2}
   - {fileID: 11400000, guid: 8a599316c80d7a940b6fabc5b928cb37, type: 2}
-  bodyMeshPrefabs:
-  - {fileID: 6089969660927558297, guid: 626f91f3ce89e6f4983c357449528628, type: 3}
+  emptyHandsAbilities:
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
