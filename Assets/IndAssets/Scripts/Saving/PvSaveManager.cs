@@ -333,11 +333,14 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             if (_currentSaveData == null) return new List<PvRelicInstance>();
             return _currentSaveData.GetAvailableRelicInstances();
         }
-        
+
+        public static void EquipWeaponToCharacter(string weaponInstanceId, string characterId, int index)
+            => EquipWeaponToCharacter(weaponInstanceId, characterId);
+
         /// <summary>
         /// Equip weapon instance to character
         /// </summary>
-        public static void EquipWeaponToCharacter(string weaponInstanceId, string characterId)
+        private static void EquipWeaponToCharacter(string weaponInstanceId, string characterId)
         {
             if (!Instance) 
             {
@@ -385,7 +388,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
                 }
                 
                 characterData.SetWeaponInstanceId(weaponInstanceId);
-                Instance.raiserEquipWeaponEntryEvent.Raise(weaponInstanceId, characterId, 0);
+                Instance.raiserEquipWeaponEntryEvent.Raise(weaponInstanceId, characterId);
                 
                 BroadcastEquipWeaponsData();
             }

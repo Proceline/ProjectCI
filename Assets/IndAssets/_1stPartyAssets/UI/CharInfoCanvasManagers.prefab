@@ -970,6 +970,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 5913924671614637286}
+  onInitialized:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6380136987885106805, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.Saving.PvSaveManager,
+          Assembly-CSharp
+        m_MethodName: BroadcastEquipWeaponsData
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls:
@@ -2678,7 +2694,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1175245686582577267
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2696,9 +2712,9 @@ RectTransform:
   - {fileID: 6800354412395764336}
   m_Father: {fileID: 7140777869992585427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 325, y: -320}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3814780592681877666
@@ -2816,6 +2832,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 4479882842270327874}
+  onInitialized:
+    m_PersistentCalls:
+      m_Calls: []
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls:
@@ -3101,6 +3120,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 3080833817924812394}
+  onInitialized:
+    m_PersistentCalls:
+      m_Calls: []
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
@@ -5583,6 +5605,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 390666020143789034}
+  onInitialized:
+    m_PersistentCalls:
+      m_Calls: []
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []
@@ -5654,7 +5679,6 @@ MonoBehaviour:
   panelObject: {fileID: 5740816256194678090}
   characterNameText: {fileID: 3282320576839418713}
   weaponDropdown1: {fileID: 7699352788816103054}
-  weaponDropdown2: {fileID: 1278882164338194645}
   relicDropdown1: {fileID: 2641535575107818660}
   relicDropdown2: {fileID: 7878652879402445899}
   relicDropdown3: {fileID: 3612132315117470113}
@@ -6611,6 +6635,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnEquipmentDropdown
   dropdown: {fileID: 7404972416383083332}
+  onInitialized:
+    m_PersistentCalls:
+      m_Calls: []
   onEquipmentEquipped:
     m_PersistentCalls:
       m_Calls: []

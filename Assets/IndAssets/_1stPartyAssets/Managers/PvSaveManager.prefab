@@ -48,3 +48,4 @@ MonoBehaviour:
   enableSaveEncryption: 1
   equipmentsCollection: {fileID: 11400000, guid: a4e86cc0b9238324cbcdc6209321b9e2, type: 2}
   raiserEquipWeaponUpdateEvent: {fileID: 11400000, guid: a91f60d7be434e94ca847c27a5e6c72c, type: 2}
+  raiserEquipWeaponEntryEvent: {fileID: 11400000, guid: 8b60435f9b30262469ff3017531266db, type: 2}

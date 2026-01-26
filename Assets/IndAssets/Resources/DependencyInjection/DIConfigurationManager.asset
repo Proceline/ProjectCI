@@ -76,8 +76,6 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterPortraitItem,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterEquipmentPanel,
-    Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.PvMnCharacterEquipmentManager,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvStatusApplyCommand, Assembly-CSharp,

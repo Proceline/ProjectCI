@@ -39,7 +39,7 @@ MonoBehaviour:
   - _weaponResilience
   - _skillCharm
   - _range
-  - _movement
+  - MOVement
   - DEFense
   - SPIrit
   - HITpoint
