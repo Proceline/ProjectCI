@@ -1,11 +1,12 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using TMPro;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using System;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -32,7 +33,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 
         [SerializeField] private UnityEvent onInitialized;
         [SerializeField] private UnityEvent<string, string, int> onEquipmentEquipped;
-        [SerializeField] private UnityEvent<string> onSlotHovered;
+        [SerializeField] private UnityEvent<string, string, bool> onSlotHovered;
         [SerializeField] private PvSoEquipDataUpdateEvent onEquipDataUpdateEvent;
 
         [NonSerialized] private bool _isRegistered;
@@ -193,12 +194,13 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             string instanceId = GetValue();
             if (string.IsNullOrEmpty(instanceId)) return;
 
-            onSlotHovered?.Invoke(instanceId);
+            var characterId = _usedInstancesWithHolders.ContainsKey(instanceId) ? _usedInstancesWithHolders[instanceId] : string.Empty;
+            onSlotHovered?.Invoke(instanceId, characterId, true);
         }
         
         public void OnPointerExit(PointerEventData eventData)
         {
-            // Empty
+            onSlotHovered?.Invoke(string.Empty, string.Empty, false);
         }
         
         /// <summary>
@@ -216,8 +218,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             int instanceIndex = dropdownItemIndex - 1;
             if (instanceIndex >= 0 && instanceIndex < _instanceIds.Count)
             {
-                string instanceId = _instanceIds[instanceIndex];
-                onSlotHovered?.Invoke(instanceId);
+                string instanceId = _instanceIds[instanceIndex]; 
+                var characterId = _usedInstancesWithHolders.ContainsKey(instanceId) ? _usedInstancesWithHolders[instanceId] : string.Empty;
+                onSlotHovered?.Invoke(instanceId, characterId, true);
             }
         }
         
@@ -288,13 +291,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             for (int i = 0; i < _displayNames.Count; i++)
             {
                 string instanceId = _instanceIds[i];
-                var outputString = _displayNames[i];
+                var outputString = _usedInstancesWithHolders.TryGetValue(instanceId, out var characterId) && characterId != _currentCharacterId ?
+                    $"<color=red>{_displayNames[i]}</color>" : _displayNames[i];
                 var targetDropdownItem = dropdown.options[i + 1];
-
-                if (_usedInstancesWithHolders.TryGetValue(instanceId, out string characterId))
-                {
-                    outputString += $" <color=red>[{characterId}]</color>";
-                }
 
                 targetDropdownItem.text = outputString;
             }
