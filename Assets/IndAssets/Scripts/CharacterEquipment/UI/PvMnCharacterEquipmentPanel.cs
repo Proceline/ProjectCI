@@ -16,9 +16,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private GameObject panelObject;
         [SerializeField] private TextMeshProUGUI characterNameText;
         [SerializeField] private PvMnEquipmentDropdown weaponDropdown1;
-        [SerializeField] private PvMnEquipmentDropdown relicDropdown1;
-        [SerializeField] private PvMnEquipmentDropdown relicDropdown2;
-        [SerializeField] private PvMnEquipmentDropdown relicDropdown3;
         [SerializeField] private Button closeButton;
         
         [Header("Data")]
@@ -208,26 +205,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 string weapon1 = weaponDropdown1.GetValue();
                 _characterData.SetWeaponInstanceId(weapon1);
             }
-            
-            // Save relics
-            if (relicDropdown1)
-            {
-                string relic1 = relicDropdown1.GetValue();
-                _characterData.SetRelicInstanceId(0, relic1);
-            }
-            
-            if (relicDropdown2)
-            {
-                string relic2 = relicDropdown2.GetValue();
-                _characterData.SetRelicInstanceId(1, relic2);
-            }
-            
-            if (relicDropdown3)
-            {
-                string relic3 = relicDropdown3.GetValue();
-                _characterData.SetRelicInstanceId(2, relic3);
-            }
-            
+
+            //_characterData.SetRelicInstanceId(0, relic1);
             _onDataChanged?.Invoke();
         }
         
@@ -235,10 +214,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         {
             bool canEdit = _isEditable && !_isInBattle;
             
-            if (weaponDropdown1 != null) weaponDropdown1.SetInteractable(canEdit);
-            if (relicDropdown1 != null) relicDropdown1.SetInteractable(canEdit);
-            if (relicDropdown2 != null) relicDropdown2.SetInteractable(canEdit);
-            if (relicDropdown3 != null) relicDropdown3.SetInteractable(canEdit);
+            if (weaponDropdown1) weaponDropdown1.SetInteractable(canEdit);
         }
     }
 }
