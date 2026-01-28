@@ -9,12 +9,20 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
     [CreateAssetMenu(fileName = "NewLevelData", menuName = "ProjectCI/Deployment/Level Data", order = 1)]
     public class PvSoLevelData : ScriptableObject
     {
+        [SerializeField] private Vector3 scanStartPivot;
+        public int gridWidth;
+        public int gridHeight;
+
+        [SerializeField] private Vector3 cameraPosition;
+
         [Header("Friendly Deployment Slots")]
         [SerializeField] private List<PvDeploymentSlot> friendlySlots = new List<PvDeploymentSlot>();
         
         [Header("Hostile Deployment Slots")]
         [SerializeField] private List<PvDeploymentSlot> hostileSlots = new List<PvDeploymentSlot>();
-        
+
+        public Vector3 LevelStartPosition => scanStartPivot;
+
         /// <summary>
         /// Get all friendly deployment slots
         /// </summary>
@@ -35,6 +43,20 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 return friendlySlots[index];
             }
             return null;
+        }
+
+        public void PutCameraOnPosition()
+        {
+            var mainCamera = Camera.main;
+            var cameraParent = mainCamera.transform.parent;
+            var targetRoot = mainCamera.transform;
+            while (cameraParent != null)
+            {
+                targetRoot = cameraParent;
+                cameraParent = cameraParent.parent;
+            }
+
+            targetRoot.position = cameraPosition;
         }
         
         /// <summary>

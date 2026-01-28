@@ -69,7 +69,7 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
                 {
                     throw new NullReferenceException("ERROR: UI Camera not defined in Scene!");
                 }
-                _battlegroundMaker.Service.ScanAndGenerateBattle(_centerPosition, camera);
+                _battlegroundMaker.Service.ScanAndGenerateBattle(camera);
             }
         }
     }

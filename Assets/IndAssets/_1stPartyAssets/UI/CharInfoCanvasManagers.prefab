@@ -335,6 +335,7 @@ MonoBehaviour:
   setupWhileSpawned: 1
   portraitPanel: {fileID: 8466938452109928424}
   equipmentPanel: {fileID: 2341247752196286576}
+  onGameStartedEvent: {fileID: 11400000, guid: a4ab0fec9f2473c42ab83160fbc96d83, type: 2}
 --- !u!1 &536098519287661674
 GameObject:
   m_ObjectHideFlags: 0
@@ -5906,9 +5907,6 @@ MonoBehaviour:
   panelObject: {fileID: 5740816256194678090}
   characterNameText: {fileID: 3282320576839418713}
   weaponDropdown1: {fileID: 7699352788816103054}
-  relicDropdown1: {fileID: 2641535575107818660}
-  relicDropdown2: {fileID: 7878652879402445899}
-  relicDropdown3: {fileID: 3612132315117470113}
   closeButton: {fileID: 5200446690105869798}
 --- !u!1 &5749531839528362095
 GameObject:

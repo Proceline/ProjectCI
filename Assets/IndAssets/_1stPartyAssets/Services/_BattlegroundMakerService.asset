@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellWidth: 3
   cellHeight: 3
-  gridWidth: 6
-  gridHeight: 6
   layerMask:
     serializedVersion: 2
     m_Bits: 72
@@ -27,6 +25,36 @@ MonoBehaviour:
   detectMaxResults: 10
   resourceContainerPrefab: {fileID: 6909603433851531995, guid: f455cd3e31fd9d046864be440a4b0357, type: 3}
   formulaCollection: {fileID: 11400000, guid: cd0d657ce42bfbd48b2d25b6d44f8e18, type: 2}
+  deploymentController: {fileID: 11400000, guid: 4eb7c339aad621d4ea6f3ad6552292ef, type: 2}
+  onBattleInitialized:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 4eb7c339aad621d4ea6f3ad6552292ef, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.Deployment.PvSoDeploymentController,
+          Assembly-CSharp
+        m_MethodName: RemoveAllSpawnHints
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: a4ab0fec9f2473c42ab83160fbc96d83, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.Utilities.Runtime.Events.PvSoSimpleVoidEvent,
+          Assembly-CSharp
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   gridCreatingRule:
     m_PersistentCalls:
       m_Calls:

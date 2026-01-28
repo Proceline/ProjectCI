@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Deployment.PvSoDeploymentController
   levelData: {fileID: 11400000, guid: 949b1e469e307cc408561ba8d2f0ba62, type: 2}
   sceneUnitPrefab: {fileID: 3356841814951682856, guid: dfdd06b7100942341afb9af43a189030, type: 3}
-  deployedUnits: []
-  unitToSlotMapping: 
+  startPivotMarkerPrefab: {fileID: 1359545353749347710, guid: 78575bafdef7e714bb4453b8b397f7e8, type: 3}

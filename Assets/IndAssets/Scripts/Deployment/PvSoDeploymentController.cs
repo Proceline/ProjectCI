@@ -6,6 +6,7 @@ using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.CoreSystem.DependencyInjection;
+using System;
 
 namespace ProjectCI.CoreSystem.Runtime.Deployment
 {
@@ -19,33 +20,52 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         [Header("Deployment Configuration")]
         [SerializeField] private PvSoLevelData levelData;
         [SerializeField] private PvMnSceneUnit sceneUnitPrefab;
+        [SerializeField] private GameObject startPivotMarkerPrefab;
+
+        [NonSerialized] private Dictionary<PvSoBattleUnitData, PvMnSceneUnit> _deployedUnits = new();
         
-        [Header("Deployed Units")]
-        [SerializeField] private List<PvSoBattleUnitData> deployedUnits = new List<PvSoBattleUnitData>();
+        [NonSerialized]
+        private Dictionary<int, PvSoBattleUnitData> _slotToUnitMap = new Dictionary<int, PvSoBattleUnitData>();
         
-        [Header("Slot Mapping")]
-        [Tooltip("Maps unit index to slot index. If empty, units will be assigned to available slots in order.")]
-        [SerializeField] private List<int> unitToSlotMapping = new List<int>();
-        
-        [System.NonSerialized]
-        private Dictionary<int, PvMnSceneUnit> _slotToUnitMap = new Dictionary<int, PvMnSceneUnit>();
-        
-        [System.NonSerialized]
-        private Dictionary<PvMnSceneUnit, int> _unitToSlotMap = new Dictionary<PvMnSceneUnit, int>();
+        [NonSerialized]
+        private Dictionary<PvSoBattleUnitData, int> _unitToSlotMap = new Dictionary<PvSoBattleUnitData, int>();
         
         [Inject]
         private static PvSoWeaponAndRelicCollection WeaponAndRelicCollection;
+
+        [NonSerialized]
+        private readonly List<GameObject> _loadedMarkers = new();
 
         /// <summary>
         /// Get level data
         /// </summary>
         public PvSoLevelData LevelData => levelData;
         
-        /// <summary>
-        /// Get deployed units list
-        /// </summary>
-        public List<PvSoBattleUnitData> DeployedUnits => deployedUnits;
-        
+        public void ShowAllSpawnHints()
+        {
+            foreach (var slotData in levelData.FriendlySlots)
+            {
+                if (slotData.UseWorldPosition)
+                {
+                    var marker = Instantiate(startPivotMarkerPrefab, slotData.WorldPosition, Quaternion.identity);
+                    _loadedMarkers.Add(marker);
+                }
+            }
+        }
+
+        public void RemoveAllSpawnHints()
+        {
+            foreach (var marker in _loadedMarkers)
+            {
+                Destroy(marker);
+            }
+        }
+
+        public void PutCameraOnPositionOnStarted()
+        {
+            levelData.PutCameraOnPosition();
+        }
+
         /// <summary>
         /// Deploy unit to available friendly slot
         /// </summary>
@@ -55,6 +75,12 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             if (!levelData || !unitData)
             {
                 Debug.LogError("Level data or unit data is null!");
+                return;
+            }
+
+            if (_deployedUnits.ContainsKey(unitData))
+            {
+                Debug.LogError("This Unit already deployed!");
                 return;
             }
 
@@ -96,10 +122,9 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             }
 
             slot.OccupiedUnit = sceneUnit;
-            _slotToUnitMap[slot.SlotIndex] = sceneUnit;
-            _unitToSlotMap[sceneUnit] = slot.SlotIndex;
-            deployedUnits.Add(unitData);
-            unitToSlotMapping.Add(slot.SlotIndex);
+            _slotToUnitMap[slot.SlotIndex] = unitData;
+            _unitToSlotMap[unitData] = slot.SlotIndex;
+            _deployedUnits.Add(unitData, sceneUnit);
         }
         
         /// <summary>
@@ -135,44 +160,19 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             var newUnit = SpawnUnitAtSlot(newUnitData, slot, parent, levelGrid);
             if (newUnit != null)
             {
+                var oldSpawnedUnit = slot.OccupiedUnit;
+                var oldUnitData = _slotToUnitMap[slotIndex];
+                _unitToSlotMap.Remove(oldUnitData);
+                _deployedUnits.Remove(oldUnitData);
+                Destroy(oldSpawnedUnit.gameObject);
+
                 slot.OccupiedUnit = newUnit;
-                _slotToUnitMap[slotIndex] = newUnit;
-                _unitToSlotMap[newUnit] = slotIndex;
-                
-                // Update deployed units list if this slot was already assigned
-                int unitIndex = deployedUnits.FindIndex(u => u == oldUnit?.UnitData);
-                if (unitIndex >= 0 && unitIndex < deployedUnits.Count)
-                {
-                    deployedUnits[unitIndex] = newUnitData;
-                }
+                _slotToUnitMap[slotIndex] = newUnitData;
+                _unitToSlotMap[newUnitData] = slotIndex;
+                _deployedUnits[newUnitData] = newUnit;
             }
             
             return newUnit;
-        }
-        
-        /// <summary>
-        /// Replace unit by unit reference
-        /// </summary>
-        /// <param name="oldUnit">Old scene unit to replace</param>
-        /// <param name="newUnitData">New unit data to deploy</param>
-        /// <param name="parent">Parent transform for spawned units</param>
-        /// <param name="levelGrid">Optional level grid for grid-based positioning</param>
-        /// <returns>New scene unit, or null if failed</returns>
-        public PvMnSceneUnit ReplaceUnit(PvMnSceneUnit oldUnit, PvSoBattleUnitData newUnitData, Transform parent = null, LevelGridBase levelGrid = null)
-        {
-            if (oldUnit == null || newUnitData == null)
-            {
-                Debug.LogError("Old unit or new unit data is null!");
-                return null;
-            }
-            
-            if (!_unitToSlotMap.TryGetValue(oldUnit, out int slotIndex))
-            {
-                Debug.LogError("Old unit is not tracked by deployment controller!");
-                return null;
-            }
-            
-            return ReplaceUnitAtSlot(slotIndex, newUnitData, parent, levelGrid);
         }
         
         /// <summary>
@@ -181,7 +181,7 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         /// <param name="slotIndex">Slot index to remove unit from</param>
         public void RemoveUnitFromSlot(int slotIndex)
         {
-            if (_slotToUnitMap.TryGetValue(slotIndex, out var unit))
+            if (_slotToUnitMap.TryGetValue(slotIndex, out var unitData))
             {
                 var slot = levelData?.GetSlotByIndex(slotIndex, true);
                 if (slot != null)
@@ -189,10 +189,10 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                     slot.ClearOccupiedUnit();
                 }
                 
-                _unitToSlotMap.Remove(unit);
+                _unitToSlotMap.Remove(unitData);
                 _slotToUnitMap.Remove(slotIndex);
                 
-                if (unit != null)
+                if (unitData && _deployedUnits.TryGetValue(unitData, out var unit))
                 {
                     Destroy(unit.gameObject);
                 }
@@ -204,7 +204,7 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         /// </summary>
         public void ClearAllUnits()
         {
-            var unitsToRemove = new List<PvMnSceneUnit>(_unitToSlotMap.Keys);
+            var unitsToRemove = new List<PvMnSceneUnit>(_deployedUnits.Values);
             foreach (var unit in unitsToRemove)
             {
                 if (unit != null)
@@ -212,7 +212,8 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                     Destroy(unit.gameObject);
                 }
             }
-            
+
+            _deployedUnits.Clear();
             _slotToUnitMap.Clear();
             _unitToSlotMap.Clear();
             
@@ -223,20 +224,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                     slot.ClearOccupiedUnit();
                 }
             }
-        }
-        
-        /// <summary>
-        /// Get slot index for unit at given index
-        /// </summary>
-        private int GetSlotIndexForUnit(int unitIndex)
-        {
-            if (unitIndex < unitToSlotMapping.Count && unitToSlotMapping[unitIndex] >= 0)
-            {
-                return unitToSlotMapping[unitIndex];
-            }
-            
-            // Auto-assign to first available slot
-            return unitIndex;
         }
         
         /// <summary>
@@ -314,24 +301,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                     sceneUnit.Initialize(weaponData);
                 }
             }
-        }
-        
-        /// <summary>
-        /// Get unit at slot index
-        /// </summary>
-        public PvMnSceneUnit GetUnitAtSlot(int slotIndex)
-        {
-            _slotToUnitMap.TryGetValue(slotIndex, out var unit);
-            return unit;
-        }
-        
-        /// <summary>
-        /// Get slot index for unit
-        /// </summary>
-        public int GetSlotIndexForUnit(PvMnSceneUnit unit)
-        {
-            _unitToSlotMap.TryGetValue(unit, out int slotIndex);
-            return slotIndex;
         }
     }
 }

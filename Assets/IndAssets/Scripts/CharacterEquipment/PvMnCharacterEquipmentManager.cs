@@ -1,10 +1,11 @@
-using System.Collections.Generic;
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.DependencyInjection;
-using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI;
 using ProjectCI.CoreSystem.Runtime.Saving;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
+using ProjectCI.Utilities.Runtime.Events;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
 {
@@ -22,7 +23,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
         [SerializeField] private PvMnCharacterEquipmentPanel equipmentPanel;
         
         [Inject] private static PvSoWeaponAndRelicCollection _equipmentsCollection;
-        
+
+        [SerializeField]
+        private PvSoSimpleVoidEvent onGameStartedEvent;
+
         private bool _isInBattle = false;
         
         // Store instanceIds and display names separately
@@ -37,6 +41,21 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment
             {
                 InitializeAndUpdateEquipmentUI();
             }
+        }
+
+        private void OnEnable()
+        {
+            onGameStartedEvent.RegisterCallback(HidePlayerPortraitPanel);
+        }
+
+        private void OnDisable()
+        {
+            onGameStartedEvent.UnregisterCallback(HidePlayerPortraitPanel);
+        }
+
+        private void HidePlayerPortraitPanel()
+        {
+            portraitPanel.gameObject.SetActive(false);
         }
 
         public void InitializeAndUpdateEquipmentUI()

@@ -20,6 +20,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private UnityEvent<PvCharacterSaveData> onCharacterSelected;
         [SerializeField] private Toggle deployModeToggle;
         private bool _deployMode = false;
+        private static bool _isDeployDisabled;
 
         private void OnDeployModeChanged(bool isOn)
         {

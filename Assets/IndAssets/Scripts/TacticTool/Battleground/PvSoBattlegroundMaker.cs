@@ -1,3 +1,4 @@
+using ProjectCI.CoreSystem.Runtime.Deployment;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
@@ -19,8 +20,6 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         private const float DefaultCellValue = 2.25f;
         public float cellWidth = DefaultCellValue;
         public float cellHeight = DefaultCellValue;
-        public int gridWidth = 5;
-        public int gridHeight = 5;
         
         [SerializeField]
         private LayerMask layerMask;
@@ -44,12 +43,22 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         [SerializeField]
         private FormulaCollection formulaCollection;
 
+        [SerializeField]
+        private PvSoDeploymentController deploymentController;
+
+        [SerializeField]
+        private UnityEvent onBattleInitialized;
+
         public UnityEvent<RaycastHit, Vector2Int, LevelGridBase> gridCreatingRule;
 
         [NonSerialized] private SquarePresetGrid _levelGrid;
         
-        public void ScanAndGenerateBattle(Vector3 centerPosition, Camera uiCamera)
+        public void ScanAndGenerateBattle(Camera uiCamera)
         {
+            var centerPosition = deploymentController.LevelData.LevelStartPosition;
+            var gridWidth = deploymentController.LevelData.gridWidth;
+            var gridHeight = deploymentController.LevelData.gridHeight;
+
             GridBattleUtils.GenerateLevelGridFromGround(
                 centerPosition,
                 cellWidth,
@@ -82,7 +91,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
                 var sceneUnits = GridBattleUtils.ScanAreaForObjects<PvMnSceneUnit>(
                     new Vector3(centerPosition.x, 0, centerPosition.z),
-                    gridWidth > gridHeight ? gridWidth * 2 : gridHeight * 2,
+                    gridWidth > gridHeight ? gridWidth * 3 : gridHeight * 3,
                     false,
                     pawnDetectLayerMask,
                     detectMaxResults
@@ -135,6 +144,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                 }
                 
                 battleManager.Initialize();
+                onBattleInitialized?.Invoke();
             }
         }
         
