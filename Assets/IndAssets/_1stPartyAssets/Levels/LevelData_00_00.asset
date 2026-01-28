@@ -19,32 +19,37 @@ MonoBehaviour:
   friendlySlots:
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -17, y: 0, z: -11}
+    worldPosition: {x: -20, y: 0, z: -9}
     useWorldPosition: 1
     isAvailable: 1
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -15, y: 0, z: -11}
+    worldPosition: {x: -17, y: 0, z: -9}
     useWorldPosition: 1
     isAvailable: 1
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -13, y: 0, z: -11}
+    worldPosition: {x: -14, y: 0, z: -9}
     useWorldPosition: 1
     isAvailable: 1
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -17, y: 0, z: -13}
+    worldPosition: {x: -20, y: 0, z: -12}
     useWorldPosition: 1
     isAvailable: 1
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -15, y: 0, z: -13}
+    worldPosition: {x: -17, y: 0, z: -12}
     useWorldPosition: 1
     isAvailable: 1
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -13, y: 0, z: -13}
+    worldPosition: {x: -14, y: 0, z: -12}
+    useWorldPosition: 1
+    isAvailable: 1
+  - slotIndex: 0
+    gridPosition: {x: 0, y: 0}
+    worldPosition: {x: -20, y: 0, z: -15}
     useWorldPosition: 1
     isAvailable: 1
   - slotIndex: 0
@@ -54,12 +59,7 @@ MonoBehaviour:
     isAvailable: 1
   - slotIndex: 0
     gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -15, y: 0, z: -15}
-    useWorldPosition: 1
-    isAvailable: 1
-  - slotIndex: 0
-    gridPosition: {x: 0, y: 0}
-    worldPosition: {x: -13, y: 0, z: -15}
+    worldPosition: {x: -14, y: 0, z: -15}
     useWorldPosition: 1
     isAvailable: 1
   hostileSlots: []

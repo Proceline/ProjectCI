@@ -61,6 +61,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _bufferedVisualStateCells.Add(cell);
                 TacticBattleManager.SetCellState(cell, CellState.ePositive);
             }
+
+            var standingCell = unit.GetCell();
+            _bufferedVisualStateCells.Add(standingCell);
+            TacticBattleManager.SetCellState(standingCell, CellState.eSpecial);
         }
 
         private void HighlightMovementRange(GridPawnUnit casterUnit)
