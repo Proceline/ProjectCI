@@ -90,7 +90,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  raiserOnOwnerSelectedEvent: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
+  raiserOwnerSelectedViewEvent: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
   onTurnOwnerSelectedPreview:
     m_PersistentCalls:
       m_Calls:
@@ -167,7 +167,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  aiArrangement: {fileID: 11400000, guid: d00210cebccc6604e8da04a764fda302, type: 2}
   onPathDeterminedSupport:
     m_PersistentCalls:
       m_Calls:

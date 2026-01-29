@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace IndAssets.Scripts.AI
 {
@@ -14,6 +16,7 @@ namespace IndAssets.Scripts.AI
     public class PvMnEnemyArrangementManager : MonoBehaviour
     {
         [SerializeField] private PvSoBattleTeamEvent onTeamRoundEndEvent;
+        [SerializeField] private PvSoSimpleVoidEvent onBattleStartedEvent;
         [NonSerialized] private readonly List<PvMnEnemyUnitThought> _orderedEnemyThoughts = new();
 
         private int _currentIndex = 0;
@@ -23,14 +26,20 @@ namespace IndAssets.Scripts.AI
         /// </summary>
         public IReadOnlyList<PvMnEnemyUnitThought> EnemyThoughtsCollection => _orderedEnemyThoughts;
 
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onEnemyPrepared;
+        [SerializeField] private UnityEvent<LevelCellBase> onEnemyMoving;
+        [SerializeField] private UnityEvent<LevelCellBase> onEnemyActing;
+
         private void Start()
         {
             onTeamRoundEndEvent.RegisterCallback(ResponseOnTeamRoundEndEvent);
+            onBattleStartedEvent.RegisterCallback(InitializeEnemies);
         }
 
         private void OnDestroy()
         {
             onTeamRoundEndEvent.UnregisterCallback(ResponseOnTeamRoundEndEvent);
+            onBattleStartedEvent.UnregisterCallback(InitializeEnemies);
         }
 
         /// <summary>
@@ -215,7 +224,9 @@ namespace IndAssets.Scripts.AI
         {
             while (TryGetNextEnemy(out var nextEnemyThought))
             {
-                // ApplyCellUnitToSelectedUnit(nextEnemyThought.GetCell());
+                var nextEnemy = nextEnemyThought.Unit;
+                onEnemyPrepared.Invoke(nextEnemy);
+
                 var result = nextEnemyThought.CalculateBestAction();
 
                 if (!result.HasAction)
@@ -228,20 +239,20 @@ namespace IndAssets.Scripts.AI
 
                 var targetCell = result.MoveToCell;
                 var targetVictim = result.AttackTargetCell;
-                var nextEnemy = nextEnemyThought.Unit;
 
-                // ApplyMovementToCellForSelectedUnit(targetCell);
+                onEnemyMoving.Invoke(targetCell);
+
                 while (nextEnemy.GetCell() != targetCell)
                 {
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
 
-                // ApplyAbilityToTargetCell(targetVictim);
+                onEnemyActing.Invoke(targetVictim);
 
-                // while (nextEnemy.GetCurrentState() == UnitBattleState.AbilityConfirming)
-                // {
-                //     await Awaitable.WaitForSecondsAsync(0.25f);
-                // }
+                while (nextEnemy.GetCurrentState() == UnitBattleState.AbilityConfirming)
+                {
+                    await Awaitable.WaitForSecondsAsync(0.25f);
+                }
 
                 Debug.LogError("Finished");
             }

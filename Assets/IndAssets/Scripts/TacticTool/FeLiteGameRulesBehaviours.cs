@@ -12,7 +12,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public partial class FeLiteGameRules
     {
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
-        
+
         /// <summary>
         /// Asset usage in Battle Scene
         /// </summary>
@@ -27,19 +27,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 return;
             }
-            
+
             _selectedUnitLastCell = null;
 
             if (standUnit is not PvMnBattleGeneralUnit playableUnit)
             {
                 throw new TypeAccessException($"ONLY Type <{nameof(PvMnBattleGeneralUnit)}> can be used!");
             }
-            
+
             if (standUnit.GetTeam() != CurrentTeam)
             {
                 return;
             }
-                
+
             if (playableUnit.IsDead() || (playableUnit.GetCurrentMovementPoints() <= 0 &&
                                           playableUnit.GetCurrentActionPoints() <= 0))
             {
@@ -54,6 +54,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             PushStateAfterSelectUnit(playableUnit);
         }
 
+        /// <summary>
+        /// Asset usage in Battle Scene, currently Registered in Controller line 45, cell clicked
+        /// Registered in AI Mono, movement determined
+        /// </summary>
+        /// <param name="targetCell"></param>
         public void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
         {
             if (!targetCell) return;
@@ -76,7 +81,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _selectedUnitLastCell = _selectedUnit.GetCell();
-            
+
             // Move target is Self
             if (standUnit)
             {
@@ -140,7 +145,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, usingAbility, targetUnit, commandResults);
             RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
             ArchiveUnitBehaviourPoints(_selectedUnit);
-            
+
             // ClearStateAndDeselectUnitCombo func applied in HandleCommandResultsCoroutine
             HandleCommandResultsCoroutine(commandResults);
         }
@@ -181,7 +186,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             // TODO: 再移动
             var targetActionPointResult = 0;
             var targetMovementPointResult = 0;
-            unit.SetCurrentActionPoints(actionEntirelyEnd? 0 : targetActionPointResult);
+            unit.SetCurrentActionPoints(actionEntirelyEnd ? 0 : targetActionPointResult);
             unit.SetCurrentMovementPoints(moveEntirelyEnd ? 0 : targetMovementPointResult);
         }
 
@@ -190,7 +195,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             ClearStateAndDeselectUnit();
             CheckRestUnits();
         }
-        
+
         private void CheckRestUnits()
         {
             var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
@@ -212,12 +217,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 RaiserTeamRoundEndEvent.Raise(CurrentTeam);
             }
         }
-        
-        #if UNITY_EDITOR
+
+#if UNITY_EDITOR
         public void EndRoundDontUseEditorOnly()
         {
             RaiserTeamRoundEndEvent.Raise(CurrentTeam);
         }
-        #endif
+#endif
     }
 }

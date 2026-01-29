@@ -40,11 +40,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupportWithAbility;
 
-        [Header("Select Support")]
+        [Header("Select Support Event View-Only")]
 
+        /// <summary>
+        /// View-only Event Raiser while Turn Owner Selected
+        /// </summary>
         [SerializeField]
-        private PvSoUnitSelectEvent raiserOnOwnerSelectedEvent;
+        private PvSoUnitSelectEvent raiserOwnerSelectedViewEvent;
 
+        /// <summary>
+        /// View-only Response while Turn Owner Selected
+        /// </summary>
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerSelectedPreview;
 
@@ -194,14 +200,25 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
+            PushStateAfterSelectUnitLogicWithoutView(selectingUnit);
+
+            onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
+            raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
+        }
+
+        /// <summary>
+        /// Push State After Select Unit Logic Without Selecting View Response,
+        /// Used in AI Turn, AI Bridge Mono Component
+        /// </summary>
+        /// <param name="selectingUnit"></param>
+        public void PushStateAfterSelectUnitLogicWithoutView(PvMnBattleGeneralUnit selectingUnit)
+        {
             _selectedUnit = selectingUnit;
             _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
 
             ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
                 ? UnitBattleState.Moving
-                : UnitBattleState.AbilityTargeting);//UsingAbility);
-            onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
-            raiserOnOwnerSelectedEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
+                : UnitBattleState.AbilityTargeting);
         }
 
         public void ClearStateAndDeselectUnit()
@@ -214,7 +231,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
             onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
-            raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
+            raiserOwnerSelectedViewEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
         }
 

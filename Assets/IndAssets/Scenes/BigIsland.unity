@@ -32391,6 +32391,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyArrangementManager
   onTeamRoundEndEvent: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
+  onBattleStartedEvent: {fileID: 11400000, guid: a4ab0fec9f2473c42ab83160fbc96d83, type: 2}
+  onEnemyPrepared:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: PushStateAfterSelectUnitLogicWithoutView
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onEnemyMoving:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: ApplyMovementToCellForSelectedUnit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onEnemyActing:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: ApplyAbilityToTargetCell
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &968036602
 Transform:
   m_ObjectHideFlags: 0
@@ -70520,9 +70569,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1127151094703661664, guid: 9566c12e2d8da8f408c9b9aa567fdecc, type: 3}
+      propertyPath: m_AttackTypeIcon
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127151094703661664, guid: 9566c12e2d8da8f408c9b9aa567fdecc, type: 3}
       propertyPath: m_AttackValueText
       value: 
       objectReference: {fileID: 684127237}
+    - target: {fileID: 1127151094703661664, guid: 9566c12e2d8da8f408c9b9aa567fdecc, type: 3}
+      propertyPath: selectUnitViewEvent
+      value: 
+      objectReference: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
     - target: {fileID: 1127151094703661664, guid: 9566c12e2d8da8f408c9b9aa567fdecc, type: 3}
       propertyPath: m_AttributeValueTexts.Array.size
       value: 6
@@ -71463,6 +71520,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5959209593292449533, guid: 9566c12e2d8da8f408c9b9aa567fdecc, type: 3}
+      propertyPath: selectUnitViewEvent
+      value: 
+      objectReference: {fileID: 11400000, guid: c19862bf91e153e43a1a704e49800144, type: 2}
     - target: {fileID: 5966170075802416177, guid: 9566c12e2d8da8f408c9b9aa567fdecc, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

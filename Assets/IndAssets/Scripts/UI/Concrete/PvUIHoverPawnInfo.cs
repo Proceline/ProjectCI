@@ -27,10 +27,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] protected Text m_AttackValueText;
         [SerializeField] protected Text[] m_AttributeValueTexts;
         [SerializeField] protected UnityEvent<GridPawnUnit> m_OnUnitSelected;
-        
-        private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
-        [NonSerialized] 
+        [SerializeField] protected PvSoUnitSelectEvent selectUnitViewEvent;
+
+        [NonSerialized]
         private GridPawnUnit _currentUnit;
 
         public bool bIsSelectedEnabled;
@@ -45,7 +45,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _bInitialized = true;
             SetupScreen();
-            
+
             // TODO: Same todo as below
             // TacticBattleManager battleManager = TacticBattleManager.Get();
             // if (battleManager)
@@ -53,10 +53,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             //     battleManager.OnUnitHover.AddListener(HandleUnitHover);
             //     battleManager.OnTeamWon.AddListener(HandleGameDone);
             // }
-            
+
             if (bIsSelectedEnabled)
             {
-                _selectEventLocator.Service.RegisterCallback(HandleUnitSelected);
+                selectUnitViewEvent.RegisterCallback(HandleUnitSelected);
             }
         }
 
@@ -66,17 +66,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 if (bIsSelectedEnabled)
                 {
-                    _selectEventLocator.Service.UnregisterCallback(HandleUnitSelected);
+                    selectUnitViewEvent.UnregisterCallback(HandleUnitSelected);
                 }
             }
         }
 
-        private void HandleUnitSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
+        private void HandleUnitSelected(PvMnBattleGeneralUnit owner, UnitSelectBehaviour behaviour)
         {
-            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.Unit : null);
+            HandleUnitSelected(behaviour == UnitSelectBehaviour.Select ? owner : null);
         }
-        
-        private void HandleUnitSelected(GridPawnUnit inUnit)
+
+        private void HandleUnitSelected(PvMnBattleGeneralUnit inUnit)
         {
             // TODO: Handle Hover
             // TacticBattleManager battleManager = TacticBattleManager.Get();
@@ -132,7 +132,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (_currentUnit)
             {
                 m_NameText.text = _currentUnit.GetUnitData().m_UnitName;
-                m_HitpointText.text = _currentUnit.RuntimeAttributes.Health.CurrentValue.ToString() 
+                m_HitpointText.text = _currentUnit.RuntimeAttributes.Health.CurrentValue.ToString()
                     + "/" + _currentUnit.RuntimeAttributes.Health.MaxValue.ToString();
                 m_HitpointSlider.maxValue = _currentUnit.RuntimeAttributes.Health.MaxValue;
                 m_HitpointSlider.value = _currentUnit.RuntimeAttributes.Health.CurrentValue;
