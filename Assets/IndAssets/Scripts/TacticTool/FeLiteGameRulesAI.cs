@@ -61,7 +61,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 Debug.LogError("Finished");
             }
         }
-        
+
+        /// <summary>
+        /// Already binded in Scriptable Event OnTeamRoundEndEvent.asset
+        /// </summary>
         public async void EditorTestEndRoundToRunAI(BattleTeam endTeam)
         {
 #if UNITY_EDITOR

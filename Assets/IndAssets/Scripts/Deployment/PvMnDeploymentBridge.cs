@@ -3,7 +3,6 @@ using UnityEngine.Events;
 
 namespace ProjectCI.CoreSystem.Runtime.Deployment
 {
-    [CreateAssetMenu(fileName = "NewDeploymentController", menuName = "ProjectCI/Deployment/Deployment Controller", order = 1)]
     public class PvMnDeploymentBridge : MonoBehaviour
     {
         [SerializeField]

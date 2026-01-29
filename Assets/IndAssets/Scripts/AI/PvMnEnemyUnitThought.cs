@@ -11,6 +11,9 @@ namespace IndAssets.Scripts.AI
 {
     public class PvMnEnemyUnitThought : MonoBehaviour
     {
+        [Header("AI Order Settings")]
+        [SerializeField] private int order = 0;
+
         [Header("AI Strategy Settings")]
         [SerializeField] private PvMnAITargetSelectionStrategy targetSelectionStrategy = PvMnAITargetSelectionStrategy.Nearest;
         [SerializeField] private PvMnAIMovementStrategy movementStrategy = PvMnAIMovementStrategy.Aggressive;
@@ -18,7 +21,9 @@ namespace IndAssets.Scripts.AI
 
         private PvMnBattleGeneralUnit _unit;
 
-        private PvMnBattleGeneralUnit Unit
+        public int Order => order;
+
+        public PvMnBattleGeneralUnit Unit
         {
             get
             {
@@ -137,13 +142,13 @@ namespace IndAssets.Scripts.AI
             {
                 // Check if we can attack from current position
                 var finalPosition = moveToCell ?? currentCell;
-                if (victimsFromCells != null && 
+                if (victimsFromCells != null &&
                     victimsFromCells.TryGetValue(targetCell, out var attackPositions) &&
                     attackPositions.Contains(finalPosition))
                 {
                     attackTarget = targetCell;
                 }
-                else if (moveToCell != null && 
+                else if (moveToCell != null &&
                          victimsFromCells != null &&
                          victimsFromCells.TryGetValue(targetCell, out var newAttackPositions) &&
                          newAttackPositions.Contains(moveToCell))
@@ -180,7 +185,7 @@ namespace IndAssets.Scripts.AI
             }
 
             var movementPoint = startUnit.GetCurrentMovementPoints();
-            
+
             AIRadiusInfo radiusInfo = new AIRadiusInfo(startUnit.GetCell(), movementPoint)
             {
                 Caster = startUnit,
