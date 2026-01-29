@@ -61,16 +61,7 @@ namespace ProjectCI.CoreSystem.Editor.TacticRpgTool
 
         private void ScanAndGenerateBattle()
         {
-            var collectedObjects = GameObject.FindGameObjectsWithTag("UICamera");
-            if (collectedObjects.Length > 0)
-            {
-                Camera camera = collectedObjects[0].GetComponent<Camera>();
-                if (camera == null)
-                {
-                    throw new NullReferenceException("ERROR: UI Camera not defined in Scene!");
-                }
-                _battlegroundMaker.Service.ScanAndGenerateBattle(camera);
-            }
+            _battlegroundMaker.Service.ScanAndGenerateBattle();
         }
     }
 } 

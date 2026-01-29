@@ -53,8 +53,15 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
         [NonSerialized] private SquarePresetGrid _levelGrid;
         
-        public void ScanAndGenerateBattle(Camera uiCamera)
+        public void ScanAndGenerateBattle()
         {
+            var collectedObjects = GameObject.FindGameObjectsWithTag("UICamera");
+            var camera = collectedObjects.Length > 0 ? collectedObjects[0].GetComponent<Camera>() : null;
+            if (!camera)
+            {
+                throw new Exception("ERROR: No UI Camera!");
+            }
+
             var centerPosition = deploymentController.LevelData.LevelStartPosition;
             var gridWidth = deploymentController.LevelData.gridWidth;
             var gridHeight = deploymentController.LevelData.gridHeight;
@@ -130,7 +137,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     unit.RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
 
                     unit.AddComponent<PvMnBattleResourceContainer>();
-                    unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
+                    unit.InitializeResourceContainer(camera, resourceContainerPrefab);
                     
                     // TODO: Consider if ability need to be assigned
                     // var abilities = unit.GetAbilities();
