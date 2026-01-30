@@ -69,7 +69,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// Used for Controller and Models to show range and enable/disable input actions
         /// </summary>
         [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
+        private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedControlSupport;
+
+        [SerializeField]
+        private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedViewSupport;
+
+
         public UnitBattleState CurrentBattleState =>
             _selectedUnit ? _selectedUnit.GetCurrentState() : UnitBattleState.Finished;
 
@@ -163,7 +168,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             raiserOnStateChangedBeforeUEvent.Raise(selectedUnit, state, stateBehaviour);
-            onStateChangedInModel?.Invoke(selectedUnit, state);
+
+            onStateChangedControlSupport?.Invoke(selectedUnit, state);
+            if (CurrentTeam == BattleTeam.Friendly)
+            {
+                onStateChangedViewSupport?.Invoke(selectedUnit, state);
+            }
         }
 
         private UnitBattleState CancelStatePurelyForUnit(PvMnBattleGeneralUnit unit, UnitBattleState stateToBeRemoved)
@@ -178,7 +188,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             // Notify which state is going to be removed
             raiserOnStateChangedBeforeUEvent.Raise(unit, stateToBeRemoved, UnitStateBehaviour.Popping);
             // Notify which state is ON
-            onStateChangedInModel?.Invoke(unit, stateAfterRemove);
+            onStateChangedControlSupport?.Invoke(unit, stateAfterRemove);
+            onStateChangedViewSupport?.Invoke(unit, stateAfterRemove);
             return stateAfterRemove;
         }
 

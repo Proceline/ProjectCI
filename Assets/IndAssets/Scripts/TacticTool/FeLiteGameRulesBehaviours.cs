@@ -72,11 +72,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             var standUnit = targetCell.GetUnitOnCell();
             if (standUnit && standUnit != _selectedUnit)
             {
-                // TODO: Consider move to Unit = Ride/Be Ride
-                var teamSituation =
-                    TacticBattleManager.GetTeamAffinity(targetCell.GetCellTeam(), _selectedUnit.GetTeam());
-                Debug.Log(
-                    $"CELL<{targetCell.GetIndex().ToString()}> already be occupied by Pawn, Team is <color=green>{teamSituation.ToString()}</color>");
                 return;
             }
 
@@ -117,13 +112,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            var gridPawnUnit = selectedCell.GetUnitOnCell();
-            if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
-            {
-                return;
-            }
-
-            var teamCondition = TacticBattleManager.GetTeamAffinity(_selectedUnit.GetTeam(), targetUnit.GetTeam());
+            var teamCondition = TacticBattleManager.GetTeamAffinity(_selectedUnit.GetTeam(), selectedCell.GetCellTeam());
             var usingAbility = teamCondition == BattleTeam.Friendly ? _selectedUnit.SupportAbility : _selectedUnit.AttackAbility;
 
             var effectTeam = usingAbility.GetEffectedTeam();
@@ -134,19 +123,33 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
+            ApplyAbilityToTargetCell(selectedCell, usingAbility);
+        }
+
+        public void ApplyAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException("ERROR: No selected unit!");
+            }
+
+            var gridPawnUnit = selectedCell.GetUnitOnCell();
+            if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
+            {
+                throw new NullReferenceException("ERROR: No target unit!");
+            }
+
             var commandResults = new Queue<CommandResult>();
             ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
 
-
-            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, usingAbility, targetUnit, commandResults);
+            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, ability, targetUnit, commandResults);
             {
-                HandleAbilityCombatingLogic(usingAbility, _selectedUnit, targetUnit, ref commandResults);
+                HandleAbilityCombatingLogic(ability, _selectedUnit, targetUnit, ref commandResults);
             }
-            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, usingAbility, targetUnit, commandResults);
+            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, ability, targetUnit, commandResults);
             RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
             ArchiveUnitBehaviourPoints(_selectedUnit);
 
-            // ClearStateAndDeselectUnitCombo func applied in HandleCommandResultsCoroutine
             HandleCommandResultsCoroutine(commandResults);
         }
 

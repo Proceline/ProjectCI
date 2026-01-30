@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -28,7 +29,7 @@ namespace IndAssets.Scripts.AI
 
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onEnemyPrepared;
         [SerializeField] private UnityEvent<LevelCellBase> onEnemyMoving;
-        [SerializeField] private UnityEvent<LevelCellBase> onEnemyActing;
+        [SerializeField] private UnityEvent<LevelCellBase, PvSoUnitAbility> onEnemyActing;
 
         private void Start()
         {
@@ -247,7 +248,7 @@ namespace IndAssets.Scripts.AI
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
 
-                onEnemyActing.Invoke(targetVictim);
+                onEnemyActing.Invoke(targetVictim, result.AbilityToUse);
 
                 while (nextEnemy.GetCurrentState() == UnitBattleState.AbilityConfirming)
                 {
