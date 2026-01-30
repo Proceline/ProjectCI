@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
-    
+
     [CreateAssetMenu(fileName = "New Visual", menuName = "ProjectCI Tools/MVC/Visual", order = 1)]
     public class FeLiteGameVisual : ScriptableObject
     {
@@ -16,7 +16,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly List<LevelCellBase> _bufferedVisualStateCells = new();
         private readonly List<LevelCellBase> _hoveringCells = new();
 
-        [NonSerialized] 
+        [NonSerialized]
         private GameObject _pawnVisualMark;
 
         [NonSerialized]
@@ -30,7 +30,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             // Empty, TBD, deprecated
         }
-        
+
         public void ResetVisualStateCells()
         {
             foreach (LevelCellBase editedCell in _bufferedVisualStateCells)
@@ -178,7 +178,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentHoverCell = cell;
             UpdateHoverCells(null);
         }
-        
+
         public void EndHover(LevelCellBase cell)
         {
             CleanupHoverCells();
@@ -244,7 +244,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         #endregion
-        
+
         #region NonGrid Visual
 
         public void ShowPawnMarker(PvMnBattleGeneralUnit selectedUnit)

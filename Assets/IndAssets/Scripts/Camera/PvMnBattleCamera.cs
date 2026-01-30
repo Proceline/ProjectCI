@@ -10,6 +10,9 @@ using UnityEngine.InputSystem;
 
 public class PvMnBattleCamera : MonoBehaviour
 {
+    [SerializeField]
+    private PvMnGameController gameController;
+
     [SerializeField] private float minZoom;
     [SerializeField] private float maxZoom;
     [SerializeField] private float zoomingSpeed;
@@ -18,7 +21,7 @@ public class PvMnBattleCamera : MonoBehaviour
     /// Used to record AUTO-ZOOM
     /// </summary>
     [NonSerialized] private float _currentZoomValue;
-    
+
     /// <summary>
     /// Used to record Manual-ZOOM
     /// </summary>
@@ -33,17 +36,17 @@ public class PvMnBattleCamera : MonoBehaviour
 
     [SerializeField] private InputActionReference panDirectionActionRef;
     [NonSerialized] private InputAction _panDirectionInputAction;
-    
+
     [SerializeField] private InputActionReference rotationActionRef;
     [SerializeField] private InputActionReference zoomInActionRef;
     [SerializeField] private InputActionReference zoomOutActionRef;
 
     [SerializeField] private UnityEvent<Camera> onRotationChanged;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private PvSoUnitBattleStateEvent onStateDetermined;
 
-    [SerializeField] 
+    [SerializeField]
     private UnityEvent<bool> onCameraStartOrEndAnyTween;
 
     [NonSerialized] private Coroutine _cameraZoomingCoroutine;
@@ -54,15 +57,15 @@ public class PvMnBattleCamera : MonoBehaviour
         _zoomValueAdjustor = 0;
         _panDirectionInputAction = panDirectionActionRef.ToInputAction();
         _panDirectionInputAction.Enable();
-        
+
         rotationActionRef.ToInputAction().Enable();
         rotationActionRef.ToInputAction().performed += AssignCameraRotation;
-        
+
         zoomInActionRef.ToInputAction().Enable();
         zoomOutActionRef.ToInputAction().Enable();
         zoomInActionRef.ToInputAction().performed += AssignCameraZoomIn;
         zoomOutActionRef.ToInputAction().performed += AssignCameraZoomOut;
-        
+
         onStateDetermined.RegisterCallback(ApplyCameraChangeOnStateDetermined);
     }
 
@@ -70,15 +73,15 @@ public class PvMnBattleCamera : MonoBehaviour
     {
         _currentZoomValue = 0;
         _panDirectionInputAction.Disable();
-        
+
         rotationActionRef.ToInputAction().Disable();
         zoomInActionRef.ToInputAction().Disable();
         zoomOutActionRef.ToInputAction().Disable();
-        
+
         rotationActionRef.ToInputAction().performed -= AssignCameraRotation;
         zoomInActionRef.ToInputAction().performed -= AssignCameraZoomIn;
         zoomOutActionRef.ToInputAction().performed -= AssignCameraZoomOut;
-        
+
         onStateDetermined.UnregisterCallback(ApplyCameraChangeOnStateDetermined);
     }
 
@@ -87,7 +90,7 @@ public class PvMnBattleCamera : MonoBehaviour
         var direction = _panDirectionInputAction.ReadValue<Vector2>();
         var moveDir = transform.right * direction.x + transform.up * direction.y;
         moveDir.y = 0;
-        
+
         translateTarget.Translate(moveDir * (movingSpeed * Time.deltaTime), Space.Self);
     }
 
@@ -104,25 +107,25 @@ public class PvMnBattleCamera : MonoBehaviour
         {
             return;
         }
-        
+
         Vector3 centerAtObjHeight = new Vector3(center.x, translateTarget.position.y, center.z);
         var rel = Vector3.ProjectOnPlane(translateTarget.position - centerAtObjHeight, groundNormal);
         Quaternion rot = Quaternion.AngleAxis(degrees, groundNormal);
         Vector3 newRel = rot * rel;
 
         translateTarget.position = centerAtObjHeight + newRel;
-        
+
         // Make sure camera face the ground center
         transform.LookAt(center, groundNormal);
         onRotationChanged?.Invoke(rotationPivotCam);
-        
+
         // TODO: Refactor UI Part
         var allBarContainers = FindObjectsByType<PvMnBattleResourceContainer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         foreach (var barContainer in allBarContainers)
         {
             barContainer.RotateHealthBarByCamera(transform);
         }
-        
+
     }
 
     private bool GetCurrentCenter(out Vector3 center, out Vector3 groundNormal)
@@ -252,12 +255,12 @@ public class PvMnBattleCamera : MonoBehaviour
         onCameraStartOrEndAnyTween.Invoke(false);
     }
     #endregion
-    
+
     #region Manual Camera Control
 
     private void AssignCameraZoomIn(InputAction.CallbackContext context)
     {
-        if (!FeLiteGameController.IsBasicControllerEnabled)
+        if (!gameController.IsActionLocked)
         {
             return;
         }
@@ -273,23 +276,23 @@ public class PvMnBattleCamera : MonoBehaviour
 
     private void AssignCameraZoomOut(InputAction.CallbackContext context)
     {
-        if (!FeLiteGameController.IsBasicControllerEnabled)
+        if (!gameController.IsActionLocked)
         {
             return;
         }
-        
+
         if (_zoomValueAdjustor < minZoom)
         {
             return;
         }
 
         var zoomDelta = -zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta,  ref _zoomValueAdjustor);
+        AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
     }
-    
+
     private void AssignCameraRotation(InputAction.CallbackContext context)
     {
-        if (!FeLiteGameController.IsBasicControllerEnabled)
+        if (!gameController.IsActionLocked)
         {
             return;
         }

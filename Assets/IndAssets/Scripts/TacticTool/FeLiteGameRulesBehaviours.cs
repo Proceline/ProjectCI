@@ -93,7 +93,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// Asset usage in Battle Scene
         /// </summary>
         /// <param name="selectedCell"></param>
-        public void ApplyAbilityToTargetCell(LevelCellBase selectedCell)
+        private void ApplyAbilityToTargetCell(LevelCellBase selectedCell, CellState cellState)
         {
             if (!_selectedUnit)
             {
@@ -112,16 +112,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            var teamCondition = TacticBattleManager.GetTeamAffinity(_selectedUnit.GetTeam(), selectedCell.GetCellTeam());
-            var usingAbility = teamCondition == BattleTeam.Friendly ? _selectedUnit.SupportAbility : _selectedUnit.AttackAbility;
-
-            var effectTeam = usingAbility.GetEffectedTeam();
-            var cellState = selectedCell.GetCellState();
-            if ((effectTeam == BattleTeam.Hostile && cellState != CellState.eNegative) ||
-                (effectTeam == BattleTeam.Friendly && cellState != CellState.ePositive))
-            {
-                return;
-            }
+            var usingAbility = cellState == CellState.ePositive ?
+                _selectedUnit.SupportAbility :
+                _selectedUnit.AttackAbility;
 
             ApplyAbilityToTargetCell(selectedCell, usingAbility);
         }

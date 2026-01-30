@@ -27,12 +27,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private LayerMask[] layerMasksRuleList;
 
-        [SerializeField]
-        private UnityEvent onGameStarted;
-
-        [SerializeField]
-        private UnityEvent onGameEnded;
-
         [Header("Update Support")]
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupport;
@@ -64,12 +58,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private PvSoUnitBattleStateEvent raiserOnStateChangedBeforeUEvent;
-
-        /// <summary>
-        /// Used for Controller and Models to show range and enable/disable input actions
-        /// </summary>
-        [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedControlSupport;
 
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedViewSupport;
@@ -111,8 +99,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected override void StartGame()
         {
-            onGameStarted?.Invoke();
-
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
 
@@ -169,7 +155,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             raiserOnStateChangedBeforeUEvent.Raise(selectedUnit, state, stateBehaviour);
 
-            onStateChangedControlSupport?.Invoke(selectedUnit, state);
             if (CurrentTeam == BattleTeam.Friendly)
             {
                 onStateChangedViewSupport?.Invoke(selectedUnit, state);
@@ -188,7 +173,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             // Notify which state is going to be removed
             raiserOnStateChangedBeforeUEvent.Raise(unit, stateToBeRemoved, UnitStateBehaviour.Popping);
             // Notify which state is ON
-            onStateChangedControlSupport?.Invoke(unit, stateAfterRemove);
+
             onStateChangedViewSupport?.Invoke(unit, stateAfterRemove);
             return stateAfterRemove;
         }
@@ -306,7 +291,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     break;
                 case UnitBattleState.Moving:
                     Debug.LogWarning("You are cancelling state for selected Unit!");
-                    Debug.Log($"<color=yellow>Move Prepare State is directly controlled in {nameof(FeLiteGameController)}</color>");
                     break;
                 case UnitBattleState.AbilityConfirming:
                     Debug.LogWarning("State change doesn't work in AbilityConfirming!");

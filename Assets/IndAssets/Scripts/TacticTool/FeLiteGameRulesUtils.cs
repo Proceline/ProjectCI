@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using IndAssets.Scripts.Passives.Status;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,16 +17,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onGlobalMovementFinishedSupport;
-        
+
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit, IBattleStatus> onUnitStatusCalculatedGlobally;
 
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUnitStatusUpdated;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onRoundEndedForEachUnit;
-        
+
         private void OnPathDeterminedResponse(List<LevelCellBase> path)
         {
             if (!_selectedUnit) return;
@@ -81,8 +83,63 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 onUnitStatusUpdated.Invoke(unit);
             }
 
-            CurrentTeam = team == BattleTeam.Friendly? BattleTeam.Hostile : BattleTeam.Friendly;
+            CurrentTeam = team == BattleTeam.Friendly ? BattleTeam.Hostile : BattleTeam.Friendly;
             BeginTeamTurn(CurrentTeam);
+        }
+
+        /// <summary>
+        /// Confirm cell target manually (Player Input) based on current battle state
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <param name="cellState">If cell state is wrong, it will be ignored</param>
+        public void ConfirmCellTarget(LevelCellBase cell, CellState cellState)
+        {
+            switch (CurrentBattleState)
+            {
+                case UnitBattleState.Moving:
+                    if (cellState != CellState.eMovement)
+                    {
+                        return;
+                    }
+                    ApplyMovementToCellForSelectedUnit(cell);
+                    break;
+                case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
+                    if (cellState != CellState.ePositive && cellState != CellState.eNegative)
+                    {
+                        return;
+                    }
+                    ApplyAbilityToTargetCell(cell, cellState);
+                    break;
+                case UnitBattleState.Finished:
+                    ApplyCellUnitToSelectedUnit(cell);
+                    break;
+                case UnitBattleState.Idle:
+                case UnitBattleState.AbilityConfirming:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void CancelCurrentAction()
+        {
+            switch (CurrentBattleState)
+            {
+                case UnitBattleState.Moving:
+                    ClearStateAndDeselectUnit();
+                    break;
+                case UnitBattleState.UsingAbility:
+                case UnitBattleState.AbilityTargeting:
+                    CancelLastStateForSelectedUnit();
+                    break;
+                case UnitBattleState.Finished:
+                case UnitBattleState.Idle:
+                case UnitBattleState.AbilityConfirming:
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

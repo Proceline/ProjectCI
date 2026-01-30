@@ -8,9 +8,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         [SerializeField]
         private PvSoDeploymentController deploymentController;
 
-        [SerializeField]
-        private UnityEvent onBattleSceneLaunched;
-
         private void Awake()
         {
             deploymentController.ShowAllSpawnHints();
@@ -19,7 +16,6 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         private void Start()
         {
             deploymentController.PutCameraOnPositionOnStarted();
-            onBattleSceneLaunched?.Invoke();
         }
     }
 }

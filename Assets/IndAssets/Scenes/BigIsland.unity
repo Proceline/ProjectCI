@@ -4060,6 +4060,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f27bbbc4d939d44ead8af9d18662d38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
   minZoom: -10
   maxZoom: 10
   zoomingSpeed: 10
@@ -26432,9 +26433,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Deployment.PvMnDeploymentBridge
   deploymentController: {fileID: 11400000, guid: 4eb7c339aad621d4ea6f3ad6552292ef, type: 2}
-  onBattleSceneLaunched:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &757362198
 Transform:
   m_ObjectHideFlags: 0
@@ -44685,43 +44683,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1342956171}
-  - component: {fileID: 1342956170}
+  - component: {fileID: 1342956172}
   m_Layer: 0
-  m_Name: InSceneControllerBridge
+  m_Name: GameController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1342956170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342956169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73bd898f62a05274fa5b5d17a37dc0ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 11400000, guid: 11c740db8f6c4e64487d2b1c494a2ea9, type: 2}
-  onControlPanelUiCanceledApplied:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1658297597}
-        m_TargetAssemblyTypeName: ProjectCI.Runtime.GUI.Battle.PvMnFollowPanelViewer,
-          Assembly-CSharp
-        m_MethodName: ToggleSideControlPanelAndMainControlPanel
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!4 &1342956171
 Transform:
   m_ObjectHideFlags: 0
@@ -44737,6 +44706,70 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1342956172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1342956169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50d5cc95740d9ba419345b2ec960e4de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnGameController
+  gameVisual: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
+  onBattleActionConfirmed: {fileID: 673623533615622979, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  onBattleActionCanceled: {fileID: -6866045312221602488, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  onConfirmedAtBattleground:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: ConfirmCellTarget
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onConfirmedAtBattlegroundWithState:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: ConfirmCellTarget
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onCanceledAtBattleground:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: CancelCurrentAction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onBattleStartedEvent: {fileID: 11400000, guid: a4ab0fec9f2473c42ab83160fbc96d83, type: 2}
 --- !u!1001 &1343070894
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55020,7 +55053,7 @@ MonoBehaviour:
   onSideControlPanelToggled:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1342956170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnGameControllerBridge,
           Assembly-CSharp
         m_MethodName: ToggleControlPanelUICancel
@@ -72241,6 +72274,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 968036602}
   - {fileID: 757362198}
+  - {fileID: 1342956171}
   - {fileID: 632277606}
   - {fileID: 1045300659}
   - {fileID: 1702668659}
@@ -72254,7 +72288,6 @@ SceneRoots:
   - {fileID: 1658297596}
   - {fileID: 407214485}
   - {fileID: 1604073942}
-  - {fileID: 1342956171}
   - {fileID: 1638842393}
   - {fileID: 781348937}
   - {fileID: 435896661}
