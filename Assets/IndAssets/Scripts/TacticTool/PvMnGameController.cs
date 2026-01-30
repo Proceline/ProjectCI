@@ -26,6 +26,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private PvSoSimpleVoidEvent onBattleStartedEvent;
 
+        [SerializeField]
+        private PvSoBattleTeamEvent onRoundEndEvent;
+
+        public ITeamRoundEndEvent OnRoundEndEvent => onRoundEndEvent;
+
         public bool IsActionLocked { get; set; }
 
         private void Start()
@@ -33,6 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onBattleActionConfirmed.action.canceled += OnBattleActionConfirmed;
             onBattleActionCanceled.action.canceled += OnBattleActionCanceled;
             onBattleStartedEvent.RegisterCallback(EnableBasicBattleActions);
+            OnRoundEndEvent.RegisterCallback(EnableBasicBattleActionAccordingToTeam);
         }
 
         private void OnDestroy()
@@ -59,6 +65,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void OnBattleActionCanceled(InputAction.CallbackContext context)
         {
             onCanceledAtBattleground?.Invoke();
+        }
+
+        private void EnableBasicBattleActionAccordingToTeam(BattleTeam battleTeam)
+        {
+            if (battleTeam == BattleTeam.Friendly)
+            {
+                onBattleActionConfirmed.action.Disable();
+                onBattleActionCanceled.action.Disable();
+            }
+            else if (battleTeam == BattleTeam.Hostile)
+            {
+                EnableBasicBattleActions();
+            }
         }
     }
 }

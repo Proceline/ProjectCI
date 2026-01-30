@@ -94,6 +94,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="cellState">If cell state is wrong, it will be ignored</param>
         public void ConfirmCellTarget(LevelCellBase cell, CellState cellState)
         {
+            if (!cell)
+            {
+                return;
+            }
+
             switch (CurrentBattleState)
             {
                 case UnitBattleState.Moving:
@@ -105,7 +110,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     break;
                 case UnitBattleState.UsingAbility:
                 case UnitBattleState.AbilityTargeting:
-                    if (cellState != CellState.ePositive && cellState != CellState.eNegative)
+                    if (cellState != CellState.ePositive && cellState != CellState.eNegative && 
+                        cellState != CellState.eSpecial)
                     {
                         return;
                     }
