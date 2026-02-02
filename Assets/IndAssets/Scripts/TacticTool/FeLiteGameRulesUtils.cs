@@ -102,7 +102,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             switch (CurrentBattleState)
             {
                 case UnitBattleState.Moving:
-                    if (cellState != CellState.eMovement)
+                    if (cellState != CellState.eMovement && cellState != CellState.eSpecial)
                     {
                         return;
                     }

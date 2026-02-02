@@ -4060,7 +4060,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f27bbbc4d939d44ead8af9d18662d38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameController: {fileID: 0}
+  gameController: {fileID: 1342956172}
   minZoom: -10
   maxZoom: 10
   zoomingSpeed: 10

@@ -78,6 +78,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     TacticBattleManager.SetCellState(cell, CellState.eMovement);
                 }
             }
+
+            var unitCell = casterUnit.GetCell();
+            _bufferedVisualStateCells.Add(unitCell);
+            TacticBattleManager.SetCellState(unitCell, CellState.eSpecial);
         }
 
         public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit)
