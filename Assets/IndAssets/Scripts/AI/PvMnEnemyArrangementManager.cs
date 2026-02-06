@@ -254,8 +254,6 @@ namespace IndAssets.Scripts.AI
                 {
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
-
-                Debug.LogError("Finished");
             }
         }
 

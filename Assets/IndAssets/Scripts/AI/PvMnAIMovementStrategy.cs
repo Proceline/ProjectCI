@@ -91,6 +91,11 @@ namespace IndAssets.Scripts.AI
 
                         foreach (var moveCell in availableMoveCells)
                         {
+                            if (moveCell.GetUnitOnCell())
+                            {
+                                continue;
+                            }
+
                             // Check if we can attack target from this position
                             if (victimsFromCells.TryGetValue(targetCell, out var attackPositions) &&
                                 attackPositions.Contains(moveCell))
@@ -109,6 +114,11 @@ namespace IndAssets.Scripts.AI
                         {
                             foreach (var moveCell in availableMoveCells)
                             {
+                                if (moveCell.GetUnitOnCell())
+                                {
+                                    continue;
+                                }
+
                                 float dist = GetDistance(moveCell, targetCell);
                                 if (dist < minDistance)
                                 {
