@@ -218,6 +218,7 @@ namespace IndAssets.Scripts.AI
             {
                 return;
             }
+            _currentIndex = 0;
             await ApplyNextEnemyBehaviour();
         }
 
