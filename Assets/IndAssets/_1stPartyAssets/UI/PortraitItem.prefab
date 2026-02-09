@@ -60,10 +60,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterPortraitItem
   portraitImage: {fileID: 6323943261712702499}
   portraitButton: {fileID: 7213195729417568304}
-  onPortraitClickedToDeploy:
-    m_PersistentCalls:
-      m_Calls: []
-  deployMode: 0
 --- !u!1 &4234753768065698434
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,8 +127,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 533f6ee8a73a28d43be101b6680c6f9a, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: -520462935, guid: a2a9861851aaf4640bf62e68f948e9d1, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -150,10 +146,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 4234753768065698434}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 385b7d1277b6c4007a84c065696e0f8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+  m_MaskingMode: 0
+  m_AlphaHitTest: 0
+  m_SoftnessRange:
+    m_Min: 0
+    m_Max: 1
+  m_DownSamplingRate: 8
+  m_AntiAliasingThreshold: 0
+  m_Alpha: -1
+  m_Softness: -1
+  m_PartOfParent: 0
 --- !u!1 &5590366479087084009
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,6 +172,7 @@ GameObject:
   - component: {fileID: 3835917853248923217}
   - component: {fileID: 6323943261712702499}
   - component: {fileID: 7213195729417568304}
+  - component: {fileID: 5679732197070242827}
   m_Layer: 5
   m_Name: Avatar
   m_TagString: Untagged
@@ -220,7 +227,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 256f6c715fdf7c845b8d33fb1c6afa9e, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -274,3 +281,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5679732197070242827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5590366479087084009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97bc2ebab6563400c95b036136d26ea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Coffee.SoftMaskForUGUI::Coffee.UISoftMask.SoftMaskable
+  m_IgnoreSelf: 0
+  m_IgnoreChildren: 0
+  m_Power: 3
