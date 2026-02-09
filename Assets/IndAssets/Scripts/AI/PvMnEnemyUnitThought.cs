@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
@@ -74,7 +72,7 @@ namespace IndAssets.Scripts.AI
             };
 
             var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);
-            var availableMoveCells = radiusField.Dist.Keys.ToList();
+            var availableMoveCells = radiusField.Dist.Keys;
 
             // Get ability to use (default or custom)
             var ability = SelectAbility();
