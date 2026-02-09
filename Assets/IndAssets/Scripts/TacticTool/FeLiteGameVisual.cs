@@ -16,6 +16,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly List<LevelCellBase> _bufferedVisualStateCells = new();
         private readonly List<LevelCellBase> _hoveringCells = new();
 
+        private readonly List<LevelCellBase> _temporaryStateCells = new();
+
         [NonSerialized]
         private GameObject _pawnVisualMark;
 
@@ -25,6 +27,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private List<LevelCellBase> _bufferedSupportCells;
         [NonSerialized]
         private bool _isShowingActionRange;
+
+        public void HighlightMovableCells(ICollection<LevelCellBase> cells) => HighlightCells(cells, CellState.eReadOnlyMove);
+
+        public void HighlightAggroCells(ICollection<LevelCellBase> cells) => HighlightCells(cells, CellState.eReadOnlyAggro);
+
+        private void HighlightCells(ICollection<LevelCellBase> cells, CellState targetState)
+        {
+            foreach (LevelCellBase cell in cells)
+            {
+                if (cell && cell.IsVisible())
+                {
+                    _temporaryStateCells.Add(cell);
+                    TacticBattleManager.SetCellState(cell, targetState);
+                }
+            }
+        }
+
+        public void ResetTemporaryStateCells()
+        {
+            foreach (LevelCellBase editedCell in _temporaryStateCells)
+            {
+                TacticBattleManager.ResetCellState(editedCell);
+            }
+
+            _temporaryStateCells.Clear();
+        }
 
         public void AssignAbilityOnView(PvSoUnitAbility ability, PvMnBattleGeneralUnit unit)
         {

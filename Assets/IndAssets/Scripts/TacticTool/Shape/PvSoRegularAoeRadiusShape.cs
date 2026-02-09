@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -19,26 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
         public override List<LevelCellBase> GetCellList(GridPawnUnit caster, LevelCellBase cell, int range,
             bool allowBlocked = true, BattleTeam effectedTeam = BattleTeam.None)
         {
-            var cellIndex = cell.GetIndex();
-            var cells = new List<LevelCellBase>();
-            var grid = TacticBattleManager.GetGrid();
-
-            for (var i = -range; i <= range; i++)
-            {
-                for (var j = -range; j <= range; j++)
-                {
-                    if (!isSquare && (Mathf.Abs(i) + Mathf.Abs(j)) > range)
-                    {
-                        continue;
-                    }
-
-                    var possibleCell = grid[cellIndex.x + i, cellIndex.y + j];
-                    if (possibleCell)
-                    {
-                        cells.Add(possibleCell);
-                    }
-                }
-            }
+            var cells = GetCellListPreview(caster, cell, range, allowBlocked, effectedTeam);
 
             if (onlyIncludedTargets)
             {
@@ -62,6 +42,33 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
                 }
             }
             
+            return cells;
+        }
+
+        public override List<LevelCellBase> GetCellListPreview(GridPawnUnit caster, LevelCellBase cell, int range,
+            bool allowBlocked = true, BattleTeam effectedTeam = BattleTeam.None)
+        {
+            var cellIndex = cell.GetIndex();
+            var cells = new List<LevelCellBase>();
+            var grid = TacticBattleManager.GetGrid();
+
+            for (var i = -range; i <= range; i++)
+            {
+                for (var j = -range; j <= range; j++)
+                {
+                    if (!isSquare && (Mathf.Abs(i) + Mathf.Abs(j)) > range)
+                    {
+                        continue;
+                    }
+
+                    var possibleCell = grid[cellIndex.x + i, cellIndex.y + j];
+                    if (possibleCell)
+                    {
+                        cells.Add(possibleCell);
+                    }
+                }
+            }
+
             return cells;
         }
     }

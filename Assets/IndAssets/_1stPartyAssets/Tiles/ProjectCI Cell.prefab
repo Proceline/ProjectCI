@@ -142,6 +142,12 @@ MonoBehaviour:
   m_SpecialMatStates:
   - m_Index: 0
     m_Material: {fileID: 2100000, guid: 08f477a447e4ebe47b1aabf111f88080, type: 2}
+  readOnlyAggroMats:
+  - m_Index: 0
+    m_Material: {fileID: 2100000, guid: 2a30c53d554c4b54cb411786c69df0fa, type: 2}
+  readOnlyMoveMats:
+  - m_Index: 0
+    m_Material: {fileID: 2100000, guid: 509685637fd4c1249b4f12bb65a3843e, type: 2}
 --- !u!114 &-8831707949372437208
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,10 +1,12 @@
-using System;
-using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.Abilities;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -30,6 +32,14 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onEnemyPrepared;
         [SerializeField] private UnityEvent<LevelCellBase> onEnemyMoving;
         [SerializeField] private UnityEvent<LevelCellBase, PvSoUnitAbility> onEnemyActing;
+
+        [Header("Preview")]
+
+        [SerializeField] private FormulaCollection formulaCollection;
+
+        [SerializeField] private UnityEvent<ICollection<LevelCellBase>> onEnemiesPreviewAggroShowed;
+        [SerializeField] private UnityEvent<ICollection<LevelCellBase>> onEnemiesPreviewMoveShowed;
+        [SerializeField] private UnityEvent onEnemiesPreviewHidden;
 
         private void Start()
         {
@@ -220,6 +230,74 @@ namespace IndAssets.Scripts.AI
             }
             _currentIndex = 0;
             await ApplyNextEnemyBehaviour();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                PreviewAllEnemiesActions();
+            }
+            
+        }
+
+        private void PreviewAllEnemiesActions()
+        {
+            var enemiesMovableCells = new HashSet<LevelCellBase>();
+            var enemiesAttackables = new Dictionary<LevelCellBase, List<PvMnEnemyUnitThought>>();
+
+            foreach (var enemyThought in _orderedEnemyThoughts)
+            {
+                var enemyUnit = enemyThought.Unit;
+
+                var movementPoints = enemyUnit.RuntimeAttributes.GetAttributeValue(formulaCollection.MovementAttributeType);
+                var currentCell = enemyUnit.GetCell();
+
+                AIRadiusInfo radiusInfo = new AIRadiusInfo(currentCell, movementPoints)
+                {
+                    Caster = enemyUnit,
+                    bAllowBlocked = false,
+                    bStopAtBlockedCell = true,
+                    EffectedTeam = BattleTeam.Friendly
+                };
+
+                var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);
+                //var availableMoveCells = radiusField.Dist.Keys;
+                foreach (var cellPair in radiusField.Dist)
+                {
+                    var cell = cellPair.Key;
+                    enemiesMovableCells.Add(cell);
+                }
+
+                var attackAbility = enemyThought.Unit.AttackAbility;
+
+                // Calculate attack field
+                var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);
+                List<LevelCellBase> GetCellList(LevelCellBase startCell)
+                {
+                    return attackAbility.GetShape().GetCellListPreview(enemyUnit, startCell, attackAbility.GetRadius(),
+                        attackAbility.DoesAllowBlocked(), attackAbility.GetEffectedTeam());
+                }
+
+                Debug.LogError(attackField.AllVictims.Count + " FROM " + enemyThought.name);
+
+                foreach (var victimCell in attackField.AllVictims)
+                {
+                    if (!enemiesAttackables.TryGetValue(victimCell, out var list))
+                    {
+                        list = new List<PvMnEnemyUnitThought>();
+                        enemiesAttackables[victimCell] = list;
+                    }
+
+                    if (!list.Contains(enemyThought))
+                    {
+                        list.Add(enemyThought);
+                    }
+                }
+            }
+
+            onEnemiesPreviewAggroShowed?.Invoke(enemiesAttackables.Keys);
+            onEnemiesPreviewMoveShowed?.Invoke(enemiesMovableCells);
         }
 
         private async Awaitable ApplyNextEnemyBehaviour()
