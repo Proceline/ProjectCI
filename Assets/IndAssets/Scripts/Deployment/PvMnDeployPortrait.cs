@@ -13,6 +13,7 @@ namespace Assets.IndAssets.Scripts.Deployment
     {
         public PvSoBattleUnitData Data { get; private set; }
         public Image iconImage;
+        [SerializeField] private Image backgroundImage;
 
         [SerializeField] private Transform defaultParent;
         [SerializeField] private GameObject trackingPivot;
@@ -21,26 +22,41 @@ namespace Assets.IndAssets.Scripts.Deployment
         [SerializeField] private PvSoWeaponAndRelicCollection charactersCol;
 
         [Header("Events")]
-        public UnityEvent<PvSoBattleUnitData, PvMnDeployCell> onPortraitInteracted;
-        public UnityEvent<bool> onUpdatePlacementStatus;
+        public UnityEvent<PvSoBattleUnitData, PvDeployCell> onPortraitInteracted;
         public UnityEvent onHoverEnter;
         public UnityEvent onHoverExit;
 
-        private static PvMnDeployCell _currentContextCell;
+        [SerializeField]
+        private UnityEvent<ScriptableObject, Image> onDataIconUpdated;
 
-        public static void SetupCurrentContextCell(PvMnDeployCell cell)
+        private static PvDeployCell _currentContextCell;
+
+        public static void SetupCurrentContextCell(PvDeployCell cell)
         {
+            if (_currentContextCell)
+            {
+                _currentContextCell.onCellDeSelected?.Invoke();
+            }
             _currentContextCell = cell;
+
+            if (cell)
+            {
+                cell.onCellSelected?.Invoke();
+            }
         }
 
-        public void ToggleParent(PvMnDeployCell cell)
+        public void ToggleParent(PvDeployCell cell)
         {
             if (defaultParent && trackingPivot)
             {
                 var currentEnableStatus = trackingPivot.activeSelf;
                 trackingPivot.SetActive(!currentEnableStatus);
 
-                if (!currentEnableStatus)
+                if (currentEnableStatus)
+                {
+                    cell.onCellDeSelected?.Invoke();
+                }
+                else
                 {
                     var targetPosition = WorldToCanvasPosition(cell.transform.position);
                     trackingPivot.transform.localPosition = targetPosition;
@@ -72,6 +88,7 @@ namespace Assets.IndAssets.Scripts.Deployment
                             portrait.gameObject.SetActive(true);
                             portrait.Data = unitData;
                             portrait.iconImage.sprite = unitData.GetIcon;
+                            portrait.onDataIconUpdated?.Invoke(unitData, portrait.backgroundImage);
                         }
                     }
                 }
@@ -82,13 +99,9 @@ namespace Assets.IndAssets.Scripts.Deployment
         {
             if (_currentContextCell)
             {
-                onPortraitInteracted?.Invoke(Data, _currentContextCell);
+                onPortraitInteracted?.Invoke(Data, _currentContextCell); 
+                onHoverExit?.Invoke();
             }
-        }
-
-        public void RefreshStatus(bool isPlaced)
-        {
-            onUpdatePlacementStatus?.Invoke(isPlaced);
         }
 
         public void OnPointerEnter(PointerEventData eventData) => onHoverEnter?.Invoke();

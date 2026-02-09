@@ -5,6 +5,8 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace ProjectCI.CoreSystem.Runtime.Deployment
 {
@@ -18,9 +20,15 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         private void Start()
         {
             onBridgeStarted?.Invoke();
+            onDeployCellFocus.action.canceled += OnDeployCellConfirmed;
         }
 
-        private readonly Dictionary<ScriptableObject, PvMnDeployCell> _charToCellMap = new();
+        private void OnDestroy()
+        {
+            onDeployCellFocus.action.canceled -= OnDeployCellConfirmed;
+        }
+
+        private readonly Dictionary<ScriptableObject, PvDeployCell> _charToCellMap = new();
         private readonly Dictionary<ScriptableObject, PvMnSceneUnit> _charToDeployedMeshes = new();
 
         [SerializeField]
@@ -35,48 +43,56 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         [SerializeField]
         private UnityEvent onBridgeStarted;
 
+        [SerializeField]
+        private InputActionReference onDeployCellFocus;
+
+        [SerializeField]
+        private Camera deployInteractCamera;
+
+        [SerializeField]
+        private UnityEvent<RaycastHit[]> onInteractedObjectsApplied;
+
+        private void OnDeployCellConfirmed(InputAction.CallbackContext context)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray);
+            onInteractedObjectsApplied?.Invoke(hits);
+        }
+
         /// <summary>
         /// Binded to Portrait OnInteracted
         /// </summary>
         /// <param name="data"></param>
         /// <param name="targetCell"></param>
-        public void HandleSelection(PvSoBattleUnitData data, PvMnDeployCell targetCell)
+        public void HandleSelection(PvSoBattleUnitData data, PvDeployCell targetCell)
         {
-            if (_charToCellMap.ContainsKey(data) && _charToCellMap[data] == targetCell)
+            if (_charToCellMap.TryGetValue(data, out var oldCell))
             {
                 UndeployUnitMesh(data);
                 RemoveCharacterLogically(data);
             }
-            else if (_charToCellMap.ContainsKey(data))
+
+            var existedData = targetCell.StandingData;
+            if (existedData)
             {
-                var oldCell = _charToCellMap[data];
+                UndeployUnitMesh(existedData);
+                RemoveCharacterLogically(existedData);
 
-                if (targetCell.StandingData != null)
+                if (oldCell)
                 {
-                    UndeployUnitMesh(targetCell.StandingData);
-                    RemoveCharacterLogically(targetCell.StandingData);
+                    PlaceCharacterLogically(existedData, oldCell);
+                    DeployUnitMesh(existedData as PvSoBattleUnitData, oldCell);
                 }
-
-                oldCell.ClearCell();
-
-                PlaceCharacterLogically(data, targetCell);
-                DeployUnitMesh(data, targetCell);
             }
-            else
-            {
-                var oldData = targetCell.StandingData;
-                if (oldData)
-                {
-                    UndeployUnitMesh(targetCell.StandingData);
-                    RemoveCharacterLogically(targetCell.StandingData);
-                }
 
+            if (targetCell != oldCell)
+            {
                 PlaceCharacterLogically(data, targetCell);
                 DeployUnitMesh(data, targetCell);
             }
         }
 
-        private void DeployUnitMesh(PvSoBattleUnitData unitData, PvMnDeployCell targetCell)
+        private void DeployUnitMesh(PvSoBattleUnitData unitData, PvDeployCell targetCell)
         {
             if (_charToDeployedMeshes.TryGetValue(unitData, out var deployedSceneUnit))
             {
@@ -134,7 +150,7 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             }
         }
 
-        private void PlaceCharacterLogically(ScriptableObject data, PvMnDeployCell cell)
+        private void PlaceCharacterLogically(ScriptableObject data, PvDeployCell cell)
         {
             cell.SetCharacter(data);
             _charToCellMap[data] = cell;
@@ -142,10 +158,27 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
 
         private void RemoveCharacterLogically(ScriptableObject data)
         {
-            if (_charToCellMap.TryGetValue(data, out PvMnDeployCell cell))
+            if (_charToCellMap.TryGetValue(data, out PvDeployCell cell))
             {
                 cell.ClearCell();
                 _charToCellMap.Remove(data);
+            }
+        }
+
+        /// <summary>
+        /// Binded and Used in Portrait
+        /// </summary>
+        /// <param name="dataObj"></param>
+        /// <param name="targetImage"></param>
+        public void UpdateCharacterIcon(ScriptableObject dataObj, Image targetImage)
+        {
+            if (_charToCellMap.ContainsKey(dataObj))
+            {
+                targetImage.color = Color.green;
+            }
+            else
+            {
+                targetImage.color = Color.white;
             }
         }
     }

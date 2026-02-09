@@ -4,25 +4,22 @@ using UnityEngine.Events;
 
 namespace Assets.IndAssets.Scripts.Deployment
 {
-    public class PvMnDeployCell : MonoBehaviour
+    public class PvMnDeployCell : PvDeployCell
     {
-        public ScriptableObject StandingData { get; private set; }
-
-        [NonSerialized]
-        private bool _isFocusing;
+        [NonSerialized] private static bool _isEnabled = true;
 
         [SerializeField]
-        private UnityEvent<PvMnDeployCell, bool> onCellHovered;
-        
-        [SerializeField]
-        private UnityEvent<PvMnDeployCell> onCellInteracted;
+        private Renderer cellRenderer;
 
-        public void SetCharacter(ScriptableObject data)
+        [SerializeField]
+        private UnityEvent<PvDeployCell> onCellInteracted;
+
+        public override void SetCharacter(ScriptableObject data)
         {
             StandingData = data;
         }
 
-        public void ClearCell()
+        public override void ClearCell()
         {
             StandingData = null;
         }
@@ -32,31 +29,40 @@ namespace Assets.IndAssets.Scripts.Deployment
             onCellInteracted?.Invoke(this);
         }
 
+        public static void SetDeployCellEnableGlobally(bool isEnabled)
+        {
+            _isEnabled = isEnabled;
+        }
+
+        #region Materials
+        public void SetMaterial(Material targetMaterial)
+        {
+            Material[] meshMaterials = cellRenderer.materials;
+            meshMaterials[0] = targetMaterial;
+            cellRenderer.materials = meshMaterials;
+        }
+        #endregion
+
         #region EventListeners
-
-        public void OnMouseOver()
+        public void OnRaycastsReceived(RaycastHit[] hits)
         {
-            if (!_isFocusing)
+            if (!_isEnabled)
             {
-                _isFocusing = true;
-                onCellHovered?.Invoke(this, true);
+                return;
             }
-        }
 
-        public void OnMouseExit()
-        {
-            _isFocusing = false;
-            onCellHovered?.Invoke(this, false);
-        }
-
-        private void OnMouseDown()
-        {
-            // Empty
-        }
-
-        private void OnMouseUp()
-        {
-            Interact();
+            foreach (var hit in hits)
+            {
+                if (hit.transform.tag == "Marker")
+                {
+                    var cell = hit.transform.GetComponent<PvMnDeployCell>();
+                    if (cell)
+                    {
+                        cell.Interact();
+                    }
+                    return;
+                }
+            }
         }
 
         #endregion
