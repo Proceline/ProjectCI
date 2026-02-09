@@ -15,6 +15,10 @@ MonoBehaviour:
   scanStartPivot: {x: -20, y: 10, z: 15}
   gridWidth: 30
   gridHeight: 30
+  minimumPlayersCount: 1
+  requiredUnits:
+  - {fileID: 11400000, guid: d74e9bb78116e4d4788cf6a482b632e2, type: 2}
+  maximumPlayersCount: 4
   cameraPosition: {x: -39.509106, y: 49.16, z: -35.19192}
   friendlySlots:
   - {x: -20, y: 0, z: -9}

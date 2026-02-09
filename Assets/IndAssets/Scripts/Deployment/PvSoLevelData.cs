@@ -1,3 +1,5 @@
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +14,10 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         [SerializeField] private Vector3 scanStartPivot;
         public int gridWidth;
         public int gridHeight;
+
+        [SerializeField] private int minimumPlayersCount;
+        [SerializeField] private List<PvSoBattleUnitData> requiredUnits;
+        [SerializeField] private int maximumPlayersCount;
 
         [SerializeField] private Vector3 cameraPosition;
 
@@ -37,6 +43,24 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
             }
 
             targetRoot.position = cameraPosition;
+        }
+
+        public bool CheckIfPawnsMeetRequirement(Func<PvSoBattleUnitData, bool> checker, int totalCount)
+        {
+            foreach (var unit in requiredUnits)
+            {
+                if (!checker.Invoke(unit))
+                {
+                    return false;
+                }
+            }
+
+            if (totalCount < minimumPlayersCount || totalCount > maximumPlayersCount)
+            {
+                return false;
+            } 
+            
+            return true;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Assets.IndAssets.Scripts.Deployment;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,6 +54,12 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         public void PutCameraOnPositionOnStarted()
         {
             levelData.PutCameraOnPosition();
+        }
+
+        public void CheckLevelValidation(IDictionary<ScriptableObject, PvDeployCell> placedPawns, bool[] output)
+        {
+            var result = levelData.CheckIfPawnsMeetRequirement(unitData => placedPawns.ContainsKey(unitData), placedPawns.Count);
+            output[0] = result;
         }
     }
 }

@@ -15,6 +15,7 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         private void Awake()
         {
             onBridgeInitialized?.Invoke();
+            battleStartButton.interactable = false;
         }
 
         private void Start()
@@ -50,7 +51,13 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         private Camera deployInteractCamera;
 
         [SerializeField]
+        private Button battleStartButton;
+
+        [SerializeField]
         private UnityEvent<RaycastHit[]> onInteractedObjectsApplied;
+
+        [SerializeField]
+        private UnityEvent<IDictionary<ScriptableObject, PvDeployCell>, bool[]> onBattleValidated;
 
         private void OnDeployCellConfirmed(InputAction.CallbackContext context)
         {
@@ -90,6 +97,16 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 PlaceCharacterLogically(data, targetCell);
                 DeployUnitMesh(data, targetCell);
             }
+        }
+
+        /// <summary>
+        /// Binded to Portrait Interacted
+        /// </summary>
+        public void CheckDeploymentRequirement()
+        {
+            var allocatedCheck = new bool[1] { false };
+            onBattleValidated.Invoke(_charToCellMap, allocatedCheck);
+            battleStartButton.interactable = allocatedCheck[0];
         }
 
         private void DeployUnitMesh(PvSoBattleUnitData unitData, PvDeployCell targetCell)
