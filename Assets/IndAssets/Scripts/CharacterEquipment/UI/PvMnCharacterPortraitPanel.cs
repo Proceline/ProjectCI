@@ -18,21 +18,8 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         
         private List<PvMnCharacterPortraitItem> _portraitItems = new List<PvMnCharacterPortraitItem>();
         [SerializeField] private UnityEvent<PvCharacterSaveData> onCharacterSelected;
-        [SerializeField] private Toggle deployModeToggle;
         private bool _deployMode = false;
         private static bool _isDeployDisabled;
-
-        private void OnDeployModeChanged(bool isOn)
-        {
-            _deployMode = isOn;
-            foreach (var item in _portraitItems)
-            {
-                if (item != null)
-                {
-                    item.deployMode = _deployMode;
-                }
-            }
-        }
 
         /// <summary>
         /// Initialize panel with list of character data
@@ -40,7 +27,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         public void Initialize(UnityAction<PvCharacterSaveData> onCharacterSelectedAction)
         {
             onCharacterSelected.AddListener(onCharacterSelectedAction);
-            deployModeToggle.onValueChanged.AddListener(OnDeployModeChanged);
             RefreshPortraits();
         }
         
@@ -69,8 +55,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             {
                 CreatePortraitItem(characterData);
             }
-
-            deployModeToggle.isOn = _deployMode;
         }
         
         private void CreatePortraitItem(PvCharacterSaveData characterData)

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.Saving;
-using IndAssets.Scripts.Weapons;
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.CoreSystem.DependencyInjection;
@@ -40,14 +39,18 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         /// Get level data
         /// </summary>
         public PvSoLevelData LevelData => levelData;
-        
-        public void ShowAllSpawnHints()
+
+        /// <summary>
+        /// Used in DeploymentBridge UnityEvent
+        /// </summary>
+        /// <param name="markerPrefab"></param>
+        public void ShowAllSpawnHints(GameObject markerPrefab)
         {
             foreach (var slotData in levelData.FriendlySlots)
             {
                 if (slotData.UseWorldPosition)
                 {
-                    var marker = Instantiate(startPivotMarkerPrefab, slotData.WorldPosition, Quaternion.identity);
+                    var marker = Instantiate(markerPrefab, slotData.WorldPosition, Quaternion.identity);
                     _loadedMarkers.Add(marker);
                 }
             }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1644742572379745230}
   - component: {fileID: 4845053039033124810}
   - component: {fileID: 1244636951713642763}
+  - component: {fileID: 5244649541999554699}
   m_Layer: 0
   m_Name: SpawnMarker
   m_TagString: Untagged
@@ -113,3 +114,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5495902117074765545, guid: 542895bb305ff2c46b5f19b898614ce3, type: 3}
+--- !u!114 &5244649541999554699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359545353749347710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47e8f97f15161048a675cc70c867c5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.IndAssets.Scripts.Deployment.PvMnDeployCell
+  onCellInteracted:
+    m_PersistentCalls:
+      m_Calls: []

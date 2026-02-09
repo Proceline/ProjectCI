@@ -20,9 +20,6 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         private PvCharacterSaveData _characterData;
         private UnityAction<PvCharacterSaveData> _onPortraitClicked;
 
-        [SerializeField] private UnityEvent<PvSoBattleUnitData> onPortraitClickedToDeploy;
-        public bool deployMode = false;
-
         [Inject] private static PvSoWeaponAndRelicCollection _validCharactersCol;
         
         private void Awake()
@@ -73,20 +70,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 portraitImage.sprite = sprite;
             }
         }
-        
+
         private void OnPortraitClicked()
         {
-            if (!deployMode)
-            {
-                _onPortraitClicked?.Invoke(_characterData);
-                return;
-            }
-            
-            if (_validCharactersCol.UnitDataDict.TryGetValue(_characterData.CharacterId, out var unitData))
-            {
-                onPortraitClickedToDeploy?.Invoke(unitData);
-                return;
-            }
+            _onPortraitClicked?.Invoke(_characterData);
         }
         
         /// <summary>
