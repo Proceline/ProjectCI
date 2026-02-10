@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6a701e2840544ef8ebb0f5f69403ff6, type: 3}
   m_Name: FelikeVisualGrid
   m_EditorClassIdentifier: 
-  showingSupportRangeByDefault: 0
+  raiserAggroHoveredEvent: {fileID: 11400000, guid: 0e9e706adc90b3c4bbeb86dabb6324fb, type: 2}
+  raiserAggroEndedEvent: {fileID: 11400000, guid: c38a644971fe35a4ebd3f021c806d56c, type: 2}

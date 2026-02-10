@@ -2,9 +2,9 @@
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -30,11 +30,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized]
         private bool _isShowingActionRange;
 
-        public void HighlightMovableCells(ICollection<LevelCellBase> cells) => HighlightCells(cells, CellState.eReadOnlyMove);
+        [SerializeField]
+        private PvSoLevelCellEvent raiserAggroHoveredEvent;
 
-        public void HighlightAggroCells(ICollection<LevelCellBase> cells) => HighlightCells(cells, CellState.eReadOnlyAggro);
+        [SerializeField]
+        private PvSoLevelCellEvent raiserAggroEndedEvent;
 
-        private void HighlightCells(ICollection<LevelCellBase> cells, CellState targetState)
+        public void HighlightMovableCells(ICollection<LevelCellBase> cells) => HighlightTempCells(cells, CellState.eReadOnlyMove);
+
+        public void HighlightAggroCells(ICollection<LevelCellBase> cells) => HighlightTempCells(cells, CellState.eReadOnlyAggro);
+
+        private void HighlightTempCells(ICollection<LevelCellBase> cells, CellState targetState)
         {
             foreach (LevelCellBase cell in cells)
             {
@@ -246,6 +252,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             CurrentHoverCell = cell;
             UpdateHoverCells(null);
+
+            if (_temporaryStateCells.Count > 0)
+            {
+                raiserAggroHoveredEvent.Raise(cell);
+            }
         }
 
         public void EndHover(LevelCellBase cell)
@@ -258,7 +269,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             CurrentHoverCell = null;
-            // TODO: EndHover Event if necessary
+
+            raiserAggroEndedEvent.Raise(cell);
         }
 
         private void CleanupHoverCells()

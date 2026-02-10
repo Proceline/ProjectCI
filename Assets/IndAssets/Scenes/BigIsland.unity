@@ -33169,6 +33169,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  aggroLinePrefab: {fileID: 7120233816253172321, guid: 8428c4fb2b92e0946b3f34284e148313, type: 3}
+  onAggroCellHoveredEvent: {fileID: 11400000, guid: 0e9e706adc90b3c4bbeb86dabb6324fb, type: 2}
+  onAggroCellUnhoveredEvent: {fileID: 11400000, guid: c38a644971fe35a4ebd3f021c806d56c, type: 2}
 --- !u!4 &968036602
 Transform:
   m_ObjectHideFlags: 0

@@ -5,7 +5,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -20,7 +19,10 @@ namespace IndAssets.Scripts.AI
     {
         [SerializeField] private PvSoBattleTeamEvent onTeamRoundEndEvent;
         [SerializeField] private PvSoSimpleVoidEvent onBattleStartedEvent;
-        [NonSerialized] private readonly List<PvMnEnemyUnitThought> _orderedEnemyThoughts = new();
+        
+        private readonly List<PvMnEnemyUnitThought> _orderedEnemyThoughts = new();
+        private readonly HashSet<LevelCellBase> _enemiesMovableCells = new();
+        private readonly Dictionary<LevelCellBase, List<Transform>> _enemiesAttackables = new();
 
         private int _currentIndex = 0;
 
@@ -41,16 +43,26 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private UnityEvent<ICollection<LevelCellBase>> onEnemiesPreviewMoveShowed;
         [SerializeField] private UnityEvent onEnemiesPreviewHidden;
 
+        [SerializeField] private PvMnAggroLine aggroLinePrefab;
+        private readonly List<PvMnAggroLine> _linesPool = new List<PvMnAggroLine>();
+
+        [SerializeField] private PvSoLevelCellEvent onAggroCellHoveredEvent;
+        [SerializeField] private PvSoLevelCellEvent onAggroCellUnhoveredEvent;
+
         private void Start()
         {
             onTeamRoundEndEvent.RegisterCallback(ResponseOnTeamRoundEndEvent);
             onBattleStartedEvent.RegisterCallback(InitializeEnemies);
+            onAggroCellHoveredEvent.RegisterCallback(ShowAggroSources);
+            onAggroCellUnhoveredEvent.RegisterCallback(HideAggroSources);
         }
 
         private void OnDestroy()
         {
             onTeamRoundEndEvent.UnregisterCallback(ResponseOnTeamRoundEndEvent);
             onBattleStartedEvent.UnregisterCallback(InitializeEnemies);
+            onAggroCellHoveredEvent.UnregisterCallback(ShowAggroSources);
+            onAggroCellUnhoveredEvent.UnregisterCallback(HideAggroSources);
         }
 
         /// <summary>
@@ -232,10 +244,47 @@ namespace IndAssets.Scripts.AI
             await ApplyNextEnemyBehaviour();
         }
 
+        private void ShowAggroSources(LevelCellBase targetCell)
+        {
+            if (_enemiesAttackables.Count > 0 && _enemiesAttackables.TryGetValue(targetCell, out var list))
+            {
+                foreach (var line in _linesPool)
+                {
+                    line.Hide();
+                }
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (i >= _linesPool.Count)
+                    {
+                        _linesPool.Add(Instantiate(aggroLinePrefab));
+                    }
+
+                    Vector3 startPos = list[i].position + Vector3.up * 1.5f;
+                    Vector3 endPos = targetCell.transform.position;
+
+                    _linesPool[i].DrawCurve(startPos, endPos);
+                }
+            }
+        }
+
+        private void HideAggroSources(LevelCellBase targetCell)
+        {
+            foreach (var line in _linesPool)
+            {
+                line.Hide();
+            }
+        }
+
+        /// <summary>
+        /// Binded to Controller's preview input action Event.
+        /// Calculate and show all enemies' potential move and attack cells based on their current positions and abilities.
+        /// </summary>
+        /// <param name="showingView"></param>
         public void PreviewAllEnemiesActions(bool showingView)
         {
-            var enemiesMovableCells = new HashSet<LevelCellBase>();
-            var enemiesAttackables = new Dictionary<LevelCellBase, List<PvMnEnemyUnitThought>>();
+            _enemiesMovableCells.Clear();
+            _enemiesAttackables.Clear();
 
             foreach (var enemyThought in _orderedEnemyThoughts)
             {
@@ -257,7 +306,7 @@ namespace IndAssets.Scripts.AI
                 foreach (var cellPair in radiusField.Dist)
                 {
                     var cell = cellPair.Key;
-                    enemiesMovableCells.Add(cell);
+                    _enemiesMovableCells.Add(cell);
                 }
 
                 var attackAbility = enemyThought.Unit.AttackAbility;
@@ -270,27 +319,25 @@ namespace IndAssets.Scripts.AI
                         attackAbility.DoesAllowBlocked(), attackAbility.GetEffectedTeam());
                 }
 
-                Debug.LogError(attackField.AllVictims.Count + " FROM " + enemyThought.name);
-
                 foreach (var victimCell in attackField.AllVictims)
                 {
-                    if (!enemiesAttackables.TryGetValue(victimCell, out var list))
+                    if (!_enemiesAttackables.TryGetValue(victimCell, out var list))
                     {
-                        list = new List<PvMnEnemyUnitThought>();
-                        enemiesAttackables[victimCell] = list;
+                        list = new List<Transform>();
+                        _enemiesAttackables[victimCell] = list;
                     }
 
-                    if (!list.Contains(enemyThought))
+                    if (!list.Contains(enemyThought.transform))
                     {
-                        list.Add(enemyThought);
+                        list.Add(enemyThought.transform);
                     }
                 }
             }
 
             if (showingView)
             {
-                onEnemiesPreviewAggroShowed?.Invoke(enemiesAttackables.Keys);
-                onEnemiesPreviewMoveShowed?.Invoke(enemiesMovableCells);
+                onEnemiesPreviewAggroShowed?.Invoke(_enemiesAttackables.Keys);
+                onEnemiesPreviewMoveShowed?.Invoke(_enemiesMovableCells);
             }
         }
 
