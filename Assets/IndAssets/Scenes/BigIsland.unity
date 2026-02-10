@@ -45761,6 +45761,7 @@ MonoBehaviour:
   gameVisual: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
   onBattleActionConfirmed: {fileID: 673623533615622979, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
   onBattleActionCanceled: {fileID: -6866045312221602488, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
+  onAggroHintInteracted: {fileID: -811987033937571647, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
   onConfirmedAtBattlegroundWithState:
     m_PersistentCalls:
       m_Calls:
@@ -45795,6 +45796,38 @@ MonoBehaviour:
         m_CallState: 2
   onBattleStartedEvent: {fileID: 11400000, guid: a4ab0fec9f2473c42ab83160fbc96d83, type: 2}
   onRoundEndEvent: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
+  onAggroHintEnabled:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 968036601}
+        m_TargetAssemblyTypeName: IndAssets.Scripts.AI.PvMnEnemyArrangementManager,
+          Assembly-CSharp
+        m_MethodName: PreviewAllEnemiesActions
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  onAggroHintDisabled:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: b7528ab95bfd7f64baccb1f316badd12, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameVisual,
+          Assembly-CSharp
+        m_MethodName: ResetTemporaryStateCells
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &1343070894
 PrefabInstance:
   m_ObjectHideFlags: 0

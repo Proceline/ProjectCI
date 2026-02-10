@@ -232,16 +232,7 @@ namespace IndAssets.Scripts.AI
             await ApplyNextEnemyBehaviour();
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                PreviewAllEnemiesActions();
-            }
-            
-        }
-
-        private void PreviewAllEnemiesActions()
+        public void PreviewAllEnemiesActions(bool showingView)
         {
             var enemiesMovableCells = new HashSet<LevelCellBase>();
             var enemiesAttackables = new Dictionary<LevelCellBase, List<PvMnEnemyUnitThought>>();
@@ -296,8 +287,11 @@ namespace IndAssets.Scripts.AI
                 }
             }
 
-            onEnemiesPreviewAggroShowed?.Invoke(enemiesAttackables.Keys);
-            onEnemiesPreviewMoveShowed?.Invoke(enemiesMovableCells);
+            if (showingView)
+            {
+                onEnemiesPreviewAggroShowed?.Invoke(enemiesAttackables.Keys);
+                onEnemiesPreviewMoveShowed?.Invoke(enemiesMovableCells);
+            }
         }
 
         private async Awaitable ApplyNextEnemyBehaviour()

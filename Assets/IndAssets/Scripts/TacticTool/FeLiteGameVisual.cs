@@ -4,6 +4,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -17,6 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly List<LevelCellBase> _hoveringCells = new();
 
         private readonly List<LevelCellBase> _temporaryStateCells = new();
+        private readonly Dictionary<LevelCellBase, List<CellState>> _bufferedCellStates = new();
 
         [NonSerialized]
         private GameObject _pawnVisualMark;
@@ -39,7 +41,42 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if (cell && cell.IsVisible())
                 {
                     _temporaryStateCells.Add(cell);
-                    TacticBattleManager.SetCellState(cell, targetState);
+                    SetCellState(cell, targetState);
+                }
+            }
+        }
+
+        private void SetCellState(LevelCellBase cell, CellState targetState)
+        {
+            TacticBattleManager.SetCellState(cell, targetState);
+            cell.SetCellState(targetState);
+
+            if (!_bufferedCellStates.TryGetValue(cell, out var stack))
+            {
+                stack = new List<CellState>();
+                _bufferedCellStates.Add(cell, stack);
+            }
+            stack.Add(targetState);
+        }
+
+        private void PopCellState(LevelCellBase cell, params CellState[] targetStates)
+        {
+            if (_bufferedCellStates.TryGetValue(cell, out var stack) && stack.Count > 0)
+            {
+                foreach (var state in targetStates)
+                {
+                    stack.Remove(state);
+                }
+
+                if (stack.Count > 0)
+                {
+                    var lastIndex = stack.Count - 1;
+                    var lastState = stack[lastIndex];
+                    TacticBattleManager.SetCellState(cell, lastState);
+                }
+                else
+                {
+                    TacticBattleManager.ResetCellState(cell);
                 }
             }
         }
@@ -48,7 +85,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             foreach (LevelCellBase editedCell in _temporaryStateCells)
             {
-                TacticBattleManager.ResetCellState(editedCell);
+                PopCellState(editedCell, CellState.eReadOnlyMove, CellState.eReadOnlyAggro);
             }
 
             _temporaryStateCells.Clear();
@@ -63,7 +100,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             foreach (LevelCellBase editedCell in _bufferedVisualStateCells)
             {
-                TacticBattleManager.ResetCellState(editedCell);
+                PopCellState(editedCell, CellState.eNegative, CellState.ePositive, CellState.eMovement, CellState.eSpecial);
             }
 
             _bufferedVisualStateCells.Clear();
@@ -81,18 +118,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             foreach (LevelCellBase cell in _bufferedAttackCells)
             {
                 _bufferedVisualStateCells.Add(cell);
-                TacticBattleManager.SetCellState(cell, CellState.eNegative);
+                SetCellState(cell, CellState.eNegative);
             }
 
             foreach (LevelCellBase cell in _bufferedSupportCells)
             {
                 _bufferedVisualStateCells.Add(cell);
-                TacticBattleManager.SetCellState(cell, CellState.ePositive);
+                SetCellState(cell, CellState.ePositive);
             }
 
             var standingCell = unit.GetCell();
             _bufferedVisualStateCells.Add(standingCell);
-            TacticBattleManager.SetCellState(standingCell, CellState.eSpecial);
+            SetCellState(standingCell, CellState.eSpecial);
         }
 
         private void HighlightMovementRange(GridPawnUnit casterUnit)
@@ -103,13 +140,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if (cell && cell.IsVisible())
                 {
                     _bufferedVisualStateCells.Add(cell);
-                    TacticBattleManager.SetCellState(cell, CellState.eMovement);
+                    SetCellState(cell, CellState.eMovement);
                 }
             }
 
             var unitCell = casterUnit.GetCell();
             _bufferedVisualStateCells.Add(unitCell);
-            TacticBattleManager.SetCellState(unitCell, CellState.eSpecial);
+            SetCellState(unitCell, CellState.eSpecial);
         }
 
         public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit)

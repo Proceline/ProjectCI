@@ -18,6 +18,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private InputActionReference onBattleActionCanceled;
 
         [SerializeField]
+        private InputActionReference onAggroHintInteracted;
+
+        [SerializeField]
         private UnityEvent<LevelCellBase, CellState> onConfirmedAtBattlegroundWithState;
 
         [SerializeField]
@@ -29,12 +32,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private PvSoBattleTeamEvent onRoundEndEvent;
 
+        [SerializeField]
+        private UnityEvent onAggroHintEnabled;
+
+        [SerializeField]
+        private UnityEvent onAggroHintDisabled;
+
         public ITeamRoundEndEvent OnRoundEndEvent => onRoundEndEvent;
 
         public bool IsActionLocked { get; set; }
 
         private void Start()
         {
+            onAggroHintInteracted.action.started += OnAggroHintEnabled;
+            onAggroHintInteracted.action.canceled += OnAggroHintEnabled;
             onBattleActionConfirmed.action.canceled += OnBattleActionConfirmed;
             onBattleActionCanceled.action.canceled += OnBattleActionCanceled;
             onBattleStartedEvent.RegisterCallback(EnableBasicBattleActions);
@@ -43,6 +54,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnDestroy()
         {
+            onAggroHintInteracted.action.started -= OnAggroHintEnabled;
+            onAggroHintInteracted.action.canceled -= OnAggroHintEnabled;
             onBattleActionConfirmed.action.canceled -= OnBattleActionConfirmed;
             onBattleActionCanceled.action.canceled -= OnBattleActionCanceled;
             onBattleActionConfirmed.action.Disable();
@@ -53,6 +66,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             onBattleActionConfirmed.action.Enable();
             onBattleActionCanceled.action.Enable();
+            onAggroHintInteracted.action.Enable();
         }
 
         private void OnBattleActionConfirmed(InputAction.CallbackContext context)
@@ -77,6 +91,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             else if (battleTeam == BattleTeam.Hostile)
             {
                 EnableBasicBattleActions();
+            }
+        }
+
+        private void OnAggroHintEnabled(InputAction.CallbackContext context)
+        {
+            switch (context.phase)
+            {
+                case InputActionPhase.Started:
+                    onAggroHintEnabled?.Invoke();
+                    break;
+                case InputActionPhase.Canceled:
+                    onAggroHintDisabled?.Invoke();
+                    break;
             }
         }
     }
