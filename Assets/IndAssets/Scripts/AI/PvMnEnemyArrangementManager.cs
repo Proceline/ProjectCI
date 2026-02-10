@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -25,6 +26,8 @@ namespace IndAssets.Scripts.AI
         private readonly Dictionary<LevelCellBase, List<Transform>> _enemiesAttackables = new();
 
         private int _currentIndex = 0;
+
+        [NonSerialized] private bool _isEnemyRound;
 
         /// <summary>
         /// Collection of all enemy thoughts, accessible by unit ID
@@ -238,15 +241,25 @@ namespace IndAssets.Scripts.AI
         {
             if (endTeam == BattleTeam.Hostile)
             {
+                _isEnemyRound = false;
                 return;
             }
+            else
+            {
+                _isEnemyRound = true;
+            }
+
+            _enemiesMovableCells.Clear();
+            _enemiesAttackables.Clear();
+
             _currentIndex = 0;
             await ApplyNextEnemyBehaviour();
         }
 
         private void ShowAggroSources(LevelCellBase targetCell)
         {
-            if (_enemiesAttackables.Count > 0 && _enemiesAttackables.TryGetValue(targetCell, out var list))
+            if (!_isEnemyRound &&
+                _enemiesAttackables.Count > 0 && _enemiesAttackables.TryGetValue(targetCell, out var list))
             {
                 foreach (var line in _linesPool)
                 {
@@ -285,6 +298,11 @@ namespace IndAssets.Scripts.AI
         {
             _enemiesMovableCells.Clear();
             _enemiesAttackables.Clear();
+
+            if (_isEnemyRound)
+            {
+                return;
+            }
 
             foreach (var enemyThought in _orderedEnemyThoughts)
             {
