@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc8b1b2db60df8a4c90faa2bd011add0, type: 3}
-  m_Name: _VoidTurnViewEndEvent
+  m_Name: _BoolWhileAnimatingEvent
   m_EditorClassIdentifier: 
   internalEvent:
     m_PersistentCalls:

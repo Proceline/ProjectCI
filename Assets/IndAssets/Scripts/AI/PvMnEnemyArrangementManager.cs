@@ -249,9 +249,6 @@ namespace IndAssets.Scripts.AI
                 _isEnemyRound = true;
             }
 
-            _enemiesMovableCells.Clear();
-            _enemiesAttackables.Clear();
-
             _currentIndex = 0;
             await ApplyNextEnemyBehaviour();
         }
@@ -354,8 +351,8 @@ namespace IndAssets.Scripts.AI
 
             if (showingView)
             {
-                onEnemiesPreviewAggroShowed?.Invoke(_enemiesAttackables.Keys);
                 onEnemiesPreviewMoveShowed?.Invoke(_enemiesMovableCells);
+                onEnemiesPreviewAggroShowed?.Invoke(_enemiesAttackables.Keys);
             }
         }
 

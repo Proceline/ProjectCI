@@ -77,11 +77,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             _selectedUnitLastCell = _selectedUnit.GetCell();
 
+            raiserTurnLockerEvent.Raise(true);
             // Move target is Self
             if (standUnit)
             {
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
                 UpdatePlayerStateAfterRegularMove();
+                raiserTurnLockerEvent.Raise(false);
             }
             else if (_selectedUnit.ExecuteMovement(targetCell, OnPathDeterminedResponse, OnVisualMovementFinished))
             {
@@ -119,6 +121,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             ApplyAbilityToTargetCell(selectedCell, usingAbility);
         }
 
+        /// <summary>
+        /// Also used in AI Manager, to manually trigger ability application logic
+        /// </summary>
+        /// <param name="selectedCell"></param>
+        /// <param name="ability"></param>
+        /// <exception cref="NullReferenceException"></exception>
         public void ApplyAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
         {
             if (!_selectedUnit)
@@ -131,6 +139,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 throw new NullReferenceException("ERROR: No target unit!");
             }
+
+            raiserTurnLockerEvent.Raise(true);
 
             var commandResults = new Queue<CommandResult>();
             ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);

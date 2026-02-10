@@ -36,8 +36,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private PvSoLevelCellEvent raiserAggroEndedEvent;
 
+        /// <summary>
+        /// Binded to AI Manager's preview
+        /// </summary>
+        /// <param name="cells"></param>
         public void HighlightMovableCells(ICollection<LevelCellBase> cells) => HighlightTempCells(cells, CellState.eReadOnlyMove);
 
+        /// <summary>
+        /// Binded to AI Manager's preview, also can be used for Aggro Hint
+        /// </summary>
+        /// <param name="cells"></param>
         public void HighlightAggroCells(ICollection<LevelCellBase> cells) => HighlightTempCells(cells, CellState.eReadOnlyAggro);
 
         private void HighlightTempCells(ICollection<LevelCellBase> cells, CellState targetState)
@@ -47,22 +55,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if (cell && cell.IsVisible())
                 {
                     _temporaryStateCells.Add(cell);
-                    SetCellState(cell, targetState);
+                    SetCellState(cell, targetState, false);
                 }
             }
         }
 
-        private void SetCellState(LevelCellBase cell, CellState targetState)
+        private void SetCellState(LevelCellBase cell, CellState targetState, bool onTop = true)
         {
-            TacticBattleManager.SetCellState(cell, targetState);
-            cell.SetCellState(targetState);
-
             if (!_bufferedCellStates.TryGetValue(cell, out var stack))
             {
                 stack = new List<CellState>();
                 _bufferedCellStates.Add(cell, stack);
             }
-            stack.Add(targetState);
+
+            if (!onTop)
+            {
+                if (stack.Count == 0)
+                {
+                    TacticBattleManager.SetCellState(cell, targetState);
+                }
+                stack.Insert(0, targetState);
+            }
+            else
+            {
+                stack.Add(targetState);
+                TacticBattleManager.SetCellState(cell, targetState);
+            }
         }
 
         private void PopCellState(LevelCellBase cell, params CellState[] targetStates)
@@ -87,6 +105,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
+        /// <summary>
+        /// Binded in MonoController, when Aggro Disabled is required
+        /// </summary>
         public void ResetTemporaryStateCells()
         {
             foreach (LevelCellBase editedCell in _temporaryStateCells)

@@ -52,7 +52,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
 
         [Header("On Turn Support"), SerializeField]
-        private PvSoTurnViewEndEvent raiserTurnAnimationEndEvent;
+        private PvSoTurnViewEndEvent raiserTurnLockerEvent;
 
         [Header("State Support")]
 

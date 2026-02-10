@@ -91,7 +91,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  raiserTurnAnimationEndEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
+  raiserTurnLockerEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
   raiserOnStateChangedBeforeUEvent: {fileID: 11400000, guid: 280ad2952b1111848ba1cf6a14bfd886, type: 2}
   onStateChangedViewSupport:
     m_PersistentCalls:

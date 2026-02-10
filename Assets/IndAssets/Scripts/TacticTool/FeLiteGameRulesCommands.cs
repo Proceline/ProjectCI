@@ -91,7 +91,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
             }
 
-            raiserTurnAnimationEndEvent.Raise();
+            raiserTurnLockerEvent.Raise(false);
             ClearStateAndDeselectUnitCombo();
         }
 

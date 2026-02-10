@@ -35,6 +35,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnVisualMovementFinished()
         {
+            raiserTurnLockerEvent.Raise(false);
             if (!_selectedUnit) return;
             onGlobalMovementFinishedSupport.Invoke(_selectedUnit);
         }
