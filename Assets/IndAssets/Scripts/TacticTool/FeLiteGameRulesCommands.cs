@@ -96,17 +96,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         /// <summary>
-        /// 开始进行对峙,主要攻击角色将会对目标角色发起Ability
+        /// Use ability to attack/support a target only in logic level, 
+        /// this function will not apply any visual effect, 
+        /// it will only calculate the combat result and return a list of CommandResult to tell the view level what to do.
         /// </summary>
-        /// <param name="abilityOwner">发起进攻/辅助/行动的角色</param>
-        /// <param name="targetUnit">被标记的目标角色</param>
-        /// <param name="results"></param>
+        /// <param name="abilityOwner">Who will use this ability</param>
+        /// <param name="targetUnit">Who will receive the result</param>
+        /// <param name="results">Results of this behaviour</param>
         /// <returns></returns>
         private void HandleAbilityCombatingLogic(PvSoUnitAbility ability, PvMnBattleGeneralUnit abilityOwner, PvMnBattleGeneralUnit targetUnit,
             ref Queue<CommandResult> results)
         {
-            int abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
-            int targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
+            var abilitySpeed = abilityOwner.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
+            var targetAbilitySpeed = targetUnit.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
 
             var speedDifference = FormulaCollectionInstance.AttackSpeedDifference;
 
