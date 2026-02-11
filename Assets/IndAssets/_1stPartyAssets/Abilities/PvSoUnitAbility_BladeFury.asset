@@ -32,12 +32,14 @@ MonoBehaviour:
   isAutoFollowUpAllowed: 0
   isAbilityWeapon: 0
   isAppliedOnSelf: 0
+  isSupportAbility: 0
   dcAttribute:
     value: 10
   acAttribute:
     value: 11
   projectilePrefab: {fileID: 0}
   abilityAnimation: {fileID: 11400000, guid: 37e79c32640835a429e8a60ac1ac7f0b, type: 2}
+  abilityAnimationName: 2
   onUnitEnteredInCombating:
     m_PersistentCalls:
       m_Calls: []

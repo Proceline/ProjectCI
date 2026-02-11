@@ -1,10 +1,16 @@
-﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using System;
-using System.Collections.Generic;
+﻿using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities;
+using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
+using ProjectCI.TacticTool.Formula.Concrete;
+using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
+using UnityEditor.Playables;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -127,7 +133,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="selectedCell"></param>
         /// <param name="ability"></param>
         /// <exception cref="NullReferenceException"></exception>
-        public void ApplyAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
+        public async void ApplyAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
         {
             if (!_selectedUnit)
             {
@@ -142,18 +148,168 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             raiserTurnLockerEvent.Raise(true);
 
-            var commandResults = new Queue<CommandResult>();
             ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
 
-            RaiserOnCombatLogicPreEvent.Raise(_selectedUnit, ability, targetUnit, commandResults);
+            var queryList = CreateCombatingProcess(ability, _selectedUnit, targetUnit);
+            RaiserOnCombatingListCreatedEvent.Raise(_selectedUnit, targetUnit, queryList);
+            RaiserOnCombatingQueryEndEvent.Raise(_selectedUnit, targetUnit, queryList);
+
+            foreach (var queryItem in queryList)
             {
-                HandleAbilityCombatingLogic(ability, _selectedUnit, targetUnit, ref commandResults);
+                if (!queryItem.enabled)
+                {
+                    continue;
+                }
+
+                queryItem.Ability.HandleAbilityParam(queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands);
             }
-            RaiserOnCombatLogicPostEvent.Raise(_selectedUnit, ability, targetUnit, commandResults);
+
             RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
             ArchiveUnitBehaviourPoints(_selectedUnit);
 
-            HandleCommandResultsCoroutine(commandResults);
+            // Apply visual results of commands
+            foreach (var queryItem in queryList)
+            {
+                if (!queryItem.enabled)
+                {
+                    continue;
+                }
+
+                await ProcessVisualResults(queryItem);
+            }
+
+            PvAbilityQueryItem<PvMnBattleGeneralUnit>.ClearList(queryList);
+            raiserTurnLockerEvent.Raise(false);
+            ClearStateAndDeselectUnitCombo();
+        }
+
+        /// <summary>
+        /// Mock how action will affect target unit and owner unit
+        /// </summary>
+        /// <param name="selectedCell"></param>
+        /// <param name="ability"></param>
+        public Dictionary<GridPawnUnit, int> MockAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
+        {
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException("ERROR: No selected unit!");
+            }
+
+            var gridPawnUnit = selectedCell.GetUnitOnCell();
+            if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
+            {
+                throw new NullReferenceException("ERROR: No target unit!");
+            }
+
+            Dictionary<GridPawnUnit, int> allMockingDelta = new();
+
+            var triggerUnit = _selectedUnit;
+            var queryList = CreateCombatingProcess(ability, triggerUnit, targetUnit);
+            RaiserOnCombatingListCreatedEvent.Raise(triggerUnit, targetUnit, queryList);
+            RaiserOnCombatingQueryEndEvent.Raise(triggerUnit, targetUnit, queryList);
+
+            foreach (var queryItem in queryList)
+            {
+                if (!queryItem.enabled)
+                {
+                    continue;
+                }
+
+                var queryOwner = queryItem.holdingOwner;
+                var queryTarget = queryItem.targetUnit;
+                var queryAbility = queryItem.Ability;
+                List<LevelCellBase> effectedCells = queryAbility.GetEffectedCells(queryOwner, queryTarget.GetCell());
+                foreach (AbilityParamBase param in queryAbility.GetParameters())
+                {
+                    foreach (var cell in effectedCells)
+                    {
+                        if (!queryAbility.IsAppliedOnSelf && cell == queryOwner.GetCell())
+                        {
+                            continue;
+                        }
+
+                        var cellUnit = cell.GetUnitOnCell();
+
+                        if (cellUnit)
+                        {
+                            var result = param.MockValue(queryOwner, cellUnit, (uint)queryItem.queryOrderForm);
+
+                            if (allMockingDelta.TryGetValue(cellUnit, out var currentDelta))
+                            {
+                                allMockingDelta[cellUnit] = currentDelta + result;
+                            }
+                            else
+                            {
+                                allMockingDelta[cellUnit] = result;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return allMockingDelta;
+        }
+
+        private List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> CreateCombatingProcess(PvSoUnitAbility ability,
+            PvMnBattleGeneralUnit triggerUnit, PvMnBattleGeneralUnit targetUnit)
+        {
+            var queryList = PvAbilityQueryItem<PvMnBattleGeneralUnit>.CreateFirstItemList(_selectedUnit, targetUnit);
+            queryList[0].SetAbility(ability, ability.IsSupportAbility ? PvEnDamageForm.Support : PvEnDamageForm.Aggressive);
+
+            if (ability.IsFollowUpAllowed())
+            {
+                var triggerFollowUpItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>.CreateQueryItemIntoList(queryList);
+                triggerFollowUpItem.holdingOwner = triggerUnit;
+                triggerFollowUpItem.targetUnit = targetUnit;
+                triggerFollowUpItem.SetAbility(triggerUnit.FollowUpAbility, PvEnDamageForm.Aggressive);
+                triggerFollowUpItem.queryOrderForm |= PvEnDamageForm.FollowUp;
+            }
+
+            if (ability.IsCounterAllowed())
+            {
+                var counterAbility = targetUnit.CounterAbility;
+                List<LevelCellBase> targetAbilityCells = counterAbility.GetAbilityCells(targetUnit);
+                var bIsTargetAbilityAbleToCounter = targetAbilityCells.Count > 0 && targetAbilityCells.Contains(triggerUnit.GetCell());
+
+                if (bIsTargetAbilityAbleToCounter)
+                {
+                    var counterItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>.CreateQueryItemIntoList(queryList, 1);
+                    counterItem.holdingOwner = targetUnit;
+                    counterItem.targetUnit = triggerUnit;
+                    counterItem.SetAbility(targetUnit.CounterAbility, PvEnDamageForm.Aggressive);
+                    counterItem.queryOrderForm |= PvEnDamageForm.Counter;
+
+                    if (counterAbility.IsFollowUpAllowed())
+                    {
+                        var counterFollowUpItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>.CreateQueryItemIntoList(queryList);
+                        counterFollowUpItem.holdingOwner = targetUnit;
+                        counterFollowUpItem.targetUnit = triggerUnit;
+                        counterFollowUpItem.SetAbility(targetUnit.FollowUpAbility, PvEnDamageForm.Aggressive);
+                        counterFollowUpItem.queryOrderForm |= PvEnDamageForm.Counter | PvEnDamageForm.FollowUp;
+                    }
+                }
+            }
+
+            var abilitySpeed = triggerUnit.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
+            var targetSpeed = targetUnit.RuntimeAttributes.GetAttributeValue(FormulaCollectionInstance.AttackSpeedType);
+            var followUpDelta = FormulaCollectionInstance.AttackSpeedDifference;
+
+            foreach (var queryItem in queryList)
+            {
+                if (queryItem.holdingOwner == triggerUnit && queryItem.queryOrderForm.HasFlag(PvEnDamageForm.FollowUp))
+                {
+                    queryItem.enabled = abilitySpeed >= (targetSpeed + followUpDelta);
+                }
+                else if (queryItem.holdingOwner == targetUnit
+                    && queryItem.queryOrderForm.HasFlag(PvEnDamageForm.Counter)
+                    && queryItem.queryOrderForm.HasFlag(PvEnDamageForm.FollowUp))
+                {
+                    queryItem.enabled = targetSpeed >= (abilitySpeed + followUpDelta);
+                }
+            }
+
+            return queryList;
         }
 
         public void AssignAbilityToCurrentUnit(PvSoUnitAbility ability)

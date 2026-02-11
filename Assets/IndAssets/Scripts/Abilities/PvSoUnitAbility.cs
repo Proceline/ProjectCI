@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -23,13 +24,15 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private bool isFollowUpAllowed = true;
 
         [SerializeField]
-        private bool isAutoFollowUpAllowed = true;
-
-        [SerializeField]
         private bool isAbilityWeapon = true;
 
         [SerializeField]
         private bool isAppliedOnSelf = false;
+
+        [SerializeField]
+        private bool isSupportAbility = false;
+
+        public bool IsSupportAbility => isSupportAbility;
 
         [SerializeField] private AttributeType dcAttribute = 10;    // Accurate
         [SerializeField] private AttributeType acAttribute = 11;    // Dodge
@@ -40,8 +43,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField] 
         private PvMnProjectile projectilePrefab;
 
-        [HideInInspector]
-        public UnitAbilityAnimation abilityAnimation;
+        [SerializeField]
+        private AnimationPvCustomName abilityAnimationName;
 
         [Inject] 
         private static readonly ICombatingOnStartEvent XRaiserCombatingOnStarted;
@@ -50,6 +53,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private static readonly ICombatingTurnEndEvent OnLogicallyEndedInTurn;
         
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
+        public AnimationPvCustomName AnimationName => abilityAnimationName;
 
         [FormerlySerializedAs("onTriggerUnitEnteredInCombating")] 
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombating;
@@ -70,52 +74,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             return isAbilityWeapon;
         }
 
-        public virtual List<CombatingQueryContext> OnCombatingQueryListCreated(PvMnBattleGeneralUnit caster,
-            PvMnBattleGeneralUnit victim, bool casterSpeedExceed, bool victimSpeedExceed)
-        {
-            var targetCounterAbility = victim.CounterAbility;
-            
-            OnLogicallyEndedInTurn.RegisterCallback(OnCombatedTurnLogicallyEndedResponse);
-            onUnitEnteredInCombating.Invoke(caster);
-            targetCounterAbility.onUnitEnteredInCombatingAsTarget.Invoke(victim);
-            
-            // You can register on Combating status before this calculation
-            XRaiserCombatingOnStarted.Raise(caster, victim);
-            
-            var combatContextList = new List<CombatingQueryContext>
-            {
-                new() { IsCounter = false, QueryType = CombatingQueryType.FirstAttempt }
-            };
-
-            // Normally, only support abilities don't allow counter
-            if (!IsCounterAllowed())
-            {
-                return combatContextList;
-            }
-            List<LevelCellBase> targetAbilityCells = targetCounterAbility.GetAbilityCells(victim);
-            var bIsTargetAbilityAbleToCounter =
-                targetAbilityCells.Count > 0 && targetAbilityCells.Contains(caster.GetCell());
-
-            if (bIsTargetAbilityAbleToCounter)
-            {
-                combatContextList.Add(new CombatingQueryContext
-                    { IsCounter = true, QueryType = CombatingQueryType.FirstAttempt });
-            }
-
-            if (casterSpeedExceed && isAutoFollowUpAllowed)
-            {
-                combatContextList.Add(new CombatingQueryContext
-                    { IsCounter = false, QueryType = CombatingQueryType.AutoFollowUp });
-            }
-            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetCounterAbility.isAutoFollowUpAllowed)
-            {
-                combatContextList.Add(new CombatingQueryContext
-                    { IsCounter = true, QueryType = CombatingQueryType.AutoFollowUp });
-            }
-
-            return combatContextList;
-        }
-
         protected virtual void OnCombatedTurnLogicallyEndedResponse(PvMnBattleGeneralUnit caster,
             PvMnBattleGeneralUnit victim)
         {
@@ -128,52 +86,14 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public override void ApplyVisualEffects(GridPawnUnit inCasterUnit, LevelCellBase inEffectCell)
         {
             // GridObject targetObj = inEffectCell.GetObjectOnCell();
+            // TODO: Remove Debug.LogError after testing
+            Debug.LogError($"Applying visual effect of {name}");
             GridPawnUnit targetExecuteUnit = inEffectCell.GetUnitOnCell();
         
             if (targetExecuteUnit)
             {
                 targetExecuteUnit.LookAtCell(inCasterUnit.GetCell());
             }
-        
-            // TODO: Visual effects on caster, SUCH AS slash light
-            // foreach (AbilityParticle abilityParticle in m_SpawnOnCaster)
-            // {
-            //     Vector3 pos = inCasterUnit.GetCell().GetAllignPos(inCasterUnit);
-            //     AbilityParticle createdAbilityParticle = Instantiate(abilityParticle.gameObject, pos, inCasterUnit.transform.rotation).GetComponent<AbilityParticle>();
-            //     createdAbilityParticle.Setup(this, inCasterUnit, inEffectCell);
-            // }
-        
-            // TODO: Visual effects on target
-            // foreach (AbilityParticle abilityParticle in m_SpawnOnTarget)
-            // {
-            //     Vector3 pos = inEffectCell.gameObject.transform.position;
-            //
-            //     if (targetObj)
-            //     {
-            //         pos = inEffectCell.GetAllignPos(targetObj);
-            //     }
-            //
-            //     AbilityParticle createdAbilityParticle = Instantiate(abilityParticle.gameObject, pos, inEffectCell.transform.rotation).GetComponent<AbilityParticle>();
-            //     createdAbilityParticle.Setup(this, inCasterUnit, inEffectCell);
-            // }
-        
-            // TODO: Should be handled as visual effects
-            // foreach (StatusEffect ailment in m_Ailments)
-            // {
-            //     if (ailment)
-            //     {
-            //         if (targetExecuteUnit)
-            //         {
-            //             targetExecuteUnit.GetAilmentContainer().AddStatusEffect(inCasterUnit, ailment);
-            //         }
-            //
-            //         CellStatusEffect cellStatusEffect = ailment as CellStatusEffect;
-            //         if (cellStatusEffect)
-            //         {
-            //             inEffectCell.GetAilmentContainer().AddStatusEffect(inCasterUnit, cellStatusEffect, inEffectCell);
-            //         }
-            //     }
-            // }
         }
     }
 }

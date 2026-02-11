@@ -1,17 +1,20 @@
-using IndAssets.Scripts.Events;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
-using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.Utilities.Runtime.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace IndAssets.Scripts.Passives
 {
+    using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
+
+    /// <summary>
+    /// Sample passive of ESFP
+    /// Encourages the owner to be in the middle of the battle by applying support ability on adjacent friendly units when doing follow-up attacks.
+    /// </summary>
     [CreateAssetMenu(fileName = "PvSoPassiveFollowAoe", menuName = "ProjectCI Passives/PvSoPassiveFollowAoe", order = 1)]
     public class PvSoPassiveFollowAoe : PvSoPassiveIndividual
     {
@@ -23,30 +26,16 @@ namespace IndAssets.Scripts.Passives
 
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            var info = new CombatingQueryContext
-            {
-                IsCounter = false,
-                QueryType = CombatingQueryType.ReplacedFollowUp
-            };
-
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpToAoe);
-            unit.RegisterQueryApply(info, ApplySupportOnNeighbors);
         }
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            var info = new CombatingQueryContext
-            {
-                IsCounter = false,
-                QueryType = CombatingQueryType.ReplacedFollowUp
-            };
-
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpToAoe);
-            unit.UnregisterQueryApply(info);
         }
 
         private void AdjustFollowUpToAoe(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
-            List<CombatingQueryContext> queryContexts)
+            List<QueryItem> queryItems)
         {
             if (!IsOwner(inUnit.ID))
             {
@@ -68,28 +57,20 @@ namespace IndAssets.Scripts.Passives
                 return;
             }
 
-            var followUpIndex = queryContexts.FindIndex(query => query.QueryType == CombatingQueryType.AutoFollowUp);
-            if (followUpIndex < 0)
+            var followUpIndex = queryItems.FindIndex
+                (query => query.queryOrderForm.HasFlag(PvEnDamageForm.FollowUp)
+                && !query.queryOrderForm.HasFlag(PvEnDamageForm.Counter));
+
+            if (followUpIndex < 0 || !queryItems[followUpIndex].enabled || inUnit.IsDead())
             {
                 return;
             }
 
-            var replacedQuery = queryContexts[followUpIndex];
-            replacedQuery.QueryType = CombatingQueryType.ReplacedFollowUp;
-            queryContexts[followUpIndex] = replacedQuery;
-        }
-
-        private void ApplySupportOnNeighbors(PvMnBattleGeneralUnit fromUnit, PvMnBattleGeneralUnit toUnit,
-            Queue<CommandResult> commands)
-        {
-            if (fromUnit.IsDead())
+            var queryItem = queryItems[followUpIndex];
+            queryItem.SetAbility(followUpAbility, PvEnDamageForm.Aggressive);
+            if (targetToSelf)
             {
-                return;
-            }
-
-            foreach (var param in followUpAbility.GetParameters())
-            {
-                followUpAbility.HandleAbilityParam(fromUnit, targetToSelf ? fromUnit : toUnit, commands);
+                queryItem.targetUnit = inUnit;
             }
         }
     }

@@ -7,7 +7,6 @@ using IndAssets.Scripts.Passives.Status;
 using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Concrete;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
@@ -60,7 +59,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void SetFormulaCollection()
         {
             RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection, this);
-            SimulatedAttributes = new FormulaAttributeContainer(FormulaCollection, this);
         }
 
         public override void GenerateNewID()
@@ -138,36 +136,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void PlayMovementAnimation()
         {
             _animationManager.PlayLoopAnimation(AnimationIndexName.Run);
-        }
-
-        public override void BroadcastActionTriggerByTag(string actionTagName)
-        {
-            if (!_animationManager) return;
-            _animationManager.ForcePlayAnimation(actionTagName);
-        }
-
-        public override float GrabActionValueDataByIndexTag(int additionalIndex, params string[] tags)
-        {
-            if (tags == null) return 0;
-            if (!_animationManager || tags.Length < 1) return 0;
-            if (tags.Length > 1)
-            {
-                switch (tags[1])
-                {
-                    case PvSoPresetAnimationClipExt.AnimationLengthTag:
-                        return _animationManager.GetPresetAnimationDuration(tags[0]);
-                }
-            }
-            else
-            {
-                var breakPoints = _animationManager.GetPresetAnimationBreakPoints(tags[0]);
-                if (breakPoints.Length > additionalIndex)
-                {
-                    return breakPoints[additionalIndex];
-                }
-            }
-
-            return 0;
         }
 
         public void SetupAttackAbility(PvSoUnitAbility ability)

@@ -15,10 +15,9 @@ MonoBehaviour:
   passiveTiming: 1
   passiveName: '[WeaknessPierce]'
   description: 
-  physDamageType: 2
-  magcDamageType: 8
+  physicAbility: {fileID: 11400000, guid: 204f53a3171e774439ab66aebd526cd8, type: 2}
+  magicAbility: {fileID: 11400000, guid: 1e0918ad16dfaf346b0b990b0df7f388, type: 2}
   physResistAttribute:
     value: 27
   magcResistAttribute:
     value: 28
-  extraDamage: 10

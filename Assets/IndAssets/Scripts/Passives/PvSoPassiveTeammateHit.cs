@@ -1,6 +1,4 @@
-using ProjectCI.CoreSystem.DependencyInjection;
-using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
@@ -8,78 +6,64 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
-using ProjectCI.Utilities.Runtime.Events;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace IndAssets.Scripts.Passives
 {
-    [StaticInjectableTarget]
+    using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
+
     [CreateAssetMenu(fileName = "ENTJ_Commander", menuName = "ProjectCI Passives/MBTI/ENTJ_Commander", order = 1)]
     public class PvSoPassiveTeammateHit : PvSoPassiveIndividual
     {
-        [Inject] private static IUnitCombatLogicPreEvent _logicPreStartedEvent;
-        //[Inject] private static IUnitCombatLogicFinishedEvent _logicFinishedEvent;
-        [SerializeField] private PvSoUnitAbility followUpNormalAttack;
-
         private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
         private static FormulaCollection FormulaColInstance => FormulaService.Service;
-        
+
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            Debug.Log($"Initialize Passive <{name}> to {unit.name}");
-            if (OwnerCount == 1)
-            {
-                _logicPreStartedEvent.RegisterCallback(AskTeammateToFollow);
-            }
+            PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpCondition);
         }
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            if (OwnerCount == 1)
-            {
-                _logicPreStartedEvent.UnregisterCallback(AskTeammateToFollow);
-            }
+            PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpCondition);
         }
 
-        private void AskTeammateToFollow(IEventOwner eventOwner, UnitAndAbilityEventParam usingParam)
+        private void AdjustFollowUpCondition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
         {
-            if (!IsOwner(eventOwner.EventIdentifier) || eventOwner.EventIdentifier != usingParam.unit.EventIdentifier)
+            if (!IsOwner(inUnit.ID))
             {
                 return;
             }
 
-            var ownerUnit = usingParam.unit;
-            var target = usingParam.target;
-            var attribute = FormulaColInstance.AttackSpeedType;
-            var ownerSpeed = ownerUnit.RuntimeAttributes.GetAttributeValue(attribute);
-            var targetSpeed = target.RuntimeAttributes.GetAttributeValue(attribute);
+            var followUpIndex = queryItems.FindIndex
+                (query => query.queryOrderForm.HasFlag(PvEnDamageForm.FollowUp)
+                && !query.queryOrderForm.HasFlag(PvEnDamageForm.Counter));
 
-            if (ownerSpeed < targetSpeed + FormulaColInstance.AttackSpeedDifference) return;
+            if (followUpIndex < 0 || !queryItems[followUpIndex].enabled || inUnit.IsDead())
+            {
+                return;
+            }
 
-            var targetCell = target.GetCell();
+            var targetCell = inTarget.GetCell();
             GridPawnUnit determinedUnit = null;
+            var speedAttribute = FormulaColInstance.AttackSpeedType;
 
             foreach (var cell in targetCell.GetAllAdjacentCells())
             {
                 var cellUnit = cell.GetUnitOnCell();
                 if (!cellUnit) continue;
-                if (TacticBattleManager.GetTeamAffinity(ownerUnit.GetTeam(), cellUnit.GetTeam()) ==
-                    BattleTeam.Friendly && ownerUnit != cellUnit)
+                if (TacticBattleManager.GetTeamAffinity(inUnit.GetTeam(), cellUnit.GetTeam()) ==
+                    BattleTeam.Friendly && inUnit != cellUnit)
                 {
-                    var unitType = cellUnit.RuntimeAttributes.GetAttributeValue(FormulaColInstance.UnitTypeAttribute);
-                    if (unitType == (int)UnitTypeValue.Ranged)
-                    {
-                        continue;
-                    }
-
                     if (!determinedUnit)
                     {
                         determinedUnit = cellUnit;
                     }
                     else
                     {
-                        var determinedSpeed = determinedUnit.RuntimeAttributes.GetAttributeValue(attribute);
-                        var currentSpeed = cellUnit.RuntimeAttributes.GetAttributeValue(attribute);
+                        var determinedSpeed = determinedUnit.RuntimeAttributes.GetAttributeValue(speedAttribute);
+                        var currentSpeed = cellUnit.RuntimeAttributes.GetAttributeValue(speedAttribute);
                         if (currentSpeed > determinedSpeed)
                         {
                             determinedUnit = cellUnit;
@@ -90,7 +74,11 @@ namespace IndAssets.Scripts.Passives
 
             if (determinedUnit)
             {
-                followUpNormalAttack.HandleAbilityParam(determinedUnit, target, usingParam.ResultsReference);
+                var queryItem = QueryItem.CreateQueryItemIntoList(queryItems, 0);
+                var castedUnit = determinedUnit as PvMnBattleGeneralUnit;
+                queryItem.SetAbility(castedUnit.FollowUpAbility, PvEnDamageForm.Aggressive);
+                queryItem.holdingOwner = castedUnit;
+                queryItem.targetUnit = inTarget;
             }
         }
     }

@@ -23,6 +23,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 900f189504bcc3544a77dde1be45f9ca, type: 2}
   - {fileID: 11400000, guid: 96e87934a5feed94bafdfa0305e462c4, type: 2}
   - {fileID: 11400000, guid: 15f4a455953cd2142ad1458d7c19bf34, type: 2}
+  - {fileID: 11400000, guid: 204f53a3171e774439ab66aebd526cd8, type: 2}
+  - {fileID: 11400000, guid: 1e0918ad16dfaf346b0b990b0df7f388, type: 2}
   layerMasksRuleList:
   - serializedVersion: 2
     m_Bits: 64

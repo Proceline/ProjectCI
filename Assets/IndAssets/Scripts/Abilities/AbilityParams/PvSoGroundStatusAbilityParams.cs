@@ -30,5 +30,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             };
             results.Enqueue(groundStatusCommand);
         }
+
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)
+        {
+            // Empty;
+            return 0;
+        }
     }
 }

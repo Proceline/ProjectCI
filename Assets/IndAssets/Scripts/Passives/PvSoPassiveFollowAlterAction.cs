@@ -1,24 +1,27 @@
 using IndAssets.Scripts.Abilities;
-using IndAssets.Scripts.Events;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.Utilities.Runtime.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace IndAssets.Scripts.Passives
 {
+    using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
+
+    /// <summary>
+    /// Represents a passive action for INTP-type units that alters follow-up combat behavior by applying additional
+    /// damage based on physical and magical resistance attributes.
+    /// </summary>
     [CreateAssetMenu(fileName = "PvSoPassiveFollowAlterAction", menuName = "ProjectCI Passives/MBTI/INTP", order = 1)]
     public class PvSoPassiveFollowAlterAction : PvSoPassiveIndividual
     {
         [SerializeField]
-        PvEnDamageType physDamageType;
+        private PvSoUnitAbility physicAbility;
 
         [SerializeField]
-        PvEnDamageType magcDamageType;
+        private PvSoUnitAbility magicAbility;
 
         [SerializeField]
         private AttributeType physResistAttribute;
@@ -26,38 +29,19 @@ namespace IndAssets.Scripts.Passives
         [SerializeField]
         private AttributeType magcResistAttribute;
 
-        [SerializeField]
-        private int extraDamage;
-
-        private CombatingQueryContext _additionalMark = new CombatingQueryContext
-        {
-            IsCounter = false,
-            QueryType = CombatingQueryType.Additional
-        };
-
-        private readonly Dictionary<string, (PvEnDamageType, int)> _chosenDamage = new();
-
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpWithAddition);
-            unit.RegisterQueryApply(_additionalMark, ApplyAdditionalOnVictim, true);
         }
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpWithAddition);
-            unit.UnregisterQueryApply(_additionalMark, ApplyAdditionalOnVictim);
         }
 
-        private void AdjustFollowUpWithAddition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
-            List<CombatingQueryContext> queryContexts)
+        private void AdjustFollowUpWithAddition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
         {
             if (!IsOwner(inUnit.ID))
-            {
-                return;
-            }
-
-            if (inTarget.IsDead())
             {
                 return;
             }
@@ -65,39 +49,20 @@ namespace IndAssets.Scripts.Passives
             var physResist = inTarget.RuntimeAttributes.GetAttributeValue(physResistAttribute);
             var magcResist = inTarget.RuntimeAttributes.GetAttributeValue(magcResistAttribute);
 
-            var possiblePhysDamage = extraDamage - physResist;
-            var possibleMagcDamage = extraDamage - magcResist;
+            var followUpIndex = queryItems.FindIndex
+                (query => query.queryOrderForm.HasFlag(PvEnDamageForm.FollowUp)
+                && !query.queryOrderForm.HasFlag(PvEnDamageForm.Counter));
 
-            var finalChoice = possiblePhysDamage >= possibleMagcDamage? physDamageType : magcDamageType;
-            var possibleDamage = finalChoice == physDamageType ? possiblePhysDamage : possibleMagcDamage;
-            var finalExtraDamage = extraDamage;
-            if (possibleDamage <= 0)
-            {
-                finalExtraDamage = 1 + (physResist > magcResist ? physResist : magcResist);
-            }
-
-            var followUpIndex = queryContexts.FindIndex(query => query.QueryType == CombatingQueryType.AutoFollowUp);
-            if (followUpIndex < 0)
+            if (followUpIndex < 0 || !queryItems[followUpIndex].enabled || inUnit.IsDead())
             {
                 return;
             }
 
             var insertAt = followUpIndex + 1;
-            var addQuery = queryContexts[followUpIndex];
-            addQuery.QueryType = CombatingQueryType.Additional;
-            queryContexts.Insert(insertAt, addQuery);
-            _chosenDamage.Add(inUnit.ID, (finalChoice, finalExtraDamage));
-        }
-
-        private void ApplyAdditionalOnVictim(PvMnBattleGeneralUnit fromUnit, PvMnBattleGeneralUnit toUnit, Queue<CommandResult> commands)
-        {
-            if (!_chosenDamage.TryGetValue(fromUnit.ID, out var chosenDamagePair))
-            {
-                chosenDamagePair = (PvEnDamageType.None, extraDamage);
-            }
-
-            PvSoDirectDamageAbilityParams.Execute(fromUnit, toUnit, commands, chosenDamagePair.Item2, false, chosenDamagePair.Item1);
-            _chosenDamage.Remove(fromUnit.ID);
+            var queryItem = QueryItem.CreateQueryItemIntoList(queryItems, insertAt);
+            queryItem.holdingOwner = inUnit;
+            queryItem.targetUnit = inTarget;
+            queryItem.SetAbility(physResist > magcResist ? magicAbility : physicAbility, PvEnDamageForm.Aggressive);
         }
     }
 }
