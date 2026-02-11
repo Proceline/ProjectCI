@@ -7,7 +7,6 @@ using IndAssets.Scripts.Passives.Status;
 using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Concrete;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;

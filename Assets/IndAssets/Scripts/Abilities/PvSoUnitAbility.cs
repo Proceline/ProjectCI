@@ -24,9 +24,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private bool isFollowUpAllowed = true;
 
         [SerializeField]
-        private bool isAutoFollowUpAllowed = true;
-
-        [SerializeField]
         private bool isAbilityWeapon = true;
 
         [SerializeField]
