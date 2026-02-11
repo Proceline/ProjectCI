@@ -250,5 +250,26 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             results.Enqueue(dieCommand);
 
         }
+
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)
+        {
+            var toContainer = targetUnit.RuntimeAttributes;
+            var fromContainer = fromUnit.RuntimeAttributes;
+
+            var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
+            var deltaDamage = Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
+
+            var finalDeltaDamage = deltaDamage;
+            if (targetUnit is IEventOwner damageReceiver)
+            {
+                finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
+            }
+
+            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, damageForm);
+            var translatedDamageForm = (PvEnDamageForm)damageForm;
+            var deltaValue = translatedDamageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
+
+            return deltaValue;
+        }
     }
 }

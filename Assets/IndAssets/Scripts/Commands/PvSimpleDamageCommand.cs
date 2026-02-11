@@ -7,7 +7,7 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     /// <summary>
     /// The result of a command execution, can be sent to frontend for animation.
     /// </summary>
-    public class PvSimpleDamageCommand : PvConcreteCommand
+    public class PvSimpleDamageCommand : CommandResult
     {
         public int BeforeValue;
         public int AfterValue;
@@ -26,6 +26,11 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
                 FeLiteGameRules.XRaiserSimpleDamageApplyEvent.Raise(BeforeValue, AfterValue, Value, fromUnit,
                     toUnit, DamageType, ExtraInfo);
             }
+        }
+
+        public override void ClearCommand()
+        {
+            // Empty
         }
     }
 } 

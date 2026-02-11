@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4290c076828f27045a3305d91868b179, type: 3}
+  m_Name: PvSoDirectDamageParams_MagLite
+  m_EditorClassIdentifier: 
+  attackerAttribute:
+    value: 13
+  defenderAttribute:
+    value: 31
+  damageType: 3
+  criticalAmountAttribute:
+    value: 31
+  useDynamicAddon: 0
+  dynamicAmountDependency:
+    value: 3
+  damageForm: 9
+  basicAddon: 10
+  isCriticalEnabledByDefault: 0
+  isAlwaysHitByDefault: 0
+  raiserNotifyDamageBeforeRev: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}

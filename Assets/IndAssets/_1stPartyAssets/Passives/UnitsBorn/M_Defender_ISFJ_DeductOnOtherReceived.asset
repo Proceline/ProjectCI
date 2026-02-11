@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e642cb3fe22ef1d44adad2486e118118, type: 3}
-  m_Name: Protagonist_ISFJ_DeductOnOtherReceived
+  m_Name: M_Defender_ISFJ_DeductOnOtherReceived
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Passives.PvSoOnOthersDamageModifier
   passiveTiming: 1
   passiveName: '[Sacrifice]'
   description: 
   onNotifyDamageBeforeRevEvent: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}
-  onLogicFinishedEvent: {fileID: 11400000, guid: 6ea0b33e67c6b164e97df2f7752b3d94, type: 2}
   raiserSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
   finalDamageValue: 1
   involvedTeam: 1
+  damageParams: {fileID: 11400000, guid: b4484253e2d462c4188c6630325adfc2, type: 2}
+  pureDamageAbility: {fileID: 11400000, guid: 204f53a3171e774439ab66aebd526cd8, type: 2}

@@ -1,4 +1,5 @@
 using IndAssets.Scripts.Abilities;
+using IndAssets.Scripts.Passives;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
@@ -11,7 +12,8 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
-    
+    using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
+
     [CreateAssetMenu(fileName = "PvSoOnOthersDamageModifier", menuName = "ProjectCI Passives/PvSoOnOthersDamageModifier", order = 1)]
     public class PvSoOnOthersDamageModifier : PvSoPassiveIndividual
     {
@@ -19,16 +21,10 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private PvSoNotifyDamageBeforeRevEvent onNotifyDamageBeforeRevEvent;
 
         [SerializeField]
-        private PvSoUnitAndAbilityEvent onLogicFinishedEvent;
-
-        [SerializeField]
         private PvSoSimpleDamageApplyEvent raiserSimpleDamageApplyEvent;
 
         [SerializeField]
         private int finalDamageValue;
-
-        [SerializeField]
-        private BattleTeam involvedTeam;
 
         [NonSerialized]
         private bool _isInstalled;
@@ -36,15 +32,19 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         [NonSerialized]
         private readonly List<PvMnBattleGeneralUnit> _ownersList = new();
 
-        [NonSerialized]
-        private readonly Queue<(GridPawnUnit, GridPawnUnit, int)> _pendingQuotes = new();
+        [SerializeField]
+        private PvSoDirectDamageAbilityParams damageParams;
+
+        [SerializeField]
+        private PvSoUnitAbility pureDamageAbility;
 
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
+            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.RegisterCallback(AdjustAfterReceivedDamage);
+
             if (!_isInstalled)
             {
                 onNotifyDamageBeforeRevEvent.RegisterPostCallback(ModifyValueForOwner);
-                onLogicFinishedEvent.RegisterCallback(AddLoadedHoldingDamage);
             }
 
             _isInstalled = true;
@@ -53,14 +53,28 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
+            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.UnregisterCallback(AdjustAfterReceivedDamage);
+
             if (_isInstalled && OwnerCount == 1)
             {
                 onNotifyDamageBeforeRevEvent.UnregisterPostCallback(ModifyValueForOwner);
-                onLogicFinishedEvent.UnregisterCallback(AddLoadedHoldingDamage);
                 _isInstalled = false;
             }
 
             _ownersList.Remove(unit);
+        }
+
+        private void AdjustAfterReceivedDamage(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
+        {
+            foreach (var owner in _ownersList)
+            {
+                var queryItem = QueryItem.CreateQueryItemIntoList(queryItems);
+                queryItem.enabled = false;
+                queryItem.SetAbility(pureDamageAbility, PvEnDamageForm.Aggressive);
+                queryItem.queryOrderForm |= PvEnDamageForm.Additional;
+                queryItem.holdingOwner = owner;
+                queryItem.targetUnit = owner;
+            }
         }
 
         private void ModifyValueForOwner(int[] allocatedValues, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
@@ -83,7 +97,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
                 if (distance == 1)
                 {
                     var teamRelation = TacticBattleManager.GetTeamAffinity(passiveOwner.GetTeam(), receiver.GetTeam());
-                    if (teamRelation == involvedTeam)
+                    if (teamRelation == BattleTeam.Friendly)
                     {
                         var health = passiveOwner.RuntimeAttributes.Health;
                         if (health.CurrentValue >= health.MaxValue)
@@ -108,25 +122,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
 
             var delta = originalValue - finalDamageValue;
-            _pendingQuotes.Enqueue((determinedOwner, triggerOwner, delta));
             allocatedValues[0] = finalDamageValue;
-        }
-
-        private void AddLoadedHoldingDamage(IEventOwner eventOwner, UnitAndAbilityEventParam usingParam)
-        {
-            while (_pendingQuotes.TryDequeue(out var quote))
-            {
-                var (pendingOwner, assultant, delta) = quote;
-                if (pendingOwner)
-                {
-                    if (pendingOwner.IsDead())
-                    {
-                        continue;
-                    }
-
-                    PvSoDirectDamageAbilityParams.Execute(assultant, pendingOwner, usingParam.ResultsReference, delta, false, PvEnDamageType.None);
-                }
-            }
         }
     }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81035d9d7150c3d4798ef242541ddc34, type: 3}
-  m_Name: Protagonist_ESFP_WaltzAoeOnFollowUp
+  m_Name: M_Entertainer_ESFP_WaltzAoeOnFollowUp
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Passives.PvSoPassiveFollowAoe
   passiveTiming: 1
   passiveName: '[WaltzAttack]'

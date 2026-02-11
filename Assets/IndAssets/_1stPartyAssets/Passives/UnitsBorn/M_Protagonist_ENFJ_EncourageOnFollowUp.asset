@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df6f4ada300f26844aa31f11870f161d, type: 3}
-  m_Name: ExtraAttack_General
-  m_EditorClassIdentifier: 
+  m_Script: {fileID: 11500000, guid: e5911b424108fa849af6cd95d1a0a1f3, type: 3}
+  m_Name: M_Protagonist_ENFJ_EncourageOnFollowUp
+  m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Passives.PvSoPassiveFollowEncourage
   passiveTiming: 1
+  passiveName: '[Encourage]'
+  description: 

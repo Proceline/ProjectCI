@@ -100,6 +100,33 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             }
         }
 
+        public static void SimulateAbilityParam(this PvSoUnitAbility ability, GridPawnUnit caster, GridPawnUnit mainTarget, Queue<CommandResult> results)
+        {
+            if (caster.IsDead())
+            {
+                return;
+            }
+
+            var resultId = Guid.NewGuid().ToString();
+            var fromContainer = caster.RuntimeAttributes;
+
+            List<LevelCellBase> effectedCells = ability.GetEffectedCells(caster, mainTarget.GetCell());
+            foreach (AbilityParamBase param in ability.GetParameters())
+            {
+                foreach (var cell in effectedCells)
+                {
+                    if (!ability.IsAppliedOnSelf && cell == caster.GetCell())
+                    {
+                        continue;
+                    }
+
+                    var cellUnit = cell.GetUnitOnCell();
+                    int delta = 0;
+                    param.Execute(resultId, ability, caster, mainTarget, cell, results, delta);
+                }
+            }
+        }
+
         private static async Awaitable ApplyProjectile(PvMnProjectile projectile, Vector3 departure, Vector3 dest)
         {
             projectile.Initialize(departure, dest);

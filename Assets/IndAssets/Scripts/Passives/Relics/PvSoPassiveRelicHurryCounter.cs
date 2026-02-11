@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -30,7 +30,7 @@ namespace IndAssets.Scripts.Passives.Relics
         }
 
         protected virtual void ReorderCombatingList(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
-            List<CombatingQueryContext> queryContexts)
+            List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> queryItems)
         {
             if (!IsResponsiveOwner(inUnit, inTarget))
             {
@@ -42,7 +42,7 @@ namespace IndAssets.Scripts.Passives.Relics
 
             if (IsAttributeCheckPassed(casterSpeed, victimSpeed))
             {
-                AdjustQueryList(queryContexts);
+                AdjustQueryList(queryItems);
             }
         }
 
@@ -57,18 +57,21 @@ namespace IndAssets.Scripts.Passives.Relics
             return delta >= triggerDeltaValue;
         }
 
-        protected virtual void AdjustQueryList(List<CombatingQueryContext> contextQueryList)
+        private void AdjustQueryList(List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> queryItems)
         {
-            var index = contextQueryList.FindIndex(query =>
-                query is { IsCounter: true, QueryType: CombatingQueryType.FirstAttempt });
-            if (index <= 0)
+            var index = queryItems.FindIndex(query =>
+            {
+                return query.queryOrderForm.HasFlag(PvEnDamageForm.Counter);
+            });
+
+            if (index <= 0 || !queryItems[index].enabled)
             {
                 return;
             }
 
-            var firstCounterQuery = contextQueryList[index];
-            contextQueryList.RemoveAt(index);
-            contextQueryList.Insert(0, firstCounterQuery);
+            var firstCounterQuery = queryItems[index];
+            queryItems.RemoveAt(index);
+            queryItems.Insert(0, firstCounterQuery);
         }
     }
 }

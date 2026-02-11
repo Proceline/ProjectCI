@@ -25,6 +25,9 @@ namespace IndAssets.Scripts.Abilities
         Physical = 1 << 2,
         Magical = 1 << 3,
         Melee = 1 << 4,
-        Ranged = 1 << 5
+        Ranged = 1 << 5,
+        FollowUp = 1 << 6,
+        Counter = 1 << 7,
+        Additional = 1 << 8
     }
 }

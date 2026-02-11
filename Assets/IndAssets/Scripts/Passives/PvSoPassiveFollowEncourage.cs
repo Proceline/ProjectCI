@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using IndAssets.Scripts.Events;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
-using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
@@ -12,66 +10,58 @@ using UnityEngine;
 
 namespace IndAssets.Scripts.Passives
 {
+    using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
+
+    /// <summary>
+    /// This is the passive for ENFJ Protagonist.
+    /// This passive will apply support ability on a friendly adjacent unit when the owner is doing a follow-up attack.
+    /// </summary>
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "Protagonist Passive", menuName = "ProjectCI Passives/MBTI/Protagonist_ENFJ", order = 1)]
     public class PvSoPassiveFollowEncourage : PvSoPassiveIndividual
     {
         [Inject] internal static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
-        
+        [Inject] internal static readonly IUnitCombatingQueryEndEvent OnCombatingListFinishedEvent;
+
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            var info = new CombatingQueryContext
-            {
-                IsCounter = false,
-                QueryType = CombatingQueryType.ReplacedFollowUp
-            };
-            
             OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpCondition);
-            unit.RegisterQueryApply(info, ApplySupportOnNeighbors);
         }
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            var info = new CombatingQueryContext
-            {
-                IsCounter = false,
-                QueryType = CombatingQueryType.ReplacedFollowUp
-            };
-            
             OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpCondition);
-            unit.UnregisterQueryApply(info);
         }
         
-        private void AdjustFollowUpCondition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
-            List<CombatingQueryContext> queryContexts)
+        private void AdjustFollowUpCondition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
         {
             if (!IsOwner(inUnit.ID))
             {
                 return;
             }
 
-            var followUpIndex = queryContexts.FindIndex(query => query.QueryType == CombatingQueryType.AutoFollowUp);
-            if (followUpIndex < 0)
+            var followUpIndex = queryItems.FindIndex
+                (query => query.queryOrderForm.HasFlag(PvEnDamageForm.FollowUp) 
+                && !query.queryOrderForm.HasFlag(PvEnDamageForm.Counter));
+
+            if (followUpIndex < 0 || !queryItems[followUpIndex].enabled || inUnit.IsDead())
             {
                 return;
             }
-            
-            var replacedQuery = queryContexts[followUpIndex];
-            replacedQuery.QueryType = CombatingQueryType.ReplacedFollowUp;
-            queryContexts[followUpIndex] = replacedQuery;
+
+            var queryItem = QueryItem.CreateQueryItemIntoList(queryItems, 0);
+            queryItem.SetAbility(inUnit.SupportAbility, PvEnDamageForm.Support);
+            queryItem.holdingOwner = inUnit;
+            if (!ApplySupportOnNeighbors(inUnit, queryItem))
+            {
+                queryItem.enabled = false;
+            }
         }
 
-        private void ApplySupportOnNeighbors(PvMnBattleGeneralUnit fromUnit, PvMnBattleGeneralUnit toUnit,
-            Queue<CommandResult> commands)
+        private bool ApplySupportOnNeighbors(PvMnBattleGeneralUnit fromUnit, QueryItem queryItem)
         {
-            if (fromUnit.IsDead())
-            {
-                return;
-            }
+            queryItem.SetAbility(fromUnit.SupportAbility, PvEnDamageForm.Support);
 
-            var ability = fromUnit.SupportAbility;
-
-            var resultId = Guid.NewGuid().ToString();
             var effectedCells = fromUnit.GetCell().GetAllAdjacentCells();
             var firstFriendCell = effectedCells.Find(cell =>
             {
@@ -83,21 +73,13 @@ namespace IndAssets.Scripts.Passives
 
             if (!firstFriendCell)
             {
-                return;
+                return false;
             }
 
-            foreach (var param in ability.GetParameters())
-            {
-                var cellUnit = firstFriendCell.GetUnitOnCell();
-                if (cellUnit)
-                {
-                    if (TacticBattleManager.GetTeamAffinity(fromUnit.GetTeam(), cellUnit.GetTeam()) ==
-                        BattleTeam.Friendly && fromUnit != cellUnit)
-                    {
-                        param.Execute(resultId, ability, fromUnit, cellUnit, firstFriendCell, commands, 0);
-                    }
-                }
-            }
+            queryItem.targetUnit = firstFriendCell.GetUnitOnCell() as PvMnBattleGeneralUnit;
+            queryItem.enabled = true;
+
+            return true;
         }
     }
 }
