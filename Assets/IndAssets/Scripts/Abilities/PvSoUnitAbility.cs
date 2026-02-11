@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -45,8 +46,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField] 
         private PvMnProjectile projectilePrefab;
 
-        [HideInInspector]
-        public UnitAbilityAnimation abilityAnimation;
+        [SerializeField]
+        private AnimationPvCustomName abilityAnimationName;
 
         [Inject] 
         private static readonly ICombatingOnStartEvent XRaiserCombatingOnStarted;
@@ -55,6 +56,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private static readonly ICombatingTurnEndEvent OnLogicallyEndedInTurn;
         
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
+        public AnimationPvCustomName AnimationName => abilityAnimationName;
 
         [FormerlySerializedAs("onTriggerUnitEnteredInCombating")] 
         [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombating;

@@ -55,6 +55,15 @@ MonoBehaviour:
   - serviceTypeName: IndAssets.Scripts.Managers.PvSoWeaponAndRelicCollection, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: a4e86cc0b9238324cbcdc6209321b9e2, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.PvSoAnimationTriggerEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: ea836533004d6964b83b9eb959ca790e, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IAnimationOutLengthFunc,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: a29988203f5002447a2ccdea57565da4, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IAnimationOutBreakPointFunc,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: a4cf2f0f2eadb8d458dc57e9698a7d80, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

@@ -2,6 +2,8 @@
 using IndAssets.Scripts.Commands;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -82,7 +84,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             await UnitAbilityCoreExtensions.WaitUntilLockReleased(casterUnit);
 
-            var executedTime = ability ? await ability.WaitUntilProjectileFinished(casterUnit, target) : 0;
+            var animationName = ability.AnimationName;
+            var executedTime = await WaitUntilProjectileFinished(animationName, casterUnit, target, ability.ProjectilePrefab);
 
             // TODO: Handle Audio
             // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
@@ -93,20 +96,50 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 toDoCommand.ApplyResultOnVisual(_unitIdToBattleUnitHash, _abilityIdToAbilityHash);
             }
 
+            // If there is no ability, just wait for a while to make sure the visual result is applied after the logic result
             if (!ability)
             {
                 await Awaitable.WaitForSecondsAsync(0.25f);
                 return;
             }
-
-            var abilityAnimation = ability.abilityAnimation;
-            if (abilityAnimation)
+;
+            if (animationName != Animation.AnimationPvCustomName.DoNothing)
             {
-                var timeRemaining = abilityAnimation.GetAnimationLength() - executedTime;
-                timeRemaining = Mathf.Max(0, timeRemaining);
+                var timeRemaining = GetPresetAnimationLengthFunc.Raise(casterUnit.transform, animationName.ToString())
+                    - executedTime;
 
-                await Awaitable.WaitForSecondsAsync(timeRemaining);
+                if (timeRemaining > 0)
+                {
+                    await Awaitable.WaitForSecondsAsync(timeRemaining);
+                }
             }
+        }
+
+        public async Awaitable<float> WaitUntilProjectileFinished(AnimationPvCustomName animName, GridPawnUnit casterUnit,
+            LevelCellBase target, PvMnProjectile projectilePrefab)
+        {
+            if (animName == AnimationPvCustomName.DoNothing)
+            {
+                await Awaitable.WaitForSecondsAsync(0.1f);
+                return 0.1f;
+            }
+
+            RaiserAnimationPlayEvent.Raise(casterUnit.transform, animName.ToString());
+
+            var firstExecuteTime = GetPresetAnimationBreakPointFunc.Raise(casterUnit.transform, animName.ToString());
+
+            await Awaitable.WaitForSecondsAsync(firstExecuteTime);
+
+            if (!projectilePrefab)
+            {
+                return firstExecuteTime;
+            }
+
+            var projectile = PvMnProjectilePool.InstantiateProjectile(projectilePrefab);
+            await UnitAbilityCoreExtensions.ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
+            firstExecuteTime += projectile.ProgressDuration;
+
+            return firstExecuteTime;
         }
     }
 }

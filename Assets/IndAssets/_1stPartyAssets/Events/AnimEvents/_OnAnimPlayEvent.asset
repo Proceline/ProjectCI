@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2bfb672eb7aad64a9f2e8cf02198509, type: 3}
-  m_Name: PvSoCustomAnim_AttackFury
-  m_EditorClassIdentifier: 
-  customAnimIndexName: 2
+  m_Script: {fileID: 11500000, guid: ce67166cd180f174d990f714383a22fc, type: 3}
+  m_Name: _OnAnimPlayEvent
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.Utilities.Runtime.Events.PvSoAnimationTriggerEvent

@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2bfb672eb7aad64a9f2e8cf02198509, type: 3}
-  m_Name: PvSoCustomAnim_AttackBasic
-  m_EditorClassIdentifier: 
-  customAnimIndexName: 0
+  m_Script: {fileID: 11500000, guid: 1d2a28c47e01f7d4d923d25c6d75b653, type: 3}
+  m_Name: _FloatOutAnimBreakPtEvent
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.Utilities.Runtime.Events.PvSoAnimationOutDataEvent

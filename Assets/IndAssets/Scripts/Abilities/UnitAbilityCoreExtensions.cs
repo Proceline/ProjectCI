@@ -37,23 +37,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             }
         }
 
-        public static async Awaitable<float> WaitUntilProjectileFinished(this PvSoUnitAbility ability, GridPawnUnit casterUnit,
-            LevelCellBase target)
-        {
-            var abilityAnimation = ability.abilityAnimation;
-            abilityAnimation?.PlayAnimation(casterUnit);
-
-            var firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
-            await Awaitable.WaitForSecondsAsync(firstExecuteTime);
-
-            if (!ability.ProjectilePrefab) return firstExecuteTime;
-            var projectile = PvMnProjectilePool.InstantiateProjectile(ability.ProjectilePrefab);
-            await ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
-            firstExecuteTime += projectile.ProgressDuration;
-
-            return firstExecuteTime;
-        }
-
         public static void HandleAbilityParam(this PvSoUnitAbility ability, GridPawnUnit caster,
             GridPawnUnit mainTarget,
             Queue<CommandResult> results)
@@ -127,7 +110,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             }
         }
 
-        private static async Awaitable ApplyProjectile(PvMnProjectile projectile, Vector3 departure, Vector3 dest)
+        public static async Awaitable ApplyProjectile(PvMnProjectile projectile, Vector3 departure, Vector3 dest)
         {
             projectile.Initialize(departure, dest);
             while (!projectile.IsProgressEnded)

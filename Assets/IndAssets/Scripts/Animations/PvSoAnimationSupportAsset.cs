@@ -10,7 +10,8 @@ namespace ProjectCI.CoreSystem.Runtime.Animation
     {
         AttackBasic,
         DieStay,
-        BladeFury
+        BladeFury,
+        DoNothing
     }
     
     public class PvCustomAnimationNamesList : IAnimationIndexAddon
