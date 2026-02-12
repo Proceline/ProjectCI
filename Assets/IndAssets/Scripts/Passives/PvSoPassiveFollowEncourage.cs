@@ -23,16 +23,26 @@ namespace IndAssets.Scripts.Passives
         [Inject] internal static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         [Inject] internal static readonly IUnitCombatingQueryEndEvent OnCombatingListFinishedEvent;
 
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpCondition);
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpCondition);
         }
-        
+
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
         private void AdjustFollowUpCondition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
         {
             if (!IsOwner(inUnit.ID))

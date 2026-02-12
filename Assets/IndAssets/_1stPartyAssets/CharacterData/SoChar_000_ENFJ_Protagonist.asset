@@ -29,7 +29,6 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 8224290a50f6baf4f8d16bd7e71c1859, type: 3}
   personalPassives:
   - {fileID: 11400000, guid: 827571ef749b63642bb79769a85ce627, type: 2}
-  - {fileID: 11400000, guid: 38e8fec6b87a47b4da1ce92cf90fb718, type: 2}
   meshes:
   - {fileID: 8001354749718593143, guid: 787811b4c6e31154b9ca3fe845d3cc8b, type: 3}
   - {fileID: 2568446364417295610, guid: 0a5e97d239c76f148986e17a4057813f, type: 3}

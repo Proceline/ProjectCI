@@ -19,14 +19,24 @@ namespace IndAssets.Scripts.Passives
         private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
         private static FormulaCollection FormulaColInstance => FormulaService.Service;
 
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpCondition);
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpCondition);
+        }
+
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
         }
 
         private void AdjustFollowUpCondition(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)

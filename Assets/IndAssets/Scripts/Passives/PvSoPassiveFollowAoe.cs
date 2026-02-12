@@ -24,14 +24,24 @@ namespace IndAssets.Scripts.Passives
         [SerializeField]
         private bool targetToSelf = false;
 
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.RegisterCallback(AdjustFollowUpToAoe);
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListCreatedEvent.UnregisterCallback(AdjustFollowUpToAoe);
+        }
+
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
         }
 
         private void AdjustFollowUpToAoe(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,

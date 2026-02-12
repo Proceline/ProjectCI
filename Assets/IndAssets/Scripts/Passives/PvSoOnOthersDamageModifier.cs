@@ -12,7 +12,6 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
-    using static UnityEngine.UI.GridLayoutGroup;
     using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
 
     [CreateAssetMenu(fileName = "PvSoOnOthersDamageModifier", menuName = "ProjectCI Passives/PvSoOnOthersDamageModifier", order = 1)]
@@ -27,11 +26,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         [SerializeField]
         private int finalDamageValue;
 
-        [NonSerialized]
-        private bool _isInstalled;
-
-        [NonSerialized]
-        private readonly List<PvMnBattleGeneralUnit> _ownersList = new();
+        private readonly Dictionary<string, string> _ownersQueryIds = new();
 
         [SerializeField]
         private PvSoDynamicDamageAbilityParams damageParams;
@@ -42,30 +37,26 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         [SerializeField]
         private PvEnDamageType damageType;
 
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.RegisterCallback(AdjustAfterFinishedEvent);
-
-            if (!_isInstalled)
-            {
-                onNotifyDamageBeforeRevEvent.RegisterPostCallback(ModifyValueForOwner);
-            }
-
-            _isInstalled = true;
-            _ownersList.Add(unit);
+            onNotifyDamageBeforeRevEvent.RegisterPostCallback(ModifyValueForOwner);
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.UnregisterCallback(AdjustAfterFinishedEvent);
+            onNotifyDamageBeforeRevEvent.UnregisterPostCallback(ModifyValueForOwner);
+        }
 
-            if (_isInstalled && OwnerCount == 1)
-            {
-                onNotifyDamageBeforeRevEvent.UnregisterPostCallback(ModifyValueForOwner);
-                _isInstalled = false;
-            }
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
 
-            _ownersList.Remove(unit);
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            _ownersQueryIds.Remove(unit.ID);
         }
 
         private void AdjustAfterFinishedEvent(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
@@ -100,13 +91,14 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
 #endif
 
-            foreach (var owner in _ownersList)
+            foreach (var owner in OwnersList)
             {
                 var queryItem = QueryItem.CreateQueryItemIntoList(queryItems);
                 queryItem.SetAbility(pureDamageAbility, PvEnDamageForm.Aggressive);
                 queryItem.queryOrderForm |= PvEnDamageForm.Additional;
                 queryItem.holdingOwner = owner;
                 queryItem.targetUnit = owner;
+                _ownersQueryIds[owner.ID] = queryItem.UniqueId;
             }
         }
 
@@ -118,7 +110,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         /// <param name="receiver"></param>
         /// <param name="triggerOwner"></param>
         /// <param name="extraInfo"></param>
-        private void ModifyValueForOwner(int[] allocatedValues, string resultId, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
+        private void ModifyValueForOwner(int[] allocatedValues, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
         {
             PvEnDamageForm damageForm = (PvEnDamageForm)extraInfo;
             if (damageForm.HasFlag(PvEnDamageForm.Support))
@@ -130,7 +122,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             bool validTarget = false;
             GridPawnUnit determinedOwner = null;
 
-            foreach (var passiveOwner in _ownersList)
+            foreach (var passiveOwner in OwnersList)
             {
                 var difference = passiveOwner.GridPosition - receivedCell.GetIndex();
                 var distance = Mathf.Abs(difference.x) + Mathf.Abs(difference.y);
@@ -165,7 +157,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             var delta = originalValue - finalDamageValue;
             allocatedValues[0] = finalDamageValue;
 
-            if (!string.IsNullOrEmpty(resultId))
+            if (_ownersQueryIds.TryGetValue(determinedOwner.ID, out var resultId))
             {
                 damageParams.SetupDynamicDamage(resultId, delta, damageType);
             }

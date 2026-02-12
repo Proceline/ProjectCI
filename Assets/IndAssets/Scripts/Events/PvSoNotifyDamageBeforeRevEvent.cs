@@ -14,36 +14,36 @@ namespace ProjectCI.Utilities.Runtime.Events
         /// Param_3: GridPawnUnit, the unit who caused damage
         /// Param_4: uint, possible Enum of damage type
         /// </summary>
-        private Func<string, GridPawnUnit, GridPawnUnit, uint, int> _onRuntimeEvent;
-        private event Action<int[], string, GridPawnUnit, GridPawnUnit, uint> _onRuntimePostEvent;
+        private Func<GridPawnUnit, GridPawnUnit, uint, int> _onRuntimeEvent;
+        private event Action<int[], GridPawnUnit, GridPawnUnit, uint> _onRuntimePostEvent;
 
         [NonSerialized] private int[] _allocatedValues = new int[1];
 
-        public int Raise(int inputValue, string uniqueId, GridPawnUnit victim, GridPawnUnit owner, uint extraInfo)
+        public int Raise(int inputValue, GridPawnUnit victim, GridPawnUnit owner, uint extraInfo)
         {
             _allocatedValues[0] = inputValue;
-            var result = _onRuntimeEvent == null? 0 : _onRuntimeEvent.Invoke(uniqueId, victim, owner, extraInfo);
-            _onRuntimePostEvent?.Invoke(_allocatedValues, uniqueId, victim, owner, extraInfo);
+            var result = _onRuntimeEvent == null? 0 : _onRuntimeEvent.Invoke(victim, owner, extraInfo);
+            _onRuntimePostEvent?.Invoke(_allocatedValues, victim, owner, extraInfo);
             var output = result + _allocatedValues[0];
             return output;
         }
 
-        public void RegisterCallback(Func<string, GridPawnUnit, GridPawnUnit, uint, int> callback)
+        public void RegisterCallback(Func<GridPawnUnit, GridPawnUnit, uint, int> callback)
         {
             _onRuntimeEvent += callback;
         }
 
-        public void UnregisterCallback(Func<string, GridPawnUnit, GridPawnUnit, uint, int> callback)
+        public void UnregisterCallback(Func<GridPawnUnit, GridPawnUnit, uint, int> callback)
         {
             _onRuntimeEvent -= callback;
         }
 
-        public void RegisterPostCallback(Action<int[], string, GridPawnUnit, GridPawnUnit, uint> callback)
+        public void RegisterPostCallback(Action<int[], GridPawnUnit, GridPawnUnit, uint> callback)
         {
             _onRuntimePostEvent += callback;
         }
 
-        public void UnregisterPostCallback(Action<int[], string, GridPawnUnit, GridPawnUnit, uint> callback)
+        public void UnregisterPostCallback(Action<int[], GridPawnUnit, GridPawnUnit, uint> callback)
         {
             _onRuntimePostEvent -= callback;
         }

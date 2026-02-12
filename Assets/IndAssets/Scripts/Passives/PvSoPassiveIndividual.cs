@@ -1,40 +1,51 @@
-using System;
-using System.Collections.Generic;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
     public abstract class PvSoPassiveIndividual : PvSoPassiveBase
     {
-        [NonSerialized] private readonly HashSet<string> _recordedOwners = new();
-        protected int OwnerCount => _recordedOwners.Count;
+        protected readonly List<PvMnBattleGeneralUnit> OwnersList = new();
+        private readonly HashSet<string> _ownersIdSet = new();
+        protected int OwnerCount => OwnersList.Count;
 
         public override void InstallPassive(PvMnBattleGeneralUnit unit)
         {
-            if (!_recordedOwners.Add(unit.ID))
+            if (OwnersList.Count == 0)
             {
-                Debug.LogWarning($"{unit.name} already registered this passive!");
-                return;
+                InstallPassiveGenerally(unit);
             }
 
-            InstallPassiveInternally(unit);
+            if (!OwnersList.Contains(unit))
+            {
+                InstallPassivePersonally(unit);
+                OwnersList.Add(unit);
+                _ownersIdSet.Add(unit.ID);
+            }
         }
 
         public override void DisposePassive(PvMnBattleGeneralUnit unit)
         {
-            if (IsOwner(unit.ID))
+            if (OwnersList.Count == 1)
             {
-                DisposePassiveInternally(unit);
-                _recordedOwners.Remove(unit.ID);
-                return;
+                DisposePassiveGenerally(unit);
             }
-            Debug.LogWarning($"{unit.name} hasn't registered this passive!");
+
+            if (OwnersList.Remove(unit))
+            {
+                _ownersIdSet.Remove(unit.ID);
+                DisposePassivePersonally(unit);
+            }
         }
 
-        protected bool IsOwner(string unitId) => _recordedOwners.Contains(unitId);
+        protected bool IsOwner(string unitId)
+        {
+            return _ownersIdSet.Contains(unitId);
+        }
 
-        protected abstract void InstallPassiveInternally(PvMnBattleGeneralUnit unit);
-        protected abstract void DisposePassiveInternally(PvMnBattleGeneralUnit unit);
+        protected abstract void InstallPassiveGenerally(PvMnBattleGeneralUnit unit);
+        protected abstract void DisposePassiveGenerally(PvMnBattleGeneralUnit unit);
+        protected abstract void InstallPassivePersonally(PvMnBattleGeneralUnit unit);
+        protected abstract void DisposePassivePersonally(PvMnBattleGeneralUnit unit);
     }
 }

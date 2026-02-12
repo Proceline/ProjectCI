@@ -28,7 +28,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         public void SetupDynamicDamage(string resultId, int damage, PvEnDamageType damageType)
         {
-            Debug.LogError("setup dynamic damage: " + damage + " " + resultId);
             var lastRecordedDamage = _recordedDamage.ContainsKey(resultId) ? _recordedDamage[resultId] : 0;
             _recordedDamage[resultId] = lastRecordedDamage + damage;
             _recordedDamageTypes[resultId] = damageType;
@@ -37,13 +36,10 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
             GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
         {
-            Debug.LogError(resultId);
             if (!_recordedDamage.TryGetValue(resultId, out var recordedDamage))
             {
                 return;
             }
-
-            Debug.LogError("Successfully get into");
 
             var finalDeltaDamage = recordedDamage + basicAddon;
             if (finalDeltaDamage == 0)
@@ -62,8 +58,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var fromContainer = fromUnit.RuntimeAttributes;
             var beforeHealth = toContainer.Health.CurrentValue;
 
-            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, resultId,
-                targetUnit, fromUnit, (uint)damageForm);
+            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
 
             if (!damageForm.HasFlag(PvEnDamageForm.Support))
             {

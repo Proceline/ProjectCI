@@ -14,6 +14,9 @@ using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifie
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
+    /// <summary>
+    /// This passive will apply on Unit one by one, thus no general binding required
+    /// </summary>
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "New EnhanceAttribute Passive", menuName = "ProjectCI Passives/EnhanceAttribute", order = 1)]
     public sealed class PvSoPassiveEnhanceAttribute : PvSoPassiveIndividual
@@ -35,7 +38,17 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private readonly Dictionary<string, UnityAction<IEventOwner, IAttributeModifierContainer>>
             _loadedModifierActions = new();
 
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
             if (!_loadedModifierActions.ContainsKey(unit.ID))
@@ -52,7 +65,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
         {
             if (_loadedModifierActions.TryGetValue(unit.ID, out var modifierAction))
             {
