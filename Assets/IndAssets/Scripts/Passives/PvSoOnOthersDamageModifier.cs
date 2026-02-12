@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
+    using static UnityEngine.UI.GridLayoutGroup;
     using QueryItem = PvAbilityQueryItem<PvMnBattleGeneralUnit>;
 
     [CreateAssetMenu(fileName = "PvSoOnOthersDamageModifier", menuName = "ProjectCI Passives/PvSoOnOthersDamageModifier", order = 1)]
@@ -33,14 +34,17 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private readonly List<PvMnBattleGeneralUnit> _ownersList = new();
 
         [SerializeField]
-        private PvSoDirectDamageAbilityParams damageParams;
+        private PvSoDynamicDamageAbilityParams damageParams;
 
         [SerializeField]
         private PvSoUnitAbility pureDamageAbility;
 
+        [SerializeField]
+        private PvEnDamageType damageType;
+
         protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.RegisterCallback(AdjustAfterReceivedDamage);
+            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.RegisterCallback(AdjustAfterFinishedEvent);
 
             if (!_isInstalled)
             {
@@ -53,7 +57,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
         {
-            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.UnregisterCallback(AdjustAfterReceivedDamage);
+            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.UnregisterCallback(AdjustAfterFinishedEvent);
 
             if (_isInstalled && OwnerCount == 1)
             {
@@ -64,12 +68,41 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             _ownersList.Remove(unit);
         }
 
-        private void AdjustAfterReceivedDamage(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
+        private void AdjustAfterFinishedEvent(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
         {
+#if UNITY_EDITOR
+            if (damageParams && pureDamageAbility)
+            {
+                if (pureDamageAbility.GetParameters()[0] != damageParams)
+                {
+                    Debug.LogError("The pure damage ability's parameters do not match the specified damage parameters.");
+                    return;
+                }
+            }
+            else
+            {
+                throw new Exception("ERROR: Damage parameters or pure damage ability is not set. Please ensure both are assigned in the inspector.");
+            }
+#else
+            if (damageParams && pureDamageAbility)
+            {
+                var parameters = pureDamageAbility.GetParameters();
+                if (parameters.Count == 0 || !parameters.Contains(damageParams))
+                {
+                    parameters.Clear();
+                    parameters.Add(damageParams);
+                }
+            }
+            else
+            {
+                throw new Exception("ERROR: Damage parameters or pure damage ability is not set. Please ensure both are assigned in the inspector.");
+            }
+
+#endif
+
             foreach (var owner in _ownersList)
             {
                 var queryItem = QueryItem.CreateQueryItemIntoList(queryItems);
-                queryItem.enabled = false;
                 queryItem.SetAbility(pureDamageAbility, PvEnDamageForm.Aggressive);
                 queryItem.queryOrderForm |= PvEnDamageForm.Additional;
                 queryItem.holdingOwner = owner;
@@ -77,7 +110,15 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
         }
 
-        private void ModifyValueForOwner(int[] allocatedValues, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
+        /// <summary>
+        /// Only applied while damage is not mocked
+        /// </summary>
+        /// <param name="allocatedValues"></param>
+        /// <param name="resultId">ResultId can be Empty, during Mock value process</param>
+        /// <param name="receiver"></param>
+        /// <param name="triggerOwner"></param>
+        /// <param name="extraInfo"></param>
+        private void ModifyValueForOwner(int[] allocatedValues, string resultId, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
         {
             PvEnDamageForm damageForm = (PvEnDamageForm)extraInfo;
             if (damageForm.HasFlag(PvEnDamageForm.Support))
@@ -123,6 +164,11 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
             var delta = originalValue - finalDamageValue;
             allocatedValues[0] = finalDamageValue;
+
+            if (!string.IsNullOrEmpty(resultId))
+            {
+                damageParams.SetupDynamicDamage(resultId, delta, damageType);
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor.Playables;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -161,7 +162,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     continue;
                 }
 
-                queryItem.Ability.HandleAbilityParam(queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands);
+                queryItem.Ability.HandleAbilityParam(queryItem.UniqueId, 
+                    queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands);
             }
 
             RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
