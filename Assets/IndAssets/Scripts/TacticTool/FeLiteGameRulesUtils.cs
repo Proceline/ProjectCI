@@ -16,9 +16,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private UnityEvent<PvMnBattleGeneralUnit, List<LevelCellBase>> onPathDeterminedSupport;
 
         [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit> onGlobalMovementFinishedSupport;
-
-        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit, IBattleStatus> onUnitStatusCalculatedGlobally;
 
         [SerializeField]
@@ -26,19 +23,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onRoundEndedForEachUnit;
-
-        private void OnPathDeterminedResponse(List<LevelCellBase> path)
-        {
-            if (!_selectedUnit) return;
-            onPathDeterminedSupport.Invoke(_selectedUnit, path);
-        }
-
-        private void OnVisualMovementFinished()
-        {
-            raiserTurnLockerEvent.Raise(false);
-            if (!_selectedUnit) return;
-            onGlobalMovementFinishedSupport.Invoke(_selectedUnit);
-        }
 
         public void CalculateAllUnitsStatusOnRoundEnded(BattleTeam team)
         {

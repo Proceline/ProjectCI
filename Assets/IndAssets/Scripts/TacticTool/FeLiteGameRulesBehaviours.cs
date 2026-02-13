@@ -1,18 +1,14 @@
 ﻿using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
-using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
-using ProjectCI.TacticTool.Formula.Concrete;
-using ProjectCI.Utilities.Runtime.Events;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Playables;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -69,7 +65,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
         {
             if (!targetCell) return;
-            // TODO: Handle Lock
 
             if (!_selectedUnit || _selectedUnit.GetCurrentState() != UnitBattleState.Moving)
             {
@@ -92,7 +87,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 UpdatePlayerStateAfterRegularMove();
                 raiserTurnLockerEvent.Raise(false);
             }
-            else if (_selectedUnit.ExecuteMovement(targetCell, OnPathDeterminedResponse, OnVisualMovementFinished))
+            else if (_selectedUnit.ExecuteMovement(targetCell, 
+                path => onPathDeterminedSupport?.Invoke(_selectedUnit, path), 
+                () => raiserTurnLockerEvent.Raise(false)))
             {
                 ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
             }
@@ -125,7 +122,42 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 _selectedUnit.SupportAbility :
                 _selectedUnit.AttackAbility;
 
-            ApplyAbilityToTargetCell(selectedCell, usingAbility);
+            if (!_selectedUnit)
+            {
+                throw new NullReferenceException("ERROR: No selected unit!");
+            }
+
+            _selectedUnit.StartCoroutine(StartAbilityApplyCoroutine(_selectedUnit, selectedCell, usingAbility));
+        }
+
+        private IEnumerator StartAbilityApplyCoroutine(PvMnBattleGeneralUnit triggerUnit, LevelCellBase selectedCell, PvSoUnitAbility ability)
+        {
+            ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
+            ArchiveUnitBehaviourPoints(triggerUnit);
+            yield return ApplyAbility(triggerUnit, selectedCell, ability);
+            ClearStateAndDeselectUnitCombo();
+        }
+
+        public void ApplyMovementToCell(PvMnBattleGeneralUnit triggerUnit, LevelCellBase targetCell)
+        {
+            var standUnit = targetCell.GetUnitOnCell();
+            if (standUnit && standUnit != triggerUnit)
+            {
+                throw new Exception($"ERROR: {triggerUnit.name} Try to move on cell with Pawn<{standUnit.name}>");
+            }
+
+            if (!standUnit)
+            {
+                raiserTurnLockerEvent.Raise(true);
+                var movable = triggerUnit.ExecuteMovement(targetCell, 
+                    path => onPathDeterminedSupport?.Invoke(triggerUnit, path), 
+                    () => raiserTurnLockerEvent.Raise(false));
+
+                if (!movable)
+                {
+                    raiserTurnLockerEvent.Raise(false);
+                }
+            }
         }
 
         /// <summary>
@@ -134,13 +166,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="selectedCell"></param>
         /// <param name="ability"></param>
         /// <exception cref="NullReferenceException"></exception>
-        public async void ApplyAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
+        public async Awaitable ApplyAbility(PvMnBattleGeneralUnit triggerUnit, LevelCellBase selectedCell, PvSoUnitAbility ability)
         {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: No selected unit!");
-            }
-
             var gridPawnUnit = selectedCell.GetUnitOnCell();
             if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
             {
@@ -149,11 +176,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             raiserTurnLockerEvent.Raise(true);
 
-            ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
-
-            var queryList = CreateCombatingProcess(ability, _selectedUnit, targetUnit);
-            RaiserOnCombatingListCreatedEvent.Raise(_selectedUnit, targetUnit, queryList);
-            RaiserOnCombatingQueryEndEvent.Raise(_selectedUnit, targetUnit, queryList);
+            var queryList = CreateCombatingProcess(ability, triggerUnit, targetUnit);
+            RaiserOnCombatingListCreatedEvent.Raise(triggerUnit, targetUnit, queryList);
+            RaiserOnCombatingQueryEndEvent.Raise(triggerUnit, targetUnit, queryList);
 
             foreach (var queryItem in queryList)
             {
@@ -166,8 +191,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands);
             }
 
-            RaiserCombatingTurnEndLogically.Raise(_selectedUnit, targetUnit);
-            ArchiveUnitBehaviourPoints(_selectedUnit);
+            RaiserCombatingTurnEndLogically.Raise(triggerUnit, targetUnit);
 
             // Apply visual results of commands
             foreach (var queryItem in queryList)
@@ -182,7 +206,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             PvAbilityQueryItem<PvMnBattleGeneralUnit>.ClearList(queryList);
             raiserTurnLockerEvent.Raise(false);
-            ClearStateAndDeselectUnitCombo();
         }
 
         /// <summary>

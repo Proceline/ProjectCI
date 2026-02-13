@@ -30,6 +30,7 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private int defensiveRange = 5;
 
         [SerializeField] private PvSoVictimSelection strategy;
+        //[SerializeField] private Vector2Int potentialTargetIndex;
 
         public PvMnAIMovementStrategy RuntimeMoveStrategy { get; private set; }
 
@@ -72,10 +73,6 @@ namespace IndAssets.Scripts.AI
 
                 RuntimeMoveStrategy = PvMnAIMovementStrategy.Conservative;
             }
-
-            // Calculate movement and attack fields
-            var movementPoints = _unit.GetCurrentMovementPoints();
-            var currentCell = _unit.GetCell();
 
             var ability = SelectAbility();
             return CalculateEnemyAction(ability);
@@ -139,7 +136,8 @@ namespace IndAssets.Scripts.AI
                 EffectedTeam = BattleTeam.Friendly
             };
 
-            var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);
+            var maximumDetectRadius = 10;
+            var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, maximumDetectRadius);
 
             // Calculate attack field
             var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);
@@ -157,21 +155,75 @@ namespace IndAssets.Scripts.AI
 
             if (attackField.AllVictims.Count == 0)
             {
-                Debug.LogError("Dict: " + radiusField.Dist.Count + ", Reach: " + radiusField.Reach.Count);
-                var cellLayers = radiusField.Layers;
-                var count = 0;
-                Debug.LogError("How many layers:" + cellLayers.Count);
-                for (int i = 0; i < cellLayers.Count; i++)
-                {
-                    count += cellLayers[i].Count;
-                }
-                Debug.LogError(count + " " + radiusInfo.Radius);
+                var futureLayers = radiusField.Layers;
+                LevelCellBase potentialDest = null;
+                //LevelCellBase closestCell = null;
+                var currentLayer = movementPoints;
 
-                return (null, null);
-                // TODO
-                //        public readonly Dictionary<LevelCellBase, int> Dist = new();
-                //public readonly HashSet<LevelCellBase> Reach = new();
-                //public readonly List<List<LevelCellBase>> Layers = new();
+                for (int i = movementPoints + 1; i < futureLayers.Count; i++)
+                {
+                    currentLayer = i;
+                    var futureCells = futureLayers[i];
+
+                    //if (!closestCell)
+                    //{
+                    //    var lastDistance = 9999;
+                    //    foreach (var futureCell in futureCells)
+                    //    {
+                    //        var distance = CalculateDistance(futureCell.GetIndex(), potentialTargetIndex);
+                    //        if (distance < lastDistance)
+                    //        {
+                    //            closestCell = futureCell;
+                    //        }
+                    //    }
+                    //}
+
+                    foreach (var futureCell in futureCells)
+                    {
+                        var victimsList = GetCellList(futureCell);
+                        if (victimsList.Count > 0)
+                        {
+                            potentialDest = futureCell;
+                            break;
+                        }
+                    }
+
+                    if (potentialDest)
+                    {
+                        break;
+                    }
+                }
+
+                //if (!potentialDest)
+                //{
+                //    potentialDest = closestCell;
+                //}
+
+                if (potentialDest)
+                {
+                    var movableTarget = potentialDest;
+                    for (int layer = currentLayer; layer > movementPoints; layer--)
+                    {
+                        if (radiusField.Parent.TryGetValue(movableTarget, out var levelCell))
+                        {
+                            movableTarget = levelCell;
+                        }
+                        else
+                        {
+                            movableTarget = null;
+                            break;
+                        }
+                    }
+
+                    if (movableTarget)
+                    {
+                        return (movableTarget, null);
+                    }
+                }
+                else
+                {
+                    return (null, null);
+                }
             }
             
             var recordedAggroPoint = -9999;

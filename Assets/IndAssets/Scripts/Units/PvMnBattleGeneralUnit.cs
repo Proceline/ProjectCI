@@ -215,8 +215,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override List<LevelCellBase> GetAllowedMovementCells()
         {
-            // TODO: Change BattleTeam type to enable cross enemy
-            return UnitData.m_MovementShape.GetCellList(this, GetCell(), _currentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
+            return UnitData.m_MovementShape.GetCellList(this, GetCell(), GetMovementPoints(), UnitData.m_bIsFlying, BattleTeam.Friendly);
         }
 
         public void ForceMoveToCellImmediately(LevelCellBase targetCell)

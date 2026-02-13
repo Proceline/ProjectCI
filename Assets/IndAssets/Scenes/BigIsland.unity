@@ -32337,9 +32337,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc37f4653344f07b0444c3ab84f9c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyUnitThought
-  order: 0
+  order: 8
   targetSelectionStrategy: 0
-  movementStrategy: 0
+  initialStrategy: 0
   defensiveRange: 5
   strategy: {fileID: 11400000, guid: 96dde5061b957ed44a795b2787b8c414, type: 2}
 --- !u!136 &922934253
@@ -33262,55 +33262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyArrangementManager
   onTeamRoundEndEvent: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
   onBattleStartedEvent: {fileID: 11400000, guid: a4ab0fec9f2473c42ab83160fbc96d83, type: 2}
-  onEnemyPrepared:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
-          Assembly-CSharp
-        m_MethodName: PushStateAfterSelectUnitLogicWithoutView
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onEnemyMoving:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
-          Assembly-CSharp
-        m_MethodName: ApplyMovementToCellForSelectedUnit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onEnemyActing:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
-        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
-          Assembly-CSharp
-        m_MethodName: ApplyAbilityToTargetCell
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  formulaCollection: {fileID: 11400000, guid: cd0d657ce42bfbd48b2d25b6d44f8e18, type: 2}
+  gameModel: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
   onEnemiesPreviewAggroShowed:
     m_PersistentCalls:
       m_Calls:
@@ -39300,9 +39252,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc37f4653344f07b0444c3ab84f9c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyUnitThought
-  order: 0
+  order: 10
   targetSelectionStrategy: 0
-  movementStrategy: 0
+  initialStrategy: 0
   defensiveRange: 5
   strategy: {fileID: 11400000, guid: 96dde5061b957ed44a795b2787b8c414, type: 2}
 --- !u!4 &1137706724 stripped
@@ -43564,9 +43516,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc37f4653344f07b0444c3ab84f9c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.AI.PvMnEnemyUnitThought
-  order: 0
+  order: 9
   targetSelectionStrategy: 0
-  movementStrategy: 0
+  initialStrategy: 0
   defensiveRange: 5
   strategy: {fileID: 11400000, guid: 96dde5061b957ed44a795b2787b8c414, type: 2}
 --- !u!4 &1278883646 stripped

@@ -19,7 +19,8 @@ namespace IndAssets.Scripts.AI
     {
         [SerializeField] private PvSoBattleTeamEvent onTeamRoundEndEvent;
         [SerializeField] private PvSoSimpleVoidEvent onBattleStartedEvent;
-        
+        [SerializeField] private FeLiteGameRules gameModel;
+
         private readonly List<PvMnEnemyUnitThought> _orderedEnemyThoughts = new();
         private readonly HashSet<LevelCellBase> _enemiesMovableCells = new();
         private readonly Dictionary<LevelCellBase, List<Transform>> _enemiesAttackables = new();
@@ -30,10 +31,6 @@ namespace IndAssets.Scripts.AI
         /// Collection of all enemy thoughts, accessible by unit ID
         /// </summary>
         public IReadOnlyList<PvMnEnemyUnitThought> EnemyThoughtsCollection => _orderedEnemyThoughts;
-
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onEnemyPrepared;
-        [SerializeField] private UnityEvent<LevelCellBase> onEnemyMoving;
-        [SerializeField] private UnityEvent<LevelCellBase, PvSoUnitAbility> onEnemyActing;
 
         [Header("Preview")]
 
@@ -280,27 +277,7 @@ namespace IndAssets.Scripts.AI
 
                 if (dest)
                 {
-                    Debug.LogError(enemyUnit.name + " " + dest.GetIndex());
-                }
-                else
-                {
-                    Debug.LogError(enemyUnit.name + " No Dest");
-                }
-
-                if (target)
-                {
-                    Debug.LogError(enemyUnit.name + " " + target.GetIndex());
-                }
-                else
-                {
-                    Debug.LogError(enemyUnit.name + " No Target");
-                }
-                continue;
-
-                if (dest)
-                {
-                    onEnemyMoving.Invoke(dest);
-
+                    gameModel.ApplyMovementToCell(enemyUnit, dest);
                     while (enemyUnit.GetCell() != dest)
                     {
                         await Awaitable.WaitForSecondsAsync(0.25f);
@@ -309,12 +286,8 @@ namespace IndAssets.Scripts.AI
 
                 if (target)
                 {
-                    onEnemyActing.Invoke(target, enemyThought.SelectAbility());
-
-                    while (enemyUnit.GetCurrentState() == UnitBattleState.AbilityConfirming)
-                    {
-                        await Awaitable.WaitForSecondsAsync(0.25f);
-                    }
+                    await gameModel.ApplyAbility(enemyUnit, target, enemyThought.SelectAbility());
+                    await Awaitable.WaitForSecondsAsync(0.25f);
                 }
 
             }
