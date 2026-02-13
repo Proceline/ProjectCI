@@ -1,12 +1,24 @@
-﻿using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.Abilities;
+﻿using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace IndAssets.Scripts.AI
 {
+    /// <summary>
+    /// Strategy for movement behavior
+    /// </summary>
+    public enum PvMnAIMovementStrategy
+    {
+        Aggressive,     // Always move towards enemies (charge type)
+        Conservative,   // Only move when enemies are in attackable range (conservative type)
+        Defensive,      // Only move when enemies enter a set area range (defensive type)
+        Stay
+    }
+
     public class PvMnEnemyUnitThought : MonoBehaviour
     {
         [Header("AI Order Settings")]
@@ -14,8 +26,12 @@ namespace IndAssets.Scripts.AI
 
         [Header("AI Strategy Settings")]
         [SerializeField] private PvMnAITargetSelectionStrategy targetSelectionStrategy = PvMnAITargetSelectionStrategy.Nearest;
-        [SerializeField] private PvMnAIMovementStrategy movementStrategy = PvMnAIMovementStrategy.Aggressive;
+        [SerializeField] private PvMnAIMovementStrategy initialStrategy = PvMnAIMovementStrategy.Aggressive;
         [SerializeField] private int defensiveRange = 5;
+
+        [SerializeField] private PvSoVictimSelection strategy;
+
+        public PvMnAIMovementStrategy RuntimeMoveStrategy { get; private set; }
 
         private PvMnBattleGeneralUnit _unit;
 
@@ -37,182 +53,178 @@ namespace IndAssets.Scripts.AI
         private void Awake()
         {
             _unit = GetComponent<PvMnBattleGeneralUnit>();
+            RuntimeMoveStrategy = initialStrategy;
         }
 
-        /// <summary>
-        /// Calculate the best action for this AI unit
-        /// </summary>
-        public PvMnAIDecisionResult CalculateBestAction()
+        public (LevelCellBase, LevelCellBase) CalculateDestinationAndTarget()
         {
-            if (!Unit || Unit.IsDead())
+            if (!Unit || Unit.IsDead() || RuntimeMoveStrategy == PvMnAIMovementStrategy.Stay)
             {
-                Debug.LogError("Unit not exist or dead" + (Unit == null));
-                return new PvMnAIDecisionResult { ShouldTakeRest = true };
+                return (null, null);
             }
 
-            // Check if unit has any action points
-            if (_unit.GetCurrentMovementPoints() <= 0 && _unit.GetCurrentActionPoints() <= 0)
+            if (RuntimeMoveStrategy == PvMnAIMovementStrategy.Defensive)
             {
-                Debug.LogError("Can Move!" + _unit.GetCurrentMovementPoints() + " " + _unit.GetCurrentActionPoints());
-                return new PvMnAIDecisionResult { ShouldTakeRest = true };
-            }
+                if (!IsDefensiveTriggered())
+                {
+                    return (null, null);
+                }
 
-            var result = new PvMnAIDecisionResult();
+                RuntimeMoveStrategy = PvMnAIMovementStrategy.Conservative;
+            }
 
             // Calculate movement and attack fields
             var movementPoints = _unit.GetCurrentMovementPoints();
             var currentCell = _unit.GetCell();
 
+            var ability = SelectAbility();
+            return CalculateEnemyAction(ability);
+        }
+
+        /// <summary>
+        /// Select ability to use. Can be overridden with custom selector
+        /// </summary>
+        public PvSoUnitAbility SelectAbility()
+        {
+            // Default: use EquippedAbility
+            return _unit.AttackAbility;
+        }
+
+        private bool IsDefensiveTriggered()
+        {
+            var grid = TacticBattleManager.GetGrid();
+            var currentCell = Unit.GetCell();
+            var currentCellIndex = currentCell.GetIndex();
+
+            if (grid)
+            {
+                for (var i = -defensiveRange; i <= defensiveRange; i++)
+                {
+                    for (var j = -defensiveRange; j <= defensiveRange; j++)
+                    {
+                        if (i == 0 && j == 0)
+                        {
+                            continue;
+                        }
+
+                        var gridIndex = currentCellIndex + new Vector2Int(i, j);
+                        var cell = grid[gridIndex];
+                        if (cell.GetCellTeam() == BattleTeam.Friendly)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Calculate the result where this enemy will go
+        /// </summary>
+        /// <param name="enemyThought"></param>
+        /// <returns>First Cell is where to move, second cell is where to attack</returns>
+        private (LevelCellBase, LevelCellBase) CalculateEnemyAction(PvSoUnitAbility usingAbility)
+        {
+            var enemyUnit = Unit;
+            var movementPoints = enemyUnit.GetMovementPoints();
+            var currentCell = enemyUnit.GetCell();
+
             AIRadiusInfo radiusInfo = new AIRadiusInfo(currentCell, movementPoints)
             {
-                Caster = _unit,
+                Caster = enemyUnit,
                 bAllowBlocked = false,
                 bStopAtBlockedCell = true,
                 EffectedTeam = BattleTeam.Friendly
             };
 
             var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);
-            var availableMoveCells = radiusField.Dist.Keys;
-
-            // Get ability to use (default or custom)
-            var ability = SelectAbility();
-            if (ability == null)
-            {
-                return new PvMnAIDecisionResult { ShouldTakeRest = true };
-            }
 
             // Calculate attack field
-            Dictionary<LevelCellBase, List<LevelCellBase>> victimsFromCells = null;
-            ICollection<LevelCellBase> allVictims = null;
+            var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);
 
-            if (ability != null)
+            List<LevelCellBase> GetCellList(LevelCellBase startCell)
             {
-                var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);
+                return usingAbility.GetShape().GetCellList(enemyUnit, startCell, usingAbility.GetRadius(),
+                    usingAbility.DoesAllowBlocked(), usingAbility.GetEffectedTeam());
+            }
 
-                List<LevelCellBase> GetCellList(LevelCellBase startCell)
+            if (attackField.AllVictims.Count == 0 && RuntimeMoveStrategy == PvMnAIMovementStrategy.Conservative)
+            {
+                return (null, null);
+            }
+
+            if (attackField.AllVictims.Count == 0)
+            {
+                Debug.LogError("Dict: " + radiusField.Dist.Count + ", Reach: " + radiusField.Reach.Count);
+                var cellLayers = radiusField.Layers;
+                var count = 0;
+                Debug.LogError("How many layers:" + cellLayers.Count);
+                for (int i = 0; i < cellLayers.Count; i++)
                 {
-                    return ability.GetShape().GetCellList(_unit, startCell, ability.GetRadius(),
-                        ability.DoesAllowBlocked(), ability.GetEffectedTeam());
+                    count += cellLayers[i].Count;
                 }
+                Debug.LogError(count + " " + radiusInfo.Radius);
 
-                victimsFromCells = attackField.VictimsFromCells;
-                allVictims = attackField.AllVictims;
+                return (null, null);
+                // TODO
+                //        public readonly Dictionary<LevelCellBase, int> Dist = new();
+                //public readonly HashSet<LevelCellBase> Reach = new();
+                //public readonly List<List<LevelCellBase>> Layers = new();
             }
-
-            // Select target based on strategy
-            LevelCellBase targetCell = null;
-            if (allVictims != null && allVictims.Count > 0)
+            
+            var recordedAggroPoint = -9999;
+            LevelCellBase determinedVictim = null;
+            foreach (var victimCell in attackField.AllVictims)
             {
-                targetCell = PvMnAITargetSelectionHelper.SelectTarget(
-                    _unit,
-                    allVictims,
-                    victimsFromCells,
-                    targetSelectionStrategy
-                );
-            }
-
-            // Determine if should move
-            bool shouldMove = PvMnAIMovementHelper.ShouldMove(
-                _unit,
-                movementStrategy,
-                availableMoveCells,
-                allVictims,
-                victimsFromCells,
-                defensiveRange
-            );
-
-            // Find best movement cell
-            LevelCellBase moveToCell = null;
-            if (shouldMove && availableMoveCells.Count > 0)
-            {
-                moveToCell = PvMnAIMovementHelper.FindBestMovementCell(
-                    _unit,
-                    movementStrategy,
-                    availableMoveCells,
-                    targetCell,
-                    victimsFromCells
-                );
-            }
-
-            // Determine attack target
-            LevelCellBase attackTarget = null;
-            if (targetCell != null)
-            {
-                // Check if we can attack from current position
-                var finalPosition = moveToCell ?? currentCell;
-                if (victimsFromCells != null &&
-                    victimsFromCells.TryGetValue(targetCell, out var attackPositions) &&
-                    attackPositions.Contains(finalPosition))
+                var aggroPoint = strategy.GetCellAggro(enemyUnit, victimCell, usingAbility);
+                if (aggroPoint > recordedAggroPoint)
                 {
-                    attackTarget = targetCell;
-                }
-                else if (moveToCell != null &&
-                         victimsFromCells != null &&
-                         victimsFromCells.TryGetValue(targetCell, out var newAttackPositions) &&
-                         newAttackPositions.Contains(moveToCell))
-                {
-                    attackTarget = targetCell;
+                    recordedAggroPoint = aggroPoint;
+                    determinedVictim = victimCell;
                 }
             }
 
-            result.MoveToCell = moveToCell;
-            result.AttackTargetCell = attackTarget;
-            result.AbilityToUse = ability;
-            result.ShouldTakeRest = !result.HasAction;
+            if (determinedVictim)
+            {
+                if (attackField.VictimsFromCells.TryGetValue(determinedVictim, out var cellList))
+                {
+                    var indexOfSelf = currentCell.GetIndex();
+                    var lastTotalPoint = -999;
+                    LevelCellBase lastDeterminedMoveCell = null;
+                    foreach (var cell in cellList)
+                    {
+                        var indexOfDetermined = determinedVictim.GetIndex();
+                        var indexOfCell = cell.GetIndex();
+                        var distanceToTarget = CalculateDistance(indexOfDetermined, indexOfCell);
+                        var distanceToSelf = CalculateDistance(indexOfCell, indexOfSelf);
+                        var distanceTotalPoint = 2 * distanceToTarget - distanceToSelf;
+                        if (distanceTotalPoint > lastTotalPoint)
+                        {
+                            lastTotalPoint = distanceTotalPoint;
+                            lastDeterminedMoveCell = cell;
+                        }
+                    }
 
-            return result;
+                    if (lastDeterminedMoveCell)
+                    { 
+                        if (RuntimeMoveStrategy == PvMnAIMovementStrategy.Conservative)
+                        {
+                            RuntimeMoveStrategy = PvMnAIMovementStrategy.Aggressive;
+                        }
+
+                        return (lastDeterminedMoveCell, determinedVictim);
+                    }
+                }
+            }
+
+            return (null, null);
         }
 
-        /// <summary>
-        /// Select ability to use. Can be overridden with custom selector
-        /// </summary>
-        private PvSoUnitAbility SelectAbility()
+        private int CalculateDistance(Vector2Int index0, Vector2Int index1)
         {
-            // Default: use EquippedAbility
-            return _unit.AttackAbility;
-        }
-
-        // Legacy method kept for compatibility
-        public void ShowTargetPawnField(PvMnBattleGeneralUnit inSceneUnit, bool allowBlock, bool toTeammate)
-        {
-            var startUnit = inSceneUnit;
-            if (!startUnit)
-            {
-                Debug.LogError("You must drag and drop a unit!");
-                return;
-            }
-
-            var movementPoint = startUnit.GetCurrentMovementPoints();
-
-            AIRadiusInfo radiusInfo = new AIRadiusInfo(startUnit.GetCell(), movementPoint)
-            {
-                Caster = startUnit,
-                bAllowBlocked = allowBlock,
-                bStopAtBlockedCell = true,
-                EffectedTeam = BattleTeam.Friendly
-            };
-
-            var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);
-
-            foreach (var pair in radiusField.Dist)
-            {
-                var cell = pair.Key;
-                var value = pair.Value;
-            }
-
-            var ability = startUnit.AttackAbility;
-            if (ability)
-            {
-                var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);
-
-                List<LevelCellBase> GetCellList(LevelCellBase startCell)
-                {
-                    return ability.GetShape().GetCellList(startUnit, startCell, ability.GetRadius(),
-                        ability.DoesAllowBlocked(), ability.GetEffectedTeam());
-                }
-
-                var victimDic = attackField.VictimsFromCells;
-            }
+            return Mathf.Abs(index0.x - index1.x) + Mathf.Abs(index0.y - index1.y);
         }
     }
 }

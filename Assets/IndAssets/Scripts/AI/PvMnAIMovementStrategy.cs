@@ -5,16 +5,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 namespace IndAssets.Scripts.AI
 {
     /// <summary>
-    /// Strategy for movement behavior
-    /// </summary>
-    public enum PvMnAIMovementStrategy
-    {
-        Aggressive,    // Always move towards enemies (charge type)
-        Conservative,  // Only move when enemies are in attackable range (conservative type)
-        Defensive      // Only move when enemies enter a set area range (defensive type)
-    }
-
-    /// <summary>
     /// Helper class for movement strategies
     /// </summary>
     public static class PvMnAIMovementHelper

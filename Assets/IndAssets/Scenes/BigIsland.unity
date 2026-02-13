@@ -32341,6 +32341,7 @@ MonoBehaviour:
   targetSelectionStrategy: 0
   movementStrategy: 0
   defensiveRange: 5
+  strategy: {fileID: 11400000, guid: 96dde5061b957ed44a795b2787b8c414, type: 2}
 --- !u!136 &922934253
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -39303,6 +39304,7 @@ MonoBehaviour:
   targetSelectionStrategy: 0
   movementStrategy: 0
   defensiveRange: 5
+  strategy: {fileID: 11400000, guid: 96dde5061b957ed44a795b2787b8c414, type: 2}
 --- !u!4 &1137706724 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}
@@ -43566,6 +43568,7 @@ MonoBehaviour:
   targetSelectionStrategy: 0
   movementStrategy: 0
   defensiveRange: 5
+  strategy: {fileID: 11400000, guid: 96dde5061b957ed44a795b2787b8c414, type: 2}
 --- !u!4 &1278883646 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1519188697402770169, guid: a90bc75212a7dce42b961e277b470f8e, type: 3}

@@ -127,6 +127,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         public override int GetCurrentMovementPoints() => _currentMovementPoints;
+        public int GetMovementPoints() => RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
 
         private void PlayIdleAnimation()
         {

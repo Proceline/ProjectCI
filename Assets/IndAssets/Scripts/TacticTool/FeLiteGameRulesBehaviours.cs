@@ -190,13 +190,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// </summary>
         /// <param name="selectedCell"></param>
         /// <param name="ability"></param>
-        public Dictionary<GridPawnUnit, int> MockAbilityToTargetCell(LevelCellBase selectedCell, PvSoUnitAbility ability)
+        public Dictionary<GridPawnUnit, int> MockAbilityToTargetCell(PvMnBattleGeneralUnit triggerUnit,
+            LevelCellBase selectedCell, PvSoUnitAbility ability)
         {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: No selected unit!");
-            }
-
             var gridPawnUnit = selectedCell.GetUnitOnCell();
             if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
             {
@@ -205,7 +201,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             Dictionary<GridPawnUnit, int> allMockingDelta = new();
 
-            var triggerUnit = _selectedUnit;
             var queryList = CreateCombatingProcess(ability, triggerUnit, targetUnit);
             RaiserOnCombatingListCreatedEvent.Raise(triggerUnit, targetUnit, queryList);
             RaiserOnCombatingQueryEndEvent.Raise(triggerUnit, targetUnit, queryList);
@@ -220,6 +215,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var queryOwner = queryItem.holdingOwner;
                 var queryTarget = queryItem.targetUnit;
                 var queryAbility = queryItem.Ability;
+
                 List<LevelCellBase> effectedCells = queryAbility.GetEffectedCells(queryOwner, queryTarget.GetCell());
                 foreach (AbilityParamBase param in queryAbility.GetParameters())
                 {
@@ -256,7 +252,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> CreateCombatingProcess(PvSoUnitAbility ability,
             PvMnBattleGeneralUnit triggerUnit, PvMnBattleGeneralUnit targetUnit)
         {
-            var queryList = PvAbilityQueryItem<PvMnBattleGeneralUnit>.CreateFirstItemList(_selectedUnit, targetUnit);
+            var queryList = PvAbilityQueryItem<PvMnBattleGeneralUnit>.CreateFirstItemList(triggerUnit, targetUnit);
             queryList[0].SetAbility(ability, ability.IsSupportAbility ? PvEnDamageForm.Support : PvEnDamageForm.Aggressive);
 
             if (ability.IsFollowUpAllowed())
