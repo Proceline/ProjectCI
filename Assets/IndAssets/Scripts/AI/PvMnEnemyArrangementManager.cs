@@ -291,6 +291,8 @@ namespace IndAssets.Scripts.AI
                 }
 
             }
+
+            gameModel.EndRound();
         }
     }
 }
