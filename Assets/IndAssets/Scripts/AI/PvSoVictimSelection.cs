@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace IndAssets.Scripts.AI
         private readonly SortedList<int, LevelCellBase> _sortedTargets = new();
         
         protected abstract int GetCellAggro(PvMnBattleGeneralUnit aiOwner, LevelCellBase cell);
+        public abstract int GetCellAggro(PvMnBattleGeneralUnit aiOwner, LevelCellBase cell, PvSoUnitAbility ability);
 
         public LevelCellBase GetTargetCell(PvMnBattleGeneralUnit aiOwner, ICollection<LevelCellBase> allVictims,
             Dictionary<LevelCellBase, List<LevelCellBase>> victimsFromCells)

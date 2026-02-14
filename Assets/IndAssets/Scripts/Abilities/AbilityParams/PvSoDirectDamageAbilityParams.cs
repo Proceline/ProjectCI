@@ -127,6 +127,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             if (isReallyHit)
             {
                 var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+
                 if (!damageForm.HasFlag(PvEnDamageForm.Support))
                 {
                     toContainer.Health.ModifyValue(-adjustedFinalDeltaDmg);
@@ -266,6 +267,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             }
 
             var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, damageForm);
+
             var translatedDamageForm = (PvEnDamageForm)damageForm;
             var deltaValue = translatedDamageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
 

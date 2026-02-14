@@ -19,14 +19,24 @@ namespace IndAssets.Scripts.Passives.Relics
         
         [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.RegisterCallback(ReorderCombatingList);
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.UnregisterCallback(ReorderCombatingList);
+        }
+
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
         }
 
         protected virtual void ReorderCombatingList(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,

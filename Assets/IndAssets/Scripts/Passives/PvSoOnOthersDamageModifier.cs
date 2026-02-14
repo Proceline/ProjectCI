@@ -26,57 +26,90 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         [SerializeField]
         private int finalDamageValue;
 
-        [NonSerialized]
-        private bool _isInstalled;
-
-        [NonSerialized]
-        private readonly List<PvMnBattleGeneralUnit> _ownersList = new();
+        private readonly Dictionary<string, string> _ownersQueryIds = new();
 
         [SerializeField]
-        private PvSoDirectDamageAbilityParams damageParams;
+        private PvSoDynamicDamageAbilityParams damageParams;
 
         [SerializeField]
         private PvSoUnitAbility pureDamageAbility;
 
-        protected override void InstallPassiveInternally(PvMnBattleGeneralUnit unit)
+        [SerializeField]
+        private PvEnDamageType damageType;
+
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
-            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.RegisterCallback(AdjustAfterReceivedDamage);
-
-            if (!_isInstalled)
-            {
-                onNotifyDamageBeforeRevEvent.RegisterPostCallback(ModifyValueForOwner);
-            }
-
-            _isInstalled = true;
-            _ownersList.Add(unit);
+            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.RegisterCallback(AdjustAfterFinishedEvent);
+            onNotifyDamageBeforeRevEvent.RegisterPostCallback(ModifyValueForOwner);
         }
 
-        protected override void DisposePassiveInternally(PvMnBattleGeneralUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
-            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.UnregisterCallback(AdjustAfterReceivedDamage);
-
-            if (_isInstalled && OwnerCount == 1)
-            {
-                onNotifyDamageBeforeRevEvent.UnregisterPostCallback(ModifyValueForOwner);
-                _isInstalled = false;
-            }
-
-            _ownersList.Remove(unit);
+            PvSoPassiveFollowEncourage.OnCombatingListFinishedEvent.UnregisterCallback(AdjustAfterFinishedEvent);
+            onNotifyDamageBeforeRevEvent.UnregisterPostCallback(ModifyValueForOwner);
         }
 
-        private void AdjustAfterReceivedDamage(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
         {
-            foreach (var owner in _ownersList)
+            // Empty
+        }
+
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            _ownersQueryIds.Remove(unit.ID);
+        }
+
+        private void AdjustAfterFinishedEvent(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
+        {
+#if UNITY_EDITOR
+            if (damageParams && pureDamageAbility)
+            {
+                if (pureDamageAbility.GetParameters()[0] != damageParams)
+                {
+                    Debug.LogError("The pure damage ability's parameters do not match the specified damage parameters.");
+                    return;
+                }
+            }
+            else
+            {
+                throw new Exception("ERROR: Damage parameters or pure damage ability is not set. Please ensure both are assigned in the inspector.");
+            }
+#else
+            if (damageParams && pureDamageAbility)
+            {
+                var parameters = pureDamageAbility.GetParameters();
+                if (parameters.Count == 0 || !parameters.Contains(damageParams))
+                {
+                    parameters.Clear();
+                    parameters.Add(damageParams);
+                }
+            }
+            else
+            {
+                throw new Exception("ERROR: Damage parameters or pure damage ability is not set. Please ensure both are assigned in the inspector.");
+            }
+
+#endif
+
+            foreach (var owner in OwnersList)
             {
                 var queryItem = QueryItem.CreateQueryItemIntoList(queryItems);
-                queryItem.enabled = false;
                 queryItem.SetAbility(pureDamageAbility, PvEnDamageForm.Aggressive);
                 queryItem.queryOrderForm |= PvEnDamageForm.Additional;
                 queryItem.holdingOwner = owner;
                 queryItem.targetUnit = owner;
+                _ownersQueryIds[owner.ID] = queryItem.UniqueId;
             }
         }
 
+        /// <summary>
+        /// Only applied while damage is not mocked
+        /// </summary>
+        /// <param name="allocatedValues"></param>
+        /// <param name="resultId">ResultId can be Empty, during Mock value process</param>
+        /// <param name="receiver"></param>
+        /// <param name="triggerOwner"></param>
+        /// <param name="extraInfo"></param>
         private void ModifyValueForOwner(int[] allocatedValues, GridPawnUnit receiver, GridPawnUnit triggerOwner, uint extraInfo)
         {
             PvEnDamageForm damageForm = (PvEnDamageForm)extraInfo;
@@ -89,7 +122,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             bool validTarget = false;
             GridPawnUnit determinedOwner = null;
 
-            foreach (var passiveOwner in _ownersList)
+            foreach (var passiveOwner in OwnersList)
             {
                 var difference = passiveOwner.GridPosition - receivedCell.GetIndex();
                 var distance = Mathf.Abs(difference.x) + Mathf.Abs(difference.y);
@@ -123,6 +156,11 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
             var delta = originalValue - finalDamageValue;
             allocatedValues[0] = finalDamageValue;
+
+            if (_ownersQueryIds.TryGetValue(determinedOwner.ID, out var resultId))
+            {
+                damageParams.SetupDynamicDamage(resultId, delta, damageType);
+            }
         }
     }
 }

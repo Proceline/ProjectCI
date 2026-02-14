@@ -2,6 +2,7 @@
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private PvSoLevelCellEvent raiserAggroEndedEvent;
+
+        [SerializeField]
+        private PvMnExtraVisualInfoCanvas extraVisualCanvasPrefab;
+        [NonSerialized]
+        private PvMnExtraVisualInfoCanvas _extraVisualInstance;
 
         /// <summary>
         /// Binded to AI Manager's preview
@@ -370,6 +376,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (!_pawnVisualMark) return;
             _pawnVisualMark.SetActive(false);
             _pawnVisualMark.transform.SetParent(null);
+        }
+
+        public void ShowExtraVisualCanvas(BattleTeam battleTeam, List<float> durationList)
+        {
+            if (!_extraVisualInstance)
+            {
+                _extraVisualInstance = Instantiate(extraVisualCanvasPrefab);
+            }
+            _extraVisualInstance.gameObject.SetActive(true);
+            durationList.Add(1f);
+
+            if (battleTeam == BattleTeam.Hostile)
+            {
+                _extraVisualInstance.PlayAnimationWhileFriendRoundStarted();
+            }
+            else if (battleTeam == BattleTeam.Friendly)
+            {
+                _extraVisualInstance.PlayAnimationWhileEnemyRoundStarted();
+            }
+        }
+
+        public void HideExtraVisualCanvas(BattleTeam battleTeam, List<float> durationList)
+        {
+            if (!_extraVisualInstance) return;
+            _extraVisualInstance.gameObject.SetActive(false);
+            durationList.Add(0.25f);
         }
 
         #endregion

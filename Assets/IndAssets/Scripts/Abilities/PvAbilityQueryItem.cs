@@ -1,9 +1,7 @@
 ﻿using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Commands;
-using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.Utilities.Runtime.Events;
+using System;
 using System.Collections.Generic;
 
 namespace IndAssets.Scripts.Abilities
@@ -13,11 +11,17 @@ namespace IndAssets.Scripts.Abilities
         private static readonly Stack<PvAbilityQueryItem<T>> _pool = new Stack<PvAbilityQueryItem<T>>();
         public static PvAbilityQueryItem<T> Get()
         {
+            PvAbilityQueryItem<T> outputItem;
             if (_pool.Count > 0)
             {
-                return _pool.Pop();
+                outputItem = _pool.Pop();
             }
-            return new PvAbilityQueryItem<T>();
+            else
+            {
+                outputItem = new PvAbilityQueryItem<T>();
+            }
+            outputItem.UniqueId = Guid.NewGuid().ToString();
+            return outputItem;
         }
 
         public void Release()
@@ -27,6 +31,7 @@ namespace IndAssets.Scripts.Abilities
             holdingOwner = null;
             targetUnit = null;
             enabled = true;
+            UniqueId = string.Empty;
             _calculatedCommands.Clear();
 
             _pool.Push(this);
@@ -38,6 +43,7 @@ namespace IndAssets.Scripts.Abilities
         public PvEnDamageForm queryOrderForm;
 
         public PvSoUnitAbility Ability { get; private set; }
+        public string UniqueId { get; private set; } = string.Empty;
         public T holdingOwner;
         public T targetUnit;
         public bool enabled = true;
