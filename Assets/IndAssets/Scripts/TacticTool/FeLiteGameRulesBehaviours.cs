@@ -401,11 +401,31 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-#if UNITY_EDITOR
-        public void EndRoundDontUseEditorOnly()
+        public async void EndRound()
         {
+            if (_teamRoundEndDelayList.Count > 0)
+            {
+                _teamRoundEndDelayList.Clear();
+            }
+
+            var index = 0;
+            foreach (var roundEndUnityEvent in roundEventEndList)
+            {
+                roundEndUnityEvent.Invoke(CurrentTeam, _teamRoundEndDelayList);
+                if (index < _teamRoundEndDelayList.Count)
+                {
+                    var waitTime = _teamRoundEndDelayList[index];
+                    if (waitTime > 0.01f)
+                    {
+                        await Awaitable.WaitForSecondsAsync(waitTime);
+                    }
+                    index++;
+                }
+            }
+
             RaiserTeamRoundEndEvent.Raise(CurrentTeam);
+            _teamRoundEndDelayList.Clear();
         }
-#endif
+
     }
 }

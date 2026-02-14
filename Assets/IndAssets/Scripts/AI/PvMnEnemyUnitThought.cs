@@ -25,7 +25,6 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private int order = 0;
 
         [Header("AI Strategy Settings")]
-        [SerializeField] private PvMnAITargetSelectionStrategy targetSelectionStrategy = PvMnAITargetSelectionStrategy.Nearest;
         [SerializeField] private PvMnAIMovementStrategy initialStrategy = PvMnAIMovementStrategy.Aggressive;
         [SerializeField] private int defensiveRange = 5;
 

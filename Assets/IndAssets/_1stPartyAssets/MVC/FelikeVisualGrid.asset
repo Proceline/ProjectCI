@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raiserAggroHoveredEvent: {fileID: 11400000, guid: 0e9e706adc90b3c4bbeb86dabb6324fb, type: 2}
   raiserAggroEndedEvent: {fileID: 11400000, guid: c38a644971fe35a4ebd3f021c806d56c, type: 2}
+  extraVisualCanvasPrefab: {fileID: 4865103252870956680, guid: 5dacaf2470098da48a2323bb899f9c9e, type: 3}
