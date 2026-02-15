@@ -142,6 +142,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  gameBattleState: {fileID: 11400000, guid: 7e5cc1875f941bb44a7923a523de734f, type: 2}
   onPathDeterminedSupport:
     m_PersistentCalls:
       m_Calls:

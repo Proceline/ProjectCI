@@ -1,10 +1,12 @@
 ﻿using IndAssets.Scripts.Abilities;
+using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
+using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public partial class FeLiteGameRules
     {
+        [SerializeField] private PvSoBattleState gameBattleState;
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
 
         /// <summary>
@@ -22,11 +25,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <param name="cell"></param>
         public void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
-            if (!cell) return;
-            // TODO: Consider Lock
-            var standUnit = cell.GetUnitOnCell();
+            if (gameBattleState.GetCurrentState != PvPlayerRoundState.None)
+            {
+                return;
+            }
 
-            if (!standUnit)
+            if (!cell)
+            {
+                return;
+            }
+
+            var standUnit = cell.GetUnitOnCell();
+            if (!standUnit || _selectedUnit || standUnit.GetTeam() != CurrentTeam || standUnit.IsDead())
             {
                 return;
             }
@@ -38,23 +48,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new TypeAccessException($"ONLY Type <{nameof(PvMnBattleGeneralUnit)}> can be used!");
             }
 
-            if (standUnit.GetTeam() != CurrentTeam)
-            {
-                return;
-            }
+            _selectedUnit = playableUnit;
+            _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
 
-            if (playableUnit.IsDead() || (playableUnit.GetCurrentMovementPoints() <= 0 &&
-                                          playableUnit.GetCurrentActionPoints() <= 0))
-            {
-                return;
-            }
+            gameBattleState.PushState(PvPlayerRoundState.Selected, playableUnit);
 
-            if (_selectedUnit)
-            {
-                return;
-            }
+            // TODO: Remove this Part
+            ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
+                ? UnitBattleState.Moving
+                : UnitBattleState.AbilityTargeting);
 
-            PushStateAfterSelectUnit(playableUnit);
+            onTurnOwnerSelectedPreview?.Invoke(playableUnit);
+            raiserOwnerSelectedViewEvent.Raise(playableUnit, UnitSelectBehaviour.Select);
         }
 
         /// <summary>

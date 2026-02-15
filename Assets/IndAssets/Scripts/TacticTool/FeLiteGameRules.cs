@@ -103,6 +103,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         protected override void StartGame()
         {
+            gameBattleState.Clear();
+
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
 
@@ -180,45 +182,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             onStateChangedViewSupport?.Invoke(unit, stateAfterRemove);
             return stateAfterRemove;
-        }
-
-        /// <summary>
-        /// Select Turn Owner Unit state will be different from other State Switch
-        /// </summary>
-        /// <param name="selectingUnit"></param>
-        /// <exception cref="Exception"></exception>
-        private void PushStateAfterSelectUnit(PvMnBattleGeneralUnit selectingUnit)
-        {
-            if (_selectedUnit)
-            {
-                throw new Exception("ERROR: Must deselect unit first to Select next Unit!");
-            }
-
-            if (selectingUnit.IsMoving())
-            {
-                Debug.LogWarning("Warning: Selected Unit is moving!");
-                return;
-            }
-
-            PushStateAfterSelectUnitLogicWithoutView(selectingUnit);
-
-            onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
-            raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
-        }
-
-        /// <summary>
-        /// Push State After Select Unit Logic Without Selecting View Response,
-        /// Used in AI Turn, AI Bridge Mono Component
-        /// </summary>
-        /// <param name="selectingUnit"></param>
-        public void PushStateAfterSelectUnitLogicWithoutView(PvMnBattleGeneralUnit selectingUnit)
-        {
-            _selectedUnit = selectingUnit;
-            _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
-
-            ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
-                ? UnitBattleState.Moving
-                : UnitBattleState.AbilityTargeting);
         }
 
         public void ClearStateAndDeselectUnit()
