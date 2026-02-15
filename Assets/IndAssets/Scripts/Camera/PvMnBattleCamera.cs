@@ -178,16 +178,16 @@ public class PvMnBattleCamera : MonoBehaviour
         {
             _inFollowMode = false;
             _followingTarget = targetUnit.transform;
-            StartToMoveCamera(_followingTarget.position, 0, 0.2f);
-            await Awaitable.WaitForSecondsAsync(0.25f);
+            StartToMoveCamera(_followingTarget.position, 0, 0.15f);
+            await Awaitable.WaitForSecondsAsync(0.15f);
             _inFollowMode = true;
         }
     }
 
     public void FollowOnUnit(PvMnBattleGeneralUnit targetUnit)
     {
-        _followingTarget = targetUnit.transform;
-        _inFollowMode = true;
+        // Mock State as Unit Selection
+        ApplyCameraOnStateSwitched(PvPlayerRoundState.Selected, targetUnit);
     }
 
     public void UnfollowTransform()

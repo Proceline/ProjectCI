@@ -94,6 +94,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             gameBattleState.Clear();
 
+            _finishedPlayableUnits.Clear();
             _unitIdToBattleUnitHash.Clear();
             _abilityIdToAbilityHash.Clear();
 

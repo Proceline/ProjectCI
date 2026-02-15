@@ -275,6 +275,7 @@ namespace IndAssets.Scripts.AI
                 }
 
                 onUnitArranged?.Invoke(enemyUnit);
+                await Awaitable.WaitForSecondsAsync(0.175f);
 
                 var destAndTarget = enemyThought.CalculateDestinationAndTarget();
                 var dest = destAndTarget.Item1;

@@ -19,6 +19,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] private PvSoBattleState gameBattleState;
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
 
+        private readonly List<PvMnBattleGeneralUnit> _finishedPlayableUnits = new();
+
         private void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
             if (gameBattleState.GetCurrentState != PvPlayerRoundState.None)
@@ -86,7 +88,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             gameBattleState.PushState(PvPlayerRoundState.Applying, triggerUnit);
             yield return ApplyAbility(triggerUnit, selectedCell, ability);
-            FinishUnitAction();
+            FinishUnitAction(triggerUnit);
         }
 
         /// <summary>
@@ -101,17 +103,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             var lastUnit = _selectedUnit;
-            RaiserManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
-            FinishUnitAction();
+            RaiserManualFinishOrRestPrepareEvent.Raise(lastUnit);
+            FinishUnitAction(lastUnit);
         }
 
-        private void FinishUnitAction()
+        private void FinishUnitAction(PvMnBattleGeneralUnit finishedUnit)
         {
             gameBattleState.PushState(PvPlayerRoundState.None, null);
 
-            if (_selectedUnit)
+            if (finishedUnit)
             {
-                DeselectUnit(_selectedUnit);
+                DeselectUnit(finishedUnit);
+                _finishedPlayableUnits.Add(finishedUnit);
             }
 
             CheckRestUnits();
@@ -394,22 +397,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void CheckRestUnits()
         {
             var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
-            var remainCount = 0;
-            var team = CurrentTeam;
+            var requiredCount = 0;
+
             foreach (var unit in allUnitsInBattle)
             {
-                if (unit.GetTeam() == team &&
-                    (unit.GetCurrentMovementPoints() > 0 || unit.GetCurrentActionPoints() > 0) && !unit.IsDead())
+                if (unit.GetTeam() == CurrentTeam && !unit.IsDead())
                 {
-                    remainCount++;
+                    requiredCount++;
                 }
             }
 
-            if (remainCount <= 0)
+            if (_finishedPlayableUnits.Count >= requiredCount)
             {
-                Debug.Log("All Units finished actions");
-                // TODO: Register Team Round End Event
-                RaiserTeamRoundEndEvent.Raise(CurrentTeam);
+                EndRound();
             }
         }
 
@@ -419,6 +419,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 _teamRoundEndDelayList.Clear();
             }
+
+            _finishedPlayableUnits.Clear();
 
             var index = 0;
             foreach (var roundEndUnityEvent in roundEventEndList)
