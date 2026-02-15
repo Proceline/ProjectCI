@@ -33,17 +33,8 @@ public class PvDebugHUD : MonoBehaviour
 
     #region Outside Delegate Support
 
-    [SerializeField] private PvSoUnitBattleStateEvent onStateEvent;
     [SerializeField] private PvSoUnitSelectEvent onOwnerSelectedEvent;
     [SerializeField] private FeLiteGameRules rules;
-
-    private void OnStateChangedResponse(IEventOwner unit, UnitStateEventParam stateParams)
-    {
-        if (debugValues.Count > 1)
-        {
-            debugValues[1] = new DebugValuePair("State", rules.CurrentBattleState.ToString());
-        }
-    }
 
     private void OnUnitSelectedResponse(PvMnBattleGeneralUnit unit, UnitSelectBehaviour behaviour)
     {
@@ -70,13 +61,11 @@ public class PvDebugHUD : MonoBehaviour
             debugValues.Add(new DebugValuePair("Testing", "N/A"));
         }
 
-        onStateEvent.RegisterCallback(OnStateChangedResponse);
         onOwnerSelectedEvent.RegisterCallback(OnUnitSelectedResponse);
     }
 
     private void OnDestroy()
     {
-        onStateEvent.UnregisterCallback(OnStateChangedResponse);
         onOwnerSelectedEvent.UnregisterCallback(OnUnitSelectedResponse);
     }
 

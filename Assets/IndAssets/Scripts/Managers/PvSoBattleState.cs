@@ -39,7 +39,7 @@ namespace IndAssets.Scripts.Managers
                 return false;
             }
 
-            if (currentState == PvPlayerRoundState.None)
+            if (state == PvPlayerRoundState.None)
             {
                 Clear();
             }
@@ -48,15 +48,37 @@ namespace IndAssets.Scripts.Managers
                 return false;
             }
 
-            onStateLeft.Invoke(currentState);
             _states.Push(state);
-            onStateEntered.Invoke(currentState, unit);
+            onStateEntered.Invoke(state, unit);
 
             return true;
         }
 
+        public PvPlayerRoundState CancelState(PvMnBattleGeneralUnit unit)
+        {
+            var lastState = PopLastState();
+            if (lastState != PvPlayerRoundState.None)
+            {
+                onStateLeft.Invoke(lastState);
+                var currentState = GetCurrentState;
+                onStateEntered.Invoke(currentState, unit);
+            }
+            return lastState;
+        }
+
+        public void RegisterCallbackOnEnter(UnityAction<PvPlayerRoundState, PvMnBattleGeneralUnit> callback)
+        {
+            onStateEntered.AddListener(callback);
+        }
+
+        public void UnregisterCallbackOnEnter(UnityAction<PvPlayerRoundState, PvMnBattleGeneralUnit> callback)
+        {
+            onStateEntered.RemoveListener(callback);
+        }
+
         public void Clear()
         {
+            onStateEntered.Invoke(PvPlayerRoundState.None, null);
             _states.Clear();
         }
 

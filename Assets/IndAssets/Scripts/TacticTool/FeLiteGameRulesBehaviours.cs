@@ -19,11 +19,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] private PvSoBattleState gameBattleState;
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
 
-        /// <summary>
-        /// Asset usage in Battle Scene
-        /// </summary>
-        /// <param name="cell"></param>
-        public void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
+        private void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
             if (gameBattleState.GetCurrentState != PvPlayerRoundState.None)
             {
@@ -48,99 +44,114 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 throw new TypeAccessException($"ONLY Type <{nameof(PvMnBattleGeneralUnit)}> can be used!");
             }
 
-            _selectedUnit = playableUnit;
-            _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
-
+            SelectUnit(playableUnit);
             gameBattleState.PushState(PvPlayerRoundState.Selected, playableUnit);
-
-            // TODO: Remove this Part
-            ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
-                ? UnitBattleState.Moving
-                : UnitBattleState.AbilityTargeting);
-
-            onTurnOwnerSelectedPreview?.Invoke(playableUnit);
-            raiserOwnerSelectedViewEvent.Raise(playableUnit, UnitSelectBehaviour.Select);
         }
 
-        /// <summary>
-        /// Asset usage in Battle Scene, currently Registered in Controller line 45, cell clicked
-        /// Registered in AI Mono, movement determined
-        /// </summary>
-        /// <param name="targetCell"></param>
-        public void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
+        private void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
         {
             if (!targetCell) return;
 
-            if (!_selectedUnit || _selectedUnit.GetCurrentState() != UnitBattleState.Moving)
-            {
-                return;
-            }
+            var playingUnit = _selectedUnit;
+            _selectedUnitLastCell = playingUnit.GetCell();
 
-            var standUnit = targetCell.GetUnitOnCell();
-            if (standUnit && standUnit != _selectedUnit)
-            {
-                return;
-            }
+            gameBattleState.PushState(PvPlayerRoundState.Moving, playingUnit);
 
-            _selectedUnitLastCell = _selectedUnit.GetCell();
-
-            raiserTurnLockerEvent.Raise(true);
-            // Move target is Self
-            if (standUnit)
-            {
-                ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
-                UpdatePlayerStateAfterRegularMove();
-                raiserTurnLockerEvent.Raise(false);
-            }
-            else if (_selectedUnit.ExecuteMovement(targetCell, 
-                path => onPathDeterminedSupport?.Invoke(_selectedUnit, path), 
-                () => raiserTurnLockerEvent.Raise(false)))
-            {
-                ChangeStateForSelectedUnit(UnitBattleState.MovingProgress);
-            }
+            ApplyMovementToCell(playingUnit, targetCell, 
+                () => 
+                {
+                    if (gameBattleState.GetCurrentState == PvPlayerRoundState.Moving)
+                    {
+                        gameBattleState.PopLastState();
+                        gameBattleState.PushState(PvPlayerRoundState.Prepare, playingUnit);
+                    } 
+                });
         }
 
-        /// <summary>
-        /// Asset usage in Battle Scene
-        /// </summary>
-        /// <param name="selectedCell"></param>
         private void ApplyAbilityToTargetCell(LevelCellBase selectedCell, CellState cellState)
         {
-            if (!_selectedUnit)
-            {
-                return;
-            }
+            var playingUnit = _selectedUnit;
 
-            var state = _selectedUnit.GetCurrentState();
-            if (state != UnitBattleState.AbilityTargeting) //&& state != UnitBattleState.UsingAbility)
-            {
-                throw new Exception("State ERROR: Must during Ability Targeting");
-            }
-
-            if (selectedCell == _selectedUnit.GetCell())
+            if (selectedCell == playingUnit.GetCell())
             {
                 TakeRestForCurrentPlayer();
                 return;
             }
 
-            var usingAbility = cellState == CellState.ePositive ?
-                _selectedUnit.SupportAbility :
-                _selectedUnit.AttackAbility;
-
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: No selected unit!");
-            }
-
-            _selectedUnit.StartCoroutine(StartAbilityApplyCoroutine(_selectedUnit, selectedCell, usingAbility));
+            var usingAbility = cellState == CellState.ePositive ? playingUnit.SupportAbility : playingUnit.AttackAbility;
+            playingUnit.StartCoroutine(StartAbilityApplyCoroutine(playingUnit, selectedCell, usingAbility));
         }
 
         private IEnumerator StartAbilityApplyCoroutine(PvMnBattleGeneralUnit triggerUnit, LevelCellBase selectedCell, PvSoUnitAbility ability)
         {
-            ChangeStateForSelectedUnit(UnitBattleState.AbilityConfirming);
-            ArchiveUnitBehaviourPoints(triggerUnit);
+            gameBattleState.PushState(PvPlayerRoundState.Applying, triggerUnit);
             yield return ApplyAbility(triggerUnit, selectedCell, ability);
-            ClearStateAndDeselectUnitCombo();
+            FinishUnitAction();
+        }
+
+        /// <summary>
+        /// Take Rest
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private void TakeRestForCurrentPlayer()
+        {
+            if (!_selectedUnit)
+            {
+                throw new Exception("ERROR: Take Rest MUST have a Selected Unit!");
+            }
+
+            var lastUnit = _selectedUnit;
+            RaiserManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
+            FinishUnitAction();
+        }
+
+        private void FinishUnitAction()
+        {
+            gameBattleState.PushState(PvPlayerRoundState.None, null);
+
+            if (_selectedUnit)
+            {
+                DeselectUnit(_selectedUnit);
+            }
+
+            CheckRestUnits();
+        }
+
+        private void SelectUnit(PvMnBattleGeneralUnit selectingUnit)
+        {
+            _selectedUnit = selectingUnit;
+            onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
+            raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
+        }
+
+        private void DeselectUnit(PvMnBattleGeneralUnit selectingUnit)
+        {
+            onTurnOwnerDeSelectedPreview?.Invoke(selectingUnit);
+            raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Deselect);
+            _selectedUnit = null;
+        }
+
+        /// <summary>
+        /// This function is manually binded to state machine, and links to Cancel InputAction
+        /// </summary>
+        public void RevertActionResponse(PvPlayerRoundState stateToBeCancelled)
+        {
+            var playingUnit = _selectedUnit;
+            switch (stateToBeCancelled)
+            {
+                case PvPlayerRoundState.Prepare:
+                    if (_selectedUnitLastCell && playingUnit.GetCell() != _selectedUnitLastCell)
+                    {
+                        // TODO: Clean up movement buff
+                        playingUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
+                    }
+                    break;
+                case PvPlayerRoundState.Selected:
+                    DeselectUnit(playingUnit);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void ApplyMovementToCell(PvMnBattleGeneralUnit triggerUnit, LevelCellBase targetCell)
@@ -162,6 +173,37 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 {
                     raiserTurnLockerEvent.Raise(false);
                 }
+            }
+        }
+
+        private void ApplyMovementToCell(PvMnBattleGeneralUnit triggerUnit, LevelCellBase targetCell, Action onMovementCompleted)
+        {
+            var standUnit = targetCell.GetUnitOnCell();
+            if (standUnit && standUnit != triggerUnit)
+            {
+                throw new Exception($"ERROR: {triggerUnit.name} Try to move on cell with Pawn<{standUnit.name}>");
+            }
+
+            if (!standUnit)
+            {
+                raiserTurnLockerEvent.Raise(true);
+                var movable = triggerUnit.ExecuteMovement(targetCell,
+                    path => onPathDeterminedSupport?.Invoke(triggerUnit, path),
+                    () => 
+                    {
+                        onMovementCompleted.Invoke();
+                        raiserTurnLockerEvent.Raise(false);
+                    });
+
+                if (!movable)
+                {
+                    onMovementCompleted.Invoke();
+                    raiserTurnLockerEvent.Raise(false);
+                }
+            }
+            else
+            {
+                onMovementCompleted.Invoke();
             }
         }
 
@@ -347,41 +389,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             // Empty
             // TODO: TBD
-        }
-
-        /// <summary>
-        /// Take Rest,待命
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        public void TakeRestForCurrentPlayer()
-        {
-            if (!_selectedUnit)
-            {
-                throw new Exception("ERROR: Take Rest MUST have a Selected Unit!");
-            }
-
-            var lastUnit = _selectedUnit;
-            RaiserManualFinishOrRestPrepareEvent.Raise(_selectedUnit);
-            ArchiveUnitBehaviourPoints(lastUnit);
-            ClearStateAndDeselectUnit();
-
-            CheckRestUnits();
-        }
-
-        private void ArchiveUnitBehaviourPoints(PvMnBattleGeneralUnit unit, bool moveEntirelyEnd = false,
-            bool actionEntirelyEnd = false)
-        {
-            // TODO: 再移动
-            var targetActionPointResult = 0;
-            var targetMovementPointResult = 0;
-            unit.SetCurrentActionPoints(actionEntirelyEnd ? 0 : targetActionPointResult);
-            unit.SetCurrentMovementPoints(moveEntirelyEnd ? 0 : targetMovementPointResult);
-        }
-
-        private void ClearStateAndDeselectUnitCombo()
-        {
-            ClearStateAndDeselectUnit();
-            CheckRestUnits();
         }
 
         private void CheckRestUnits()

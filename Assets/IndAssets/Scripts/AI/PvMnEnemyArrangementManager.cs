@@ -21,6 +21,9 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private PvSoSimpleVoidEvent onBattleStartedEvent;
         [SerializeField] private FeLiteGameRules gameModel;
 
+        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitArranged;
+        [SerializeField] private UnityEvent onAllThoughtsFinished;
+
         private readonly List<PvMnEnemyUnitThought> _orderedEnemyThoughts = new();
         private readonly HashSet<LevelCellBase> _enemiesMovableCells = new();
         private readonly Dictionary<LevelCellBase, List<Transform>> _enemiesAttackables = new();
@@ -271,6 +274,8 @@ namespace IndAssets.Scripts.AI
                     continue;
                 }
 
+                onUnitArranged?.Invoke(enemyUnit);
+
                 var destAndTarget = enemyThought.CalculateDestinationAndTarget();
                 var dest = destAndTarget.Item1;
                 var target = destAndTarget.Item2;
@@ -292,6 +297,7 @@ namespace IndAssets.Scripts.AI
 
             }
 
+            onAllThoughtsFinished?.Invoke();
             gameModel.EndRound();
         }
     }

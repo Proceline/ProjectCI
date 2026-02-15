@@ -6,6 +6,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using UnityEngine.Events;
+using IndAssets.Scripts.Managers;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -59,10 +60,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             foreach (var unit in allUnitsInBattle)
             {
                 if (unit.IsDead()) continue;
-                if (unit.GetTeam() == team)
-                {
-                    ArchiveUnitBehaviourPoints(unit, true, true);
-                }
 
                 onRoundEndedForEachUnit.Invoke(unit);
                 onUnitStatusUpdated.Invoke(unit);
@@ -84,53 +81,41 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            switch (CurrentBattleState)
+            switch (gameBattleState.GetCurrentState)
             {
-                case UnitBattleState.Moving:
-                    if (cellState != CellState.eMovement && cellState != CellState.eSpecial)
-                    {
-                        return;
-                    }
-                    ApplyMovementToCellForSelectedUnit(cell);
+                case PvPlayerRoundState.None:
+                    ApplyCellUnitToSelectedUnit(cell);
                     break;
-                case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    if (cellState != CellState.ePositive && cellState != CellState.eNegative && 
+                case PvPlayerRoundState.Prepare:
+                    if (cellState != CellState.ePositive && cellState != CellState.eNegative &&
                         cellState != CellState.eSpecial)
                     {
                         return;
                     }
                     ApplyAbilityToTargetCell(cell, cellState);
                     break;
-                case UnitBattleState.Finished:
-                    ApplyCellUnitToSelectedUnit(cell);
-                    break;
-                case UnitBattleState.Idle:
-                case UnitBattleState.AbilityConfirming:
-                    break;
-                default:
+                case PvPlayerRoundState.Selected:
+                    if (cellState != CellState.eMovement && cellState != CellState.eSpecial)
+                    {
+                        return;
+                    }
+                    ApplyMovementToCellForSelectedUnit(cell);
                     break;
             }
         }
 
+        /// <summary>
+        /// This function is manually binded into Controller
+        /// </summary>
         public void CancelCurrentAction()
         {
-            switch (CurrentBattleState)
+            if (!_selectedUnit)
             {
-                case UnitBattleState.Moving:
-                    ClearStateAndDeselectUnit();
-                    break;
-                case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    CancelLastStateForSelectedUnit();
-                    break;
-                case UnitBattleState.Finished:
-                case UnitBattleState.Idle:
-                case UnitBattleState.AbilityConfirming:
-                    break;
-                default:
-                    break;
+                return;
             }
+
+            var playingUnit = _selectedUnit;
+            gameBattleState.CancelState(playingUnit);
         }
     }
 }

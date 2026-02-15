@@ -1,4 +1,5 @@
-﻿using ProjectCI.CoreSystem.Runtime.Abilities;
+﻿using IndAssets.Scripts.Managers;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -314,28 +315,25 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         #region MethodsCombo
-        public void ShowRangeWhileStateChanged(PvMnBattleGeneralUnit unit, UnitBattleState state)
+
+        public void ShowRangeInState(PvPlayerRoundState state, PvMnBattleGeneralUnit unit)
         {
             switch (state)
             {
                 //case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
+                case PvPlayerRoundState.Prepare:
                     _isShowingActionRange = false;
                     HighlightAbilityAndSupportRange(unit);
                     UpdateHoverCellsWithGeneralAbilities(unit);
                     break;
-                case UnitBattleState.Finished:
-                    ResetVisualStateCells();
-                    break;
-                case UnitBattleState.Moving:
+                case PvPlayerRoundState.Selected:
                     ResetVisualStateCells();
                     HighlightMovementRange(unit);
                     break;
-                case UnitBattleState.MovingProgress:
+                case PvPlayerRoundState.Moving:
+                case PvPlayerRoundState.None:
                     ResetVisualStateCells();
                     break;
-                case UnitBattleState.Idle:
-                case UnitBattleState.AbilityConfirming:
                 default:
                     // Empty
                     break;

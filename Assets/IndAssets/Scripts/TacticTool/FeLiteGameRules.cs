@@ -10,6 +10,7 @@ using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
+using IndAssets.Scripts.Managers;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -53,18 +54,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [Header("On Turn Support"), SerializeField]
         private PvSoTurnViewEndEvent raiserTurnLockerEvent;
-
-        [Header("State Support")]
-
-        [SerializeField]
-        private PvSoUnitBattleStateEvent raiserOnStateChangedBeforeUEvent;
-
-        [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedViewSupport;
-
-
-        public UnitBattleState CurrentBattleState =>
-            _selectedUnit ? _selectedUnit.GetCurrentState() : UnitBattleState.Finished;
 
         #region Injected Fields
 
@@ -130,147 +119,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             BeginTeamTurn(CurrentTeam);
         }
 
-        #region StateSwitchAndActions
-
-        public void ChangeStateToConfirmedTargeting()
-        {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: No selected unit while Selecting ACTION OPTION!");
-            }
-            ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
-        }
-
-        private void ChangeStateForSelectedUnit(UnitBattleState state)
-        {
-            var stateBehaviour = UnitStateBehaviour.Emphasis;
-            var selectedUnit = _selectedUnit;
-            if (selectedUnit)
-            {
-                if (state != UnitBattleState.Finished)
-                {
-                    selectedUnit.AddState(state);
-                    stateBehaviour = UnitStateBehaviour.Adding;
-                }
-                else
-                {
-                    selectedUnit.ClearStates();
-                    stateBehaviour = UnitStateBehaviour.Clear;
-                }
-            }
-
-            raiserOnStateChangedBeforeUEvent.Raise(selectedUnit, state, stateBehaviour);
-
-            if (CurrentTeam == BattleTeam.Friendly)
-            {
-                onStateChangedViewSupport?.Invoke(selectedUnit, state);
-            }
-        }
-
-        private UnitBattleState CancelStatePurelyForUnit(PvMnBattleGeneralUnit unit, UnitBattleState stateToBeRemoved)
-        {
-            unit.RemoveLastState();
-            var stateAfterRemove = unit.GetCurrentState();
-            if (stateAfterRemove == UnitBattleState.MovingProgress)
-            {
-                unit.RemoveLastState();
-                stateAfterRemove = unit.GetCurrentState();
-            }
-            // Notify which state is going to be removed
-            raiserOnStateChangedBeforeUEvent.Raise(unit, stateToBeRemoved, UnitStateBehaviour.Popping);
-            // Notify which state is ON
-
-            onStateChangedViewSupport?.Invoke(unit, stateAfterRemove);
-            return stateAfterRemove;
-        }
-
-        public void ClearStateAndDeselectUnit()
-        {
-            ChangeStateForSelectedUnit(UnitBattleState.Finished);   // Clean up all States
-            if (!_selectedUnit)
-            {
-                return;
-            }
-
-            _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
-            onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
-            raiserOwnerSelectedViewEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
-            _selectedUnit = null;
-        }
-
-        /// <summary>
-        /// Only Used for binding to OnMovementEnd of Pawn
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private void UpdatePlayerStateAfterRegularMove()
-        {
-            if (!_selectedUnit) return;
-            if (_selectedUnit.GetCurrentState() != UnitBattleState.MovingProgress)
-            {
-                throw new Exception(
-                    $"State ERROR: Current State must be <{UnitBattleState.MovingProgress.ToString()}>, but Having <{CurrentBattleState.ToString()}>");
-            }
-
-            if (_selectedUnit.GetCurrentActionPoints() > 0)
-            {
-                ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);//UsingAbility);
-            }
-            else
-            {
-                ArchiveUnitBehaviourPoints(_selectedUnit, true, true);
-                ClearStateAndDeselectUnitCombo();
-            }
-        }
-
-        /// <summary>
-        /// This function is directly binded to Controller, and links to Cancel InputAction
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        public void CancelLastStateForSelectedUnit()
-        {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException(
-                    "ERROR: This Cancel function should be called ONLY when Unit Selected.");
-            }
-
-            var state = _selectedUnit.GetCurrentState();
-            switch (state)
-            {
-                case UnitBattleState.MovingProgress:
-                    Debug.LogError("State change doesn't work during Moving Progress!");
-                    break;
-                //case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    //if (state == UnitBattleState.UsingAbility)
-                    if (_selectedUnitLastCell)
-                    {
-                        // TODO: Consider clean up movement buff, Consider if NEED rotation RESET (Maybe not since rotation not matter)
-                        _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
-                    }
-
-                    // ONLY Place really to cancel State
-                    var afterState = CancelStatePurelyForUnit(_selectedUnit, state);
-                    if (afterState == UnitBattleState.Idle)
-                    {
-                        ClearStateAndDeselectUnit();
-                    }
-                    break;
-                case UnitBattleState.Moving:
-                    Debug.LogWarning("You are cancelling state for selected Unit!");
-                    break;
-                case UnitBattleState.AbilityConfirming:
-                    Debug.LogWarning("State change doesn't work in AbilityConfirming!");
-                    break;
-                case UnitBattleState.Finished:
-                case UnitBattleState.Idle:
-                default:
-                    break;
-            }
-        }
-
-        #endregion
-
         private void SetupTeam(BattleTeam inTeam)
         {
             List<GridPawnUnit> units = TacticBattleManager.GetUnitsOnTeam(inTeam);
@@ -282,16 +130,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void Update()
         {
-            switch (CurrentBattleState)
+            switch (gameBattleState.GetCurrentState)
             {
-                //case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    // TODO: Consider ability option
-                    onUpdateSupportWithAbility.Invoke(_selectedUnit);//, CurrentAbility);
-                    break;
-                case UnitBattleState.Moving:
-                case UnitBattleState.Finished:
+                case PvPlayerRoundState.Selected:
+                case PvPlayerRoundState.Moving:
+                case PvPlayerRoundState.None:
                     onUpdateSupport.Invoke(_selectedUnit);
+                    break;
+                case PvPlayerRoundState.Prepare:
+                    onUpdateSupportWithAbility.Invoke(_selectedUnit);
                     break;
             }
         }
@@ -303,7 +150,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void BeginTeamTurn(BattleTeam inTeam)
         {
-            ClearStateAndDeselectUnit();
+            gameBattleState.Clear();
+
             SetupTeam(inTeam);
 
             if (inTeam == BattleTeam.Hostile)

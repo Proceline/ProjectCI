@@ -1,9 +1,8 @@
+using IndAssets.Scripts.Managers;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.Runtime.GUI.Battle;
 using System;
 using System.Collections;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.Runtime.GUI.Battle;
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -44,15 +43,23 @@ public class PvMnBattleCamera : MonoBehaviour
     [SerializeField] private UnityEvent<Camera> onRotationChanged;
 
     [SerializeField]
-    private PvSoUnitBattleStateEvent onStateDetermined;
-
-    [SerializeField]
     private UnityEvent<bool> onCameraStartOrEndAnyTween;
 
     [NonSerialized] private Coroutine _cameraZoomingCoroutine;
 
+    [NonSerialized]
+    private bool _inFollowMode;
+
+    [NonSerialized]
+    private Transform _followingTarget;
+
+    [SerializeField]
+    private PvSoBattleState battleState;
+
     private void Start()
     {
+        _inFollowMode = false;
+
         _currentZoomValue = 0;
         _zoomValueAdjustor = 0;
         _panDirectionInputAction = panDirectionActionRef.ToInputAction();
@@ -66,7 +73,7 @@ public class PvMnBattleCamera : MonoBehaviour
         zoomInActionRef.ToInputAction().performed += AssignCameraZoomIn;
         zoomOutActionRef.ToInputAction().performed += AssignCameraZoomOut;
 
-        onStateDetermined.RegisterCallback(ApplyCameraChangeOnStateDetermined);
+        battleState.RegisterCallbackOnEnter(ApplyCameraOnStateSwitched);
     }
 
     private void OnDestroy()
@@ -82,16 +89,23 @@ public class PvMnBattleCamera : MonoBehaviour
         zoomInActionRef.ToInputAction().performed -= AssignCameraZoomIn;
         zoomOutActionRef.ToInputAction().performed -= AssignCameraZoomOut;
 
-        onStateDetermined.UnregisterCallback(ApplyCameraChangeOnStateDetermined);
+        battleState.UnregisterCallbackOnEnter(ApplyCameraOnStateSwitched);
     }
 
     void Update()
     {
-        var direction = _panDirectionInputAction.ReadValue<Vector2>();
-        var moveDir = transform.right * direction.x + transform.up * direction.y;
-        moveDir.y = 0;
+        if (!_inFollowMode)
+        {
+            var direction = _panDirectionInputAction.ReadValue<Vector2>();
+            var moveDir = transform.right * direction.x + transform.up * direction.y;
+            moveDir.y = 0;
 
-        translateTarget.Translate(moveDir * (movingSpeed * Time.deltaTime), Space.Self);
+            translateTarget.Translate(moveDir * (movingSpeed * Time.deltaTime), Space.Self);
+        }
+        else if (_followingTarget && GetCurrentCenter(out var center, out _))
+        {
+            TranslateCameraToPosition(center, _followingTarget.position);
+        }
     }
 
     private void AddOnCameraZoom(float zoomDelta, ref float recordValue)
@@ -153,38 +167,33 @@ public class PvMnBattleCamera : MonoBehaviour
         return true;
     }
 
-    private void ApplyCameraChangeOnStateDetermined(IEventOwner owner, UnitStateEventParam stateEventParam)
+    private async void ApplyCameraOnStateSwitched(PvPlayerRoundState inState, PvMnBattleGeneralUnit targetUnit)
     {
-        if (owner is not PvMnBattleGeneralUnit) return;
-        var state = stateEventParam.battleState;
-        var stateBehaviour = stateEventParam.behaviour;
+        if (!targetUnit || inState == PvPlayerRoundState.None)
+        {
+            _inFollowMode = false;
+        }
 
-        if (stateBehaviour == UnitStateBehaviour.Adding)
+        if (inState == PvPlayerRoundState.Selected)
         {
-            switch (state)
-            {
-                case UnitBattleState.Moving:
-                    StartToMoveCamera(owner.Position, 0f);
-                    break;
-                //case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    StartToMoveCamera(owner.Position, 20f);
-                    break;
-                case UnitBattleState.AbilityConfirming:
-                    StartToMoveCamera(owner.Position, -10f, 0.1f);
-                    break;
-                case UnitBattleState.Idle:
-                case UnitBattleState.MovingProgress:
-                case UnitBattleState.Finished:
-                default:
-                    StartToMoveCamera(owner.Position, 0f, 0.1f);
-                    break;
-            }
+            _inFollowMode = false;
+            _followingTarget = targetUnit.transform;
+            StartToMoveCamera(_followingTarget.position, 0, 0.2f);
+            await Awaitable.WaitForSecondsAsync(0.25f);
+            _inFollowMode = true;
         }
-        else
-        {
-            StartToMoveCamera(owner.Position, 0f, 0.1f);
-        }
+    }
+
+    public void FollowOnUnit(PvMnBattleGeneralUnit targetUnit)
+    {
+        _followingTarget = targetUnit.transform;
+        _inFollowMode = true;
+    }
+
+    public void UnfollowTransform()
+    {
+        _inFollowMode = false;
+        _followingTarget = null;
     }
 
     private void StartToMoveCamera(Vector3 position, float zoomValue, float duration = 0.25f)
@@ -254,6 +263,15 @@ public class PvMnBattleCamera : MonoBehaviour
         }
         onCameraStartOrEndAnyTween.Invoke(false);
     }
+
+    private void TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition)
+    {
+        var deltaDirection = targetPosition - currentCenter;
+        deltaDirection.y = 0;
+
+        translateTarget.Translate(deltaDirection, Space.Self);
+    }
+
     #endregion
 
     #region Manual Camera Control

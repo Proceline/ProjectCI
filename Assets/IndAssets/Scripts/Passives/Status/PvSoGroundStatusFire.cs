@@ -37,29 +37,29 @@ namespace IndAssets.Scripts.Passives.Status
             raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
         }
 
-        public void DetermineProcessOnStateChanged(IEventOwner owner, UnitStateEventParam stateEventParam)
-        {
-            if (_pendingActionsCollection.Count == 0) return;
+        //public void DetermineProcessOnStateChanged(IEventOwner owner, UnitStateEventParam stateEventParam)
+        //{
+        //    if (_pendingActionsCollection.Count == 0) return;
             
-            var state = stateEventParam.battleState;
-            var stateBehaviour = stateEventParam.behaviour;
+        //    var state = stateEventParam.battleState;
+        //    var stateBehaviour = stateEventParam.behaviour;
 
-            switch (state)
-            {
-                case UnitBattleState.AbilityTargeting when stateBehaviour == UnitStateBehaviour.Popping:
-                    _pendingActionsCollection.Remove(owner);
-                    break;
-                case UnitBattleState.Finished when stateBehaviour == UnitStateBehaviour.Clear:
-                {
-                    if (_pendingActionsCollection.TryGetValue(owner, out var pendingAction))
-                    {
-                        pendingAction.Invoke();
-                        _pendingActionsCollection.Remove(owner);
-                    }
+        //    switch (state)
+        //    {
+        //        case UnitBattleState.AbilityTargeting when stateBehaviour == UnitStateBehaviour.Popping:
+        //            _pendingActionsCollection.Remove(owner);
+        //            break;
+        //        case UnitBattleState.Finished when stateBehaviour == UnitStateBehaviour.Clear:
+        //        {
+        //            if (_pendingActionsCollection.TryGetValue(owner, out var pendingAction))
+        //            {
+        //                pendingAction.Invoke();
+        //                _pendingActionsCollection.Remove(owner);
+        //            }
 
-                    break;
-                }
-            }
-        }
+        //            break;
+        //        }
+        //    }
+        //}
     }
 }
