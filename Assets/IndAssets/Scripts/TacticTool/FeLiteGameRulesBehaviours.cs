@@ -19,7 +19,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] private PvSoBattleState gameBattleState;
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
 
-        private readonly List<PvMnBattleGeneralUnit> _finishedPlayableUnits = new();
+        private readonly HashSet<PvMnBattleGeneralUnit> _finishedPlayableUnits = new();
 
         private void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
@@ -39,12 +39,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 
-            _selectedUnitLastCell = null;
-
             if (standUnit is not PvMnBattleGeneralUnit playableUnit)
             {
                 throw new TypeAccessException($"ONLY Type <{nameof(PvMnBattleGeneralUnit)}> can be used!");
             }
+
+            if (_finishedPlayableUnits.Contains(playableUnit))
+            {
+                return;
+            }
+
+            _selectedUnitLastCell = null;
 
             SelectUnit(playableUnit);
             gameBattleState.PushState(PvPlayerRoundState.Selected, playableUnit);
