@@ -29,9 +29,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private static FormulaCollection _formulaCollection;
         private static FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
 
-        private readonly Stack<UnitBattleState> _unitStates = new();
-        private readonly List<PvSoUnitAbility> _battleAbilities = new();
-
         [NonSerialized]
         private PvSoUnitAbility _attackAbility;
 
@@ -97,8 +94,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 OnPreStandIdleAnimRequired += PlayIdleAnimation;
                 OnPreMovementAnimRequired += PlayMovementAnimation;
             }
-
-            OnMovementPostComplete.RemoveAllListeners();
         }
 
         public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
@@ -171,34 +166,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override IStatusEffectContainer GetStatusEffectContainer()
         {
             return _statusCollection ??= new PvStatusDataCollection(ID, name);
-        }
-
-        public override UnitBattleState GetCurrentState()
-        {
-            if (_unitStates.TryPeek(out var result))
-            {
-                return result;
-            }
-
-            return UnitBattleState.Idle;
-        }
-
-        public override void AddState(UnitBattleState state)
-        {
-            _unitStates.Push(state);
-        }
-
-        public override void RemoveLastState()
-        {
-            if (!_unitStates.TryPop(out _))
-            {
-                throw new IndexOutOfRangeException("ERROR: No state left!");
-            }
-        }
-
-        public override void ClearStates()
-        {
-            _unitStates.Clear();
         }
 
         public override void HandleTurnStarted()
