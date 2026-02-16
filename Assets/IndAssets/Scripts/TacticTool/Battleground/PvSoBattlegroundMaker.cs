@@ -143,12 +143,6 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     // var abilities = unit.GetAbilities();
                     // abilityEquipEvent.Raise(unit, abilities[0]);
                 }
-
-                var hoverPawnInfos = FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);
-                foreach (var hoverPawnInfo in hoverPawnInfos)
-                {
-                    hoverPawnInfo.Initialize();
-                }
                 
                 battleManager.Initialize();
                 onBattleInitialized?.Invoke();

@@ -33,6 +33,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private bool _isShowingActionRange;
 
         [SerializeField]
+        private PvSoLevelCellEvent raiserHoverCellEventWithoutOwner;
+
+        [SerializeField]
         private PvSoLevelCellEvent raiserAggroHoveredEvent;
 
         [SerializeField]
@@ -191,13 +194,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 return;
             }
-            // GridPawnUnit hoverUnit = CurrentHoverCell.GetUnitOnCell();
-            // TODO: Add Event if necessary
 
             _hoveringCells.Add(CurrentHoverCell);
             if (!selectedUnit)
             {
                 RefreshHoveringVisualCells();
+                raiserHoverCellEventWithoutOwner.Raise(CurrentHoverCell);
                 return;
             }
 
@@ -279,7 +281,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void BeginHover(LevelCellBase cell)
         {
             CurrentHoverCell = cell;
-            UpdateHoverCells(null);
 
             if (_temporaryStateCells.Count > 0)
             {
