@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dc767009d9c450bb45c2c88b18e61db, type: 3}
-  m_Name: _OnTeamRoundEndEvent
+  m_Name: _OnTeamRoundEndPostEvent
   m_EditorClassIdentifier: 
   onRuntimePreInstalledEvents:
     m_PersistentCalls:
