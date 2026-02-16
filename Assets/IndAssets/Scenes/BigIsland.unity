@@ -68846,6 +68846,8 @@ MonoBehaviour:
   battleState: {fileID: 11400000, guid: 7e5cc1875f941bb44a7923a523de734f, type: 2}
   roundSwitchEvent: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
   onHoverCellEventWithoutOwner: {fileID: 11400000, guid: 96c11a14d92eb7d458f264d8366c5957, type: 2}
+  onHoverCellEventWithOwner: {fileID: 11400000, guid: cde261346966da0418456c40b2c593e7, type: 2}
+  onBattleState: {fileID: 11400000, guid: 7e5cc1875f941bb44a7923a523de734f, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

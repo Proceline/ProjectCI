@@ -36,6 +36,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private PvSoLevelCellEvent raiserHoverCellEventWithoutOwner;
 
         [SerializeField]
+        private PvSoLevelCellEvent raiserHoverCellEventWithOwner;
+
+        [SerializeField]
         private PvSoLevelCellEvent raiserAggroHoveredEvent;
 
         [SerializeField]
@@ -247,6 +250,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var isAttackable = _bufferedAttackCells.Contains(cell);
                 if (isAttackable || _bufferedSupportCells.Contains(cell))
                 {
+                    raiserHoverCellEventWithOwner.Raise(cell);
+
                     var ability = isAttackable ? selectedUnit.AttackAbility : selectedUnit.SupportAbility;
                     List<LevelCellBase> effectedCells = ability.GetEffectedCells(selectedUnit, cell);
                     foreach (var currCell in effectedCells)
@@ -262,6 +267,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                             _hoveringCells.Add(currCell);
                         }
                     }
+                }
+                else
+                {
+                    raiserHoverCellEventWithOwner.Raise(null);
                 }
 
                 RefreshHoveringVisualCells();
