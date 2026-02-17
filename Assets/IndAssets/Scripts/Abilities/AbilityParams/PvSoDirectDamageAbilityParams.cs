@@ -53,7 +53,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
         {
             var targetUnit = currentTargetCell.GetUnitOnCell();
-            if (!targetUnit)
+            if (!targetUnit || !targetUnit.gameObject.activeSelf)
             {
                 return;
             }

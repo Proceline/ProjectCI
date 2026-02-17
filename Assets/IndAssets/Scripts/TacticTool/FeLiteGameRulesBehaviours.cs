@@ -314,18 +314,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                         var cellUnit = cell.GetUnitOnCell();
 
-                        if (cellUnit)
+                        if (!cellUnit)
                         {
-                            var result = param.MockValue(queryOwner, cellUnit, (uint)queryItem.queryOrderForm);
+                            continue;
+                        }
 
-                            if (results.TryGetValue(cellUnit, out var currentDelta))
-                            {
-                                results[cellUnit] = currentDelta + result;
-                            }
-                            else
-                            {
-                                results[cellUnit] = result;
-                            }
+                        var result = param.MockValue(queryOwner, cellUnit, (uint)queryItem.queryOrderForm);
+
+                        if (results.TryGetValue(cellUnit, out var currentDelta))
+                        {
+                            results[cellUnit] = currentDelta + result;
+                        }
+                        else
+                        {
+                            results[cellUnit] = result;
                         }
                     }
                 }

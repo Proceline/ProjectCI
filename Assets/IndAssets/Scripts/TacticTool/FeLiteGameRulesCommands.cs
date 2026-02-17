@@ -71,6 +71,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private async Awaitable ProcessVisualResults(PvAbilityQueryItem<PvMnBattleGeneralUnit> queryItem)
         {
             var commandResults = queryItem.Commands;
+            if (commandResults.Count == 0)
+            {
+                return;
+            }
+
             await ApplyAnimationProcess(queryItem.Ability, queryItem.holdingOwner, queryItem.targetUnit.GetCell(), commandResults);
         }
 
@@ -115,7 +120,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public async Awaitable<float> WaitUntilProjectileFinished(AnimationPvCustomName animName, GridPawnUnit casterUnit,
+        private async Awaitable<float> WaitUntilProjectileFinished(AnimationPvCustomName animName, GridPawnUnit casterUnit,
             LevelCellBase target, PvMnProjectile projectilePrefab)
         {
             if (animName == AnimationPvCustomName.DoNothing)

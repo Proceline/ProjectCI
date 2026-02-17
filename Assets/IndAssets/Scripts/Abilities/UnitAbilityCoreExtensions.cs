@@ -61,7 +61,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
                     var cellUnit = cell.GetUnitOnCell();
                     int delta = 0;
-                    if (cellUnit)
+
+                    if (cellUnit && !cellUnit.IsDead())
                     {
                         var criticalAttribute = 100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
                         if (caughtSeedValue >= criticalAttribute)

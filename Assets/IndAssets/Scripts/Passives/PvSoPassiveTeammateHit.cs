@@ -84,11 +84,13 @@ namespace IndAssets.Scripts.Passives
 
             if (determinedUnit)
             {
-                var queryItem = QueryItem.CreateQueryItemIntoList(queryItems, 0);
+                var adjustQueryItem = queryItems[followUpIndex];
+                // Comment part is used for inserting new follow up
+                //var queryItem = QueryItem.CreateQueryItemIntoList(queryItems, 0);
                 var castedUnit = determinedUnit as PvMnBattleGeneralUnit;
-                queryItem.SetAbility(castedUnit.FollowUpAbility, PvEnDamageForm.Aggressive);
-                queryItem.holdingOwner = castedUnit;
-                queryItem.targetUnit = inTarget;
+                adjustQueryItem.SetAbility(castedUnit.FollowUpAbility, PvEnDamageForm.Aggressive);
+                adjustQueryItem.holdingOwner = castedUnit;
+                adjustQueryItem.targetUnit = inTarget;
             }
         }
     }
