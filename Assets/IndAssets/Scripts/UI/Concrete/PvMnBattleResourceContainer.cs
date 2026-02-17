@@ -21,7 +21,7 @@ namespace ProjectCI.Runtime.GUI.Battle
         [NonSerialized] private bool _initialized;
         private GridObject _followingTarget;
 
-        [Inject] private static IUnitDyingEvent _onUnitDyingEvent;
+        [Inject] private static ITargetUnitDeathEvent _onUnitDyingEvent;
         [Inject] private static IOnStatusApplyEvent _onStatusVisualApplyEvent;
         [Inject] private static ITargetUnitUpdateStatusEvent _onStatusVisualRefreshEvent;
 
@@ -49,9 +49,9 @@ namespace ProjectCI.Runtime.GUI.Battle
             _initialized = true;
         }
 
-        private void OnObjectMarkedAsDead(IEventOwner owner, UnitPureEventParam unitParam)
+        private void OnObjectMarkedAsDead(PvMnBattleGeneralUnit deadUnit)
         {
-            if (unitParam.unit != _followingTarget) return;
+            if (deadUnit != _followingTarget) return;
             _healthBarInstance.SetActive(false);
         }
 

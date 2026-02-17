@@ -13,6 +13,7 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.CoreSystem.Runtime.Passives;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -52,6 +53,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private int _currentActionPoints = 1;
 
         private PvStatusDataCollection _statusCollection;
+
+        private readonly List<PvSoPassiveBase> _installedPassives = new();
 
         private void SetFormulaCollection()
         {
@@ -109,6 +112,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnDestroy()
         {
+            _installedPassives.Clear();
+
             if (_animationManager)
             {
                 OnPreStandIdleAnimRequired -= PlayIdleAnimation;
@@ -120,6 +125,21 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             return RuntimeAttributes.Health.CurrentValue <= 0;
         }
+
+        public void AddPassiveRecord(PvSoPassiveBase passive)
+        {
+            _installedPassives.Add(passive);
+        }
+
+        public void DoActionOnInstalledPassives(Action<PvSoPassiveBase> action)
+        {
+            foreach (var passive in _installedPassives) 
+            { 
+                action.Invoke(passive); 
+            }
+        }
+
+        public void CleanUpPassives() => _installedPassives.Clear();
 
         public override int GetCurrentMovementPoints() => _currentMovementPoints;
         public int GetMovementPoints() => RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);

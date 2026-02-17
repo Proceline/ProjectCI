@@ -51,9 +51,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             pawnUnit.RuntimeAttributes.SetGeneralAttribute(decisionAttribute, decisionLevel);
             pawnUnit.RuntimeAttributes.SetGeneralAttribute(styleAttribute, styleLevel);
 
-            foreach (var passive in personalPassives)
+            if (pawnUnit is PvMnBattleGeneralUnit battleUnit)
             {
-                passive.InstallPassive(pawnUnit as PvMnBattleGeneralUnit);
+                battleUnit.CleanUpPassives();
+
+                foreach (var passive in personalPassives)
+                {
+                    passive.InstallPassive(battleUnit);
+                    battleUnit.AddPassiveRecord(passive);
+                }
             }
         }
 

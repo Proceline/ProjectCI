@@ -31,7 +31,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
         [NonSerialized] private bool _isLockableAnimating;
         private Coroutine _lockingRoutine;
 
-        [Inject] private static IUnitDyingEvent _onIsDyingEvent;
+        [Inject] private static ITargetUnitDeathEvent _onIsDyingEvent;
 
         public Action<string> OnForcePlayAnimation;
 
@@ -124,9 +124,9 @@ namespace ProjectCI_Animation.Runtime.Concrete
             _lockingRoutine = StartCoroutine(EnablePresetTimeLock(actingTime));
         }
         
-        private void RespondToDie(IEventOwner owner, UnitPureEventParam unitParam)
+        private async void RespondToDie(PvMnBattleGeneralUnit deadUnit)
         {
-            if (_animatorOwner.EventIdentifier != unitParam.unit.ID)
+            if (_animatorOwner.EventIdentifier != deadUnit.ID)
             {
                 return;
             }
@@ -139,6 +139,10 @@ namespace ProjectCI_Animation.Runtime.Concrete
 
             PlayLoopAnimation(CurrentPlayableSupport.GetAnimationIndex(AnimationPvCustomName.DieStay.ToString()));
             ForcePlayAnimation(AnimationIndexName.Death);
+
+            var waitLength = _onGetPresetAnimationLengthFunc.Raise(transform.parent, AnimationIndexName.Death.ToString()) + 0.25f;
+            await Awaitable.WaitForSecondsAsync(waitLength);
+            transform.parent.gameObject.SetActive(false);
         }
 
         private IEnumerator EnablePresetTimeLock(float lockTime)

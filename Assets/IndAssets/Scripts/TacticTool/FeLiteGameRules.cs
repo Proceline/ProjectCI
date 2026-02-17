@@ -182,5 +182,24 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 cell.Reset();
             }
         }
+
+        /// <summary>
+        /// Handles the logic required when a unit has been defeated in battle.
+        /// Used in asset _OnUnitDeathOfficiallyTriggeredEvent.asset, as binding UnityAction
+        /// </summary>
+        /// <param name="deadUnit">The unit that has been defeated. Cannot be null.</param>
+        public void HandleDeadUnit(PvMnBattleGeneralUnit deadUnit)
+        {
+            if (!deadUnit)
+            {
+                return;
+            }
+
+            deadUnit.SetCurrentCell(null);
+
+            _unitIdToBattleUnitHash.Remove(deadUnit.ID);
+            deadUnit.DoActionOnInstalledPassives(passive => passive.DisposePassive(deadUnit));
+            deadUnit.CleanUpPassives();
+        }
     }
 }

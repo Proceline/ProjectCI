@@ -9,7 +9,7 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     [StaticInjectableTarget]
     public class PvDieCommand : CommandResult
     {
-        [Inject] private static IUnitDyingEvent _raiserUnitDyingEvent;
-        public static IUnitDyingEvent GetRaiserUnitDyingEvent => _raiserUnitDyingEvent;
+        [Inject] private static ITargetUnitDeathEvent _raiserUnitDyingEvent;
+        public static ITargetUnitDeathEvent GetRaiserUnitDyingEvent => _raiserUnitDyingEvent;
     }
 } 
