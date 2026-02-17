@@ -15,5 +15,7 @@ EditorBuildSettings:
     path: Assets/IndAssets/Scenes/BigIsland.unity
     guid: d337beb2894b49e41b2751d878d12490
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 0c19c54bc83abd2478e3fb2edeed92b3, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 3c71535e29788b14b8cd0eb8e2e69f77, type: 2}
   m_UseUCBPForAssetBundles: 0
