@@ -31,7 +31,7 @@ MonoBehaviour:
   isFollowUpAllowed: 0
   isAbilityWeapon: 0
   isAppliedOnSelf: 1
-  isSupportAbility: 0
+  isSupportAbility: 1
   dcAttribute:
     value: 10
   acAttribute:

@@ -4,7 +4,9 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace ProjectCI.CoreSystem.Runtime.UI
@@ -21,9 +23,6 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private Transform[] pawnPreviewParents = new Transform[2];
 
         [Header("Global Assets"), SerializeField]
-        private PvSoBattleState battleState;
-
-        [SerializeField]
         private PvSoBattleTeamEvent roundSwitchEvent;
 
         [SerializeField]
@@ -35,8 +34,13 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         [SerializeField]
         private PvSoBattleState onBattleState;
 
+        [Header("Evnets"), SerializeField]
+        private UnityEvent<Dictionary<GridPawnUnit, int>, LevelCellBase> onCombatOutPreviewsEvent;
+
         private readonly PvUIHoverPawnInfo[] _pawnPreviews = new PvUIHoverPawnInfo[2];
         private readonly GridPawnUnit[] _pawnsInView = new GridPawnUnit[2];
+
+        private readonly Dictionary<GridPawnUnit, int> _combatingPreviewResults = new();
 
         private void Awake()
         {
@@ -45,7 +49,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
         private void Start()
         {
-            battleState.RegisterCallbackOnEnter(OnBattleStateEntered);
+            onBattleState.RegisterCallbackOnEnter(OnBattleStateEntered);
             roundSwitchEvent.RegisterCallback(OnRoundSwitchResponse);
             onHoverCellEventWithoutOwner.RegisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.RegisterCallback(CreatePreviewForTarget);
@@ -54,7 +58,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
         private void OnDestroy()
         {
-            battleState.UnregisterCallbackOnEnter(OnBattleStateEntered);
+            onBattleState.UnregisterCallbackOnEnter(OnBattleStateEntered);
             roundSwitchEvent.UnregisterCallback(OnRoundSwitchResponse);
             onHoverCellEventWithoutOwner.UnregisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.UnregisterCallback(CreatePreviewForTarget);
@@ -82,10 +86,32 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             if (target)
             {
                 var unit = target.GetUnitOnCell();
-                CreatePreview(unit, 1);
+                if (CreatePreview(unit, 1))
+                {
+                    onCombatOutPreviewsEvent.Invoke(_combatingPreviewResults, target);
+
+                    if (_combatingPreviewResults.TryGetValue(_pawnsInView[0], out var deltaOnOwner))
+                    {
+                        _pawnPreviews[0].Setup(_pawnsInView[0], deltaOnOwner);
+                    }
+                    else
+                    {
+                        _pawnPreviews[0].Setup(_pawnsInView[0], 0);
+                    }
+
+                    if (_combatingPreviewResults.TryGetValue(_pawnsInView[1], out var deltaOnTarget))
+                    {
+                        _pawnPreviews[1].Setup(_pawnsInView[1], deltaOnTarget);
+                    }
+                    else
+                    {
+                        _pawnPreviews[1].Setup(_pawnsInView[1], 0);
+                    }
+                }
             }
             else if (_pawnPreviews[1] && _pawnPreviews[1].gameObject.activeSelf)
             {
+                _pawnPreviews[0].Setup(_pawnsInView[0], 0);
                 _pawnsInView[1] = null;
                 _pawnPreviews[1].gameObject.SetActive(false);
             }
@@ -103,7 +129,13 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             }
         }
 
-        private void CreatePreview(GridPawnUnit unit, int index)
+        /// <summary>
+        /// Create and Check if Preview refreshed
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="index"></param>
+        /// <returns>If Preview updated on Canvas</returns>
+        private bool CreatePreview(GridPawnUnit unit, int index)
         {
             if (unit)
             {
@@ -119,9 +151,12 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
                 if (!_pawnsInView[index] || _pawnsInView[index] != unit)
                 {
-                    _pawnPreviews[index].Setup(unit);
+                    _pawnPreviews[index].Setup(unit, 0);
                     _pawnsInView[index] = unit;
+                    return true;
                 }
+
+                return false;
             }
             else
             {
@@ -129,6 +164,8 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                 {
                     _pawnPreviews[index].gameObject.SetActive(false);
                 }
+
+                return false;
             }
         }
     }

@@ -19,9 +19,6 @@ MonoBehaviour:
   damageType: 7
   criticalAmountAttribute:
     value: 31
-  useDynamicAddon: 1
-  dynamicAmountDependency:
-    value: 3
   damageForm: 2
   basicAddon: 10
   isCriticalEnabledByDefault: 0

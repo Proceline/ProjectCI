@@ -278,6 +278,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             Dictionary<GridPawnUnit, int> allMockingDelta = new();
+            MockAbilityToTargetCell(ref allMockingDelta, triggerUnit, targetUnit, ability);
+            return allMockingDelta;
+        }
+
+        private void MockAbilityToTargetCell(ref Dictionary<GridPawnUnit, int> results, PvMnBattleGeneralUnit triggerUnit,
+            PvMnBattleGeneralUnit targetUnit, PvSoUnitAbility ability)
+        {
+            results.Clear();
 
             var queryList = CreateCombatingProcess(ability, triggerUnit, targetUnit);
             RaiserOnCombatingListCreatedEvent.Raise(triggerUnit, targetUnit, queryList);
@@ -310,21 +318,42 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                         {
                             var result = param.MockValue(queryOwner, cellUnit, (uint)queryItem.queryOrderForm);
 
-                            if (allMockingDelta.TryGetValue(cellUnit, out var currentDelta))
+                            if (results.TryGetValue(cellUnit, out var currentDelta))
                             {
-                                allMockingDelta[cellUnit] = currentDelta + result;
+                                results[cellUnit] = currentDelta + result;
                             }
                             else
                             {
-                                allMockingDelta[cellUnit] = result;
+                                results[cellUnit] = result;
                             }
                         }
                     }
                 }
             }
+        }
 
+        /// <summary>
+        /// Binded to PvMnGameVisualBridges
+        /// </summary>
+        /// <param name="results"></param>
+        /// <param name="targetCell"></param>
+        public void GetMockingDataForSelectedUnit(Dictionary<GridPawnUnit, int> results, LevelCellBase targetCell)
+        {
+            var selectedUnit = _selectedUnit;
 
-            return allMockingDelta;
+            if (selectedUnit)
+            {
+                var gridPawnUnit = targetCell.GetUnitOnCell();
+                if (!gridPawnUnit || gridPawnUnit is not PvMnBattleGeneralUnit targetUnit)
+                {
+                    throw new NullReferenceException("ERROR: No target unit!");
+                }
+
+                var usingAbility = TacticBattleManager.GetTeamAffinity(selectedUnit.GetTeam(), targetUnit.GetTeam()) == BattleTeam.Friendly ?
+                    selectedUnit.SupportAbility : selectedUnit.AttackAbility;
+
+                MockAbilityToTargetCell(ref results, selectedUnit, targetUnit, usingAbility);
+            }
         }
 
         private List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> CreateCombatingProcess(PvSoUnitAbility ability,

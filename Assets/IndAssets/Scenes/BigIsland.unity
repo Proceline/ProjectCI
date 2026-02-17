@@ -18554,6 +18554,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1778585826}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &542896090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -68843,11 +68855,26 @@ MonoBehaviour:
   pawnPreviewParents:
   - {fileID: 1802293973}
   - {fileID: 836146227}
-  battleState: {fileID: 11400000, guid: 7e5cc1875f941bb44a7923a523de734f, type: 2}
   roundSwitchEvent: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
   onHoverCellEventWithoutOwner: {fileID: 11400000, guid: 96c11a14d92eb7d458f264d8366c5957, type: 2}
   onHoverCellEventWithOwner: {fileID: 11400000, guid: cde261346966da0418456c40b2c593e7, type: 2}
   onBattleState: {fileID: 11400000, guid: 7e5cc1875f941bb44a7923a523de734f, type: 2}
+  onCombatOutPreviewsEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e6edb0e4483354a46a9652d42a6b6c2b, type: 2}
+        m_TargetAssemblyTypeName: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.FeLiteGameRules,
+          Assembly-CSharp
+        m_MethodName: GetMockingDataForSelectedUnit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

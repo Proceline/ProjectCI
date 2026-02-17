@@ -28,13 +28,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField]
         private AttributeType criticalAmountAttribute;
 
-
-        [Header("Dynamic")]
-        [SerializeField]
-        private bool useDynamicAddon;
-        [SerializeField]
-        private AttributeType dynamicAmountDependency;
-
         [SerializeField]
         private PvEnDamageForm damageForm;
 
@@ -75,28 +68,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             var beforeHealth = toContainer.Health.CurrentValue;
             var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
-
-            if (useDynamicAddon)
-            {
-                var dynamicLimit = (fromContainer.GetAttributeValue(dynamicAmountDependency) + 5) / 2;
-                if (dynamicLimit > 0)
-                {
-                    var limitMin = 5 - dynamicLimit;
-                    var limitMax = 5 + dynamicLimit;
-
-                    var randomValue = RandomSeedProvider.Service.GetUnrelatedRandomNumber(limitMin, limitMax);
-
-                    damage += randomValue;
-                    if (damage <= 0)
-                    {
-                        damage = 1;
-                    }
-                }
-                else
-                {
-                    damage += 5;
-                }
-            }
 
             var isReallyHit = isAlwaysHitByDefault || passValue > 0;
 
@@ -252,7 +223,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         }
 
-        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint extraDamageForm)
         {
             var toContainer = targetUnit.RuntimeAttributes;
             var fromContainer = fromUnit.RuntimeAttributes;
@@ -266,10 +237,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
             }
 
-            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, damageForm);
-
-            var translatedDamageForm = (PvEnDamageForm)damageForm;
-            var deltaValue = translatedDamageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
+            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+            var deltaValue = damageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
 
             return deltaValue;
         }
