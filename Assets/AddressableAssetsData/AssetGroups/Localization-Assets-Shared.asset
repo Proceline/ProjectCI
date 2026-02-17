@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44b4dd9fd31e8d947bab6826614415a9
+    m_Address: Assets/IndAssets/Localization/Tables/BattleAttributes Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 620daac71ea69724d924568c7cf201df
     m_Address: Assets/IndAssets/Localization/Tables/Pawn,Abilities,Attributes Shared
       Data.asset
