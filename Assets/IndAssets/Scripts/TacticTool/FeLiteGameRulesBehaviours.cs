@@ -246,8 +246,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands);
             }
 
-            RaiserCombatingTurnEndLogically.Raise(triggerUnit, targetUnit);
-
             // Apply visual results of commands
             foreach (var queryItem in queryList)
             {

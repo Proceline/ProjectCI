@@ -1,19 +1,12 @@
-using System.Collections.Generic;
-using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
-    [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "NewAbility", menuName = "ProjectCI Tools/Ability/Create Custom Ability", order = 1)]
     public class PvSoUnitAbility : UnitAbilityCore
     {
@@ -45,22 +38,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         [SerializeField]
         private AnimationPvCustomName abilityAnimationName;
-
-        [Inject] 
-        private static readonly ICombatingOnStartEvent XRaiserCombatingOnStarted;
-
-        [Inject]
-        private static readonly ICombatingTurnEndEvent OnLogicallyEndedInTurn;
         
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
         public AnimationPvCustomName AnimationName => abilityAnimationName;
-
-        [FormerlySerializedAs("onTriggerUnitEnteredInCombating")] 
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombating;
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombatingAsTarget;
-        [FormerlySerializedAs("onTriggerUnitLeftFromCombating")] 
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitLeftFromCombating;
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitLeftFromCombatingAsTarget;
         
         public bool IsCounterAllowed()
         {
@@ -72,15 +52,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public bool IsAbilityWeapon()
         {
             return isAbilityWeapon;
-        }
-
-        protected virtual void OnCombatedTurnLogicallyEndedResponse(PvMnBattleGeneralUnit caster,
-            PvMnBattleGeneralUnit victim)
-        {
-            onUnitEnteredInCombatingAsTarget.Invoke(victim);
-            
-            victim.CounterAbility.onUnitLeftFromCombating.Invoke(caster);
-            OnLogicallyEndedInTurn.UnregisterCallback(OnCombatedTurnLogicallyEndedResponse);
         }
 
         public override void ApplyVisualEffects(GridPawnUnit inCasterUnit, LevelCellBase inEffectCell)

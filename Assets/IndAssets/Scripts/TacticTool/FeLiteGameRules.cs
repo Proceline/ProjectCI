@@ -82,8 +82,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] private static readonly IUnitGeneralCombatingEvent RaiserOnCombatingListCreatedEvent;
         [Inject] private static readonly IUnitCombatingQueryEndEvent RaiserOnCombatingQueryEndEvent;
 
-        [Inject] private static readonly ICombatingTurnEndEvent RaiserCombatingTurnEndLogically;
-
         [Inject] private static readonly IAnimationOutLengthFunc GetPresetAnimationLengthFunc;
         [Inject] private static readonly IAnimationOutBreakPointFunc GetPresetAnimationBreakPointFunc;
         [Inject] private static readonly PvSoAnimationTriggerEvent RaiserAnimationPlayEvent;
