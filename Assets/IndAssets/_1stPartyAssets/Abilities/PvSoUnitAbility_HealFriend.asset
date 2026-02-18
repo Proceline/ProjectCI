@@ -32,7 +32,7 @@ MonoBehaviour:
   isAbilityWeapon: 0
   isAppliedOnSelf: 1
   isSupportAbility: 1
-  iconSprite: {fileID: 1813024148, guid: 1538c5afb130f444784879ec5163389d, type: 3}
+  iconSprite: {fileID: 1408770283, guid: b04d2f8964af7d34e948770eac4ffad9, type: 3}
   dcAttribute:
     value: 10
   acAttribute:
