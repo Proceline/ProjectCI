@@ -52,6 +52,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private bool IsTeamInputLocked { get; set; }
 
+        public static bool IsControllerLocked { get; set; }
+
         private void Start()
         {
             onAggroHintInteracted.action.started += OnAggroHintEnabled;
@@ -107,6 +109,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnBattleActionConfirmed(InputAction.CallbackContext context)
         {
+            if (IsControllerLocked)
+            {
+                return;
+            }
+
             var currentHoverCell = gameVisual.CurrentHoverCell;
             if (!currentHoverCell) return;
             onConfirmedAtBattlegroundWithState?.Invoke(currentHoverCell, currentHoverCell.GetCellState());
@@ -114,6 +121,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnBattleActionCanceled(InputAction.CallbackContext context)
         {
+            if (IsControllerLocked)
+            {
+                return;
+            }
+
             onCanceledAtBattleground?.Invoke();
 
             if (IsAggroHintToggled)
@@ -139,6 +151,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnAggroHintEnabled(InputAction.CallbackContext context)
         {
+            if (IsControllerLocked)
+            {
+                return;
+            }
+
             switch (context.phase)
             {
                 case InputActionPhase.Started:
@@ -154,6 +171,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnAggroHintToggling(InputAction.CallbackContext context)
         {
+            if (IsControllerLocked)
+            {
+                return;
+            }
+
             IsAggroHintToggled = !IsAggroHintToggled;
 
             if (IsAggroHintToggled)

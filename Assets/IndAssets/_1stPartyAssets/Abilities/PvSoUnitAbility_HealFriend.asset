@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PvSoUnitAbility_HealFriend
   m_EditorClassIdentifier: 
   m_AbilityName: '[Heal]'
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: 734d32258bac0664a8e515872d58f9b8, type: 3}
   m_Radius: 2
   m_ActionPointCost: 1
   m_bAllowBlocked: 1
@@ -32,21 +32,10 @@ MonoBehaviour:
   isAbilityWeapon: 0
   isAppliedOnSelf: 1
   isSupportAbility: 1
+  iconSprite: {fileID: 1813024148, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   dcAttribute:
     value: 10
   acAttribute:
     value: 11
   projectilePrefab: {fileID: 0}
   abilityAnimationName: 0
-  onUnitEnteredInCombating:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitEnteredInCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombating:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []

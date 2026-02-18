@@ -24,6 +24,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         [SerializeField]
         private GameObject abilitiesPanel;
 
+        [SerializeField]
+        private Image[] abilityHints = new Image[3];
+
         [Header("Global Assets"), SerializeField]
         private PvSoBattleTeamEvent roundSwitchEvent;
 
@@ -83,6 +86,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             var unit = cell.GetUnitOnCell();
             if (CreatePreview(unit, 0) && unit)
             {
+                SetupUnitAbilities(unit);
                 abilitiesPanel.SetActive(true);
             }
             else if (!unit)
@@ -179,6 +183,16 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                 }
 
                 return false;
+            }
+        }
+
+        private void SetupUnitAbilities(GridPawnUnit unit)
+        {
+            if (unit is PvMnBattleGeneralUnit battleUnit)
+            {
+                abilityHints[0].sprite = battleUnit.AttackAbility.GetIconSprite;
+                abilityHints[1].sprite = battleUnit.FollowUpAbility.GetIconSprite;
+                abilityHints[2].sprite = battleUnit.SupportAbility.GetIconSprite;
             }
         }
     }

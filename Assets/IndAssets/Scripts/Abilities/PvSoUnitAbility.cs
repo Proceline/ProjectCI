@@ -25,7 +25,11 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField]
         private bool isSupportAbility = false;
 
+        [SerializeField]
+        private Sprite iconSprite;
+
         public bool IsSupportAbility => isSupportAbility;
+        public Sprite GetIconSprite => iconSprite;
 
         [SerializeField] private AttributeType dcAttribute = 10;    // Accurate
         [SerializeField] private AttributeType acAttribute = 11;    // Dodge
