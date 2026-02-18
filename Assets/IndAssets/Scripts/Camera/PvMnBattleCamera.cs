@@ -182,6 +182,10 @@ public class PvMnBattleCamera : MonoBehaviour
             await Awaitable.WaitForSecondsAsync(0.15f);
             _inFollowMode = true;
         }
+        else if (inState == PvPlayerRoundState.Prepare)
+        {
+            _inFollowMode = false;
+        }
     }
 
     public void FollowOnUnit(PvMnBattleGeneralUnit targetUnit)

@@ -21,6 +21,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         [SerializeField]
         private Transform[] pawnPreviewParents = new Transform[2];
 
+        [SerializeField]
+        private GameObject abilitiesPanel;
+
         [Header("Global Assets"), SerializeField]
         private PvSoBattleTeamEvent roundSwitchEvent;
 
@@ -44,6 +47,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private void Awake()
         {
             roundEndButton.gameObject.SetActive(false);
+            abilitiesPanel.SetActive(false);
         }
 
         private void Start()
@@ -77,7 +81,14 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private void CreatePreviewForUnit(LevelCellBase cell)
         {
             var unit = cell.GetUnitOnCell();
-            CreatePreview(unit, 0);
+            if (CreatePreview(unit, 0) && unit)
+            {
+                abilitiesPanel.SetActive(true);
+            }
+            else if (!unit)
+            {
+                abilitiesPanel.SetActive(false);
+            }
         }
 
         private void CreatePreviewForTarget(LevelCellBase target)
@@ -143,19 +154,22 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                     _pawnPreviews[index] = Instantiate(pawnPreviewPanelPrefab, pawnPreviewParents[index]);
                 }
 
+                var activateThisFrame = false;
+
                 if (!_pawnPreviews[index].gameObject.activeSelf)
                 {
                     _pawnPreviews[index].gameObject.SetActive(true);
+                    activateThisFrame = true;
                 }
 
                 if (!_pawnsInView[index] || _pawnsInView[index] != unit)
                 {
                     _pawnPreviews[index].Setup(unit, 0);
                     _pawnsInView[index] = unit;
-                    return true;
+                    activateThisFrame = true;
                 }
 
-                return false;
+                return activateThisFrame;
             }
             else
             {
