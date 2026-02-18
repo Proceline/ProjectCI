@@ -32,12 +32,20 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-zh-Hans
+    - Preload
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f638432527496c46b922897cc076515
     m_Address: BootUiContent_zh-Hans
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-zh-Hans
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d210663a249e4e44291147db87af6fad
+    m_Address: CharacterNames_zh-Hans
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-Hans
+    - Preload
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 99b5eb2e4b1ccec4bb57f59470c3edc6, type: 2}

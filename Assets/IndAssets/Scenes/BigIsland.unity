@@ -41541,7 +41541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSceneMode: 1
   isFriendly: 0
-  unitData: {fileID: 11400000, guid: 7c99e74bfd662ba42be9b9908d59084f, type: 2}
+  unitData: {fileID: 11400000, guid: 055c048478473024ca6ca993154ed1af, type: 2}
   weaponAttackAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponFollowUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   weaponCounterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
@@ -68604,7 +68604,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 1
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0

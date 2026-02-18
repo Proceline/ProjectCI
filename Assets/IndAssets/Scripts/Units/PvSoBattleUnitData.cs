@@ -1,5 +1,4 @@
 using IndAssets.Scripts.Units;
-using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
@@ -7,7 +6,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.TacticTool.Formula.Concrete;
-using System.Linq;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {

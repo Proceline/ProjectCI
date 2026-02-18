@@ -10,35 +10,43 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
-  m_Name: BattleAttributes Shared Data
+  m_Name: CharacterNames Shared Data
   m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
-  m_TableCollectionName: BattleAttributes
-  m_TableCollectionNameGuidString: 44b4dd9fd31e8d947bab6826614415a9
+  m_TableCollectionName: CharacterNames
+  m_TableCollectionNameGuidString: 8b32515b18a7f45429bf5c90353747e5
   m_Entries:
-  - m_Id: 57448443904
-    m_Key: ATT_ATTACK_SPEED
+  - m_Id: 49995165696
+    m_Key: CHUN_YU
     m_Metadata:
       m_Items: []
-  - m_Id: 943369334784
-    m_Key: ATT_ACCURACY
+  - m_Id: 1601602433024
+    m_Key: QIU_GENG
     m_Metadata:
       m_Items: []
-  - m_Id: 1046779899904
-    m_Key: ATT_CRITICAL
+  - m_Id: 1665573957632
+    m_Key: DONG_XU
     m_Metadata:
       m_Items: []
-  - m_Id: 1165789081600
-    m_Key: ATT_DODGE
+  - m_Id: 1781584211968
+    m_Key: DONG_YUAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2224855035904
+    m_Key: XIA_DI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26237249630208
+    m_Key: ENEMY_PAWN_0
     m_Metadata:
       m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
-    rid: 7379951039199838296
+    rid: 7379951039199838492
   references:
     version: 2
     RefIds:
-    - rid: 7379951039199838296
+    - rid: 7379951039199838492
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:
-        m_CustomEpoch: 1771367912357
+        m_CustomEpoch: 1771380915322

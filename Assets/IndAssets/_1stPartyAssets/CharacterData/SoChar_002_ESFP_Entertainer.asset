@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
   m_Name: SoChar_002_ESFP_Entertainer
   m_EditorClassIdentifier: 
-  m_UnitName: '[Entertainer]'
-  m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
+  m_UnitName: XIA_DI
+  m_UnitClass: ROLE_ESFP_CLASS
   originalAttributes: []
   m_TravelSound: {fileID: 0}
   m_DamagedSound: {fileID: 0}

@@ -10,28 +10,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
-  m_Name: BattleAttributes_en
+  m_Name: CharacterNames_zh-Hans
   m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
   m_LocaleId:
-    m_Code: en
-  m_SharedData: {fileID: 11400000, guid: 44b4dd9fd31e8d947bab6826614415a9, type: 2}
+    m_Code: zh-Hans
+  m_SharedData: {fileID: 11400000, guid: 8b32515b18a7f45429bf5c90353747e5, type: 2}
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 57448443904
-    m_Localized: Speed
+  - m_Id: 49995165696
+    m_Localized: "\u6625\u96E8"
     m_Metadata:
       m_Items: []
-  - m_Id: 943369334784
-    m_Localized: Accuracy
+  - m_Id: 1601602433024
+    m_Localized: "\u79CB\u8015"
     m_Metadata:
       m_Items: []
-  - m_Id: 1046779899904
-    m_Localized: Critical
+  - m_Id: 1665573957632
+    m_Localized: "\u51AC\u7D6E"
     m_Metadata:
       m_Items: []
-  - m_Id: 1165789081600
-    m_Localized: Dodge
+  - m_Id: 1781584211968
+    m_Localized: "\u51AC\u6E90"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2224855035904
+    m_Localized: "\u590F\u7B1B"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26237249630208
+    m_Localized: "\u9009\u6C11"
     m_Metadata:
       m_Items: []
   references:

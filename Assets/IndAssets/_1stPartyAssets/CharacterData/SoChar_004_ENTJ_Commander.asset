@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
   m_Name: SoChar_004_ENTJ_Commander
   m_EditorClassIdentifier: 
-  m_UnitName: '[Commander]'
-  m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
+  m_UnitName: DONG_YUAN
+  m_UnitClass: ROLE_ENTJ_CLASS
   originalAttributes: []
   m_TravelSound: {fileID: 0}
   m_DamagedSound: {fileID: 0}

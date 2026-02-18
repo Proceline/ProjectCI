@@ -33,11 +33,19 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-en
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cd6e8c7fc1123874f81b18f1005587a4
+    m_Address: CharacterNames_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d94f1c17e51d8e34193a8a85aed69772
     m_Address: AllClass_en
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en
+    - Preload
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 99b5eb2e4b1ccec4bb57f59470c3edc6, type: 2}

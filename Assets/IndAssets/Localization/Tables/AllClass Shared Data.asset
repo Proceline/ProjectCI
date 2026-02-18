@@ -32,9 +32,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1074634272768
-    m_Key: 'ROLE_ESFP_CLASS
-
-'
+    m_Key: ROLE_ESFP_CLASS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90977862791168
+    m_Key: ROLE_NF_CLASS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91053167325184
+    m_Key: ROLE_NT_CLASS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91076802228224
+    m_Key: ROLE_SP_CLASS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91136969519104
+    m_Key: ROLE_SJ_CLASS
     m_Metadata:
       m_Items: []
   m_Metadata:

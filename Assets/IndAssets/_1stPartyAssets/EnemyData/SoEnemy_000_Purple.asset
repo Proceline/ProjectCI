@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
-  m_Name: SoEnemy_000_Antagonist
+  m_Name: SoEnemy_000_Purple
   m_EditorClassIdentifier: 
-  m_UnitName: '[Antagonist]'
-  m_UnitClass: ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete.PvMnBattleGeneralUnit
+  m_UnitName: ENEMY_PAWN_0
+  m_UnitClass: ROLE_NT_CLASS
   originalAttributes: []
   m_TravelSound: {fileID: 0}
   m_DamagedSound: {fileID: 0}
@@ -29,8 +29,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   personalPassives:
   - {fileID: 11400000, guid: 53d00a9e5397bf241a66b7e629fa7015, type: 2}
-  animatedMountForm: {fileID: 3464642160719408833, guid: 1ede0295e0c67dd43927e4645ce9ef16, type: 3}
-  headMeshPrefab: {fileID: 0}
+  meshes: []
   talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   personality:
     energyLevel: 0

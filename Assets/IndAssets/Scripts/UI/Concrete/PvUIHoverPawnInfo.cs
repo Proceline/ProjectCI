@@ -2,27 +2,31 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using UnityEngine.UI;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public class PvUIHoverPawnInfo : MonoBehaviour
     {
         [SerializeField] protected Text m_NameText;
+        [SerializeField] private Text classText;
         [SerializeField] protected Text m_HitpointText;
         [SerializeField] private Slider currentValueSlider;
         [SerializeField] private Slider finalValueSlider;
 
-        [SerializeField] protected AttributeType m_PhysicalAttackAttribute;
-        [SerializeField] protected AttributeType m_MagicAttackAttribute;
         [SerializeField] protected AttributeType[] m_AttributesToDisplay;
-        [SerializeField] protected Text m_AttackValueText;
         [SerializeField] protected Text[] m_AttributeValueTexts;
+
+        [SerializeField] private Color[] teamColors;
 
         public void Setup(GridPawnUnit unit, int mockDelta)
         {
             if (unit)
             {
-                m_NameText.text = unit.GetUnitData().m_UnitName;
+                var color = unit.GetTeam() == BattleTeam.Friendly ? teamColors[0] : teamColors[1];
+                m_NameText.text = unit.GetUnitData().GetCharacterName();
+                m_NameText.color = color;
+                classText.text = unit.GetUnitData().GetClassName();
                 var maxHealth = unit.RuntimeAttributes.Health.MaxValue;
                 var currHealth = unit.RuntimeAttributes.Health.CurrentValue;
                 var mockHealth = currHealth + mockDelta;
@@ -53,7 +57,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     currentValueSlider.fillRect.gameObject.SetActive(false);
                 }
                 
-                m_AttackValueText.text = unit.RuntimeAttributes.GetAttributeValue(m_PhysicalAttackAttribute).ToString();
                 for (int i = 0; i < m_AttributesToDisplay.Length; i++)
                 {
                     m_AttributeValueTexts[i].text = unit.RuntimeAttributes.GetAttributeValue(m_AttributesToDisplay[i]).ToString();

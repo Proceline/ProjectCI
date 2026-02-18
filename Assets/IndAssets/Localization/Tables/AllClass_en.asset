@@ -19,23 +19,39 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 374965645312
-    m_Localized: Commander
+    m_Localized: <color=purple>Commander</color>
     m_Metadata:
       m_Items: []
   - m_Id: 609355935744
-    m_Localized: Protagonist
+    m_Localized: <color=green>Protagonist</color>
     m_Metadata:
       m_Items: []
   - m_Id: 719791960064
-    m_Localized: Defender
+    m_Localized: <color=blue>Defender</color>
     m_Metadata:
       m_Items: []
   - m_Id: 869650247680
-    m_Localized: Logician
+    m_Localized: <color=purple>Logician</color>
     m_Metadata:
       m_Items: []
   - m_Id: 1074634272768
-    m_Localized: Entertainer
+    m_Localized: <color=orange>Entertainer</color>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90977862791168
+    m_Localized: <color=green>The Verdant Oracle</color>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91053167325184
+    m_Localized: <color=purple>The Violet Logic</color>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91076802228224
+    m_Localized: <color=orange>The Gilded Edge</color>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91136969519104
+    m_Localized: <color=blue>The Cobalt Shield</color>
     m_Metadata:
       m_Items: []
   references:
