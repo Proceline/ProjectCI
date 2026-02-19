@@ -211,9 +211,20 @@ public class PvMnBattleCamera : MonoBehaviour
         {
             return;
         }
-        onRotationChanged.Invoke(rotationPivotCam);
+
         orbitalFollow.HorizontalAxis.Value -= value;
+        onRotationChanged.Invoke(rotationPivotCam);
     }
 
     #endregion
+
+    public void RegisterOnCameraRotationChanged(UnityAction<Camera> onCameraRotateResponse)
+    {
+        onRotationChanged.AddListener(onCameraRotateResponse);
+    }
+
+    public void UnregisterOnCameraRotationChanged(UnityAction<Camera> onCameraRotateResponse)
+    {
+        onRotationChanged.RemoveListener(onCameraRotateResponse);
+    }
 }

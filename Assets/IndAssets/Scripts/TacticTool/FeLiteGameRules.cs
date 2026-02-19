@@ -166,7 +166,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         /// <summary>
-        /// Create Cell according to Rules, used in Unity Event, don't delete this function
+        /// Create Cell according to Rules, used in PvSoBattlegroundMaker, gridCreatingRule(Unity Event), don't delete this function
         /// </summary>
         /// <param name="hit">rayCast information</param>
         /// <param name="keyIndex">Grid Cell Index</param>
@@ -176,7 +176,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             int layerFlagValue = Mathf.RoundToInt(Mathf.Pow(2, hit.collider.gameObject.layer));
             if (layerFlagValue == layerMasksRuleList[0])
             {
-                var cell = grid.GenerateCell(hit.point, keyIndex);
+                var cell = grid.GenerateCell<PvMnLevelCell>(hit.point, keyIndex);
                 cell.Reset();
             }
         }

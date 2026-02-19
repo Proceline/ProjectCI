@@ -26,7 +26,10 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         
         [SerializeField]
         private LayerMask pawnDetectLayerMask;
-        
+
+        [SerializeField]
+        private LayerMask cellDetectLayerMask;
+
         [SerializeField]
         private TacticRpgTool.General.CellPalette cellPalette;
         
@@ -56,6 +59,8 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         public void ScanAndGenerateBattle()
         {
             var collectedObjects = GameObject.FindGameObjectsWithTag("UICamera");
+            var cameraController = FindAnyObjectByType<PvMnBattleCamera>();
+
             var camera = collectedObjects.Length > 0 ? collectedObjects[0].GetComponent<Camera>() : null;
             if (!camera)
             {
@@ -66,7 +71,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
             var gridWidth = deploymentController.LevelData.gridWidth;
             var gridHeight = deploymentController.LevelData.gridHeight;
 
-            GridBattleUtils.GenerateLevelGridFromGround(
+            GridBattleUtils.GenerateLevelGridFromGround<SquarePresetGrid, PvMnLevelCell>(
                 centerPosition,
                 cellWidth,
                 cellHeight,
@@ -125,7 +130,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                             spawnedUnit.SetupSupportAbility(sceneUnit.UnitData.TalentedSupportAbility);
                         },
                         1,
-                        pawnDetectLayerMask
+                        cellDetectLayerMask
                     );
                     
                     unit.GenerateNewID();
@@ -137,7 +142,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                     unit.RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
 
                     unit.AddComponent<PvMnBattleResourceContainer>();
-                    unit.InitializeResourceContainer(camera, resourceContainerPrefab);
+                    unit.InitializeResourceContainer(camera, cameraController, resourceContainerPrefab);
                     
                     // TODO: Consider if ability need to be assigned
                     // var abilities = unit.GetAbilities();

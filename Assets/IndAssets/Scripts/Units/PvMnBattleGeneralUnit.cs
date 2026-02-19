@@ -99,12 +99,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
+        public void InitializeResourceContainer(Camera uiCamera, PvMnBattleCamera cameraController, GameObject resourceContainerPrefab)
         {
             PvMnBattleResourceContainer container = GetComponent<PvMnBattleResourceContainer>();
             if (container)
             {
-                container.Initialize(this, uiCamera, resourceContainerPrefab);
+                container.Initialize(this, uiCamera, cameraController, resourceContainerPrefab);
                 container.SetHealth(RuntimeAttributes.Health.CurrentValue);
                 container.SetMaxHealth(RuntimeAttributes.Health.MaxValue);
             }

@@ -2,6 +2,7 @@
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.Saving;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -48,6 +49,9 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         private InputActionReference onDeployCellFocus;
 
         [SerializeField]
+        private InputActionReference onCursorTrackingPosition;
+
+        [SerializeField]
         private Camera deployInteractCamera;
 
         [SerializeField]
@@ -59,9 +63,16 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
         [SerializeField]
         private UnityEvent<IDictionary<ScriptableObject, PvDeployCell>, bool[]> onBattleValidated;
 
+        [NonSerialized] private Camera _bufferedCamera;
+
         private void OnDeployCellConfirmed(InputAction.CallbackContext context)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (!_bufferedCamera)
+            {
+                _bufferedCamera = Camera.main;
+            }
+            Ray ray = _bufferedCamera.ScreenPointToRay(onCursorTrackingPosition.action.ReadValue<Vector2>());
+
             RaycastHit[] hits = Physics.RaycastAll(ray);
             onInteractedObjectsApplied?.Invoke(hits);
         }

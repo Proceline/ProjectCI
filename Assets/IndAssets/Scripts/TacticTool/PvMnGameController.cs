@@ -1,6 +1,7 @@
 ﻿using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -22,6 +23,16 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [SerializeField]
         private InputActionReference onAggroHintToggled;
+
+        [SerializeField]
+        private InputActionReference onCursorPositionTracked;
+        private InputAction _cursorPositionAction;
+
+        [SerializeField]
+        private Camera cursorCamera;
+
+        [SerializeField]
+        private LayerMask cellUsingLayer;
 
         public static bool IsAggroHintToggled { get; private set; }
 
@@ -46,6 +57,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private UnityEvent onAggroHintDisabled;
 
+        [SerializeField]
+        private UnityEvent<LevelCellBase> onCellRayHit;
+
+        [SerializeField]
+        private UnityEvent<LevelCellBase> onCellRayMissed;
+
+        private LevelCellBase HitBufferedCell { get; set; }
+
         public ITeamRoundEndEvent OnRoundEndEvent => onRoundEndEvent;
 
         private bool IsTeamInputLocked { get; set; }
@@ -54,6 +73,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void Start()
         {
+            onCursorPositionTracked.action.Enable();
+            _cursorPositionAction = onCursorPositionTracked.ToInputAction();
+
             onAggroHintInteracted.action.started += OnAggroHintEnabled;
             onAggroHintInteracted.action.canceled += OnAggroHintEnabled;
             onAggroHintToggled.action.canceled += OnAggroHintToggling;
@@ -68,6 +90,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnDestroy()
         {
+            onCursorPositionTracked.action.Disable();
+
             onAggroHintInteracted.action.started -= OnAggroHintEnabled;
             onAggroHintInteracted.action.canceled -= OnAggroHintEnabled;
             onAggroHintToggled.action.canceled -= OnAggroHintToggling;
@@ -103,6 +127,30 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             onBattleActionCanceled.action.Disable();
             onAggroHintInteracted.action.Disable();
             onAggroHintToggled.action.Disable();
+        }
+
+        private void Update()
+        {
+            var ray = cursorCamera.ScreenPointToRay(_cursorPositionAction.ReadValue<Vector2>());
+            if (Physics.Raycast(ray, out var hit, 1000f, cellUsingLayer))
+            {
+                if (hit.collider.TryGetComponent<PvMnLevelCell>(out var cell))
+                {
+                    if (cell != HitBufferedCell)
+                    {
+                        HitBufferedCell = cell;
+                        onCellRayHit.Invoke(cell);
+                    }
+                }
+                else if (HitBufferedCell)
+                {
+                    onCellRayMissed.Invoke(HitBufferedCell);
+                }
+            }
+            else if (HitBufferedCell)
+            {
+                onCellRayMissed.Invoke(HitBufferedCell);
+            }
         }
 
         private void OnBattleActionConfirmed(InputAction.CallbackContext context)

@@ -189,6 +189,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             SetCellState(unitCell, CellState.eSpecial);
         }
 
+        /// <summary>
+        /// Bind to GameModel's update controller
+        /// </summary>
+        /// <param name="selectedUnit">current selected Owner</param>
         public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit)
         {
             CleanupHoverCells();
@@ -287,6 +291,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentHoverCell.HandleMouseOver();
         }
 
+        /// <summary>
+        /// Binded to TacticBattleManager, OnCellPointed
+        /// </summary>
+        /// <param name="cell"></param>
         public void BeginHover(LevelCellBase cell)
         {
             CurrentHoverCell = cell;
@@ -297,6 +305,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
+        /// <summary>
+        /// Binded to TacticBattleManager, OnCellUnPointed
+        /// </summary>
+        /// <param name="cell"></param>
         public void EndHover(LevelCellBase cell)
         {
             CleanupHoverCells();

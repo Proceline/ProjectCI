@@ -20,6 +20,9 @@ MonoBehaviour:
   pawnDetectLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  cellDetectLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   cellPalette: {fileID: 11400000, guid: 85129ad340742934ebfb3cbfc7d433e5, type: 2}
   battleManagerPrefab: {fileID: 1352712205622167666, guid: 5821f100d73104740b501a66875c831c, type: 3}
   detectMaxResults: 10
