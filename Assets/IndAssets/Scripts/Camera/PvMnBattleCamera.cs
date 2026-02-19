@@ -29,7 +29,7 @@ public class PvMnBattleCamera : MonoBehaviour
     [NonSerialized] private Bounds followingBounds;
 
     [SerializeField] private CinemachineOrbitalFollow orbitalFollow;
-    [SerializeField] private float defaultHorizontalAxis = 40f;
+    //[SerializeField] private float defaultHorizontalAxis = 40f;
     [NonSerialized] private bool _inFollowMode;
     [NonSerialized] private Transform _followingObject;
 
