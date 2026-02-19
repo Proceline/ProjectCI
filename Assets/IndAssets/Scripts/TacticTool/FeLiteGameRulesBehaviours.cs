@@ -10,6 +10,7 @@ using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -60,6 +61,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (!targetCell) return;
 
             var playingUnit = _selectedUnit;
+
+            var standUnit = targetCell.GetUnitOnCell();
+            if (standUnit && standUnit != playingUnit)
+            {
+                return;
+            }
+
             _selectedUnitLastCell = playingUnit.GetCell();
 
             gameBattleState.PushState(PvPlayerRoundState.Moving, playingUnit);

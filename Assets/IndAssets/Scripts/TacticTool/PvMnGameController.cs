@@ -48,8 +48,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public ITeamRoundEndEvent OnRoundEndEvent => onRoundEndEvent;
 
-        public bool IsActionLocked { get; set; }
-
         private bool IsTeamInputLocked { get; set; }
 
         public static bool IsControllerLocked { get; set; }

@@ -1,34 +1,16 @@
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.Runtime.GUI.Battle;
 using System;
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PvMnBattleCamera : MonoBehaviour
 {
-    [SerializeField]
-    private PvMnGameController gameController;
-
-    [SerializeField] private float minZoom;
-    [SerializeField] private float maxZoom;
-    [SerializeField] private float zoomingSpeed;
-
-    /// <summary>
-    /// Used to record AUTO-ZOOM
-    /// </summary>
-    [NonSerialized] private float _currentZoomValue;
-
-    /// <summary>
-    /// Used to record Manual-ZOOM
-    /// </summary>
-    [NonSerialized] private float _zoomValueAdjustor;
-
-    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Camera rotationPivotCam;
-    [SerializeField] private float rotatingSpeed;
+    [SerializeField] private float[] zoomBounds = new float[2] { 15f, 50f };
 
     [SerializeField] private Transform translateTarget;
     [SerializeField] private float movingSpeed;
@@ -42,32 +24,28 @@ public class PvMnBattleCamera : MonoBehaviour
 
     [SerializeField] private UnityEvent<Camera> onRotationChanged;
 
-    [SerializeField]
-    private UnityEvent<bool> onCameraStartOrEndAnyTween;
+    [SerializeField] private Vector3 boundCenter;
+    [SerializeField] private Vector3 boundSize;
+    [NonSerialized] private Bounds followingBounds;
 
-    [NonSerialized] private Coroutine _cameraZoomingCoroutine;
-
-    [NonSerialized]
-    private bool _inFollowMode;
-
-    [NonSerialized]
-    private Transform _followingTarget;
+    [SerializeField] private CinemachineOrbitalFollow orbitalFollow;
+    [SerializeField] private float defaultHorizontalAxis = 40f;
+    [NonSerialized] private bool _inFollowMode;
+    [NonSerialized] private Transform _followingObject;
 
     [SerializeField]
     private PvSoBattleState battleState;
 
+    private Coroutine _movingCoroutine;
+
     private void Start()
     {
-        _inFollowMode = false;
+        followingBounds = new Bounds(boundCenter, boundSize);
 
-        _currentZoomValue = 0;
-        _zoomValueAdjustor = 0;
         _panDirectionInputAction = panDirectionActionRef.ToInputAction();
         _panDirectionInputAction.Enable();
 
         rotationActionRef.ToInputAction().Enable();
-        rotationActionRef.ToInputAction().performed += AssignCameraRotation;
-
         zoomInActionRef.ToInputAction().Enable();
         zoomOutActionRef.ToInputAction().Enable();
         zoomInActionRef.ToInputAction().performed += AssignCameraZoomIn;
@@ -78,14 +56,12 @@ public class PvMnBattleCamera : MonoBehaviour
 
     private void OnDestroy()
     {
-        _currentZoomValue = 0;
         _panDirectionInputAction.Disable();
 
         rotationActionRef.ToInputAction().Disable();
         zoomInActionRef.ToInputAction().Disable();
         zoomOutActionRef.ToInputAction().Disable();
 
-        rotationActionRef.ToInputAction().performed -= AssignCameraRotation;
         zoomInActionRef.ToInputAction().performed -= AssignCameraZoomIn;
         zoomOutActionRef.ToInputAction().performed -= AssignCameraZoomOut;
 
@@ -94,241 +70,150 @@ public class PvMnBattleCamera : MonoBehaviour
 
     void Update()
     {
-        if (!_inFollowMode)
+        if (_inFollowMode)
         {
-            var direction = _panDirectionInputAction.ReadValue<Vector2>();
-            var moveDir = transform.right * direction.x + transform.up * direction.y;
-            moveDir.y = 0;
-
-            translateTarget.Translate(moveDir * (movingSpeed * Time.deltaTime), Space.Self);
-        }
-        else if (_followingTarget && GetCurrentCenter(out var center, out _))
-        {
-            TranslateCameraToPosition(center, _followingTarget.position);
-        }
-    }
-
-    private void AddOnCameraZoom(float zoomDelta, ref float recordValue)
-    {
-        recordValue += zoomDelta;
-        var moveDir = transform.forward * zoomDelta;
-        translateTarget.Translate(moveDir, Space.Self);
-    }
-
-    private void SetRotationWithDegrees(float degrees)
-    {
-        if (!GetCurrentCenter(out var center, out var groundNormal))
-        {
-            return;
-        }
-
-        Vector3 centerAtObjHeight = new Vector3(center.x, translateTarget.position.y, center.z);
-        var rel = Vector3.ProjectOnPlane(translateTarget.position - centerAtObjHeight, groundNormal);
-        Quaternion rot = Quaternion.AngleAxis(degrees, groundNormal);
-        Vector3 newRel = rot * rel;
-
-        translateTarget.position = centerAtObjHeight + newRel;
-
-        // Make sure camera face the ground center
-        transform.LookAt(center, groundNormal);
-        onRotationChanged?.Invoke(rotationPivotCam);
-
-        // TODO: Refactor UI Part
-        var allBarContainers = FindObjectsByType<PvMnBattleResourceContainer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        foreach (var barContainer in allBarContainers)
-        {
-            barContainer.RotateHealthBarByCamera(transform);
-        }
-
-    }
-
-    private bool GetCurrentCenter(out Vector3 center, out Vector3 groundNormal)
-    {
-        Ray ray = rotationPivotCam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        var defaultGroundNormal = Vector3.up;
-        center = default;
-        groundNormal = defaultGroundNormal;
-
-        if (Physics.Raycast(ray, out RaycastHit hit, 2000f, groundLayer, QueryTriggerInteraction.Ignore))
-        {
-            center = hit.point;
-            groundNormal = hit.normal;
+            translateTarget.position = _followingObject.position;
         }
         else
         {
-            // If not Hit ground, use Y=0
-            Plane plane = new Plane(defaultGroundNormal, Vector3.zero);
-            if (plane.Raycast(ray, out float t))
-                center = ray.GetPoint(t);
-            else
-                return false;
-        }
+            var direction = _panDirectionInputAction.ReadValue<Vector2>();
+            var directionPivotTarget = rotationPivotCam.transform;
+            var moveDir = directionPivotTarget.right * direction.x + directionPivotTarget.up * direction.y;
+            moveDir.y = 0;
 
-        return true;
-    }
+            var dirInFrame = moveDir * movingSpeed * Time.deltaTime;
 
-    private async void ApplyCameraOnStateSwitched(PvPlayerRoundState inState, PvMnBattleGeneralUnit targetUnit)
-    {
-        if (!targetUnit || inState == PvPlayerRoundState.None)
-        {
-            _inFollowMode = false;
+            var nextPosition = translateTarget.position + dirInFrame;
+            if (followingBounds.Contains(nextPosition))
+            {
+                translateTarget.Translate(dirInFrame, Space.Self);
+            }
         }
-
-        if (inState == PvPlayerRoundState.Selected)
+        
+        if (rotationActionRef.action.enabled)
         {
-            _inFollowMode = false;
-            _followingTarget = targetUnit.transform;
-            StartToMoveCamera(_followingTarget.position, 0, 0.15f);
-            await Awaitable.WaitForSecondsAsync(0.15f);
-            _inFollowMode = true;
-        }
-        else if (inState == PvPlayerRoundState.Prepare)
-        {
-            _inFollowMode = false;
+            UpdateCameraHorizontalAxisForRotation(rotationActionRef.action);
         }
     }
 
+    /// <summary>
+    /// Binded into AI Manager so when select AI Unit camera will follow
+    /// </summary>
+    /// <param name="targetUnit"></param>
     public void FollowOnUnit(PvMnBattleGeneralUnit targetUnit)
     {
-        // Mock State as Unit Selection
-        ApplyCameraOnStateSwitched(PvPlayerRoundState.Selected, targetUnit);
+        translateTarget.position = targetUnit.transform.position;
+        _followingObject = targetUnit.transform;
+        _inFollowMode = true;
     }
 
+    /// <summary>
+    /// Binded into AI Manager so when all thoughts finished
+    /// </summary>
     public void UnfollowTransform()
     {
+        if (_movingCoroutine != null)
+        {
+            StopCoroutine(_movingCoroutine);
+            _movingCoroutine = null;
+        }
+
         _inFollowMode = false;
-        _followingTarget = null;
+        _followingObject = null;
     }
 
-    private void StartToMoveCamera(Vector3 position, float zoomValue, float duration = 0.25f)
+    private void ApplyCameraOnStateSwitched(PvPlayerRoundState inState, PvMnBattleGeneralUnit targetUnit)
     {
-        if (GetCurrentCenter(out var center, out _))
+        if (inState == PvPlayerRoundState.None)
         {
-            StartCoroutine(TranslateCameraToPosition(center, position, duration));
+            UnfollowTransform();
         }
-
-        _cameraZoomingCoroutine ??= StartCoroutine(AssignCameraZoom(zoomValue, duration));
-    }
-
-    #region Camera Tween
-
-    private IEnumerator AssignCameraZoom(float targetZoomValue, float duration)
-    {
-        if (targetZoomValue > 0 && _zoomValueAdjustor >= targetZoomValue)
+        else if (inState == PvPlayerRoundState.Moving)
         {
-            yield break;
-        }
-
-        if (Mathf.Approximately(targetZoomValue, _currentZoomValue))
-        {
-            yield break;
-        }
-
-        onCameraStartOrEndAnyTween.Invoke(true);
-        {
-            var zoomDelta = targetZoomValue - _currentZoomValue;
-            float deltaSum = 0;
-            var elapsed = 0f;
-
-            while (elapsed < duration)
+            if (_movingCoroutine != null)
             {
-                elapsed += Time.deltaTime;
-                var progress = Mathf.Clamp01(elapsed / duration);
-                var deltaProgress = Mathf.Lerp(0f, zoomDelta, progress);
-                var delta = deltaProgress - deltaSum;
-                deltaSum = deltaProgress;
-                AddOnCameraZoom(delta, ref _currentZoomValue);
-                yield return null;
+                StopCoroutine(_movingCoroutine);
             }
+            _movingCoroutine = StartCoroutine(TranslateCameraToPosition(translateTarget.position, 
+                targetUnit.transform.position, 0.15f, () => FollowOnUnit(targetUnit)));
         }
-        onCameraStartOrEndAnyTween.Invoke(false);
-        _cameraZoomingCoroutine = null;
-    }
-
-    private IEnumerator TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition, float duration)
-    {
-        onCameraStartOrEndAnyTween.Invoke(true);
+        else if (inState == PvPlayerRoundState.Selected || inState == PvPlayerRoundState.Prepare)
         {
-            var deltaDirection = targetPosition - currentCenter;
-            deltaDirection.y = 0;
-
-            var directionSum = Vector3.zero;
-            var elapsed = 0f;
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                var progress = Mathf.Clamp01(elapsed / duration);
-                var deltaProgress = Vector3.Lerp(Vector3.zero, deltaDirection, progress);
-                var delta = deltaProgress - directionSum;
-                directionSum = deltaProgress;
-                translateTarget.Translate(delta, Space.Self);
-                yield return null;
-            }
+            translateTarget.position = targetUnit.transform.position;
+            UnfollowTransform();
         }
-        onCameraStartOrEndAnyTween.Invoke(false);
     }
 
-    private void TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition)
+    private IEnumerator TranslateCameraToPosition(Vector3 currentCenter, Vector3 targetPosition, float duration, Action onFinished)
     {
         var deltaDirection = targetPosition - currentCenter;
         deltaDirection.y = 0;
 
-        translateTarget.Translate(deltaDirection, Space.Self);
+        var directionSum = Vector3.zero;
+        var elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            var progress = Mathf.Clamp01(elapsed / duration);
+            var deltaProgress = Vector3.Lerp(Vector3.zero, deltaDirection, progress);
+            var delta = deltaProgress - directionSum;
+            directionSum = deltaProgress;
+            translateTarget.Translate(delta, Space.Self);
+            yield return null;
+        }
+
+        onFinished.Invoke();
+        _movingCoroutine = null;
     }
 
-    #endregion
 
     #region Manual Camera Control
 
     private void AssignCameraZoomIn(InputAction.CallbackContext context)
     {
-        if (gameController.IsActionLocked)
+        if (PvMnGameController.IsControllerLocked)
         {
             return;
         }
 
-        if (_zoomValueAdjustor > maxZoom)
+        if (orbitalFollow.TargetOffset.y > (zoomBounds[1] - 0.5f))
         {
             return;
         }
 
-        var zoomDelta = zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
+        orbitalFollow.TargetOffset += Vector3.down;
     }
 
     private void AssignCameraZoomOut(InputAction.CallbackContext context)
     {
-        if (gameController.IsActionLocked)
+        if (PvMnGameController.IsControllerLocked)
         {
             return;
         }
 
-        if (_zoomValueAdjustor < minZoom)
+        if (orbitalFollow.TargetOffset.y < (zoomBounds[0] + 0.5f))
         {
             return;
         }
 
-        var zoomDelta = -zoomingSpeed * context.ReadValue<float>();
-        AddOnCameraZoom(zoomDelta, ref _zoomValueAdjustor);
+        orbitalFollow.TargetOffset += Vector3.up;
     }
 
-    private void AssignCameraRotation(InputAction.CallbackContext context)
+    private void UpdateCameraHorizontalAxisForRotation(InputAction inputAction)
     {
-        if (gameController.IsActionLocked)
+        if (PvMnGameController.IsControllerLocked)
         {
             return;
         }
 
-        var value = context.ReadValue<float>();
-        switch (value)
+        var value = inputAction.ReadValue<float>();
+        if (Mathf.Approximately(value, 0))
         {
-            case > 0:
-                SetRotationWithDegrees(45);
-                break;
-            case < 0:
-                SetRotationWithDegrees(-45);
-                break;
+            return;
         }
+        onRotationChanged.Invoke(rotationPivotCam);
+        orbitalFollow.HorizontalAxis.Value -= value;
     }
+
     #endregion
 }
