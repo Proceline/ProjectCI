@@ -23,6 +23,7 @@ namespace IndAssets.Scripts.AI
         [SerializeField] private UnityEvent onAllThoughtsFinished;
 
         private readonly List<PvMnEnemyUnitThought> _orderedEnemyThoughts = new();
+        private readonly Queue<PvMnEnemyUnitThought> _runtimeToRemoveThoughts = new();
         private readonly HashSet<LevelCellBase> _enemiesMovableCells = new();
         private readonly Dictionary<LevelCellBase, List<Transform>> _enemiesAttackables = new();
 
@@ -212,6 +213,12 @@ namespace IndAssets.Scripts.AI
             {
                 var enemyUnit = enemyThought.Unit;
 
+                if (enemyUnit.IsDead() || !enemyUnit.gameObject.activeSelf)
+                {
+                    // TODO: Handle Death
+                    continue;
+                }
+
                 var movementPoints = enemyUnit.GetMovementPoints();
                 var currentCell = enemyUnit.GetCell();
 
@@ -266,9 +273,9 @@ namespace IndAssets.Scripts.AI
             foreach (var enemyThought in _orderedEnemyThoughts)
             {
                 var enemyUnit = enemyThought.Unit;
-                if (enemyUnit.IsDead())
+                if (enemyUnit.IsDead() || !enemyUnit.gameObject.activeSelf)
                 {
-                    // TODO: Handle Death
+                    _runtimeToRemoveThoughts.Enqueue(enemyThought);
                     continue;
                 }
 
@@ -294,6 +301,11 @@ namespace IndAssets.Scripts.AI
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
 
+            }
+
+            while (_runtimeToRemoveThoughts.TryDequeue(out var thought))
+            {
+                _orderedEnemyThoughts.Remove(thought);
             }
 
             onAllThoughtsFinished?.Invoke();
