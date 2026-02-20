@@ -150,6 +150,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             else if (HitBufferedCell)
             {
                 onCellRayMissed.Invoke(HitBufferedCell);
+                HitBufferedCell = null;
             }
         }
 
