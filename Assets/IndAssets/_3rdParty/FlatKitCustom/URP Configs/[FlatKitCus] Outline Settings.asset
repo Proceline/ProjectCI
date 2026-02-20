@@ -13,6 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - OUTLINE_USE_COLOR
+  - OUTLINE_USE_DEPTH
   - OUTLINE_USE_NORMALS
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -39,17 +40,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ColorThresholdMax: 0.25
-    - _ColorThresholdMin: 0
-    - _DepthThresholdMax: 0.1
-    - _DepthThresholdMin: 0.1
+    - _ColorThresholdMax: 0.5
+    - _ColorThresholdMin: 0.3
+    - _DepthThresholdMax: 5
+    - _DepthThresholdMin: 2
     - _FadeRangeEnd: 50
     - _FadeRangeStart: 10
-    - _NormalThresholdMax: 2
-    - _NormalThresholdMin: 0
-    - _Thickness: 1
+    - _NormalThresholdMax: 5
+    - _NormalThresholdMin: 2
+    - _Thickness: 2
     m_Colors:
-    - _EdgeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &11400000
@@ -71,15 +72,15 @@ MonoBehaviour:
   fadeRangeStart: 10
   fadeRangeEnd: 50
   useDepth: 1
-  minDepthThreshold: 12
-  maxDepthThreshold: 15
+  minDepthThreshold: 2
+  maxDepthThreshold: 5
   useNormals: 1
   minNormalsThreshold: 2
   maxNormalsThreshold: 5
   useColor: 1
   minColorThreshold: 0.3
   maxColorThreshold: 0.5
-  renderEvent: 500
+  renderEvent: 600
   outlineOnly: 0
   applyInSceneView: 1
   effectMaterial: {fileID: -3130267085085746722}
