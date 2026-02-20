@@ -176,7 +176,7 @@ public class PvMnBattleCamera : MonoBehaviour
             return;
         }
 
-        if (orbitalFollow.TargetOffset.y > (zoomBounds[1] - 0.5f))
+        if (orbitalFollow.TargetOffset.y < (zoomBounds[0] + 0.5f))
         {
             return;
         }
@@ -191,7 +191,7 @@ public class PvMnBattleCamera : MonoBehaviour
             return;
         }
 
-        if (orbitalFollow.TargetOffset.y < (zoomBounds[0] + 0.5f))
+        if (orbitalFollow.TargetOffset.y > (zoomBounds[1] - 0.5f))
         {
             return;
         }

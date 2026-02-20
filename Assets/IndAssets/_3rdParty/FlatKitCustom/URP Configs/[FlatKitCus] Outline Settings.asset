@@ -40,15 +40,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ColorThresholdMax: 0.5
-    - _ColorThresholdMin: 0.3
-    - _DepthThresholdMax: 5
-    - _DepthThresholdMin: 2
+    - _ColorThresholdMax: 0.16
+    - _ColorThresholdMin: 0.15
+    - _DepthThresholdMax: 15
+    - _DepthThresholdMin: 12
     - _FadeRangeEnd: 50
     - _FadeRangeStart: 10
-    - _NormalThresholdMax: 5
-    - _NormalThresholdMin: 2
-    - _Thickness: 2
+    - _NormalThresholdMax: 1.7
+    - _NormalThresholdMin: 1
+    - _Thickness: 1
     m_Colors:
     - _EdgeColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
@@ -66,21 +66,21 @@ MonoBehaviour:
   m_Name: '[FlatKitCus] Outline Settings'
   m_EditorClassIdentifier: 
   edgeColor: {r: 0, g: 0, b: 0, a: 1}
-  thickness: 2
+  thickness: 1
   resolutionInvariant: 0
   fadeWithDistance: 0
   fadeRangeStart: 10
   fadeRangeEnd: 50
   useDepth: 1
-  minDepthThreshold: 2
-  maxDepthThreshold: 5
+  minDepthThreshold: 12
+  maxDepthThreshold: 15
   useNormals: 1
-  minNormalsThreshold: 2
-  maxNormalsThreshold: 5
+  minNormalsThreshold: 1
+  maxNormalsThreshold: 1.7
   useColor: 1
-  minColorThreshold: 0.3
-  maxColorThreshold: 0.5
-  renderEvent: 600
+  minColorThreshold: 0.15
+  maxColorThreshold: 0.16
+  renderEvent: 550
   outlineOnly: 0
   applyInSceneView: 1
   effectMaterial: {fileID: -3130267085085746722}
