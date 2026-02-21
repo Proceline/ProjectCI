@@ -98,7 +98,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             while (commands.TryDequeue(out var toDoCommand))
             {
-                toDoCommand.ApplyResultOnVisual(_unitIdToBattleUnitHash, _abilityIdToAbilityHash);
+                toDoCommand.ApplyResultOnVisual(ability, _unitIdToBattleUnitHash);
             }
 
             // If there is no ability, just wait for a while to make sure the visual result is applied after the logic result

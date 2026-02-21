@@ -12,18 +12,13 @@ namespace IndAssets.Scripts.Commands
 {
     public static class PvCommandExtension
     {
-        public static void ApplyResultOnVisual(this CommandResult commandResult,
-            IDictionary<string, PvMnBattleGeneralUnit> unitIdCollection,
-            IDictionary<string, PvSoUnitAbility> abilityIdCollection)
+        public static void ApplyResultOnVisual(this CommandResult commandResult, PvSoUnitAbility usingAbility,
+            IDictionary<string, PvMnBattleGeneralUnit> unitIdCollection)
         {
             if (!unitIdCollection.TryGetValue(commandResult.OwnerId, out var caster))
             {
                 return;
             }
-
-            var ability = string.IsNullOrEmpty(commandResult.AbilityId) || !abilityIdCollection.ContainsKey(commandResult.AbilityId)
-                ? null
-                : abilityIdCollection[commandResult.AbilityId];
 
             var targetCell = TacticBattleManager.GetGrid()[commandResult.TargetCellIndex];
             var targetUnit = targetCell.GetUnitOnCell();
@@ -36,9 +31,9 @@ namespace IndAssets.Scripts.Commands
                         targetUnit.LookAtCell(caster.GetCell());
                     }
 
-                    if (commandResult.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && ability)
+                    if (commandResult.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && usingAbility)
                     {
-                        foreach (var effectPrefab in ability.GetTargetParticles())
+                        foreach (var effectPrefab in usingAbility.GetTargetParticles())
                         {
                             var hitEffect = MnObjectPool.Instance.Get(effectPrefab);
                             hitEffect.transform.position = targetUnit.transform.position + Vector3.up * 2;

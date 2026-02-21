@@ -57,18 +57,5 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         {
             return isAbilityWeapon;
         }
-
-        public override void ApplyVisualEffects(GridPawnUnit inCasterUnit, LevelCellBase inEffectCell)
-        {
-            // GridObject targetObj = inEffectCell.GetObjectOnCell();
-            // TODO: Remove Debug.LogError after testing
-            Debug.LogError($"Applying visual effect of {name}");
-            GridPawnUnit targetExecuteUnit = inEffectCell.GetUnitOnCell();
-        
-            if (targetExecuteUnit)
-            {
-                targetExecuteUnit.LookAtCell(inCasterUnit.GetCell());
-            }
-        }
     }
 }

@@ -18,10 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "NewGameRules", menuName = "ProjectCI Tools/GameRules/Create FeLiteGameRules", order = 1)]
     public partial class FeLiteGameRules : BattleGameRules
     {
-        [SerializeField]
-        private PvSoUnitAbility[] allAbilities;
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
-        private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
 
@@ -96,18 +93,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _ultPreparedUnits.Clear();
 
             _unitIdToBattleUnitHash.Clear();
-            _abilityIdToAbilityHash.Clear();
 
             CurrentTeam = BattleTeam.Friendly;
-
-            foreach (var singleAbility in allAbilities)
-            {
-                if (string.IsNullOrEmpty(singleAbility.ID))
-                {
-                    singleAbility.GenerateNewID();
-                }
-                _abilityIdToAbilityHash.TryAdd(singleAbility.ID, singleAbility);
-            }
 
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)

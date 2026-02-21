@@ -81,7 +81,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var savingCommand = new PvSimpleDamageCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex(),
                 BeforeValue = beforeHealth,
@@ -108,7 +107,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var dieCommand = new PvDieCommand
             {
                 ResultId = resultId,
-                AbilityId = string.Empty,
                 OwnerId = targetUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex()
             };

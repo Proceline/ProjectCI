@@ -35,7 +35,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var pushCommand = new PvPushCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = currentTarget.GetIndex(),
                 Distance = pushDistance,

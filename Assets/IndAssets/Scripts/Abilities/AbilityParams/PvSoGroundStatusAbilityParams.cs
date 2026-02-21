@@ -23,7 +23,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var groundStatusCommand = new PvGroundStatusCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = targetCell.GetIndex(),
                 RelatedGroundStatus = relatedGroundStatus
