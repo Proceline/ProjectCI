@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace IndAssets.Scripts.Weapons
 {
+    /// <summary>
+    /// This weapon Animator normally Only used for Bow and Arrow
+    /// </summary>
     public class PvMnWeaponAnimator : MonoBehaviour
     {
         [NonSerialized] private PvMnFunctionalAnimator _animationManager;
@@ -26,6 +29,10 @@ namespace IndAssets.Scripts.Weapons
             }
         }
 
+        /// <summary>
+        /// Originally, only Bow and Arrow requires trigger animation
+        /// </summary>
+        /// <param name="animName"></param>
         private void OnNamedAnimationPlayed(string animName)
         {
             animator.SetTrigger(animName);
