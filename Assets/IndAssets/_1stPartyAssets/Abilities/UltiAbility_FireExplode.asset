@@ -18,8 +18,8 @@ MonoBehaviour:
   m_EffectedTeam: 2
   m_EffectedType: 0
   m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
-  m_EffectShape: {fileID: 0}
-  m_EffectRadius: 0
+  m_EffectShape: {fileID: 11400000, guid: bd94aad7e2dc5a44dbb4ab5e8f60bd53, type: 2}
+  m_EffectRadius: 1
   spawnOnCaster: []
   spawnOnTarget:
   - {fileID: 5976799327186537325, guid: 30ea9158161b6df46b80ee9ed9d12216, type: 3}
@@ -36,4 +36,4 @@ MonoBehaviour:
   acAttribute:
     value: 11
   projectilePrefab: {fileID: 0}
-  abilityAnimationName: 0
+  abilityAnimationName: 3

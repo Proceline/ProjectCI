@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: PvSoUnitAbility_LiteDynamicExtraDamage
   m_EditorClassIdentifier: 
   m_AbilityName: '[LiteDynamicExtra]'
-  m_Icon: {fileID: 0}
   m_Radius: 1
-  m_ActionPointCost: 1
   m_bAllowBlocked: 1
   m_EffectedTeam: 3
   m_EffectedType: 0
@@ -32,21 +30,10 @@ MonoBehaviour:
   isAbilityWeapon: 0
   isAppliedOnSelf: 1
   isSupportAbility: 0
+  iconSprite: {fileID: 0}
   dcAttribute:
     value: 10
   acAttribute:
     value: 31
   projectilePrefab: {fileID: 0}
-  abilityAnimationName: 3
-  onUnitEnteredInCombating:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitEnteredInCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombating:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
+  abilityAnimationName: 99999

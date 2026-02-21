@@ -11,7 +11,9 @@ namespace ProjectCI.CoreSystem.Runtime.Animation
         AttackBasic,
         DieStay,
         BladeFury,
-        DoNothing
+        SimpleCast,
+        SuperCast,
+        DoNothing = 99999
     }
     
     public class PvCustomAnimationNamesList : IAnimationIndexAddon
