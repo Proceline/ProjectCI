@@ -33,6 +33,7 @@ MonoBehaviour:
   - {fileID: 8001354749718593143, guid: 19baf60bc92080e45ae95bace6797caf, type: 3}
   - {fileID: 2568446364417295610, guid: 56cb11cf1570cfb40be2302e97718b1e, type: 3}
   talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
   personality:
     energyLevel: -2
     informationLevel: 3

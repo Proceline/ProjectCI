@@ -128,6 +128,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                             spawnedUnit.SetupFollowUpAbility(sceneUnit.WeaponFollowUpAbility);
                             spawnedUnit.SetupCounterAbility(sceneUnit.WeaponCounterAbility);
                             spawnedUnit.SetupSupportAbility(sceneUnit.UnitData.TalentedSupportAbility);
+                            spawnedUnit.SetupUltimateAbility(sceneUnit.UnitData.TalentedUltimateAbility);
                         },
                         1,
                         cellDetectLayerMask

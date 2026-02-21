@@ -42,10 +42,18 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized]
         private PvSoUnitAbility _supportAbility;
 
+        [NonSerialized]
+        private PvSoUnitAbility _ultimateAbility;
+
+        [SerializeField]
+        private bool _ultimateForm = false;
+
         public PvSoUnitAbility AttackAbility => _attackAbility;
         public PvSoUnitAbility FollowUpAbility => _followUpAbility;
         public PvSoUnitAbility CounterAbility => _counterAbility;
         public PvSoUnitAbility SupportAbility => _supportAbility;
+        public PvSoUnitAbility UltimateAbility => _ultimateAbility;
+        public bool IsInUltimateForm => _ultimateForm;
 
         private Coroutine _rotatingCoroutine;
 
@@ -174,14 +182,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _supportAbility = ability;
         }
 
-        /// <summary>
-        /// Do not use in undeprecated Scripts
-        /// </summary>
-        /// <returns></returns>
-        public List<PvSoUnitAbility> GetUsableAbilities() => new List<PvSoUnitAbility>()
+        public void SetupUltimateAbility(PvSoUnitAbility ability)
         {
-            _attackAbility, _followUpAbility, _counterAbility, _supportAbility
-        };
+            _ultimateAbility = ability;
+        }
+
+        public void SwitchForm(bool isUltimate)
+        {
+            _ultimateForm = isUltimate;
+        }
 
         public override IStatusEffectContainer GetStatusEffectContainer()
         {

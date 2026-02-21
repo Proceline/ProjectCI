@@ -150,9 +150,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             if (!_isShowingActionRange)
             {
-                _bufferedAttackCells = unit.AttackAbility.GetAbilityCells(unit);
-                _bufferedSupportCells = unit.SupportAbility.GetAbilityCells(unit);
-                _isShowingActionRange = true;
+                UpdateAttackAndSupportCellsRecord(unit);
             }
 
             foreach (LevelCellBase cell in _bufferedAttackCells)
@@ -161,15 +159,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 SetCellState(cell, CellState.eNegative);
             }
 
-            foreach (LevelCellBase cell in _bufferedSupportCells)
+            if (!unit.IsInUltimateForm)
             {
-                _bufferedVisualStateCells.Add(cell);
-                SetCellState(cell, CellState.ePositive);
+                foreach (LevelCellBase cell in _bufferedSupportCells)
+                {
+                    _bufferedVisualStateCells.Add(cell);
+                    SetCellState(cell, CellState.ePositive);
+                }
             }
 
             var standingCell = unit.GetCell();
             _bufferedVisualStateCells.Add(standingCell);
             SetCellState(standingCell, CellState.eSpecial);
+        }
+
+        private void UpdateAttackAndSupportCellsRecord(PvMnBattleGeneralUnit unit)
+        {
+            var ultimateForm = unit.IsInUltimateForm;
+            _bufferedAttackCells = ultimateForm ?
+                unit.UltimateAbility.GetAbilityCells(unit) : unit.AttackAbility.GetAbilityCells(unit);
+            _bufferedSupportCells = ultimateForm ? null : unit.SupportAbility.GetAbilityCells(unit);
+            _isShowingActionRange = true;
         }
 
         private void HighlightMovementRange(GridPawnUnit casterUnit)
@@ -244,19 +254,29 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                 if (!_isShowingActionRange)
                 {
-                    _bufferedAttackCells = selectedUnit.AttackAbility.GetAbilityCells(selectedUnit);
-                    _bufferedSupportCells = selectedUnit.SupportAbility.GetAbilityCells(selectedUnit);
-                    _isShowingActionRange = true;
+                    UpdateAttackAndSupportCellsRecord(selectedUnit);
                 }
 
                 var cell = CurrentHoverCell;
 
                 var isAttackable = _bufferedAttackCells.Contains(cell);
-                if (isAttackable || _bufferedSupportCells.Contains(cell))
+                var ability = isAttackable ? selectedUnit.AttackAbility : selectedUnit.SupportAbility;
+                if (isAttackable)
+                {
+                    if (selectedUnit.IsInUltimateForm)
+                    {
+                        ability = selectedUnit.UltimateAbility;
+                    }
+                }
+                else if (_bufferedSupportCells == null || !_bufferedSupportCells.Contains(cell))
+                {
+                    ability = null;
+                }
+
+                if (ability)
                 {
                     raiserHoverCellEventWithOwner.Raise(cell);
 
-                    var ability = isAttackable ? selectedUnit.AttackAbility : selectedUnit.SupportAbility;
                     List<LevelCellBase> effectedCells = ability.GetEffectedCells(selectedUnit, cell);
                     foreach (var currCell in effectedCells)
                     {

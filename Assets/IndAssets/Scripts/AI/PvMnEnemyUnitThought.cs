@@ -56,7 +56,7 @@ namespace IndAssets.Scripts.AI
             RuntimeMoveStrategy = initialStrategy;
         }
 
-        public (LevelCellBase, LevelCellBase) CalculateDestinationAndTarget()
+        public (LevelCellBase, LevelCellBase) CalculateDestinationAndTarget(PvSoUnitAbility ability)
         {
             if (!Unit || Unit.IsDead() || RuntimeMoveStrategy == PvMnAIMovementStrategy.Stay)
             {
@@ -73,7 +73,6 @@ namespace IndAssets.Scripts.AI
                 RuntimeMoveStrategy = PvMnAIMovementStrategy.Conservative;
             }
 
-            var ability = SelectAbility();
             return CalculateEnemyAction(ability);
         }
 

@@ -71,6 +71,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         /// <summary>
         /// Confirm cell target manually (Player Input) based on current battle state
+        /// Binded in Mono game controller
         /// </summary>
         /// <param name="cell"></param>
         /// <param name="cellState">If cell state is wrong, it will be ignored</param>

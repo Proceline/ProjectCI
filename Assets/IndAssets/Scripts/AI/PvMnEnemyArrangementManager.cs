@@ -230,20 +230,24 @@ namespace IndAssets.Scripts.AI
                     EffectedTeam = BattleTeam.Friendly
                 };
 
+                var usingAbility = enemyThought.SelectAbility();
+                if (usingAbility.IsSupportAbility)
+                {
+                    continue;
+                }
+
                 var radiusField = BucketDijkstraSolutionUtils.CalculateBucket(radiusInfo, false, 10);
                 foreach (var cell in radiusField.Reach)
                 {
                     _enemiesMovableCells.Add(cell);
                 }
 
-                var attackAbility = enemyThought.Unit.AttackAbility;
-
                 // Calculate attack field
                 var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);
                 List<LevelCellBase> GetCellList(LevelCellBase startCell)
                 {
-                    return attackAbility.GetShape().GetCellListPreview(enemyUnit, startCell, attackAbility.GetRadius(),
-                        attackAbility.DoesAllowBlocked(), attackAbility.GetEffectedTeam());
+                    return usingAbility.GetShape().GetCellListPreview(enemyUnit, startCell, usingAbility.GetRadius(),
+                        usingAbility.DoesAllowBlocked(), usingAbility.GetEffectedTeam());
                 }
 
                 foreach (var victimCell in attackField.AllVictims)
@@ -282,7 +286,8 @@ namespace IndAssets.Scripts.AI
                 onUnitArranged?.Invoke(enemyUnit);
                 await Awaitable.WaitForSecondsAsync(0.175f);
 
-                var destAndTarget = enemyThought.CalculateDestinationAndTarget();
+                var usingAbility = enemyThought.SelectAbility();
+                var destAndTarget = enemyThought.CalculateDestinationAndTarget(usingAbility);
                 var dest = destAndTarget.Item1;
                 var target = destAndTarget.Item2;
 
@@ -297,7 +302,7 @@ namespace IndAssets.Scripts.AI
 
                 if (target)
                 {
-                    await gameModel.ApplyAbility(enemyUnit, target, enemyThought.SelectAbility());
+                    await gameModel.ApplyAbility(enemyUnit, target, usingAbility);
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
 

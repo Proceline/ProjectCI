@@ -27,7 +27,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private PvSoUnitAbility talentedSupportAbility;
 
+        [SerializeField]
+        private PvSoUnitAbility talentedUltimateAbility;
+
         public PvSoUnitAbility TalentedSupportAbility => talentedSupportAbility;
+        public PvSoUnitAbility TalentedUltimateAbility => talentedUltimateAbility;
 
         [SerializeField] private PvPersonalitiesCombination personality;
 

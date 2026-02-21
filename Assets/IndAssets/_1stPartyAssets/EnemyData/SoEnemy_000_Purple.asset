@@ -31,6 +31,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 53d00a9e5397bf241a66b7e629fa7015, type: 2}
   meshes: []
   talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
   personality:
     energyLevel: 0
     informationLevel: 0

@@ -10,7 +10,6 @@ using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -21,6 +20,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
 
         private readonly HashSet<PvMnBattleGeneralUnit> _finishedPlayableUnits = new();
+        private readonly HashSet<PvMnBattleGeneralUnit> _ultPreparedUnits = new();
 
         private void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
@@ -53,7 +53,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _selectedUnitLastCell = null;
 
             SelectUnit(playableUnit);
-            gameBattleState.PushState(PvPlayerRoundState.Selected, playableUnit);
+            gameBattleState.PushState(playableUnit.IsInUltimateForm ? 
+                PvPlayerRoundState.Prepare : PvPlayerRoundState.Selected, playableUnit);
         }
 
         private void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
@@ -72,7 +73,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             gameBattleState.PushState(PvPlayerRoundState.Moving, playingUnit);
 
-            ApplyMovementToCell(playingUnit, targetCell, 
+            ApplyMovementToCell(playingUnit, targetCell,
                 () => 
                 {
                     if (gameBattleState.GetCurrentState == PvPlayerRoundState.Moving)
@@ -94,6 +95,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             var usingAbility = cellState == CellState.ePositive ? playingUnit.SupportAbility : playingUnit.AttackAbility;
+            if (playingUnit.IsInUltimateForm)
+            {
+                usingAbility = playingUnit.UltimateAbility;
+            }
+
             playingUnit.StartCoroutine(StartAbilityApplyCoroutine(playingUnit, selectedCell, usingAbility));
         }
 
@@ -101,7 +107,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             gameBattleState.PushState(PvPlayerRoundState.Applying, triggerUnit);
             yield return ApplyAbility(triggerUnit, selectedCell, ability);
-            FinishUnitAction(triggerUnit);
+            FinishUnitAction(triggerUnit, false);
         }
 
         /// <summary>
@@ -110,24 +116,26 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <exception cref="Exception"></exception>
         private void TakeRestForCurrentPlayer()
         {
-            if (!_selectedUnit)
-            {
-                throw new Exception("ERROR: Take Rest MUST have a Selected Unit!");
-            }
-
             var lastUnit = _selectedUnit;
             RaiserManualFinishOrRestPrepareEvent.Raise(lastUnit);
-            FinishUnitAction(lastUnit);
+            FinishUnitAction(lastUnit, true);
         }
 
-        private void FinishUnitAction(PvMnBattleGeneralUnit finishedUnit)
+        private void FinishUnitAction(PvMnBattleGeneralUnit finishedUnit, bool ultimate)
         {
             gameBattleState.PushState(PvPlayerRoundState.None, null);
 
             if (finishedUnit)
             {
                 DeselectUnit(finishedUnit);
-                _finishedPlayableUnits.Add(finishedUnit);
+                if (ultimate)
+                {
+                    _ultPreparedUnits.Add(finishedUnit);
+                }
+                else
+                {
+                    _finishedPlayableUnits.Add(finishedUnit);
+                }
             }
 
             CheckRestUnits();
@@ -135,6 +143,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void SelectUnit(PvMnBattleGeneralUnit selectingUnit)
         {
+            if (_ultPreparedUnits.Contains(selectingUnit))
+            {
+                selectingUnit.SwitchForm(true);
+            }
+
             _selectedUnit = selectingUnit;
             onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
             raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
@@ -142,13 +155,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void DeselectUnit(PvMnBattleGeneralUnit selectingUnit)
         {
+            if (_ultPreparedUnits.Contains(selectingUnit))
+            {
+                selectingUnit.SwitchForm(false);
+            }
+
             onTurnOwnerDeSelectedPreview?.Invoke(selectingUnit);
             raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
         }
 
         /// <summary>
-        /// This function is manually binded to state machine, and links to Cancel InputAction
+        /// This function is manually binded to State Machine Object
+        /// links to Cancel InputAction
         /// </summary>
         public void RevertActionResponse(PvPlayerRoundState stateToBeCancelled)
         {
@@ -156,7 +175,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             switch (stateToBeCancelled)
             {
                 case PvPlayerRoundState.Prepare:
-                    if (_selectedUnitLastCell && playingUnit.GetCell() != _selectedUnitLastCell)
+                    if (playingUnit.IsInUltimateForm)
+                    {
+                        DeselectUnit(playingUnit);
+                    }
+                    else if (_selectedUnitLastCell && playingUnit.GetCell() != _selectedUnitLastCell)
                     {
                         // TODO: Clean up movement buff
                         playingUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
@@ -359,6 +382,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
                 var usingAbility = TacticBattleManager.GetTeamAffinity(selectedUnit.GetTeam(), targetUnit.GetTeam()) == BattleTeam.Friendly ?
                     selectedUnit.SupportAbility : selectedUnit.AttackAbility;
+                if (selectedUnit.IsInUltimateForm)
+                {
+                    usingAbility = selectedUnit.UltimateAbility;
+                }
 
                 MockAbilityToTargetCell(ref results, selectedUnit, targetUnit, usingAbility);
             }
@@ -463,6 +490,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _finishedPlayableUnits.Clear();
+
+            foreach (var ultUnit in _ultPreparedUnits)
+            {
+                ultUnit.SwitchForm(false);
+            }
+            _ultPreparedUnits.Clear();
 
             var index = 0;
             foreach (var roundEndUnityEvent in roundEventEndList)
