@@ -257,6 +257,7 @@ GameObject:
   - component: {fileID: 436832139}
   - component: {fileID: 436832138}
   - component: {fileID: 436832140}
+  - component: {fileID: 436832141}
   m_Layer: 0
   m_Name: LoadingDummyCamera
   m_TagString: Untagged
@@ -374,6 +375,14 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!81 &436832141
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436832136}
+  m_Enabled: 1
 --- !u!1 &849086188
 GameObject:
   m_ObjectHideFlags: 0
