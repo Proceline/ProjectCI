@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.SceneTransition.PvSoSceneConfig
   sceneAsset: {fileID: 102900000, guid: 08a9a4542dd8a3048a2bfc28b4104d09, type: 3}
   prefabsToInstantiate: []
+  sceneName: Start

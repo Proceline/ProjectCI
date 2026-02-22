@@ -15,32 +15,19 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
     {
         [Header("Scene Configuration")]
         [Tooltip("The scene asset to load")]
-#if UNITY_EDITOR
-        [SerializeField] private SceneAsset sceneAsset;
-#else
-        [SerializeField] private Object sceneAsset; // Dummy field for runtime
-#endif
+        [SerializeField] private Object sceneAsset;
 
         [Header("Prefabs to Instantiate")]
         [Tooltip("List of prefabs to instantiate when this scene is loaded")]
         [SerializeField] private List<GameObject> prefabsToInstantiate = new List<GameObject>();
 
+        [SerializeField]
+        private string sceneName;
+
         /// <summary>
         /// Get the scene name for runtime loading
         /// </summary>
-        public string SceneName
-        {
-            get
-            {
-#if UNITY_EDITOR
-                if (sceneAsset != null)
-                {
-                    return System.IO.Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(sceneAsset));
-                }
-#endif
-                return string.Empty;
-            }
-        }
+        public string SceneName => sceneName;
 
         /// <summary>
         /// Get the list of prefabs to instantiate
@@ -51,7 +38,7 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
         /// <summary>
         /// Get the scene asset (editor only)
         /// </summary>
-        public SceneAsset SceneAsset => sceneAsset;
+        public SceneAsset SceneAsset => (SceneAsset)sceneAsset;
 #endif
     }
 }

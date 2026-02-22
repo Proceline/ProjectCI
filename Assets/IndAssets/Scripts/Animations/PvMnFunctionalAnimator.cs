@@ -1,5 +1,4 @@
-﻿using MCPForUnity.Editor.Resources.Project;
-using ProjectCI.CoreSystem.DependencyInjection;
+﻿using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
@@ -10,7 +9,6 @@ using ProjectCI.Utilities.Runtime.Functions;
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace ProjectCI_Animation.Runtime.Concrete
 {
