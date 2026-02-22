@@ -14,9 +14,9 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
     {
         [SerializeField] private string characterName;
         [SerializeField] private string characterId; // Unique ID for the character
-        
+
         // Store instance IDs instead of just names
-        [SerializeField] private List<string> weaponInstanceIds = new List<string>(); // Max 2 weapons
+        [SerializeField] private string weaponInstanceId;
         [SerializeField] private List<string> relicInstanceIds = new List<string>(); // Max 3 relics
         
         public string CharacterName
@@ -31,7 +31,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             set => characterId = value;
         }
         
-        public List<string> WeaponInstanceIds => weaponInstanceIds;
+        public string WeaponInstanceId => weaponInstanceId;
         public List<string> RelicInstanceIds => relicInstanceIds;
         
         /// <summary>
@@ -41,27 +41,16 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         {
             characterName = unitData.m_UnitName;
             characterId = unitData.EntryId;
-            weaponInstanceIds = new List<string>();
+            weaponInstanceId = string.Empty;
             relicInstanceIds = new List<string>();
         }
         
         /// <summary>
         /// Set weapon instance ID at specific index (0 or 1)
         /// </summary>
-        public void SetWeaponInstanceId(int index, string instanceId)
-        {
-            if (index < 0 || index >= 2)
-            {
-                Debug.LogWarning($"Weapon index {index} is out of range. Must be 0 or 1.");
-                return;
-            }
-            
-            while (weaponInstanceIds.Count <= index)
-            {
-                weaponInstanceIds.Add(string.Empty);
-            }
-            
-            weaponInstanceIds[index] = instanceId;
+        public void SetWeaponInstanceId(string instanceId)
+        {   
+            weaponInstanceId = instanceId;
         }
         
         /// <summary>
@@ -88,7 +77,7 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
         /// </summary>
         public void ClearEquipment()
         {
-            weaponInstanceIds.Clear();
+            weaponInstanceId = string.Empty;
             relicInstanceIds.Clear();
         }
     }

@@ -37,33 +37,13 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             }
         }
 
-        public static async Awaitable<float> WaitUntilProjectileFinished(this PvSoUnitAbility ability, GridPawnUnit casterUnit,
-            LevelCellBase target)
-        {
-            var abilityAnimation = ability.abilityAnimation;
-            abilityAnimation?.PlayAnimation(casterUnit);
-
-            var firstExecuteTime = abilityAnimation ? abilityAnimation.ExecuteAfterTime(0) : 0.25f;
-            await Awaitable.WaitForSecondsAsync(firstExecuteTime);
-
-            if (!ability.ProjectilePrefab) return firstExecuteTime;
-            var projectile = PvMnProjectilePool.InstantiateProjectile(ability.ProjectilePrefab);
-            await ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
-            firstExecuteTime += projectile.ProgressDuration;
-
-            return firstExecuteTime;
-        }
-
-        public static void HandleAbilityParam(this PvSoUnitAbility ability, GridPawnUnit caster,
-            GridPawnUnit mainTarget,
-            Queue<CommandResult> results)
+        public static void HandleAbilityParam(this PvSoUnitAbility ability, string resultUniqueId,
+            GridPawnUnit caster, GridPawnUnit mainTarget, Queue<CommandResult> results)
         {
             if (caster.IsDead())
             {
                 return;
             }
-
-            var resultId = Guid.NewGuid().ToString();
 
             var fromContainer = caster.RuntimeAttributes;
             var caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
@@ -74,30 +54,34 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             {
                 foreach (var cell in effectedCells)
                 {
-                    var cellUnit = cell.GetUnitOnCell();
-                    int delta = 0;
-                    if (cellUnit)
+                    if (!ability.IsAppliedOnSelf && cell == caster.GetCell())
                     {
-                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute) + 10;
-                        delta = dcFinal - acFinal;
+                        continue;
                     }
 
-                    if (delta > 0)
+                    var cellUnit = cell.GetUnitOnCell();
+                    int delta = 0;
+
+                    if (cellUnit && !cellUnit.IsDead())
                     {
-                        var criticalAttribute =
-                            100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
+                        var criticalAttribute = 100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
                         if (caughtSeedValue >= criticalAttribute)
                         {
                             delta = 100;
                         }
+                        else 
+                        {
+                            var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
+                            delta = dcFinal - acFinal;
+                        }
                     }
 
-                    param.Execute(resultId, ability, caster, mainTarget, cell, results, delta);
+                    param.Execute(resultUniqueId, ability, caster, mainTarget, cell, results, delta);
                 }
             }
         }
 
-        private static async Awaitable ApplyProjectile(PvMnProjectile projectile, Vector3 departure, Vector3 dest)
+        public static async Awaitable ApplyProjectile(PvMnProjectile projectile, Vector3 departure, Vector3 dest)
         {
             projectile.Initialize(departure, dest);
             while (!projectile.IsProgressEnded)

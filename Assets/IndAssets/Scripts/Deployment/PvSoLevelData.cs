@@ -1,3 +1,5 @@
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,82 +11,56 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
     [CreateAssetMenu(fileName = "NewLevelData", menuName = "ProjectCI/Deployment/Level Data", order = 1)]
     public class PvSoLevelData : ScriptableObject
     {
+        [SerializeField] private Vector3 scanStartPivot;
+        public int gridWidth;
+        public int gridHeight;
+
+        [SerializeField] private int minimumPlayersCount;
+        [SerializeField] private List<PvSoBattleUnitData> requiredUnits;
+        [SerializeField] private int maximumPlayersCount;
+
+        [SerializeField] private Vector3 cameraPosition;
+
         [Header("Friendly Deployment Slots")]
-        [SerializeField] private List<PvDeploymentSlot> friendlySlots = new List<PvDeploymentSlot>();
-        
-        [Header("Hostile Deployment Slots")]
-        [SerializeField] private List<PvDeploymentSlot> hostileSlots = new List<PvDeploymentSlot>();
-        
+        [SerializeField] private List<Vector3> friendlySlots = new List<Vector3>();
+
+        public Vector3 LevelStartPosition => scanStartPivot;
+
         /// <summary>
         /// Get all friendly deployment slots
         /// </summary>
-        public List<PvDeploymentSlot> FriendlySlots => friendlySlots;
-        
-        /// <summary>
-        /// Get all hostile deployment slots
-        /// </summary>
-        public List<PvDeploymentSlot> HostileSlots => hostileSlots;
-        
-        /// <summary>
-        /// Get friendly slot by index
-        /// </summary>
-        public PvDeploymentSlot GetFriendlySlot(int index)
+        public List<Vector3> FriendlySlots => friendlySlots;
+
+        public void PutCameraOnPosition()
         {
-            if (index >= 0 && index < friendlySlots.Count)
+            var mainCamera = Camera.main;
+            var cameraParent = mainCamera.transform.parent;
+            var targetRoot = mainCamera.transform;
+            while (cameraParent != null)
             {
-                return friendlySlots[index];
+                targetRoot = cameraParent;
+                cameraParent = cameraParent.parent;
             }
-            return null;
+
+            targetRoot.position = cameraPosition;
         }
-        
-        /// <summary>
-        /// Get hostile slot by index
-        /// </summary>
-        public PvDeploymentSlot GetHostileSlot(int index)
+
+        public bool CheckIfPawnsMeetRequirement(Func<PvSoBattleUnitData, bool> checker, int totalCount)
         {
-            if (index >= 0 && index < hostileSlots.Count)
+            foreach (var unit in requiredUnits)
             {
-                return hostileSlots[index];
-            }
-            return null;
-        }
-        
-        /// <summary>
-        /// Get available friendly slot
-        /// </summary>
-        public PvDeploymentSlot GetAvailableFriendlySlot()
-        {
-            foreach (var slot in friendlySlots)
-            {
-                if (slot.IsAvailable && !slot.IsOccupied())
+                if (!checker.Invoke(unit))
                 {
-                    return slot;
+                    return false;
                 }
             }
-            return null;
-        }
-        
-        /// <summary>
-        /// Get available hostile slot
-        /// </summary>
-        public PvDeploymentSlot GetAvailableHostileSlot()
-        {
-            foreach (var slot in hostileSlots)
+
+            if (totalCount < minimumPlayersCount || totalCount > maximumPlayersCount)
             {
-                if (slot.IsAvailable && !slot.IsOccupied())
-                {
-                    return slot;
-                }
-            }
-            return null;
-        }
-        
-        /// <summary>
-        /// Get slot by index for a specific team
-        /// </summary>
-        public PvDeploymentSlot GetSlotByIndex(int index, bool isFriendly)
-        {
-            return isFriendly ? GetFriendlySlot(index) : GetHostileSlot(index);
+                return false;
+            } 
+            
+            return true;
         }
     }
 }

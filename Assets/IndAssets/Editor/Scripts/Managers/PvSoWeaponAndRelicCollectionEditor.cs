@@ -48,8 +48,6 @@ namespace IndAssets.Editor.Scripts.Managers
             
             EditorGUILayout.PropertyField(
                 serializedObject.FindProperty(PvSoWeaponAndRelicCollection.UnitsPropertyName));
-            EditorGUILayout.PropertyField(
-                serializedObject.FindProperty(PvSoWeaponAndRelicCollection.BodyMeshPrefabsPropertyName));
 
             // Display collected items
             EditorGUILayout.LabelField($"Weapons Count: {_weaponsProperty.arraySize}", EditorStyles.boldLabel);
@@ -59,6 +57,7 @@ namespace IndAssets.Editor.Scripts.Managers
             
             EditorGUILayout.LabelField($"Relics Count: {_relicsProperty.arraySize}", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(_relicsProperty, true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponAndRelicCollection.emptyHandsAbilities)));
 
             serializedObject.ApplyModifiedProperties();
         }

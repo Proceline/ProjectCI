@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using IndAssets.Scripts.Managers;
-using ProjectCI.CoreSystem.DependencyInjection;
 using UnityEngine;
 using UnityEngine.UI;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
@@ -12,23 +10,16 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
     /// Panel for displaying and editing character equipment information
     /// Supports both editable and read-only modes
     /// </summary>
-    [StaticInjectableTarget]
     public class PvMnCharacterEquipmentPanel : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private GameObject panelObject;
         [SerializeField] private TextMeshProUGUI characterNameText;
         [SerializeField] private PvMnEquipmentDropdown weaponDropdown1;
-        [SerializeField] private PvMnEquipmentDropdown weaponDropdown2;
-        [SerializeField] private PvMnEquipmentDropdown relicDropdown1;
-        [SerializeField] private PvMnEquipmentDropdown relicDropdown2;
-        [SerializeField] private PvMnEquipmentDropdown relicDropdown3;
         [SerializeField] private Button closeButton;
         
         [Header("Data")]
         private PvCharacterSaveData _characterData;
-
-        [Inject] private static PvSoWeaponAndRelicCollection _equipmentsCollection;
         
         private bool _isEditable = true;
         private bool _isInBattle = false;
@@ -148,16 +139,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 characterNameText.text = _characterData.CharacterName;
             }
 
-            void InitializeWeaponDropDown(PvMnEquipmentDropdown dropdown, int slotIndex)
+            void InitializeWeaponDropDown(PvMnEquipmentDropdown dropdown)
             {
-                dropdown.Initialize(_availableWeaponInstanceIds, _availableWeaponDisplayNames,
-                    _characterData?.CharacterId, slotIndex);
-            }
-            
-            void InitializeRelicDropDown(PvMnEquipmentDropdown dropdown, int slotIndex)
-            {
-                dropdown.Initialize(_availableRelicInstanceIds, _availableRelicDisplayNames,
-                    _characterData?.CharacterId, slotIndex);
+                dropdown.Initialize(_characterData?.CharacterId, 0);
             }
 
             void InitializeDropdownEquipment(PvMnEquipmentDropdown dropdown, int targetIndex, List<string> holdingIndices)
@@ -180,39 +164,32 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             // Update weapon dropdowns
             if (weaponDropdown1)
             {
-                InitializeWeaponDropDown(weaponDropdown1, 0);
-                InitializeDropdownEquipment(weaponDropdown1, 0, _characterData.WeaponInstanceIds);
+                InitializeWeaponDropDown(weaponDropdown1);
+                weaponDropdown1.SetValueWithoutNotify(_characterData.WeaponInstanceId);
                 weaponDropdown1.SetInteractable(_isEditable && !_isInBattle);
             }
 
-            if (weaponDropdown2)
-            {
-                InitializeWeaponDropDown(weaponDropdown2, 1);
-                InitializeDropdownEquipment(weaponDropdown2, 1, _characterData.WeaponInstanceIds);
-                weaponDropdown2.SetInteractable(_isEditable && !_isInBattle);
-            }
-
             // Update relic dropdowns
-            if (relicDropdown1)
-            {
-                InitializeRelicDropDown(relicDropdown1, 0);
-                InitializeDropdownEquipment(relicDropdown1, 0, _characterData.RelicInstanceIds);
-                relicDropdown1.SetInteractable(_isEditable && !_isInBattle);
-            }
+            //if (relicDropdown1)
+            //{
+            //    //InitializeRelicDropDown(relicDropdown1, 0);
+            //    InitializeDropdownEquipment(relicDropdown1, 0, _characterData.RelicInstanceIds);
+            //    relicDropdown1.SetInteractable(_isEditable && !_isInBattle);
+            //}
             
-            if (relicDropdown2)
-            {
-                InitializeRelicDropDown(relicDropdown2, 1);
-                InitializeDropdownEquipment(relicDropdown2, 1, _characterData.RelicInstanceIds);
-                relicDropdown2.SetInteractable(_isEditable && !_isInBattle);
-            }
+            //if (relicDropdown2)
+            //{
+            //    //InitializeRelicDropDown(relicDropdown2, 1);
+            //    InitializeDropdownEquipment(relicDropdown2, 1, _characterData.RelicInstanceIds);
+            //    relicDropdown2.SetInteractable(_isEditable && !_isInBattle);
+            //}
             
-            if (relicDropdown3)
-            {
-                InitializeRelicDropDown(relicDropdown3, 2);
-                InitializeDropdownEquipment(relicDropdown3, 2, _characterData.RelicInstanceIds);
-                relicDropdown3.SetInteractable(_isEditable && !_isInBattle);
-            }
+            //if (relicDropdown3)
+            //{
+            //    //InitializeRelicDropDown(relicDropdown3, 2);
+            //    InitializeDropdownEquipment(relicDropdown3, 2, _characterData.RelicInstanceIds);
+            //    relicDropdown3.SetInteractable(_isEditable && !_isInBattle);
+            //}
         }
         
         /// <summary>
@@ -226,34 +203,10 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             if (weaponDropdown1)
             {
                 string weapon1 = weaponDropdown1.GetValue();
-                _characterData.SetWeaponInstanceId(0, weapon1);
+                _characterData.SetWeaponInstanceId(weapon1);
             }
-            
-            if (weaponDropdown2)
-            {
-                string weapon2 = weaponDropdown2.GetValue();
-                _characterData.SetWeaponInstanceId(1, weapon2);
-            }
-            
-            // Save relics
-            if (relicDropdown1)
-            {
-                string relic1 = relicDropdown1.GetValue();
-                _characterData.SetRelicInstanceId(0, relic1);
-            }
-            
-            if (relicDropdown2)
-            {
-                string relic2 = relicDropdown2.GetValue();
-                _characterData.SetRelicInstanceId(1, relic2);
-            }
-            
-            if (relicDropdown3)
-            {
-                string relic3 = relicDropdown3.GetValue();
-                _characterData.SetRelicInstanceId(2, relic3);
-            }
-            
+
+            //_characterData.SetRelicInstanceId(0, relic1);
             _onDataChanged?.Invoke();
         }
         
@@ -261,11 +214,7 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         {
             bool canEdit = _isEditable && !_isInBattle;
             
-            if (weaponDropdown1 != null) weaponDropdown1.SetInteractable(canEdit);
-            if (weaponDropdown2 != null) weaponDropdown2.SetInteractable(canEdit);
-            if (relicDropdown1 != null) relicDropdown1.SetInteractable(canEdit);
-            if (relicDropdown2 != null) relicDropdown2.SetInteractable(canEdit);
-            if (relicDropdown3 != null) relicDropdown3.SetInteractable(canEdit);
+            if (weaponDropdown1) weaponDropdown1.SetInteractable(canEdit);
         }
     }
 }

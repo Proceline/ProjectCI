@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e642cb3fe22ef1d44adad2486e118118, type: 3}
+  m_Name: M_Defender_ISFJ_DeductOnOtherReceived
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Passives.PvSoOnOthersDamageModifier
+  passiveTiming: 1
+  passiveName: '[Sacrifice]'
+  description: 
+  onNotifyDamageBeforeRevEvent: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}
+  raiserSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+  finalDamageValue: 1
+  damageParams: {fileID: 11400000, guid: da9be5c5bbfd5a245a34b616c033d3c1, type: 2}
+  pureDamageAbility: {fileID: 11400000, guid: 038a281b57c08074c883202e93d0b51c, type: 2}

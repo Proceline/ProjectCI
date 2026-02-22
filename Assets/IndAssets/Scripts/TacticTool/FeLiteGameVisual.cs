@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.Runtime.GUI.Battle;
+using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
-    
+
     [CreateAssetMenu(fileName = "New Visual", menuName = "ProjectCI Tools/MVC/Visual", order = 1)]
     public class FeLiteGameVisual : ScriptableObject
     {
@@ -16,35 +19,167 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private readonly List<LevelCellBase> _bufferedVisualStateCells = new();
         private readonly List<LevelCellBase> _hoveringCells = new();
 
-        [NonSerialized] 
+        private readonly List<LevelCellBase> _temporaryStateCells = new();
+        private readonly Dictionary<LevelCellBase, List<CellState>> _bufferedCellStates = new();
+
+        [NonSerialized]
         private GameObject _pawnVisualMark;
-        
-        [NonSerialized] 
-        private PvSoUnitAbility _highlightAbility;
+
+        [NonSerialized]
+        private List<LevelCellBase> _bufferedAttackCells;
+        [NonSerialized]
+        private List<LevelCellBase> _bufferedSupportCells;
+        [NonSerialized]
+        private bool _isShowingActionRange;
+
+        [SerializeField]
+        private PvSoLevelCellEvent raiserHoverCellEventWithoutOwner;
+
+        [SerializeField]
+        private PvSoLevelCellEvent raiserHoverCellEventWithOwner;
+
+        [SerializeField]
+        private PvSoLevelCellEvent raiserAggroHoveredEvent;
+
+        [SerializeField]
+        private PvSoLevelCellEvent raiserAggroEndedEvent;
+
+        [SerializeField]
+        private PvMnExtraVisualInfoCanvas extraVisualCanvasPrefab;
+        [NonSerialized]
+        private PvMnExtraVisualInfoCanvas _extraVisualInstance;
+
+        /// <summary>
+        /// Binded to AI Manager's preview
+        /// </summary>
+        /// <param name="cells"></param>
+        public void HighlightMovableCells(ICollection<LevelCellBase> cells) => HighlightTempCells(cells, CellState.eReadOnlyMove);
+
+        /// <summary>
+        /// Binded to AI Manager's preview, also can be used for Aggro Hint
+        /// </summary>
+        /// <param name="cells"></param>
+        public void HighlightAggroCells(ICollection<LevelCellBase> cells) => HighlightTempCells(cells, CellState.eReadOnlyAggro);
+
+        private void HighlightTempCells(ICollection<LevelCellBase> cells, CellState targetState)
+        {
+            foreach (LevelCellBase cell in cells)
+            {
+                if (cell && cell.IsVisible())
+                {
+                    _temporaryStateCells.Add(cell);
+                    SetCellState(cell, targetState, false);
+                }
+            }
+        }
+
+        private void SetCellState(LevelCellBase cell, CellState targetState, bool onTop = true)
+        {
+            if (!_bufferedCellStates.TryGetValue(cell, out var stack))
+            {
+                stack = new List<CellState>();
+                _bufferedCellStates.Add(cell, stack);
+            }
+
+            if (!onTop)
+            {
+                if (stack.Count == 0)
+                {
+                    TacticBattleManager.SetCellState(cell, targetState);
+                }
+                stack.Insert(0, targetState);
+            }
+            else
+            {
+                stack.Add(targetState);
+                TacticBattleManager.SetCellState(cell, targetState);
+            }
+        }
+
+        private void PopCellState(LevelCellBase cell, params CellState[] targetStates)
+        {
+            if (_bufferedCellStates.TryGetValue(cell, out var stack) && stack.Count > 0)
+            {
+                foreach (var state in targetStates)
+                {
+                    stack.Remove(state);
+                }
+
+                if (stack.Count > 0)
+                {
+                    var lastIndex = stack.Count - 1;
+                    var lastState = stack[lastIndex];
+                    TacticBattleManager.SetCellState(cell, lastState);
+                }
+                else
+                {
+                    TacticBattleManager.ResetCellState(cell);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Binded in MonoController, when Aggro Disabled is required
+        /// </summary>
+        public void ResetTemporaryStateCells()
+        {
+            foreach (LevelCellBase editedCell in _temporaryStateCells)
+            {
+                PopCellState(editedCell, CellState.eReadOnlyMove, CellState.eReadOnlyAggro);
+            }
+
+            _temporaryStateCells.Clear();
+        }
 
         public void AssignAbilityOnView(PvSoUnitAbility ability, PvMnBattleGeneralUnit unit)
         {
-            _highlightAbility = ability;
+            // Empty, TBD, deprecated
         }
-        
+
         public void ResetVisualStateCells()
         {
             foreach (LevelCellBase editedCell in _bufferedVisualStateCells)
             {
-                TacticBattleManager.ResetCellState(editedCell);
+                PopCellState(editedCell, CellState.eNegative, CellState.ePositive, CellState.eMovement, CellState.eSpecial);
             }
 
             _bufferedVisualStateCells.Clear();
         }
 
-        private void HighlightAbilityOrSupportCells(PvSoUnitAbility ability, PvMnBattleGeneralUnit unit, CellState state)
+        private void ShowUnitGeneralAbilitiesCells(PvMnBattleGeneralUnit unit)
         {
-            List<LevelCellBase> abilityCells = ability.GetAbilityCells(unit);
-            foreach (LevelCellBase cell in abilityCells)
+            if (!_isShowingActionRange)
+            {
+                UpdateAttackAndSupportCellsRecord(unit);
+            }
+
+            foreach (LevelCellBase cell in _bufferedAttackCells)
             {
                 _bufferedVisualStateCells.Add(cell);
-                TacticBattleManager.SetCellState(cell, state);
+                SetCellState(cell, CellState.eNegative);
             }
+
+            if (!unit.IsInUltimateForm)
+            {
+                foreach (LevelCellBase cell in _bufferedSupportCells)
+                {
+                    _bufferedVisualStateCells.Add(cell);
+                    SetCellState(cell, CellState.ePositive);
+                }
+            }
+
+            var standingCell = unit.GetCell();
+            _bufferedVisualStateCells.Add(standingCell);
+            SetCellState(standingCell, CellState.eSpecial);
+        }
+
+        private void UpdateAttackAndSupportCellsRecord(PvMnBattleGeneralUnit unit)
+        {
+            var ultimateForm = unit.IsInUltimateForm;
+            _bufferedAttackCells = ultimateForm ?
+                unit.UltimateAbility.GetAbilityCells(unit) : unit.AttackAbility.GetAbilityCells(unit);
+            _bufferedSupportCells = ultimateForm ? null : unit.SupportAbility.GetAbilityCells(unit);
+            _isShowingActionRange = true;
         }
 
         private void HighlightMovementRange(GridPawnUnit casterUnit)
@@ -55,11 +190,19 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 if (cell && cell.IsVisible())
                 {
                     _bufferedVisualStateCells.Add(cell);
-                    TacticBattleManager.SetCellState(cell, CellState.eMovement);
+                    SetCellState(cell, CellState.eMovement);
                 }
             }
+
+            var unitCell = casterUnit.GetCell();
+            _bufferedVisualStateCells.Add(unitCell);
+            SetCellState(unitCell, CellState.eSpecial);
         }
 
+        /// <summary>
+        /// Bind to GameModel's update controller
+        /// </summary>
+        /// <param name="selectedUnit">current selected Owner</param>
         public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit)
         {
             CleanupHoverCells();
@@ -68,13 +211,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 return;
             }
-            // GridPawnUnit hoverUnit = CurrentHoverCell.GetUnitOnCell();
-            // TODO: Add Event if necessary
 
             _hoveringCells.Add(CurrentHoverCell);
             if (!selectedUnit)
             {
                 RefreshHoveringVisualCells();
+                raiserHoverCellEventWithoutOwner.Raise(CurrentHoverCell);
                 return;
             }
 
@@ -98,7 +240,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             RefreshHoveringVisualCells();
         }
 
-        public void UpdateHoverCells(PvMnBattleGeneralUnit selectedUnit, PvSoUnitAbility ability)
+        public void UpdateHoverCellsWithGeneralAbilities(PvMnBattleGeneralUnit selectedUnit)
         {
             if (!selectedUnit)
             {
@@ -108,11 +250,53 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             if (CurrentHoverCell)
             {
-                // GridPawnUnit hoverUnit = CurrentHoverCell.GetUnitOnCell();
-                // TODO: Add Event if necessary
-
                 _hoveringCells.Add(CurrentHoverCell);
-                UpdateHoverCellsToList(selectedUnit, ability, CurrentHoverCell);
+
+                if (!_isShowingActionRange)
+                {
+                    UpdateAttackAndSupportCellsRecord(selectedUnit);
+                }
+
+                var cell = CurrentHoverCell;
+
+                var isAttackable = _bufferedAttackCells.Contains(cell);
+                var ability = isAttackable ? selectedUnit.AttackAbility : selectedUnit.SupportAbility;
+                if (isAttackable)
+                {
+                    if (selectedUnit.IsInUltimateForm)
+                    {
+                        ability = selectedUnit.UltimateAbility;
+                    }
+                }
+                else if (_bufferedSupportCells == null || !_bufferedSupportCells.Contains(cell))
+                {
+                    ability = null;
+                }
+
+                if (ability)
+                {
+                    raiserHoverCellEventWithOwner.Raise(cell);
+
+                    List<LevelCellBase> effectedCells = ability.GetEffectedCells(selectedUnit, cell);
+                    foreach (var currCell in effectedCells)
+                    {
+                        if (!currCell || currCell == cell)
+                        {
+                            continue;
+                        }
+
+                        if (TacticBattleManager.CanCasterEffectTarget(selectedUnit.GetCell(), currCell, BattleTeam.All,
+                                ability.DoesAllowBlocked()))
+                        {
+                            _hoveringCells.Add(currCell);
+                        }
+                    }
+                }
+                else
+                {
+                    raiserHoverCellEventWithOwner.Raise(null);
+                }
+
                 RefreshHoveringVisualCells();
             }
         }
@@ -127,12 +311,24 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             CurrentHoverCell.HandleMouseOver();
         }
 
+        /// <summary>
+        /// Binded to TacticBattleManager, OnCellPointed
+        /// </summary>
+        /// <param name="cell"></param>
         public void BeginHover(LevelCellBase cell)
         {
             CurrentHoverCell = cell;
-            UpdateHoverCells(null);
+
+            if (_temporaryStateCells.Count > 0)
+            {
+                raiserAggroHoveredEvent.Raise(cell);
+            }
         }
-        
+
+        /// <summary>
+        /// Binded to TacticBattleManager, OnCellUnPointed
+        /// </summary>
+        /// <param name="cell"></param>
         public void EndHover(LevelCellBase cell)
         {
             CleanupHoverCells();
@@ -143,7 +339,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             CurrentHoverCell = null;
-            // TODO: EndHover Event if necessary
+
+            raiserAggroEndedEvent.Raise(cell);
         }
 
         private void CleanupHoverCells()
@@ -159,62 +356,26 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _hoveringCells.Clear();
         }
 
-        private void UpdateHoverCellsToList(GridPawnUnit caster, PvSoUnitAbility ability, LevelCellBase cell)
-        {
-            if (!ability)
-            {
-                throw new NullReferenceException("ERROR: Cannot identify current Ability");
-            }
-
-            if (!ability)
-            {
-                return;
-            }
-
-            List<LevelCellBase> abilityCells = ability.GetAbilityCells(caster);
-
-            if (abilityCells.Contains(cell))
-            {
-                List<LevelCellBase> effectedCells = ability.GetEffectedCells(caster, cell);
-                foreach (var currCell in effectedCells)
-                {
-                    if (!currCell || currCell == cell)
-                    {
-                        continue;
-                    }
-
-                    if (TacticBattleManager.CanCasterEffectTarget(caster.GetCell(), currCell, BattleTeam.All,
-                            ability.DoesAllowBlocked()))
-                    {
-                        _hoveringCells.Add(currCell);
-                    }
-                }
-            }
-        }
-
         #region MethodsCombo
-        public void ShowRangeWhileStateChanged(PvMnBattleGeneralUnit unit, UnitBattleState state)
+
+        public void ShowRangeInState(PvPlayerRoundState state, PvMnBattleGeneralUnit unit)
         {
             switch (state)
             {
-                case UnitBattleState.UsingAbility:
+                //case UnitBattleState.UsingAbility:
+                case PvPlayerRoundState.Prepare:
+                    _isShowingActionRange = false;
                     HighlightAbilityAndSupportRange(unit);
-                    //TODO: Consider ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
-                    UpdateHoverCells(unit, _highlightAbility);
+                    UpdateHoverCellsWithGeneralAbilities(unit);
                     break;
-                case UnitBattleState.Finished:
-                    ResetVisualStateCells();
-                    break;
-                case UnitBattleState.Moving:
+                case PvPlayerRoundState.Selected:
                     ResetVisualStateCells();
                     HighlightMovementRange(unit);
                     break;
-                case UnitBattleState.MovingProgress:
+                case PvPlayerRoundState.Moving:
+                case PvPlayerRoundState.None:
                     ResetVisualStateCells();
                     break;
-                case UnitBattleState.AbilityTargeting:
-                case UnitBattleState.Idle:
-                case UnitBattleState.AbilityConfirming:
                 default:
                     // Empty
                     break;
@@ -227,38 +388,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private void HighlightAbilityAndSupportRange(PvMnBattleGeneralUnit casterUnit)
         {
             ResetVisualStateCells();
-            var ability = _highlightAbility;
-            if (!ability || !ability.GetShape())
-            {
-                throw new NullReferenceException("ERROR: Ability MUST have Shape!");
-            }
-
-            HighlightAbilityOrSupportCells(ability, casterUnit,
-                ability.GetEffectedTeam() == BattleTeam.Friendly ? CellState.ePositive : CellState.eNegative);
-        }
-        
-        public void ReHighlightAbilityRange(PvSoUnitAbility ability, PvMnBattleGeneralUnit casterUnit)
-        {
-            ResetVisualStateCells();
-
-            if (!ability)
-            {
-                return;
-            }
-
-            if (!ability.GetShape())
-            {
-                throw new NullReferenceException("ERROR: This specific Ability MUST have Shape!");
-            }
-
-            HighlightAbilityOrSupportCells(ability, casterUnit,
-                ability.GetEffectedTeam() == BattleTeam.Friendly ? CellState.ePositive : CellState.eNegative);
-            
-            UpdateHoverCells(casterUnit, ability);
+            ShowUnitGeneralAbilitiesCells(casterUnit);
         }
 
         #endregion
-        
+
         #region NonGrid Visual
 
         public void ShowPawnMarker(PvMnBattleGeneralUnit selectedUnit)
@@ -282,6 +416,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             if (!_pawnVisualMark) return;
             _pawnVisualMark.SetActive(false);
             _pawnVisualMark.transform.SetParent(null);
+        }
+
+        public void ShowExtraVisualCanvas(BattleTeam battleTeam, List<float> durationList)
+        {
+            if (!_extraVisualInstance)
+            {
+                _extraVisualInstance = Instantiate(extraVisualCanvasPrefab);
+            }
+            _extraVisualInstance.gameObject.SetActive(true);
+            durationList.Add(1f);
+
+            if (battleTeam == BattleTeam.Hostile)
+            {
+                _extraVisualInstance.PlayAnimationWhileFriendRoundStarted();
+            }
+            else if (battleTeam == BattleTeam.Friendly)
+            {
+                _extraVisualInstance.PlayAnimationWhileEnemyRoundStarted();
+            }
+        }
+
+        public void HideExtraVisualCanvas(BattleTeam battleTeam, List<float> durationList)
+        {
+            if (!_extraVisualInstance) return;
+            _extraVisualInstance.gameObject.SetActive(false);
+            durationList.Add(0.25f);
         }
 
         #endregion

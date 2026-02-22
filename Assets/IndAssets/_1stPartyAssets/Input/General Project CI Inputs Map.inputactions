@@ -1,55 +1,11 @@
 {
+    "version": 1,
     "name": "General Project CI Inputs Map",
     "maps": [
         {
             "name": "Battle",
             "id": "dd1bbed2-d202-4155-85a3-d1f7ea9d21b0",
             "actions": [
-                {
-                    "name": "Unit Cancel",
-                    "type": "Button",
-                    "id": "74f67661-d156-440f-9473-550589d3b737",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Action Cancel",
-                    "type": "Button",
-                    "id": "5db73f55-ec94-4ee4-9ea4-109feeb13aaa",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Select TurnOwner",
-                    "type": "Button",
-                    "id": "4712faa2-a098-468a-83f7-1d037fa42e32",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Select Destination",
-                    "type": "Button",
-                    "id": "3995af5a-1068-4883-a5d4-8a7a07d52064",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Select Target",
-                    "type": "Button",
-                    "id": "8a0e2b33-0f13-4d7c-96bf-1d22b3d941cb",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
                 {
                     "name": "ToggleSkill",
                     "type": "Button",
@@ -85,61 +41,62 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Confirm",
+                    "type": "Button",
+                    "id": "076adf4b-c299-4b71-8c5d-1f676d3b4643",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel",
+                    "type": "Button",
+                    "id": "256c25a0-f7d6-4f88-ad41-87c9c7d8dbe6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Aggro",
+                    "type": "Button",
+                    "id": "9f340d62-a6bb-4bf4-8904-ab31b50fb264",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AggroToggle",
+                    "type": "Button",
+                    "id": "af80b8f2-74f0-400a-8606-0dd28f2f0af3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cursor",
+                    "type": "Value",
+                    "id": "c3ab9313-86b9-489c-b94d-09fb5e9aefaf",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "3f075df2-da8d-490d-acf1-2c83505b1cab",
+                    "id": "cffd1345-43a0-40ab-8a6e-abab26324010",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Unit Cancel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "99c53c78-eaa9-49de-987a-bbf8623a6cb8",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Action Cancel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e38c6cda-c29a-428d-8b6c-75ec7c2cbd04",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select TurnOwner",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "918cec7a-97b6-45b1-b78e-23c5d09c934a",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select Destination",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "773bbe25-7dcc-4402-86b8-5e804a8b5225",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select Target",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -184,6 +141,61 @@
                     "processors": "",
                     "groups": "",
                     "action": "ToggleInfo",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e032af74-5823-4d0b-996b-4178a89b7d71",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Confirm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e9b771e1-13e3-4597-b5fe-badd2488a9d4",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aggro",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6be0d5d4-8b4b-41a2-a73f-fc072a69f048",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aggro",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "acf0eb1f-519b-4d6a-a3f0-e21ecb57c90e",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AggroToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2593e461-c19e-428f-9915-78e27f676f9e",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cursor",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -456,6 +468,34 @@
                     "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Additional",
+            "id": "9ca06914-6c92-4dd2-963d-ecef198c35ec",
+            "actions": [
+                {
+                    "name": "DeployCell",
+                    "type": "Button",
+                    "id": "405600f2-34b1-4a35-a71c-1c9af7f27115",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e0eb0e05-48af-4bdd-9e4c-f9086db167cd",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DeployCell",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

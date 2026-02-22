@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace ProjectCI.CoreSystem.Runtime.SceneTransition
 {
@@ -15,32 +12,12 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
     {
         [Header("Loading Scene")]
         [Tooltip("The loading scene that will be shown during scene transitions")]
-#if UNITY_EDITOR
-        [SerializeField] private SceneAsset loadingSceneAsset;
-#else
-        [SerializeField] private Object loadingSceneAsset; // Dummy field for runtime
-#endif
+        [SerializeField] private string loadingSceneName;
+        public string LoadingSceneName => loadingSceneName;
 
         [Header("Scene Configurations")]
         [Tooltip("List of all scene configurations")]
         [SerializeField] private List<PvSoSceneConfig> sceneConfigs = new List<PvSoSceneConfig>();
-
-        /// <summary>
-        /// Get the loading scene name for runtime loading
-        /// </summary>
-        public string LoadingSceneName
-        {
-            get
-            {
-#if UNITY_EDITOR
-                if (loadingSceneAsset != null)
-                {
-                    return System.IO.Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(loadingSceneAsset));
-                }
-#endif
-                return string.Empty;
-            }
-        }
 
         /// <summary>
         /// Get all scene configurations
@@ -61,12 +38,5 @@ namespace ProjectCI.CoreSystem.Runtime.SceneTransition
             }
             return null;
         }
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// Get the loading scene asset (editor only)
-        /// </summary>
-        public SceneAsset LoadingSceneAsset => loadingSceneAsset;
-#endif
     }
 }

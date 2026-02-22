@@ -27,9 +27,15 @@ MonoBehaviour:
   - {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
   m_Params:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
-  m_Ailments: []
   isCounterAllowed: 1
   isFollowUpAllowed: 1
   isAbilityWeapon: 1
+  isAppliedOnSelf: 0
+  isSupportAbility: 0
+  iconSprite: {fileID: -1140453347, guid: 1538c5afb130f444784879ec5163389d, type: 3}
+  dcAttribute:
+    value: 10
+  acAttribute:
+    value: 11
   projectilePrefab: {fileID: 0}
-  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
+  abilityAnimationName: 0

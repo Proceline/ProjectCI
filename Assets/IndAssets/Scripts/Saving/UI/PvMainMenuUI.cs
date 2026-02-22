@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using System;
+using IndAssets.Scripts.Audio;
 
 namespace ProjectCI.CoreSystem.Runtime.Saving.UI
 {
@@ -14,6 +15,9 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
     /// </summary>
     public class PvMainMenuUI : MonoBehaviour
     {
+        [Header("BGM")]
+        [SerializeField] private AudioClip beginBGM;
+
         [Header("Menu Buttons")]
         [SerializeField] private Button newGameButton; // Start new game button
         [SerializeField] private Button continueGameButton; // Continue last game button
@@ -44,6 +48,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.UI
         {
             SetupButtons();
             InitializeUI();
+
+            PvMnAudioManager.Instance?.PlayMusic(beginBGM);
         }
         
         private void OnEnable()

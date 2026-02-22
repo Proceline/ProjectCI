@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
+  m_Name: SoChar_001_ISFJ_Defender
+  m_EditorClassIdentifier: 
+  m_UnitName: QIU_GENG
+  m_UnitClass: ROLE_ISFJ_CLASS
+  originalAttributes: []
+  m_TravelSound: {fileID: 0}
+  m_DamagedSound: {fileID: 0}
+  m_HealSound: {fileID: 0}
+  m_DeathSound: {fileID: 0}
+  m_bLookAtTargets: 1
+  m_bIsFlying: 0
+  m_HeightOffset: 0
+  m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
+  m_SpawnOnHeal: []
+  m_AbilityPoints: 5
+  unitIdentifier: PlayerChar01
+  icon: {fileID: 21300000, guid: cfc82a8a8a236b34fa00ff7c2cf24014, type: 3}
+  personalPassives:
+  - {fileID: 11400000, guid: 2e055c510c1ff7c458c1b99e82839170, type: 2}
+  meshes:
+  - {fileID: 8001354749718593143, guid: 19baf60bc92080e45ae95bace6797caf, type: 3}
+  - {fileID: 2568446364417295610, guid: 56cb11cf1570cfb40be2302e97718b1e, type: 3}
+  talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
+  personality:
+    energyLevel: -2
+    informationLevel: 3
+    decisionLevel: -3
+    styleLevel: 3
+    identityLevel: -3

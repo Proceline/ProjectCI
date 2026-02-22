@@ -27,49 +27,15 @@ MonoBehaviour:
   - {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
   m_Params:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
-  m_Ailments: []
   isCounterAllowed: 1
   isFollowUpAllowed: 1
-  isAutoFollowUpAllowed: 0
   isAbilityWeapon: 1
+  isAppliedOnSelf: 0
+  isSupportAbility: 0
+  dcAttribute:
+    value: 10
+  acAttribute:
+    value: 11
   projectilePrefab: {fileID: 0}
-  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
-  onUnitEnteredInCombating:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: b6ad620dbea2d4a4589ac7887d1b578e, type: 2}
-        m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
-          Assembly-CSharp
-        m_MethodName: Apply
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onUnitEnteredInCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombating:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: b6ad620dbea2d4a4589ac7887d1b578e, type: 2}
-        m_TargetAssemblyTypeName: IndAssets.Scripts.Modifiers.PvSoModifierSupportObject,
-          Assembly-CSharp
-        m_MethodName: UnApply
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onUnitLeftFromCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
+  abilityAnimationName: 0
   isFullPost: 1

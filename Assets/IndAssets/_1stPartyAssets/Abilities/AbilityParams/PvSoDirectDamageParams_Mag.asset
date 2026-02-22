@@ -17,11 +17,13 @@ MonoBehaviour:
   defenderAttribute:
     value: 28
   damageType: 3
+  criticalAmountAttribute:
+    value: 31
+  useDynamicAddon: 1
+  dynamicAmountDependency:
+    value: 3
+  damageForm: 9
+  basicAddon: 10
   isCriticalEnabledByDefault: 0
-  criticalAttribute:
-    value: 9
   isAlwaysHitByDefault: 0
-  hitAttribute:
-    value: 10
-  dodgeAttribute:
-    value: 11
+  raiserNotifyDamageBeforeRev: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}

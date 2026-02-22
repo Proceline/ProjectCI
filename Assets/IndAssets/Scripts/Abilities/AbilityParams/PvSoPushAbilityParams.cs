@@ -35,7 +35,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var pushCommand = new PvPushCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = currentTarget.GetIndex(),
                 Distance = pushDistance,
@@ -43,6 +42,12 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             };
 
             results.Enqueue(pushCommand);
+        }
+
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)
+        {
+            // Empty;
+            return 0;
         }
     }
 }

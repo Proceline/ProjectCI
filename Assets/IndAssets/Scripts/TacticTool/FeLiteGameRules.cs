@@ -7,10 +7,10 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using System;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
+using IndAssets.Scripts.Managers;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -19,84 +19,39 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     public partial class FeLiteGameRules : BattleGameRules
     {
         private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
-        private readonly Dictionary<string, PvSoUnitAbility> _abilityIdToAbilityHash = new();
-
-        private GameObject _pawnMarkObject;
-
-        [SerializeField]
-        private AttributeType abilitySpeedAttributeType;
-        
-        [SerializeField]
-        private int followAttackSpeedThreshold = 5;
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
-        [NonSerialized] private PvSoUnitAbility _selectedAbility;
-        
-        #region Static Action Variables
 
-        [SerializeField] private List<PvSoUnitAbility> preloadedAbilities;
-        
-        #endregion
-
-        [SerializeField] 
-        private UnityEvent<PvSoUnitAbility, PvMnBattleGeneralUnit> onAbilitySelectedPostSupport;
-
-        private PvSoUnitAbility CurrentAbility
-        {
-            get => _selectedAbility;
-            set
-            {
-                _selectedAbility = value;
-                if (value)
-                {
-                    onAbilitySelectedPostSupport?.Invoke(_selectedAbility, _selectedUnit);
-                }
-            }
-        }
-
-        [SerializeField] 
+        [SerializeField]
         private LayerMask[] layerMasksRuleList;
-        
-        [SerializeField] 
-        private UnityEvent onGameStarted;
-        
-        [SerializeField] 
-        private UnityEvent onGameEnded;
 
         [Header("Update Support")]
-        [SerializeField] 
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupport;
 
-        [SerializeField] 
-        private UnityEvent<PvMnBattleGeneralUnit, PvSoUnitAbility> onUpdateSupportWithAbility;
+        [SerializeField]
+        private UnityEvent<PvMnBattleGeneralUnit> onUpdateSupportWithAbility;
 
-        [Header("Select Support")]
-        
-        [SerializeField] 
-        private PvSoUnitSelectEvent raiserOnOwnerSelectedEvent;
-        
-        [SerializeField] 
+        [Header("Select Support Event View-Only")]
+
+        /// <summary>
+        /// View-only Event Raiser while Turn Owner Selected
+        /// </summary>
+        [SerializeField]
+        private PvSoUnitSelectEvent raiserOwnerSelectedViewEvent;
+
+        /// <summary>
+        /// View-only Response while Turn Owner Selected
+        /// </summary>
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerSelectedPreview;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onTurnOwnerDeSelectedPreview;
 
         [Header("On Turn Support"), SerializeField]
-        private PvSoTurnViewEndEvent raiserTurnAnimationEndEvent;
-        
-        [Header("State Support")]
-        
-        [SerializeField]
-        private PvSoUnitBattleStateEvent raiserOnStateChangedBeforeUEvent;
-        
-        /// <summary>
-        /// Used for Controller and Models to show range and enable/disable input actions
-        /// </summary>
-        [SerializeField] 
-        private UnityEvent<PvMnBattleGeneralUnit, UnitBattleState> onStateChangedInModel;
-        public UnitBattleState CurrentBattleState =>
-            _selectedUnit ? _selectedUnit.GetCurrentState() : UnitBattleState.Finished;
-        
+        private PvSoTurnViewEndEvent raiserTurnLockerEvent;
+
         #region Injected Fields
 
         public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent
@@ -116,226 +71,41 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [Inject] private static readonly PvSoSimpleDamageApplyEvent RaiserSimpleDamageApplyEvent;
         [Inject] private static readonly IUnitPrepareEvent RaiserManualFinishOrRestPrepareEvent;
+
         [Inject] private static readonly ITeamRoundEndEvent RaiserTeamRoundEndEvent;
-        [Inject] private static readonly IUnitCombatLogicFinishedEvent RaiserOnCombatLogicPostEvent;
-        [Inject] private static readonly IUnitCombatLogicPreEvent RaiserOnCombatLogicPreEvent;
-        
+        [SerializeField] private List<UnityEvent<BattleTeam, List<float>>> roundEventEndList;
+        private readonly List<float> _teamRoundEndDelayList = new();
+
         [Inject] private static readonly IUnitGeneralCombatingEvent RaiserOnCombatingListCreatedEvent;
-        [Inject] private static readonly IUnitCombatingQueryStartEvent RaiserOnCombatingQueryStartEvent;
         [Inject] private static readonly IUnitCombatingQueryEndEvent RaiserOnCombatingQueryEndEvent;
-        
-        [Inject] private static readonly ICombatingTurnEndEvent RaiserCombatingTurnEndLogically;
-        
+
+        [Inject] private static readonly IAnimationOutLengthFunc GetPresetAnimationLengthFunc;
+        [Inject] private static readonly IAnimationOutBreakPointFunc GetPresetAnimationBreakPointFunc;
+        [Inject] private static readonly PvSoAnimationTriggerEvent RaiserAnimationPlayEvent;
+
         #endregion
-        
+
         protected override void StartGame()
         {
-            onGameStarted?.Invoke();
+            gameBattleState.Clear();
+
+            _finishedPlayableUnits.Clear();
+            _ultPreparedUnits.Clear();
 
             _unitIdToBattleUnitHash.Clear();
-            _abilityIdToAbilityHash.Clear();
-            
+
             CurrentTeam = BattleTeam.Friendly;
 
-            foreach (var staticAbility in preloadedAbilities)
-            {
-                if (string.IsNullOrEmpty(staticAbility.ID))
-                {
-                    staticAbility.GenerateNewID();
-                }
-                _abilityIdToAbilityHash.TryAdd(staticAbility.ID, staticAbility);
-            }
-            
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
-                if (_unitIdToBattleUnitHash.TryAdd(unit.ID, unit))
-                {
-                    foreach (var ability in unit.GetUsableAbilities())
-                    {
-                        // TODO: Consider whether initialize ID here
-                        if (string.IsNullOrEmpty(ability.ID))
-                        {
-                            ability.GenerateNewID();
-                        }
-                        _abilityIdToAbilityHash.TryAdd(ability.ID, ability);
-                    }
-                }
+                _unitIdToBattleUnitHash.TryAdd(unit.ID, unit);
             }
-            
+
             TacticBattleManager.HandleGameStarted();
 
             BeginTeamTurn(CurrentTeam);
         }
-
-        #region StateSwitchAndActions
-
-        public void ChangeStateToConfirmedTargeting()
-        {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException("ERROR: No selected unit while Selecting ACTION OPTION!");
-            }
-            ChangeStateForSelectedUnit(UnitBattleState.AbilityTargeting);
-        }
-        
-        private void ChangeStateForSelectedUnit(UnitBattleState state)
-        {
-            var stateBehaviour = UnitStateBehaviour.Emphasis;
-            var selectedUnit = _selectedUnit;
-            if (selectedUnit)
-            {
-                if (state != UnitBattleState.Finished)
-                {
-                    selectedUnit.AddState(state);
-                    stateBehaviour = UnitStateBehaviour.Adding;
-                }
-                else
-                {
-                    selectedUnit.ClearStates();
-                    stateBehaviour = UnitStateBehaviour.Clear;
-                }
-            }
-
-            raiserOnStateChangedBeforeUEvent.Raise(selectedUnit, state, stateBehaviour);
-            onStateChangedInModel?.Invoke(selectedUnit, state);
-        }
-
-        private UnitBattleState CancelStatePurelyForUnit(PvMnBattleGeneralUnit unit, UnitBattleState stateToBeRemoved)
-        {
-            unit.RemoveLastState();
-            var stateAfterRemove = unit.GetCurrentState();
-            if (stateAfterRemove == UnitBattleState.MovingProgress)
-            {
-                unit.RemoveLastState();
-                stateAfterRemove = unit.GetCurrentState();
-            }
-            // Notify which state is going to be removed
-            raiserOnStateChangedBeforeUEvent.Raise(unit, stateToBeRemoved, UnitStateBehaviour.Popping);
-            // Notify which state is ON
-            onStateChangedInModel?.Invoke(unit, stateAfterRemove);
-            return stateAfterRemove;
-        }
-
-        /// <summary>
-        /// Select Turn Owner Unit state will be different from other State Switch
-        /// </summary>
-        /// <param name="selectingUnit"></param>
-        /// <exception cref="Exception"></exception>
-        private void PushStateAfterSelectUnit(PvMnBattleGeneralUnit selectingUnit)
-        {
-            if (_selectedUnit)
-            {
-                throw new Exception("ERROR: Must deselect unit first to Select next Unit!");
-            }
-
-            if (selectingUnit.IsMoving())
-            {
-                Debug.LogWarning("Warning: Selected Unit is moving!");
-                return;
-            }
-
-            _selectedUnit = selectingUnit;
-            CurrentAbility = _selectedUnit.EquippedAbility;
-            _selectedUnit.BindToOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
-
-            ChangeStateForSelectedUnit(_selectedUnit.GetCurrentMovementPoints() > 0
-                ? UnitBattleState.Moving
-                : UnitBattleState.UsingAbility);
-            onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
-            raiserOnOwnerSelectedEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
-        }
-
-        public void ClearStateAndDeselectUnit()
-        {
-            ChangeStateForSelectedUnit(UnitBattleState.Finished);   // Clean up all States
-            if (!_selectedUnit)
-            {
-                return;
-            }
-            
-            _selectedUnit.UnBindFromOnMovementPostCompleted(UpdatePlayerStateAfterRegularMove);
-            onTurnOwnerDeSelectedPreview?.Invoke(_selectedUnit);
-            raiserOnOwnerSelectedEvent.Raise(_selectedUnit, UnitSelectBehaviour.Deselect);
-            _selectedUnit = null;
-            CurrentAbility = null;
-        }
-
-        /// <summary>
-        /// Only Used for binding to OnMovementEnd of Pawn
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private void UpdatePlayerStateAfterRegularMove()
-        {
-            if (!_selectedUnit) return;
-            if (_selectedUnit.GetCurrentState() != UnitBattleState.MovingProgress)
-            {
-                throw new Exception(
-                    $"State ERROR: Current State must be <{UnitBattleState.MovingProgress.ToString()}>, but Having <{CurrentBattleState.ToString()}>");
-            }
-
-            if (_selectedUnit.GetCurrentActionPoints() > 0)
-            {
-                ChangeStateForSelectedUnit(UnitBattleState.UsingAbility);
-            }
-            else
-            {
-                ArchiveUnitBehaviourPoints(_selectedUnit, true, true);
-                ClearStateAndDeselectUnitCombo();
-            }
-        }
-
-        /// <summary>
-        /// This function is directly binded to Controller, and links to Cancel InputAction
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        public void CancelLastStateForSelectedUnit()
-        {
-            if (!_selectedUnit)
-            {
-                throw new NullReferenceException(
-                    "ERROR: This Cancel function should be called ONLY when Unit Selected.");
-            }
-
-            var state = _selectedUnit.GetCurrentState();
-            switch (state)
-            {
-                case UnitBattleState.MovingProgress:
-                    Debug.LogError("State change doesn't work during Moving Progress!");
-                    break;
-                case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    if (state == UnitBattleState.UsingAbility)
-                    {
-                        if (_selectedUnitLastCell)
-                        {
-                            // TODO: Consider clean up movement buff, Consider if NEED rotation RESET (Maybe not since rotation not matter)
-                            _selectedUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
-                        }
-                    }
-
-                    // ONLY Place really to cancel State
-                    var afterState = CancelStatePurelyForUnit(_selectedUnit, state);
-                    if (afterState == UnitBattleState.Idle)
-                    {
-                        ClearStateAndDeselectUnit();
-                    }
-                    break;
-                case UnitBattleState.Moving:
-                    Debug.LogWarning("You are cancelling state for selected Unit!");
-                    Debug.Log($"<color=yellow>Move Prepare State is directly controlled in {nameof(FeLiteGameController)}</color>");
-                    break;
-                case UnitBattleState.AbilityConfirming:
-                    Debug.LogWarning("State change doesn't work in AbilityConfirming!");
-                    break;
-                case UnitBattleState.Finished:
-                case UnitBattleState.Idle:
-                default:
-                    break;
-            }
-        }
-
-        #endregion
 
         private void SetupTeam(BattleTeam inTeam)
         {
@@ -348,16 +118,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void Update()
         {
-            switch (CurrentBattleState)
+            switch (gameBattleState.GetCurrentState)
             {
-                case UnitBattleState.UsingAbility:
-                case UnitBattleState.AbilityTargeting:
-                    // TODO: Consider ability option
-                    onUpdateSupportWithAbility.Invoke(_selectedUnit, CurrentAbility);
-                    break;
-                case UnitBattleState.Moving:
-                case UnitBattleState.Finished:
+                case PvPlayerRoundState.Selected:
+                case PvPlayerRoundState.Moving:
+                case PvPlayerRoundState.None:
                     onUpdateSupport.Invoke(_selectedUnit);
+                    break;
+                case PvPlayerRoundState.Prepare:
+                    onUpdateSupportWithAbility.Invoke(_selectedUnit);
                     break;
             }
         }
@@ -369,7 +138,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void BeginTeamTurn(BattleTeam inTeam)
         {
-            ClearStateAndDeselectUnit();
+            gameBattleState.Clear();
+
             SetupTeam(inTeam);
 
             if (inTeam == BattleTeam.Hostile)
@@ -385,7 +155,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         }
 
         /// <summary>
-        /// Create Cell according to Rules, used in Unity Event, don't delete this function
+        /// Create Cell according to Rules, used in PvSoBattlegroundMaker, gridCreatingRule(Unity Event), don't delete this function
         /// </summary>
         /// <param name="hit">rayCast information</param>
         /// <param name="keyIndex">Grid Cell Index</param>
@@ -395,9 +165,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             int layerFlagValue = Mathf.RoundToInt(Mathf.Pow(2, hit.collider.gameObject.layer));
             if (layerFlagValue == layerMasksRuleList[0])
             {
-                var cell = grid.GenerateCell(hit.point, keyIndex);
+                var cell = grid.GenerateCell<PvMnLevelCell>(hit.point, keyIndex);
                 cell.Reset();
             }
         }
+
+        /// <summary>
+        /// Handles the logic required when a unit has been defeated in battle.
+        /// Used in asset _OnUnitDeathOfficiallyTriggeredEvent.asset, as binding UnityAction
+        /// </summary>
+        /// <param name="deadUnit">The unit that has been defeated. Cannot be null.</param>
+        public void HandleDeadUnit(PvMnBattleGeneralUnit deadUnit)
+        {
+            if (!deadUnit)
+            {
+                return;
+            }
+
+            deadUnit.SetCurrentCell(null);
+
+            _unitIdToBattleUnitHash.Remove(deadUnit.ID);
+            deadUnit.DoActionOnInstalledPassives(passive => passive.DisposePassive(deadUnit));
+            deadUnit.CleanUpPassives();
+        }
     }
-} 
+}

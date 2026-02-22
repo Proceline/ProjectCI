@@ -1,8 +1,11 @@
-using ProjectCI_Animation.Runtime;
+using IndAssets.Scripts.Units;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
+using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.TacticTool.Formula.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -15,21 +18,50 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField] 
         private PvSoPassiveBase[] personalPassives;
 
-        [SerializeField] 
-        private UnitAnimationManager animatedMountForm;
+        [SerializeField]
+        private GameObject[] meshes;
 
-        public UnitAnimationManager PresetAnimatedMount => animatedMountForm;
+        public GameObject BodyMeshPrefab => meshes[0];
+        public GameObject HeadMeshPrefab => meshes.Length > 1 ? meshes[1] : null;
 
         [SerializeField]
-        private GameObject headMeshPrefab;
+        private PvSoUnitAbility talentedSupportAbility;
 
-        public GameObject HeadMeshPrefab => headMeshPrefab;
+        [SerializeField]
+        private PvSoUnitAbility talentedUltimateAbility;
+
+        public PvSoUnitAbility TalentedSupportAbility => talentedSupportAbility;
+        public PvSoUnitAbility TalentedUltimateAbility => talentedUltimateAbility;
+
+        [SerializeField] private PvPersonalitiesCombination personality;
+
+        private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
+        private static FormulaCollection FormulaColInstance => FormulaService.Service;
 
         public override void InitializeUnitDataToGridUnit(GridPawnUnit pawnUnit)
         {
-            foreach (var passive in personalPassives)
+            var energyLevel = personality.GetBasicLevel(EPvPersonalityName.Energy);
+            var informationLevel = personality.GetBasicLevel(EPvPersonalityName.Information);
+            var decisionLevel = personality.GetBasicLevel(EPvPersonalityName.Decisions);
+            var styleLevel = personality.GetBasicLevel(EPvPersonalityName.Style);
+            var energyAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Energy);
+            var informationAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Information);
+            var decisionAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Decisions);
+            var styleAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Style);
+            pawnUnit.RuntimeAttributes.SetGeneralAttribute(energyAttribute, energyLevel);
+            pawnUnit.RuntimeAttributes.SetGeneralAttribute(informationAttribute, informationLevel);
+            pawnUnit.RuntimeAttributes.SetGeneralAttribute(decisionAttribute, decisionLevel);
+            pawnUnit.RuntimeAttributes.SetGeneralAttribute(styleAttribute, styleLevel);
+
+            if (pawnUnit is PvMnBattleGeneralUnit battleUnit)
             {
-                passive.InstallPassive(pawnUnit);
+                battleUnit.CleanUpPassives();
+
+                foreach (var passive in personalPassives)
+                {
+                    passive.InstallPassive(battleUnit);
+                    battleUnit.AddPassiveRecord(passive);
+                }
             }
         }
 

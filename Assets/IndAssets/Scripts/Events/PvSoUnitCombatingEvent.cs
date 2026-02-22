@@ -1,33 +1,12 @@
 using System;
 using System.Collections.Generic;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace ProjectCI.Utilities.Runtime.Events
 {
-    [Serializable]
-    public class UnitCombatingEventParam : IEventParameter
-    {
-        public PvMnBattleGeneralUnit unit;
-        public PvMnBattleGeneralUnit target;
-        public List<CombatingQueryContext> CombatingList { get; internal set; }
-    }
-
-    public enum CombatingQueryType
-    {
-        None,
-        FirstAttempt,
-        AutoFollowUp,
-        ExtraFollowUp
-    }
-    
-    public struct CombatingQueryContext
-    {
-        public bool IsCounter;
-        public CombatingQueryType QueryType;
-    }
-
     public interface IUnitCombatingEvent
     {
         /// <summary>
@@ -37,17 +16,12 @@ namespace ProjectCI.Utilities.Runtime.Events
         /// <param name="inTarget"></param>
         /// <param name="queryContexts"></param>
         void Raise(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
-            List<CombatingQueryContext> queryContexts);
-        void RegisterCallback(UnityAction<IEventOwner, UnitCombatingEventParam> callback);
-        void UnregisterCallback(UnityAction<IEventOwner, UnitCombatingEventParam> callback);
+            List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> queryItems);
+        void RegisterCallback(UnityAction<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, List<PvAbilityQueryItem<PvMnBattleGeneralUnit>>> callback);
+        void UnregisterCallback(UnityAction<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, List<PvAbilityQueryItem<PvMnBattleGeneralUnit>>> callback);
     }
 
     public interface IUnitGeneralCombatingEvent : IUnitCombatingEvent
-    {
-        // Empty
-    }
-
-    public interface IUnitCombatingQueryStartEvent : IUnitCombatingEvent
     {
         // Empty
     }
@@ -58,34 +32,25 @@ namespace ProjectCI.Utilities.Runtime.Events
     }
 
     [CreateAssetMenu(fileName = "Unit Combating Event", menuName = "ProjectCI Utilities/Events/Unit Combating Event")]
-    public class PvSoUnitCombatingEvent : SoUnityEventBase<UnitCombatingEventParam>, IUnitGeneralCombatingEvent,
-        IUnitCombatingQueryStartEvent, IUnitCombatingQueryEndEvent
+    public class PvSoUnitCombatingEvent : SoUnityEventBase, IUnitGeneralCombatingEvent, IUnitCombatingQueryEndEvent
     {
-        [NonSerialized] private UnitCombatingEventParam _bufferedParam;
-        [NonSerialized] private bool _hasEverBuffered;
-
+        private readonly UnityEvent<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, 
+            List<PvAbilityQueryItem<PvMnBattleGeneralUnit>>> _onRuntimeOnlyEvent = new();
+        
         public void Raise(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
-            List<CombatingQueryContext> queryContexts)
+            List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> queryItems)
         {
-            if (!_hasEverBuffered)
-            {
-                _bufferedParam = new UnitCombatingEventParam
-                {
-                    unit = inUnit, target = inTarget, CombatingList = queryContexts
-                };
-                _hasEverBuffered = true;
-            }
-            else
-            {
-                _bufferedParam.unit = inUnit;
-                _bufferedParam.target = inTarget;
-                _bufferedParam.CombatingList = queryContexts;
-            }
+            _onRuntimeOnlyEvent?.Invoke(inUnit, inTarget, queryItems);
+        }
 
-            Raise(inUnit, _bufferedParam);
-            
-            // Unlink the CombatingList to boost GC
-            _bufferedParam.CombatingList = null;
+        public void RegisterCallback(UnityAction<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, List<PvAbilityQueryItem<PvMnBattleGeneralUnit>>> callback)
+        {
+            _onRuntimeOnlyEvent.AddListener(callback);
+        }
+
+        public void UnregisterCallback(UnityAction<PvMnBattleGeneralUnit, PvMnBattleGeneralUnit, List<PvAbilityQueryItem<PvMnBattleGeneralUnit>>> callback)
+        {
+            _onRuntimeOnlyEvent.RemoveListener(callback);
         }
     }
 }

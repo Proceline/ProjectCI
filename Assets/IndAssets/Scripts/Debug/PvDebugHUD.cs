@@ -12,14 +12,14 @@ public class PvDebugHUD : MonoBehaviour
     {
         public string name;
         public string value;
-        
+
         public DebugValuePair(string name, string value)
         {
             this.name = name;
             this.value = value;
         }
     }
-    
+
     [Header("Debug HUD Settings")]
     [SerializeField] private List<DebugValuePair> debugValues = new List<DebugValuePair>();
     [SerializeField] private bool showHUD = true;
@@ -27,33 +27,24 @@ public class PvDebugHUD : MonoBehaviour
     [SerializeField] private int fieldWidth = 250;
     [SerializeField] private Color textColor = Color.white;
     [SerializeField] private Color backgroundColor = new Color(0, 0, 0, 0.7f);
-    
+
     private GUIStyle textStyle;
     private GUIStyle backgroundStyle;
-    
+
     #region Outside Delegate Support
 
-    [SerializeField] private PvSoUnitBattleStateEvent onStateEvent;
     [SerializeField] private PvSoUnitSelectEvent onOwnerSelectedEvent;
     [SerializeField] private FeLiteGameRules rules;
-    
-    private void OnStateChangedResponse(IEventOwner unit, UnitStateEventParam stateParams)
-    {
-        if (debugValues.Count > 1)
-        {
-            debugValues[1] = new DebugValuePair("State", rules.CurrentBattleState.ToString());
-        }
-    }
 
-    private void OnUnitSelectedResponse(IEventOwner unit, UnitSelectEventParam stateParams)
+    private void OnUnitSelectedResponse(PvMnBattleGeneralUnit unit, UnitSelectBehaviour behaviour)
     {
         if (debugValues.Count > 0)
         {
-            if (stateParams.Behaviour == UnitSelectBehaviour.Select)
+            if (behaviour == UnitSelectBehaviour.Select)
             {
-                debugValues[0] = new DebugValuePair("Owner", stateParams.Unit.ID);
+                debugValues[0] = new DebugValuePair("Owner", unit.ID);
             }
-            else if (stateParams.Behaviour == UnitSelectBehaviour.Deselect)
+            else if (behaviour == UnitSelectBehaviour.Deselect)
             {
                 debugValues[0] = new DebugValuePair("Owner", "N/A");
             }
@@ -61,7 +52,7 @@ public class PvDebugHUD : MonoBehaviour
     }
 
     #endregion
-    
+
     private void Start()
     {
         // Initialize default values if empty
@@ -69,14 +60,12 @@ public class PvDebugHUD : MonoBehaviour
         {
             debugValues.Add(new DebugValuePair("Testing", "N/A"));
         }
-        
-        onStateEvent.RegisterCallback(OnStateChangedResponse);
+
         onOwnerSelectedEvent.RegisterCallback(OnUnitSelectedResponse);
     }
 
     private void OnDestroy()
     {
-        onStateEvent.UnregisterCallback(OnStateChangedResponse);
         onOwnerSelectedEvent.UnregisterCallback(OnUnitSelectedResponse);
     }
 
@@ -84,14 +73,14 @@ public class PvDebugHUD : MonoBehaviour
     private void OnGUI()
     {
         if (!showHUD) return;
-        
+
         InitializeStyles();
-        
+
         // Calculate HUD dimensions
         float padding = 10f;
         float lineHeight = fontSize + 10f;
         float maxWidth = 0f;
-        
+
         // Calculate maximum width needed
         foreach (var pair in debugValues)
         {
@@ -99,18 +88,18 @@ public class PvDebugHUD : MonoBehaviour
             Vector2 textSize = textStyle.CalcSize(new GUIContent(displayText));
             maxWidth = Mathf.Max(fieldWidth, textSize.x);
         }
-        
+
         float hudWidth = maxWidth + padding * 2;
         float hudHeight = debugValues.Count * lineHeight + padding * 3;
-        
+
         // Position HUD in top-right corner
         float x = Screen.width - hudWidth - 10f;
         float y = 10f;
-        
+
         // Draw background
         Rect backgroundRect = new Rect(x, y, hudWidth, hudHeight);
         GUI.Box(backgroundRect, "", backgroundStyle);
-        
+
         // Draw debug values
         for (int i = 0; i < debugValues.Count; i++)
         {
@@ -119,7 +108,7 @@ public class PvDebugHUD : MonoBehaviour
             GUI.Label(textRect, displayText, textStyle);
         }
     }
-    
+
     private void InitializeStyles()
     {
         if (textStyle == null)
@@ -129,14 +118,14 @@ public class PvDebugHUD : MonoBehaviour
             textStyle.normal.textColor = textColor;
             textStyle.alignment = TextAnchor.UpperLeft;
         }
-        
+
         if (backgroundStyle == null)
         {
             backgroundStyle = new GUIStyle(GUI.skin.box);
             backgroundStyle.normal.background = CreateColorTexture(backgroundColor);
         }
     }
-    
+
     private Texture2D CreateColorTexture(Color color)
     {
         Texture2D texture = new Texture2D(1, 1);
@@ -144,7 +133,7 @@ public class PvDebugHUD : MonoBehaviour
         texture.Apply();
         return texture;
     }
-    
+
     // Public methods to update values at runtime
     public void UpdateValue(string name, string value)
     {
@@ -158,36 +147,36 @@ public class PvDebugHUD : MonoBehaviour
                 return;
             }
         }
-        
+
         // If name not found, add new pair
         debugValues.Add(new DebugValuePair(name, value));
     }
-    
+
     public void UpdateValue(string name, float value)
     {
         UpdateValue(name, value.ToString("F2"));
     }
-    
+
     public void UpdateValue(string name, int value)
     {
         UpdateValue(name, value.ToString());
     }
-    
+
     public void UpdateValue(string name, bool value)
     {
         UpdateValue(name, value.ToString());
     }
-    
+
     public void SetHUDVisible(bool visible)
     {
         showHUD = visible;
     }
-    
+
     public void AddDebugValue(string name, string value)
     {
         debugValues.Add(new DebugValuePair(name, value));
     }
-    
+
     public void RemoveDebugValue(string name)
     {
         for (int i = debugValues.Count - 1; i >= 0; i--)
@@ -198,12 +187,12 @@ public class PvDebugHUD : MonoBehaviour
             }
         }
     }
-    
+
     public void ClearAllValues()
     {
         debugValues.Clear();
     }
-    
+
     #region Specific
 
     public void UpdateHoverCellDebugInfo(LevelCellBase cell)

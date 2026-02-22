@@ -21,13 +21,13 @@ namespace ProjectCI.Runtime.GUI.Battle
         [NonSerialized] private bool _initialized;
         private GridObject _followingTarget;
 
-        [Inject] private static IUnitDyingEvent _onUnitDyingEvent;
+        [Inject] private static ITargetUnitDeathEvent _onUnitDyingEvent;
         [Inject] private static IOnStatusApplyEvent _onStatusVisualApplyEvent;
         [Inject] private static ITargetUnitUpdateStatusEvent _onStatusVisualRefreshEvent;
 
         private static readonly Dictionary<string, Sprite> PreloadedTextures = new();
 
-        public void Initialize(GridObject owner, Camera inCamera, GameObject healthBarPrefab)
+        public void Initialize(GridObject owner, Camera inCamera, PvMnBattleCamera cameraController, GameObject healthBarPrefab)
         {
             // Instantiate health bar UI
             _healthBarInstance = Instantiate(healthBarPrefab);
@@ -38,7 +38,9 @@ namespace ProjectCI.Runtime.GUI.Battle
             Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
             canvas.worldCamera = inCamera;
 
-            RotateHealthBarByCamera(inCamera.transform);
+            RotateHealthBarByCamera(inCamera);
+            cameraController.RegisterOnCameraRotationChanged(RotateHealthBarByCamera);
+
             _followingTarget = owner;
             
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(UpdateHealthViewInfo);
@@ -49,9 +51,9 @@ namespace ProjectCI.Runtime.GUI.Battle
             _initialized = true;
         }
 
-        private void OnObjectMarkedAsDead(IEventOwner owner, UnitPureEventParam unitParam)
+        private void OnObjectMarkedAsDead(PvMnBattleGeneralUnit deadUnit)
         {
-            if (unitParam.unit != _followingTarget) return;
+            if (deadUnit != _followingTarget) return;
             _healthBarInstance.SetActive(false);
         }
 
@@ -110,10 +112,10 @@ namespace ProjectCI.Runtime.GUI.Battle
             }
         }
 
-        public void RotateHealthBarByCamera(Transform targetTransform)
+        private void RotateHealthBarByCamera(Camera uiCamera)
         {
             if (!_healthBarInstance) return;
-            _healthBarInstance.transform.rotation = targetTransform.rotation;
+            _healthBarInstance.transform.rotation = uiCamera.transform.rotation;
         }
 
         public override void SetHealth(int inHealth)

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
+  m_Name: SoChar_004_ENTJ_Commander
+  m_EditorClassIdentifier: 
+  m_UnitName: DONG_YUAN
+  m_UnitClass: ROLE_ENTJ_CLASS
+  originalAttributes: []
+  m_TravelSound: {fileID: 0}
+  m_DamagedSound: {fileID: 0}
+  m_HealSound: {fileID: 0}
+  m_DeathSound: {fileID: 0}
+  m_bLookAtTargets: 1
+  m_bIsFlying: 0
+  m_HeightOffset: 0
+  m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
+  m_SpawnOnHeal: []
+  m_AbilityPoints: 5
+  unitIdentifier: PlayerChar04
+  icon: {fileID: 21300000, guid: 61c481cb294fa7d4484422c84693ebd5, type: 3}
+  personalPassives:
+  - {fileID: 11400000, guid: 1b6f0ce3b1339534a830606697266eb9, type: 2}
+  meshes:
+  - {fileID: 8001354749718593143, guid: ba0816ba64c19474791d66416b0d0286, type: 3}
+  - {fileID: 2568446364417295610, guid: 846affabb3d52594a89659284e6d492e, type: 3}
+  talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
+  personality:
+    energyLevel: 4
+    informationLevel: -3
+    decisionLevel: 3
+    styleLevel: 3
+    identityLevel: -3

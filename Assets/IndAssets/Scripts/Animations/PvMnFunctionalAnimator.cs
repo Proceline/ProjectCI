@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using ProjectCI.CoreSystem.DependencyInjection;
+﻿using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
@@ -8,6 +6,8 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Functions;
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace ProjectCI_Animation.Runtime.Concrete
@@ -16,6 +16,9 @@ namespace ProjectCI_Animation.Runtime.Concrete
     public class PvMnFunctionalAnimator : UnitAnimationManager
     {
         [Inject] private static PvSoOutBooleanFunction _onIsAnimatingProgressFunc;
+        [Inject] private static IAnimationOutLengthFunc _onGetPresetAnimationLengthFunc;
+        [Inject] private static IAnimationOutBreakPointFunc _onGetPresetAnimationBreakPointFunc;
+        [Inject] private static PvSoAnimationTriggerEvent _onAnimationPlayEvent;
 
         [SerializeField] 
         private float generalAdjustOnTransition = 0.15f;
@@ -26,7 +29,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
         [NonSerialized] private bool _isLockableAnimating;
         private Coroutine _lockingRoutine;
 
-        [Inject] private static IUnitDyingEvent _onIsDyingEvent;
+        [Inject] private static ITargetUnitDeathEvent _onIsDyingEvent;
 
         public Action<string> OnForcePlayAnimation;
 
@@ -45,8 +48,19 @@ namespace ProjectCI_Animation.Runtime.Concrete
             _initialized = true;
         }
 
+        private void OnEnable()
+        {
+            _onGetPresetAnimationLengthFunc.RegisterCallback(transform.parent, GetAnimationLengthInDelegate);
+            _onGetPresetAnimationBreakPointFunc.RegisterCallback(transform.parent, GetAnimationBreakInDelegate);
+            _onAnimationPlayEvent.RegisterCallback(transform.parent, PlayAnimationInDelegate);
+        }
+
         private void OnDisable()
         {
+            _onGetPresetAnimationBreakPointFunc.UnregisterCallback(transform.parent);
+            _onGetPresetAnimationLengthFunc.UnregisterCallback(transform.parent);
+            _onAnimationPlayEvent.UnregisterCallback(transform.parent);
+
             if (_initialized)
             {
                 FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(RespondToDamageParams);
@@ -54,6 +68,27 @@ namespace ProjectCI_Animation.Runtime.Concrete
                 
                 _initialized = false;
             }
+        }
+
+        private void GetAnimationLengthInDelegate(float[] outputLength, string animName)
+        {
+            outputLength[0] = GetPresetAnimationDuration(animName);
+        }
+
+        private void GetAnimationBreakInDelegate(float[] outputLength, string animName)
+        {
+            var breakPoints = GetPresetAnimationBreakPoints(animName);
+            outputLength[0] = breakPoints.Length > 0 ? breakPoints[0] : 0;
+        }
+
+        private void PlayAnimationInDelegate(string animName)
+        {
+            if (animName == AnimationPvCustomName.DoNothing.ToString())
+            {
+                return;
+            }
+            
+            ForcePlayAnimation(animName);
         }
 
         private bool IsLockableAnimating(IEventOwner checkingOwner)
@@ -87,9 +122,9 @@ namespace ProjectCI_Animation.Runtime.Concrete
             _lockingRoutine = StartCoroutine(EnablePresetTimeLock(actingTime));
         }
         
-        private void RespondToDie(IEventOwner owner, UnitPureEventParam unitParam)
+        private async void RespondToDie(PvMnBattleGeneralUnit deadUnit)
         {
-            if (_animatorOwner.EventIdentifier != unitParam.unit.ID)
+            if (_animatorOwner.EventIdentifier != deadUnit.ID)
             {
                 return;
             }
@@ -102,6 +137,10 @@ namespace ProjectCI_Animation.Runtime.Concrete
 
             PlayLoopAnimation(CurrentPlayableSupport.GetAnimationIndex(AnimationPvCustomName.DieStay.ToString()));
             ForcePlayAnimation(AnimationIndexName.Death);
+
+            var waitLength = _onGetPresetAnimationLengthFunc.Raise(transform.parent, AnimationIndexName.Death.ToString()) + 0.25f;
+            await Awaitable.WaitForSecondsAsync(waitLength);
+            transform.parent.gameObject.SetActive(false);
         }
 
         private IEnumerator EnablePresetTimeLock(float lockTime)

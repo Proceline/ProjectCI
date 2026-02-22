@@ -44,7 +44,7 @@ public class PvDebugGridHint : MonoBehaviour
             hintText.transform.localPosition = cell.transform.position;
         }
 
-        var ability = (startUnit as PvMnBattleGeneralUnit)?.EquippedAbility;
+        var ability = (startUnit as PvMnBattleGeneralUnit)?.AttackAbility;
         if (ability)
         {
             var attackField = BucketDijkstraSolutionUtils.ComputeAttackField(radiusField, GetCellList);

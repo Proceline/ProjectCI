@@ -18,15 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
         public override List<LevelCellBase> GetCellList(GridPawnUnit caster, LevelCellBase cell, int range,
             bool allowBlocked = true, BattleTeam effectedTeam = BattleTeam.None)
         {
-            AIRadiusInfo radiusInfo = new AIRadiusInfo(cell, range)
-            {
-                Caster = caster,
-                bAllowBlocked = allowBlocked,
-                bStopAtBlockedCell = allowStopOnBlock,
-                EffectedTeam = effectedTeam
-            };
-
-            var radCells = AStarAlgorithmUtils.GetRadius(radiusInfo);
+            var radCells = GetCellListPreview(caster, cell, range, allowBlocked, effectedTeam);
 
             if (onlyIncludedTargets)
             {
@@ -49,6 +41,19 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
             }
             
             return radCells;
+        }
+
+        public override List<LevelCellBase> GetCellListPreview(GridPawnUnit caster, LevelCellBase cell, int range, bool isAllowBlock = true, BattleTeam effectedTeam = BattleTeam.None)
+        {
+            AIRadiusInfo radiusInfo = new AIRadiusInfo(cell, range)
+            {
+                Caster = caster,
+                bAllowBlocked = isAllowBlock,
+                bStopAtBlockedCell = allowStopOnBlock,
+                EffectedTeam = effectedTeam
+            };
+
+            return AStarAlgorithmUtils.GetRadius(radiusInfo);
         }
     }
 }

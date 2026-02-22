@@ -8,7 +8,7 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     /// <summary>
     /// The result of a command execution, can be sent to frontend for animation.
     /// </summary>
-    public class PvPushCommand : PvConcreteCommand
+    public class PvPushCommand : CommandResult
     {
         public int Distance;
         public LevelCellBase FromCell { get; set; }
@@ -33,6 +33,11 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
             }
 
             victim.ForceMoveTo(targetCell);
+        }
+
+        public override void ClearCommand()
+        {
+            FromCell = null;
         }
     }
 } 

@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attributeTypeNames:
   - Health
-  - Strength
-  - Psychic
-  - Dexterity
-  - Agility
-  - Luck
+  - Energy
+  - Information
+  - Decisions
+  - Style
+  - Identity
   - Defense
   - Resistance
-  - Charm
+  - UnitType
   - CRTical
   - ACCuracy
   - AVOid
@@ -39,7 +39,7 @@ MonoBehaviour:
   - _weaponResilience
   - _skillCharm
   - _range
-  - _movement
+  - MOVement
   - DEFense
   - SPIrit
   - HITpoint

@@ -1,146 +1,65 @@
-using System;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 using UnityEngine.UI;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Services;
-using ProjectCI.Utilities.Runtime.Events;
-using UnityEngine.Events;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public class PvUIHoverPawnInfo : MonoBehaviour
     {
-        public GameObject m_ScreenObject;
-
-        [SerializeField] protected Image m_AttackTypeIcon;
-        [SerializeField] protected Sprite m_PhysicalSprite;
-        [SerializeField] protected Sprite m_MagicSprite;
-
         [SerializeField] protected Text m_NameText;
+        [SerializeField] private Text classText;
         [SerializeField] protected Text m_HitpointText;
-        [SerializeField] protected Slider m_HitpointSlider;
+        [SerializeField] private Slider currentValueSlider;
+        [SerializeField] private Slider finalValueSlider;
 
-        [SerializeField] protected AttributeType m_PhysicalAttackAttribute;
-        [SerializeField] protected AttributeType m_MagicAttackAttribute;
         [SerializeField] protected AttributeType[] m_AttributesToDisplay;
-        [SerializeField] protected Text m_AttackValueText;
         [SerializeField] protected Text[] m_AttributeValueTexts;
-        [SerializeField] protected UnityEvent<GridPawnUnit> m_OnUnitSelected;
-        
-        private readonly ServiceLocator<PvSoUnitSelectEvent> _selectEventLocator = new();
 
-        [NonSerialized] 
-        private GridPawnUnit _currentUnit;
+        [SerializeField] private Color[] teamColors;
 
-        public bool bIsSelectedEnabled;
-
-        private bool _bEnabled = true;
-        private bool _bInitialized;
-
-        public void Initialize()
+        public void Setup(GridPawnUnit unit, int mockDelta)
         {
-            if (_bInitialized)
-                return;
-
-            _bInitialized = true;
-            SetupScreen();
-            
-            // TODO: Same todo as below
-            // TacticBattleManager battleManager = TacticBattleManager.Get();
-            // if (battleManager)
-            // {
-            //     battleManager.OnUnitHover.AddListener(HandleUnitHover);
-            //     battleManager.OnTeamWon.AddListener(HandleGameDone);
-            // }
-            
-            if (bIsSelectedEnabled)
+            if (unit)
             {
-                _selectEventLocator.Service.RegisterCallback(HandleUnitSelected);
-            }
-        }
+                var color = unit.GetTeam() == BattleTeam.Friendly ? teamColors[0] : teamColors[1];
+                m_NameText.text = unit.GetUnitData().GetCharacterName();
+                m_NameText.color = color;
+                classText.text = unit.GetUnitData().GetClassName();
+                var maxHealth = unit.RuntimeAttributes.Health.MaxValue;
+                var currHealth = unit.RuntimeAttributes.Health.CurrentValue;
+                var mockHealth = currHealth + mockDelta;
 
-        private void OnDestroy()
-        {
-            if (_bInitialized)
-            {
-                if (bIsSelectedEnabled)
+                if (mockDelta == 0)
                 {
-                    _selectEventLocator.Service.UnregisterCallback(HandleUnitSelected);
+                    m_HitpointText.text = $"{currHealth.ToString()} / {maxHealth.ToString()}";
                 }
-            }
-        }
+                else
+                {
+                    var additionalInfo = mockDelta > 0 ? $"<color=yellow>+{mockDelta}</color>" : $"<color=red>{mockDelta}</color>";
+                    m_HitpointText.text = $"{currHealth.ToString()} {additionalInfo} / {maxHealth.ToString()}";
+                }
+                    
+                finalValueSlider.maxValue = maxHealth;
+                finalValueSlider.value = mockHealth;
 
-        private void HandleUnitSelected(IEventOwner owner, UnitSelectEventParam selectInfo)
-        {
-            HandleUnitSelected(selectInfo.Behaviour == UnitSelectBehaviour.Select ? selectInfo.Unit : null);
-        }
-        
-        private void HandleUnitSelected(GridPawnUnit inUnit)
-        {
-            // TODO: Handle Hover
-            // TacticBattleManager battleManager = TacticBattleManager.Get();
-            if (inUnit)
-            {
-                HandleUnitHover(inUnit);
-                // battleManager.OnUnitHover.RemoveListener(HandleUnitHover);
-            }
-            else
-            {
-                m_ScreenObject.SetActive(false);
-                // battleManager.OnUnitHover.AddListener(HandleUnitHover);
-            }
-
-            m_OnUnitSelected.Invoke(inUnit);
-        }
-
-        public void OnEnableExtraUIHoverPanel(GridPawnUnit InUnit)
-        {
-            if (InUnit)
-            {
-                _bEnabled = true;
-                m_ScreenObject.SetActive(true);
-            }
-            else
-            {
-                _bEnabled = false;
-                m_ScreenObject.SetActive(false);
-            }
-        }
-
-        protected virtual void HandleUnitHover(GridPawnUnit InUnit)
-        {
-            _currentUnit = InUnit;
-            SetupScreen();
-        }
-
-        protected void SetupScreen()
-        {
-            if (_currentUnit && _bEnabled)
-            {
-                m_ScreenObject.SetActive(true);
-                UpdateViewInfo();
-            }
-            else
-            {
-                m_ScreenObject.SetActive(false);
-            }
-        }
-
-        protected virtual void UpdateViewInfo()
-        {
-            if (_currentUnit)
-            {
-                m_NameText.text = _currentUnit.GetUnitData().m_UnitName;
-                m_HitpointText.text = _currentUnit.RuntimeAttributes.Health.CurrentValue.ToString() 
-                    + "/" + _currentUnit.RuntimeAttributes.Health.MaxValue.ToString();
-                m_HitpointSlider.maxValue = _currentUnit.RuntimeAttributes.Health.MaxValue;
-                m_HitpointSlider.value = _currentUnit.RuntimeAttributes.Health.CurrentValue;
-
-                m_AttackValueText.text = _currentUnit.RuntimeAttributes.GetAttributeValue(m_PhysicalAttackAttribute).ToString();
+                if (mockDelta != 0)
+                {
+                    currentValueSlider.gameObject.SetActive(true);
+                    currentValueSlider.fillRect.gameObject.SetActive(true);
+                    currentValueSlider.maxValue = maxHealth;
+                    currentValueSlider.value = currHealth;
+                }
+                else
+                {
+                    currentValueSlider.gameObject.SetActive(false);
+                    currentValueSlider.fillRect.gameObject.SetActive(false);
+                }
+                
                 for (int i = 0; i < m_AttributesToDisplay.Length; i++)
                 {
-                    m_AttributeValueTexts[i].text = _currentUnit.RuntimeAttributes.GetAttributeValue(m_AttributesToDisplay[i]).ToString();
+                    m_AttributeValueTexts[i].text = unit.RuntimeAttributes.GetAttributeValue(m_AttributesToDisplay[i]).ToString();
                 }
             }
         }

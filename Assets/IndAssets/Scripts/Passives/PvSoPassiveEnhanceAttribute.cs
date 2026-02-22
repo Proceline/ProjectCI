@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.AI;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
@@ -14,9 +14,12 @@ using AttributeModifier = ProjectCI.Utilities.Runtime.Modifiers.AttributeModifie
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
+    /// <summary>
+    /// This passive will apply on Unit one by one, thus no general binding required
+    /// </summary>
     [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "New EnhanceAttribute Passive", menuName = "ProjectCI Passives/EnhanceAttribute", order = 1)]
-    public sealed class PvSoPassiveEnhanceAttribute : PvSoPassiveBase
+    public sealed class PvSoPassiveEnhanceAttribute : PvSoPassiveIndividual
     {
         [Header("Parameters"), SerializeField] 
         private AttributeType targetAttribute;
@@ -35,14 +38,24 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private readonly Dictionary<string, UnityAction<IEventOwner, IAttributeModifierContainer>>
             _loadedModifierActions = new();
 
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
         {
             Debug.Log($"Initialize Passive <{name}> to {unit.name}");
             if (!_loadedModifierActions.ContainsKey(unit.ID))
             {
-                GridPawnUnit bufferedUnit = unit;
+                GridPawnUnit provider = unit;
                 UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction = (attributeOwner, container) =>
-                    ModifyAttribute(bufferedUnit, attributeOwner, container);
+                    ModifyAttribute(provider, attributeOwner, container);
                 _loadedModifierActions.Add(unit.ID, modifierAction);
                 ModifiersManager.RegisterModifier(targetAttribute, modifierAction);
             }
@@ -52,7 +65,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
         {
             if (_loadedModifierActions.TryGetValue(unit.ID, out var modifierAction))
             {
@@ -65,11 +78,11 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
             }
         }
 
-        private void ModifyAttribute(GridPawnUnit gridPawnUnit, IEventOwner attributeOwner, IAttributeModifierContainer container)
+        private void ModifyAttribute(GridPawnUnit provider, IEventOwner attributeOwner, IAttributeModifierContainer container)
         {
-            AIRadiusInfo radiusInfo = new AIRadiusInfo(gridPawnUnit.GetCell(), radius)
+            AIRadiusInfo radiusInfo = new AIRadiusInfo(provider.GetCell(), radius)
             {
-                Caster = gridPawnUnit,
+                Caster = provider,
                 bAllowBlocked = false,
                 bStopAtBlockedCell = false,
                 EffectedTeam = teamCondition

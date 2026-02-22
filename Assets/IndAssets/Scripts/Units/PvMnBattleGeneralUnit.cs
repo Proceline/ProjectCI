@@ -7,27 +7,53 @@ using IndAssets.Scripts.Passives.Status;
 using ProjectCI_Animation.Runtime;
 using ProjectCI_Animation.Runtime.Concrete;
 using ProjectCI.CoreSystem.Runtime.Abilities;
-using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Status;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Runtime.GUI.Battle;
 using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.CoreSystem.Runtime.Passives;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
+    public enum UnitTypeValue : int
+    {
+        Melee = 0,
+        Ranged = 1,
+        Magic = 2
+    }
+
     public partial class PvMnBattleGeneralUnit : GridPawnUnit, IEventOwner
     {
         [NonSerialized] private UnitAnimationManager _animationManager;
-        [NonSerialized] private FormulaCollection _formulaCollection;
-        private FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
+        private static FormulaCollection _formulaCollection;
+        private static FormulaCollection FormulaCollection => _formulaCollection ??= ServiceLocator.Get<FormulaCollection>();
 
-        private readonly Stack<UnitBattleState> _unitStates = new();
-        private readonly List<PvSoUnitAbility> _battleAbilities = new();
-        
         [NonSerialized]
-        private PvSoUnitAbility _defaultAttackAbility;
+        private PvSoUnitAbility _attackAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _followUpAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _counterAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _supportAbility;
+
+        [NonSerialized]
+        private PvSoUnitAbility _ultimateAbility;
+
+        [SerializeField]
+        private bool _ultimateForm = false;
+
+        public PvSoUnitAbility AttackAbility => _attackAbility;
+        public PvSoUnitAbility FollowUpAbility => _followUpAbility;
+        public PvSoUnitAbility CounterAbility => _counterAbility;
+        public PvSoUnitAbility SupportAbility => _supportAbility;
+        public PvSoUnitAbility UltimateAbility => _ultimateAbility;
+        public bool IsInUltimateForm => _ultimateForm;
 
         private Coroutine _rotatingCoroutine;
 
@@ -36,25 +62,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private PvStatusDataCollection _statusCollection;
 
-        public PvSoUnitAbility EquippedAbility
-        {
-            get
-            {
-                if (_defaultAttackAbility)
-                {
-                    return _defaultAttackAbility;
-                }
-
-                _defaultAttackAbility = _battleAbilities.Find(ability =>
-                    ability.IsAbilityWeapon() && ability.GetEffectedTeam() == BattleTeam.Hostile);
-                return _defaultAttackAbility;
-            }
-        }
+        private readonly List<PvSoPassiveBase> _installedPassives = new();
 
         private void SetFormulaCollection()
         {
             RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection, this);
-            SimulatedAttributes = new FormulaAttributeContainer(FormulaCollection, this);
         }
 
         public override void GenerateNewID()
@@ -93,16 +105,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 OnPreStandIdleAnimRequired += PlayIdleAnimation;
                 OnPreMovementAnimRequired += PlayMovementAnimation;
             }
-
-            OnMovementPostComplete.RemoveAllListeners();
         }
 
-        public void InitializeResourceContainer(Camera uiCamera, GameObject resourceContainerPrefab)
+        public void InitializeResourceContainer(Camera uiCamera, PvMnBattleCamera cameraController, GameObject resourceContainerPrefab)
         {
             PvMnBattleResourceContainer container = GetComponent<PvMnBattleResourceContainer>();
             if (container)
             {
-                container.Initialize(this, uiCamera, resourceContainerPrefab);
+                container.Initialize(this, uiCamera, cameraController, resourceContainerPrefab);
                 container.SetHealth(RuntimeAttributes.Health.CurrentValue);
                 container.SetMaxHealth(RuntimeAttributes.Health.MaxValue);
             }
@@ -110,6 +120,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnDestroy()
         {
+            _installedPassives.Clear();
+
             if (_animationManager)
             {
                 OnPreStandIdleAnimRequired -= PlayIdleAnimation;
@@ -122,7 +134,23 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             return RuntimeAttributes.Health.CurrentValue <= 0;
         }
 
+        public void AddPassiveRecord(PvSoPassiveBase passive)
+        {
+            _installedPassives.Add(passive);
+        }
+
+        public void DoActionOnInstalledPassives(Action<PvSoPassiveBase> action)
+        {
+            foreach (var passive in _installedPassives) 
+            { 
+                action.Invoke(passive); 
+            }
+        }
+
+        public void CleanUpPassives() => _installedPassives.Clear();
+
         public override int GetCurrentMovementPoints() => _currentMovementPoints;
+        public int GetMovementPoints() => RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
 
         private void PlayIdleAnimation()
         {
@@ -134,108 +162,39 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _animationManager.PlayLoopAnimation(AnimationIndexName.Run);
         }
 
-        public override void BroadcastActionTriggerByTag(string actionTagName)
+        public void SetupAttackAbility(PvSoUnitAbility ability)
         {
-            if (!_animationManager) return;
-            _animationManager.ForcePlayAnimation(actionTagName);
+            _attackAbility = ability;
         }
 
-        public override float GrabActionValueDataByIndexTag(int additionalIndex, params string[] tags)
+        public void SetupFollowUpAbility(PvSoUnitAbility ability)
         {
-            if (tags == null) return 0;
-            if (!_animationManager || tags.Length < 1) return 0;
-            if (tags.Length > 1)
-            {
-                switch (tags[1])
-                {
-                    case PvSoPresetAnimationClipExt.AnimationLengthTag:
-                        return _animationManager.GetPresetAnimationDuration(tags[0]);
-                }
-            }
-            else
-            {
-                var breakPoints = _animationManager.GetPresetAnimationBreakPoints(tags[0]);
-                if (breakPoints.Length > additionalIndex)
-                {
-                    return breakPoints[additionalIndex];
-                }
-            }
-
-            return 0;
+            _followUpAbility = ability;
         }
 
-        public override void SetUnitData(SoUnitData unitData)
+        public void SetupCounterAbility(PvSoUnitAbility ability)
         {
-            base.SetUnitData(unitData);
-
-            foreach (var attribute in unitData.originalAttributes)
-            {
-                RuntimeAttributes.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
-            }
-
-            if (FormulaCollection != null)
-            {
-                int hitPoint = RuntimeAttributes.GetAttributeValue(FormulaCollection.HealthAttributeType);
-                RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
-            }
-            else
-            {
-                RuntimeAttributes.Health.SetValue(10, 10);
-            }
-        }
-        
-        public void SetupAbilities(ICollection<PvSoUnitAbility> abilities)
-        {
-            _battleAbilities.Clear();
-            foreach (var ability in abilities)
-            {
-                _battleAbilities.Add(ability);
-            }
+            _counterAbility = ability;
         }
 
-        public List<PvSoUnitAbility> GetUsableAbilities() => _battleAbilities;
-
-        public List<PvSoUnitAbility> GetAttackAbilities()
+        public void SetupSupportAbility(PvSoUnitAbility ability)
         {
-            return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Hostile);
+            _supportAbility = ability;
         }
-        
-        public List<PvSoUnitAbility> GetSupportAbilities()
+
+        public void SetupUltimateAbility(PvSoUnitAbility ability)
         {
-            return _battleAbilities.FindAll(ability => ability.GetEffectedTeam() == BattleTeam.Friendly);
+            _ultimateAbility = ability;
+        }
+
+        public void SwitchForm(bool isUltimate)
+        {
+            _ultimateForm = isUltimate;
         }
 
         public override IStatusEffectContainer GetStatusEffectContainer()
         {
             return _statusCollection ??= new PvStatusDataCollection(ID, name);
-        }
-
-        public override UnitBattleState GetCurrentState()
-        {
-            if (_unitStates.TryPeek(out var result))
-            {
-                return result;
-            }
-
-            return UnitBattleState.Idle;
-        }
-
-        public override void AddState(UnitBattleState state)
-        {
-            _unitStates.Push(state);
-        }
-
-        public override void RemoveLastState()
-        {
-            if (!_unitStates.TryPop(out _))
-            {
-                throw new IndexOutOfRangeException("ERROR: No state left!");
-            }
-        }
-
-        public override void ClearStates()
-        {
-            _unitStates.Clear();
         }
 
         public override void HandleTurnStarted()
@@ -252,8 +211,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override List<LevelCellBase> GetAllowedMovementCells()
         {
-            // TODO: Change BattleTeam type to enable cross enemy
-            return UnitData.m_MovementShape.GetCellList(this, GetCell(), _currentMovementPoints, UnitData.m_bIsFlying, BattleTeam.Friendly);
+            return UnitData.m_MovementShape.GetCellList(this, GetCell(), GetMovementPoints(), UnitData.m_bIsFlying, BattleTeam.Friendly);
         }
 
         public void ForceMoveToCellImmediately(LevelCellBase targetCell)

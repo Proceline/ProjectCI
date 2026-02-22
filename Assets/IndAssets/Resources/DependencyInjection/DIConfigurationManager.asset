@@ -28,30 +28,12 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitPrepareEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: f7f445ba1f0c5a54ea343ea1c1435c1f, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitDyingEvent, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: 2988af4b3767f374ab31cdcdb4184109, type: 2}
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITeamRoundEndEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatLogicFinishedEvent,
-      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: 6ea0b33e67c6b164e97df2f7752b3d94, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatLogicPreEvent,
-      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: dd7536d757b8f7c44abc01e14d298cdb, type: 2}
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitGeneralCombatingEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 8c60d5cd08dcbc44b8697e3f14e1a5c6, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ICombatingOnStartEvent, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: f456678831b5d62408230f19403f9f79, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ICombatingTurnEndEvent, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: 5c625d7c76f613545917e316e5bbf529, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatingQueryStartEvent,
-      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: 727ba1bcf8b6af048bf9399134ab689c, type: 2}
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitCombatingQueryEndEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 3a76a52073b862b4884bc9523c0b51ff, type: 2}
@@ -64,28 +46,30 @@ MonoBehaviour:
   - serviceTypeName: IndAssets.Scripts.Managers.PvSoWeaponAndRelicCollection, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: a4e86cc0b9238324cbcdc6209321b9e2, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.PvSoAnimationTriggerEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: ea836533004d6964b83b9eb959ca790e, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IAnimationOutLengthFunc,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: a29988203f5002447a2ccdea57565da4, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IAnimationOutBreakPointFunc,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: a4cf2f0f2eadb8d458dc57e9698a7d80, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITargetUnitDeathEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 62ad0769594cfb3488db02c3f169cf81, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - ProjectCI.CoreSystem.Runtime.Abilities.PvSoUnitAbility, Assembly-CSharp, Version=0.0.0.0,
-    Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Abilities.PvSoDirectDamageAbilityParams, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterPortraitItem,
-    Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI.PvMnCharacterEquipmentPanel,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.PvMnCharacterEquipmentManager,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvStatusApplyCommand, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvDieCommand, Assembly-CSharp,
-    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - ProjectCI.CoreSystem.Runtime.Deployment.PvSoDeploymentController, Assembly-CSharp,
-    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveSupportAttack, Assembly-CSharp,
-    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveExtraAttack, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Passives.PvSoPassiveEnhanceAttribute, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -99,7 +83,7 @@ MonoBehaviour:
     Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicHurryCounter, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicEnforceFollowUp, Assembly-CSharp,
-    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Passives.PvSoPassiveFollowEncourage, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   - ProjectCI_Animation.Runtime.Concrete.PvMnFunctionalAnimator, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

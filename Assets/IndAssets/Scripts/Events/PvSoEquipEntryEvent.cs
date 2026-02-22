@@ -7,22 +7,22 @@ namespace ProjectCI.Utilities.Runtime.Events
     public class PvSoEquipEntryEvent : SoUnityEventBase
     {
         [SerializeField]
-        private UnityEvent<string, string, int> onPreInstalledEvent;
-        private readonly UnityEvent<string, string, int> _onPostEvent = new();
+        private UnityEvent<string, string> onPreInstalledEvent;
+        private readonly UnityEvent<string, string> _onPostEvent = new();
 
         
-        public void Raise(string weaponInstanceId, string characterId, int slotIndex)
+        public void Raise(string weaponInstanceId, string characterId)
         {
-            onPreInstalledEvent?.Invoke(weaponInstanceId, characterId, slotIndex);
-            _onPostEvent?.Invoke(weaponInstanceId, characterId, slotIndex);
+            onPreInstalledEvent?.Invoke(weaponInstanceId, characterId);
+            _onPostEvent?.Invoke(weaponInstanceId, characterId);
         }
 
-        public void RegisterCallback(UnityAction<string, string, int> callback)
+        public void RegisterCallback(UnityAction<string, string> callback)
         {
             _onPostEvent.AddListener(callback);
         }
 
-        public void UnregisterCallback(UnityAction<string, string, int> callback)
+        public void UnregisterCallback(UnityAction<string, string> callback)
         {
             _onPostEvent.RemoveListener(callback);
         }

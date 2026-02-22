@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-Shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-Assets-Shared
+  m_GUID: cefd99f42bcbfed41a5439c8c03b4db3
+  m_SerializeEntries:
+  - m_GUID: 256a5f97009353149977b19013132bdf
+    m_Address: Assets/IndAssets/Localization/Tables/Functional Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26d640c255480ab4c853fadbe9eee553
+    m_Address: Assets/IndAssets/Localization/Tables/BootUiContent Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44b4dd9fd31e8d947bab6826614415a9
+    m_Address: Assets/IndAssets/Localization/Tables/BattleAttributes Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 620daac71ea69724d924568c7cf201df
+    m_Address: Assets/IndAssets/Localization/Tables/Pawn,Abilities,Attributes Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b32515b18a7f45429bf5c90353747e5
+    m_Address: Assets/IndAssets/Localization/Tables/CharacterNames Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 99b5eb2e4b1ccec4bb57f59470c3edc6, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 31f89c109f71bb747891a45a9dab7f17, type: 2}
+    - {fileID: 11400000, guid: 4cbc10a6f5e7bd0449306cabf82bfcc3, type: 2}

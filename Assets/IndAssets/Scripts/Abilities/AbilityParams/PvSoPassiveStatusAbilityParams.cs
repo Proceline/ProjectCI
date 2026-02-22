@@ -35,13 +35,18 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var statusCommand = new PvStatusApplyCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex(),
                 StatusType = relatedStatus
             };
 
             results.Enqueue(statusCommand);
+        }
+
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)
+        {
+            // Empty;
+            return 0;
         }
     }
 }

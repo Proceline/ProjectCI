@@ -12,19 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ec66185db545d249b3bdcd4b92bfc97, type: 3}
   m_Name: _FormulaCollection
   m_EditorClassIdentifier: 
-  m_HealthAttributeType:
+  hitPointAttribute:
     value: 29
   m_MovementAttributeType:
     value: 26
   criticalAttributeType:
     value: 9
+  attackSpeedType:
+    value: 14
+  unitTypeAttribute:
+    value: 8
+  attackSpeedDifference: 3
+  personalityRedirections:
+  - personalityName: 0
+    redirectToAttribute:
+      value: 1
+  - personalityName: 1
+    redirectToAttribute:
+      value: 2
+  - personalityName: 2
+    redirectToAttribute:
+      value: 3
+  - personalityName: 3
+    redirectToAttribute:
+      value: 4
+  - personalityName: 4
+    redirectToAttribute:
+      value: 5
   m_Formulas:
-  - {fileID: 11400000, guid: f76cf5bea54c9ce47954b60defd9c11f, type: 2}
-  - {fileID: 11400000, guid: ac654dae09e246c42b8aafacff9a01a8, type: 2}
-  - {fileID: 11400000, guid: 6e30391919c7d2c489e68d070cc22d29, type: 2}
+  - {fileID: 11400000, guid: 58f8572d48f1e6b4fab438a2d712fb3c, type: 2}
+  - {fileID: 11400000, guid: c356f39e59fef07409fd64f01ba82da8, type: 2}
+  - {fileID: 11400000, guid: 712f12ff1e5042043921e33200157dd1, type: 2}
   - {fileID: 11400000, guid: 82869f321d3a1434fbc6afbd141e3479, type: 2}
   - {fileID: 11400000, guid: 1cd2b78e8a475674398591bc6e8d7cb6, type: 2}
   - {fileID: 11400000, guid: 13610aa981570ae4dac9b14cc2daf070, type: 2}
   - {fileID: 11400000, guid: 033316d0ec506174d97a873dcaea0755, type: 2}
   - {fileID: 11400000, guid: 79ccc91277536d44aafc2c1c878fcdeb, type: 2}
-  - {fileID: 11400000, guid: 67ce4b89893fec547aa646357f82817c, type: 2}
+  - {fileID: 11400000, guid: cb2e79700b8090d47a4fb1e3e0bfa7fa, type: 2}
+  - {fileID: 11400000, guid: 62e8189a02efed14eace67f81c71b439, type: 2}

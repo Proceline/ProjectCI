@@ -7,7 +7,6 @@ namespace IndAssets.Editor.Scripts.Weapons
     [CustomEditor(typeof(PvSoWeaponData))]
     public class SoWeaponDataEditor : UnityEditor.Editor
     {
-        private SerializedProperty _mWeaponNumberIdentifier;
         private SerializedProperty _mWeaponName;
         private SerializedProperty _mDescription;
         private SerializedProperty _mAttributes;
@@ -26,14 +25,11 @@ namespace IndAssets.Editor.Scripts.Weapons
             EditorGUILayout.PropertyField(_mWeaponName);
             EditorGUILayout.PropertyField(_mDescription);
 
-            var animatorProperty = serializedObject.FindProperty(PvSoWeaponData.AnimatorPropertyName);
-            var abilityProperty = serializedObject.FindProperty(PvSoWeaponData.BindingAbilityPropertyName);
-            EditorGUILayout.PropertyField(animatorProperty);
-            EditorGUILayout.PropertyField(abilityProperty);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponPrefab)));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalRotation)));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalPosition)));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.prefabLocalScale)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.AnimatorPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.BindingAbilityPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.FollowUpAbilityPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(PvSoWeaponData.CounterAbilityPropertyName));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(PvSoWeaponData.weaponInfos)));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Attributes", EditorStyles.boldLabel);

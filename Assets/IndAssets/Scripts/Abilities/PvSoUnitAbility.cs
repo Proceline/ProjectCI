@@ -1,18 +1,12 @@
-using System.Collections.Generic;
-using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
+using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
-    [StaticInjectableTarget]
     [CreateAssetMenu(fileName = "NewAbility", menuName = "ProjectCI Tools/Ability/Create Custom Ability", order = 1)]
     public class PvSoUnitAbility : UnitAbilityCore
     {
@@ -23,36 +17,34 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private bool isFollowUpAllowed = true;
 
         [SerializeField]
-        private bool isAutoFollowUpAllowed = true;
+        private bool isAbilityWeapon = true;
 
         [SerializeField]
-        private bool isAbilityWeapon = true;
-        
+        private bool isAppliedOnSelf = false;
+
+        [SerializeField]
+        private bool isSupportAbility = false;
+
+        [SerializeField]
+        private Sprite iconSprite;
+
+        public bool IsSupportAbility => isSupportAbility;
+        public Sprite GetIconSprite => iconSprite;
+
         [SerializeField] private AttributeType dcAttribute = 10;    // Accurate
         [SerializeField] private AttributeType acAttribute = 11;    // Dodge
         public AttributeType DcAttribute => dcAttribute;
         public AttributeType AcAttribute => acAttribute;
+        public bool IsAppliedOnSelf => isAppliedOnSelf;
 
         [SerializeField] 
         private PvMnProjectile projectilePrefab;
 
-        [HideInInspector]
-        public UnitAbilityAnimation abilityAnimation;
-
-        [Inject] 
-        private static readonly ICombatingOnStartEvent XRaiserCombatingOnStarted;
-
-        [Inject]
-        private static readonly ICombatingTurnEndEvent OnLogicallyEndedInTurn;
+        [SerializeField]
+        private AnimationPvCustomName abilityAnimationName;
         
         public PvMnProjectile ProjectilePrefab => projectilePrefab;
-
-        [FormerlySerializedAs("onTriggerUnitEnteredInCombating")] 
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombating;
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitEnteredInCombatingAsTarget;
-        [FormerlySerializedAs("onTriggerUnitLeftFromCombating")] 
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitLeftFromCombating;
-        [SerializeField] private UnityEvent<PvMnBattleGeneralUnit> onUnitLeftFromCombatingAsTarget;
+        public AnimationPvCustomName AnimationName => abilityAnimationName;
         
         public bool IsCounterAllowed()
         {
@@ -64,113 +56,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public bool IsAbilityWeapon()
         {
             return isAbilityWeapon;
-        }
-
-        public virtual List<CombatingQueryContext> OnCombatingQueryListCreated(PvMnBattleGeneralUnit caster,
-            PvMnBattleGeneralUnit victim, bool casterSpeedExceed, bool victimSpeedExceed)
-        {
-            var targetAbility = victim.EquippedAbility;
-            
-            OnLogicallyEndedInTurn.RegisterCallback(OnCombatedTurnLogicallyEndedResponse);
-            onUnitEnteredInCombating.Invoke(caster);
-            targetAbility.onUnitEnteredInCombatingAsTarget.Invoke(victim);
-            
-            // You can register on Combating status before this calculation
-            XRaiserCombatingOnStarted.Raise(caster, victim);
-            
-            var combatContextList = new List<CombatingQueryContext>
-            {
-                new() { IsCounter = false, QueryType = CombatingQueryType.FirstAttempt }
-            };
-
-            // Normally, only support abilities don't allow counter
-            if (!IsCounterAllowed())
-            {
-                return combatContextList;
-            }
-            List<LevelCellBase> targetAbilityCells = targetAbility.GetAbilityCells(victim);
-            var bIsTargetAbilityAbleToCounter =
-                targetAbilityCells.Count > 0 && targetAbilityCells.Contains(caster.GetCell());
-
-            if (bIsTargetAbilityAbleToCounter)
-            {
-                combatContextList.Add(new CombatingQueryContext
-                    { IsCounter = true, QueryType = CombatingQueryType.FirstAttempt });
-            }
-
-            if (casterSpeedExceed && isAutoFollowUpAllowed)
-            {
-                combatContextList.Add(new CombatingQueryContext
-                    { IsCounter = false, QueryType = CombatingQueryType.AutoFollowUp });
-            }
-            else if (bIsTargetAbilityAbleToCounter && victimSpeedExceed && targetAbility.isAutoFollowUpAllowed)
-            {
-                combatContextList.Add(new CombatingQueryContext
-                    { IsCounter = true, QueryType = CombatingQueryType.AutoFollowUp });
-            }
-
-            return combatContextList;
-        }
-
-        protected virtual void OnCombatedTurnLogicallyEndedResponse(PvMnBattleGeneralUnit caster,
-            PvMnBattleGeneralUnit victim)
-        {
-            var targetAbility = victim.EquippedAbility;
-            onUnitEnteredInCombatingAsTarget.Invoke(victim);
-            
-            targetAbility.onUnitLeftFromCombating.Invoke(caster);
-            OnLogicallyEndedInTurn.UnregisterCallback(OnCombatedTurnLogicallyEndedResponse);
-        }
-
-        public override void ApplyVisualEffects(GridPawnUnit inCasterUnit, LevelCellBase inEffectCell)
-        {
-            // GridObject targetObj = inEffectCell.GetObjectOnCell();
-            GridPawnUnit targetExecuteUnit = inEffectCell.GetUnitOnCell();
-        
-            if (targetExecuteUnit)
-            {
-                targetExecuteUnit.LookAtCell(inCasterUnit.GetCell());
-            }
-        
-            // TODO: Visual effects on caster, SUCH AS slash light
-            // foreach (AbilityParticle abilityParticle in m_SpawnOnCaster)
-            // {
-            //     Vector3 pos = inCasterUnit.GetCell().GetAllignPos(inCasterUnit);
-            //     AbilityParticle createdAbilityParticle = Instantiate(abilityParticle.gameObject, pos, inCasterUnit.transform.rotation).GetComponent<AbilityParticle>();
-            //     createdAbilityParticle.Setup(this, inCasterUnit, inEffectCell);
-            // }
-        
-            // TODO: Visual effects on target
-            // foreach (AbilityParticle abilityParticle in m_SpawnOnTarget)
-            // {
-            //     Vector3 pos = inEffectCell.gameObject.transform.position;
-            //
-            //     if (targetObj)
-            //     {
-            //         pos = inEffectCell.GetAllignPos(targetObj);
-            //     }
-            //
-            //     AbilityParticle createdAbilityParticle = Instantiate(abilityParticle.gameObject, pos, inEffectCell.transform.rotation).GetComponent<AbilityParticle>();
-            //     createdAbilityParticle.Setup(this, inCasterUnit, inEffectCell);
-            // }
-        
-            // TODO: Should be handled as visual effects
-            // foreach (StatusEffect ailment in m_Ailments)
-            // {
-            //     if (ailment)
-            //     {
-            //         if (targetExecuteUnit)
-            //         {
-            //             targetExecuteUnit.GetAilmentContainer().AddStatusEffect(inCasterUnit, ailment);
-            //         }
-            //
-            //         CellStatusEffect cellStatusEffect = ailment as CellStatusEffect;
-            //         if (cellStatusEffect)
-            //         {
-            //             inEffectCell.GetAilmentContainer().AddStatusEffect(inCasterUnit, cellStatusEffect, inEffectCell);
-            //         }
-            //     }
-            // }
         }
     }
 }

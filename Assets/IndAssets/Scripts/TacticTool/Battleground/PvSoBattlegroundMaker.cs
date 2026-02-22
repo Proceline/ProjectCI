@@ -1,4 +1,4 @@
-using System;
+using ProjectCI.CoreSystem.Runtime.Deployment;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
@@ -6,9 +6,11 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Library;
 using ProjectCI.Runtime.GUI.Battle;
+using ProjectCI.TacticTool.Formula.Concrete;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-using Unity.VisualScripting;
 
 namespace ProjectCI.CoreSystem.Runtime.Battleground
 {
@@ -18,15 +20,16 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         private const float DefaultCellValue = 2.25f;
         public float cellWidth = DefaultCellValue;
         public float cellHeight = DefaultCellValue;
-        public int gridWidth = 5;
-        public int gridHeight = 5;
         
         [SerializeField]
         private LayerMask layerMask;
         
         [SerializeField]
         private LayerMask pawnDetectLayerMask;
-        
+
+        [SerializeField]
+        private LayerMask cellDetectLayerMask;
+
         [SerializeField]
         private TacticRpgTool.General.CellPalette cellPalette;
         
@@ -40,13 +43,35 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
         [SerializeField]
         private GameObject resourceContainerPrefab;
 
+        [SerializeField]
+        private FormulaCollection formulaCollection;
+
+        [SerializeField]
+        private PvSoDeploymentController deploymentController;
+
+        [SerializeField]
+        private UnityEvent onBattleInitialized;
+
         public UnityEvent<RaycastHit, Vector2Int, LevelGridBase> gridCreatingRule;
 
         [NonSerialized] private SquarePresetGrid _levelGrid;
         
-        public void ScanAndGenerateBattle(Vector3 centerPosition, Camera uiCamera)
+        public void ScanAndGenerateBattle()
         {
-            GridBattleUtils.GenerateLevelGridFromGround(
+            var collectedObjects = GameObject.FindGameObjectsWithTag("UICamera");
+            var cameraController = FindAnyObjectByType<PvMnBattleCamera>();
+
+            var camera = collectedObjects.Length > 0 ? collectedObjects[0].GetComponent<Camera>() : null;
+            if (!camera)
+            {
+                throw new Exception("ERROR: No UI Camera!");
+            }
+
+            var centerPosition = deploymentController.LevelData.LevelStartPosition;
+            var gridWidth = deploymentController.LevelData.gridWidth;
+            var gridHeight = deploymentController.LevelData.gridHeight;
+
+            GridBattleUtils.GenerateLevelGridFromGround<SquarePresetGrid, PvMnLevelCell>(
                 centerPosition,
                 cellWidth,
                 cellHeight,
@@ -78,7 +103,7 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
 
                 var sceneUnits = GridBattleUtils.ScanAreaForObjects<PvMnSceneUnit>(
                     new Vector3(centerPosition.x, 0, centerPosition.z),
-                    gridWidth > gridHeight ? gridWidth * 2 : gridHeight * 2,
+                    gridWidth > gridHeight ? gridWidth * 3 : gridHeight * 3,
                     false,
                     pawnDetectLayerMask,
                     detectMaxResults
@@ -97,30 +122,36 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                         _levelGrid,
                         sceneUnit.UnitData,
                         team,
-                        spawnedUnit => spawnedUnit.SetupAbilities(sceneUnit.UnitAbilities),
+                        spawnedUnit =>
+                        {
+                            spawnedUnit.SetupAttackAbility(sceneUnit.WeaponAttackAbility);
+                            spawnedUnit.SetupFollowUpAbility(sceneUnit.WeaponFollowUpAbility);
+                            spawnedUnit.SetupCounterAbility(sceneUnit.WeaponCounterAbility);
+                            spawnedUnit.SetupSupportAbility(sceneUnit.UnitData.TalentedSupportAbility);
+                            spawnedUnit.SetupUltimateAbility(sceneUnit.UnitData.TalentedUltimateAbility);
+                        },
                         1,
-                        pawnDetectLayerMask
+                        cellDetectLayerMask
                     );
                     
                     unit.GenerateNewID();
                     sceneUnit.UnitData.InitializeUnitDataToGridUnit(unit);
                     
                     sceneUnit.InitializeAttributes(unit.RuntimeAttributes);
+
+                    int hitPoint = unit.RuntimeAttributes.GetAttributeValue(formulaCollection.HealthAttributeType);
+                    unit.RuntimeAttributes.Health.SetValue(hitPoint, hitPoint);
+
                     unit.AddComponent<PvMnBattleResourceContainer>();
-                    unit.InitializeResourceContainer(uiCamera, resourceContainerPrefab);
+                    unit.InitializeResourceContainer(camera, cameraController, resourceContainerPrefab);
                     
                     // TODO: Consider if ability need to be assigned
                     // var abilities = unit.GetAbilities();
                     // abilityEquipEvent.Raise(unit, abilities[0]);
                 }
-
-                var hoverPawnInfos = FindObjectsByType<PvUIHoverPawnInfo>(FindObjectsSortMode.None);
-                foreach (var hoverPawnInfo in hoverPawnInfos)
-                {
-                    hoverPawnInfo.Initialize();
-                }
                 
                 battleManager.Initialize();
+                onBattleInitialized?.Invoke();
             }
         }
         

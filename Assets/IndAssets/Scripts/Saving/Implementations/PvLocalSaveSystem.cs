@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.Saving.Data;
@@ -375,8 +374,8 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Implementations
                 }
                 
                 // Sort by save time (newest first)
-                detailsList = detailsList.OrderByDescending(d => d.SaveTime).ToList();
-                
+                detailsList.Sort((a, b) => b.SaveTime.CompareTo(a.SaveTime));
+
                 return detailsList;
             }
             catch (Exception ex)

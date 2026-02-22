@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6438202135020366693}
   - component: {fileID: 8235728796978286583}
   - component: {fileID: -8831707949372437208}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ProjectCI Cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,6 +64,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -86,9 +88,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &6438202135020366693
 MeshCollider:
@@ -136,6 +140,15 @@ MonoBehaviour:
   m_MovementMatStates:
   - m_Index: 0
     m_Material: {fileID: 2100000, guid: 722a0caa6049ce6408f08070885c843e, type: 2}
+  m_SpecialMatStates:
+  - m_Index: 0
+    m_Material: {fileID: 2100000, guid: 08f477a447e4ebe47b1aabf111f88080, type: 2}
+  readOnlyAggroMats:
+  - m_Index: 0
+    m_Material: {fileID: 2100000, guid: 2a30c53d554c4b54cb411786c69df0fa, type: 2}
+  readOnlyMoveMats:
+  - m_Index: 0
+    m_Material: {fileID: 2100000, guid: 509685637fd4c1249b4f12bb65a3843e, type: 2}
 --- !u!114 &-8831707949372437208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e16472020ae37042ad433a159d76c99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_WeightInfo:
+  weightInfo:
     bBlocked: 0
-    Weight: 3
+    weight: 3

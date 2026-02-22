@@ -1,15 +1,18 @@
-using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
+using IndAssets.Scripts.Random;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
+using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
@@ -23,10 +26,13 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         public PvEnDamageType damageType;
 
         [SerializeField]
-        private bool isHealValue;
+        private AttributeType criticalAmountAttribute;
+
+        [SerializeField]
+        private PvEnDamageForm damageForm;
 
         [SerializeField] private int basicAddon;
-        
+
         [Header("Critical")]
         [SerializeField]
         private bool isCriticalEnabledByDefault;
@@ -35,14 +41,19 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField] 
         private bool isAlwaysHitByDefault;
 
+        [SerializeField]
+        private PvSoNotifyDamageBeforeRevEvent raiserNotifyDamageBeforeRev;
+
         [Inject]
         private static IFinalReceiveDamageModifier _receiveDamageModifier;
+
+        private static readonly ServiceLocator<PvSoRandomSeedCentre> RandomSeedProvider = new();
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
             GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
         {
             var targetUnit = currentTargetCell.GetUnitOnCell();
-            if (!targetUnit)
+            if (!targetUnit || !targetUnit.gameObject.activeSelf)
             {
                 return;
             }
@@ -63,7 +74,15 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var isCritical = false;
             if (isCriticalEnabledByDefault && passValue == 100)
             {
-                damage *= 2;
+                var criticalAmountAdjustor = fromContainer.GetAttributeValue(criticalAmountAttribute);
+                criticalAmountAdjustor += 100;
+                if (criticalAmountAdjustor > 100)
+                {
+                    criticalAmountAdjustor = 100;
+                }
+                
+                var extraDamage = damage * criticalAmountAdjustor / 100;
+                damage += extraDamage;
                 isCritical = true;
             }
 
@@ -78,14 +97,18 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             if (isReallyHit)
             {
-                if (!isHealValue)
+                var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+
+                if (!damageForm.HasFlag(PvEnDamageForm.Support))
                 {
-                    toContainer.Health.ModifyValue(-finalDeltaDamage);
+                    toContainer.Health.ModifyValue(-adjustedFinalDeltaDmg);
                 }
                 else
                 {
-                    toContainer.Health.ModifyValue(finalDeltaDamage);
+                    toContainer.Health.ModifyValue(adjustedFinalDeltaDmg);
                 }
+
+                finalDeltaDamage = adjustedFinalDeltaDmg;
             }
 
             var afterHealth = toContainer.Health.CurrentValue;
@@ -93,7 +116,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var savingCommand = new PvSimpleDamageCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex(),
                 BeforeValue = beforeHealth,
@@ -102,7 +124,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 DamageType = damageType
             };
 
-            if (isHealValue)
+            if (damageForm.HasFlag(PvEnDamageForm.Support))
             {
                 savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
             }
@@ -128,13 +150,93 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var dieCommand = new PvDieCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = targetUnit.ID,
                 TargetCellIndex = targetUnit.GetCell().GetIndex()
             };
 
             results.Enqueue(dieCommand);
 
+        }
+
+        public static void Execute(GridPawnUnit fromUnit, GridPawnUnit targetUnit, Queue<CommandResult> results, 
+            int executeValue, bool isHeal, PvEnDamageType damageType)
+        {
+            var resultId = Guid.NewGuid().ToString();
+
+            var toContainer = targetUnit.RuntimeAttributes;
+            var fromContainer = fromUnit.RuntimeAttributes;
+
+            if (targetUnit.IsDead())
+            {
+                return;
+            }
+
+            var beforeHealth = toContainer.Health.CurrentValue;
+            if (!isHeal)
+            {
+                toContainer.Health.ModifyValue(-executeValue);
+            }
+            else
+            {
+                toContainer.Health.ModifyValue(executeValue);
+            }
+            var afterHealth = toContainer.Health.CurrentValue;
+
+            var savingCommand = new PvSimpleDamageCommand
+            {
+                ResultId = resultId,
+                OwnerId = fromUnit.ID,
+                TargetCellIndex = targetUnit.GetCell().GetIndex(),
+                BeforeValue = beforeHealth,
+                AfterValue = afterHealth,
+                Value = executeValue,
+                DamageType = damageType
+            };
+
+            if (isHeal)
+            {
+                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
+            }
+
+            results.Enqueue(savingCommand);
+
+            // Add Die Command if Health is 0
+            if (!targetUnit.IsDead())
+            {
+                return;
+            }
+
+            Debug.Log($"<color=red>{targetUnit.name} is Dead!</color>");
+
+            var dieCommand = new PvDieCommand
+            {
+                ResultId = resultId,
+                OwnerId = targetUnit.ID,
+                TargetCellIndex = targetUnit.GetCell().GetIndex()
+            };
+
+            results.Enqueue(dieCommand);
+
+        }
+
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint extraDamageForm)
+        {
+            var toContainer = targetUnit.RuntimeAttributes;
+            var fromContainer = fromUnit.RuntimeAttributes;
+
+            var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
+            var deltaDamage = Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
+
+            var finalDeltaDamage = deltaDamage;
+            if (targetUnit is IEventOwner damageReceiver)
+            {
+                finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
+            }
+
+            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+            var deltaValue = damageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
+
+            return deltaValue;
         }
     }
 }

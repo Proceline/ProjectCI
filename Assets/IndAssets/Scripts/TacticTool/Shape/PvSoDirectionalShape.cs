@@ -9,9 +9,8 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.Abilities;
 namespace ProjectCI.CoreSystem.Runtime.Abilities.Concrete
 {
     /// <summary>
-    /// 四边形Grid上的十字范围
+    /// Cross
     /// </summary>
-
     [CreateAssetMenu(fileName = "PvSoDirectionalShape", menuName = "ProjectCI Tools/Ability/Shapes/PvSoDirectionalShape")]
     public class PvSoDirectionalShape : AbilityShape
     {

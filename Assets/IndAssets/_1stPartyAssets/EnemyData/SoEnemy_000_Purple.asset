@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
+  m_Name: SoEnemy_000_Purple
+  m_EditorClassIdentifier: 
+  m_UnitName: ENEMY_PAWN_0
+  m_UnitClass: ROLE_NT_CLASS
+  originalAttributes: []
+  m_TravelSound: {fileID: 0}
+  m_DamagedSound: {fileID: 0}
+  m_HealSound: {fileID: 0}
+  m_DeathSound: {fileID: 0}
+  m_bLookAtTargets: 1
+  m_bIsFlying: 0
+  m_HeightOffset: 0
+  m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
+  m_SpawnOnHeal: []
+  m_AbilityPoints: 5
+  unitIdentifier: 
+  icon: {fileID: 0}
+  personalPassives:
+  - {fileID: 11400000, guid: 53d00a9e5397bf241a66b7e629fa7015, type: 2}
+  meshes: []
+  talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
+  personality:
+    energyLevel: 0
+    informationLevel: 0
+    decisionLevel: 0
+    styleLevel: 0
+    identityLevel: 0

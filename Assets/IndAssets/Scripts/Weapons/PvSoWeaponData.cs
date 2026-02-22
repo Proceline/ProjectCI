@@ -10,6 +10,15 @@ using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 
 namespace IndAssets.Scripts.Weapons
 {
+    [Serializable]
+    public struct FPvWeaponInfo
+    {
+        public GameObject weaponPrefab;
+        public Quaternion prefabLocalRotation;
+        public Vector3 prefabLocalPosition;
+        public Vector3 prefabLocalScale;
+    }
+
     [CreateAssetMenu(fileName = "NewWeapon", menuName = "ProjectCI Tools/Weapon")]
     public class PvSoWeaponData : ScriptableObject, IPvSaveEntry
     {
@@ -24,22 +33,29 @@ namespace IndAssets.Scripts.Weapons
         /// Cannot be accessed through Runtime
         /// </summary>
         public static string BindingAbilityPropertyName => nameof(bindingAbility);
+        public static string FollowUpAbilityPropertyName => nameof(followUpAbility);
+        public static string CounterAbilityPropertyName => nameof(counterAbility);
 #endif
-        
+
         [SerializeField]
         private PvSoAnimationSupportAsset animator;
 
         [SerializeField]
         private PvSoUnitAbility bindingAbility;
 
-        public GameObject weaponPrefab;
-        public Quaternion prefabLocalRotation;
-        public Vector3 prefabLocalPosition;
-        public Vector3 prefabLocalScale = Vector3.one;
+        [SerializeField]
+        private PvSoUnitAbility followUpAbility;
+
+        [SerializeField]
+        private PvSoUnitAbility counterAbility;
+
+        public FPvWeaponInfo[] weaponInfos;
 
         public AnimationPlayableSupportBase Animator => animator;
         public PvSoUnitAbility DefaultAttackAbility => bindingAbility;
-        
+        public PvSoUnitAbility DefaultFollowUpAbility => followUpAbility;
+        public PvSoUnitAbility DefaultCounterAbility => counterAbility;
+
         public string EntryId => name;
 
         [Serializable]

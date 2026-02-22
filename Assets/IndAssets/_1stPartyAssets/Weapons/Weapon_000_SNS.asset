@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
+  m_Name: Weapon_000_SNS
+  m_EditorClassIdentifier: 
+  animator: {fileID: 11400000, guid: 491723784bff23a4b9775801fad7fe11, type: 2}
+  bindingAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  followUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  counterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  weaponInfos:
+  - weaponPrefab: {fileID: 1544745192496040, guid: 092b3560b76f6ee4089747437e2a38bc, type: 3}
+    prefabLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+    prefabLocalPosition: {x: 0, y: 0, z: 0}
+    prefabLocalScale: {x: 1, y: 1, z: 1}
+  - weaponPrefab: {fileID: 1483447435328282, guid: 6c0ccdc6d657c0c4595db29f9f50b136, type: 3}
+    prefabLocalRotation: {x: 0.49999997, y: 0.49999997, z: -0.49999997, w: -0.49999997}
+    prefabLocalPosition: {x: -0.039, y: 0, z: 0}
+    prefabLocalScale: {x: 1, y: 1, z: 1}
+  weaponName: '[SingleHandSword0]'
+  description: SingleHandSwordDescription
+  attributes:
+  - type:
+      value: 15
+    value: 10
+  - type:
+      value: 16
+    value: 1
+  - type:
+      value: 18
+    value: 0
+  - type:
+      value: 19
+    value: 0
+  - type:
+      value: 20
+    value: 0
+  - type:
+      value: 23
+    value: 0
+  - type:
+      value: 30
+    value: 0

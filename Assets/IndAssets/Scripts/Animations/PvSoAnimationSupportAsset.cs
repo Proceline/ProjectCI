@@ -9,7 +9,11 @@ namespace ProjectCI.CoreSystem.Runtime.Animation
     public enum AnimationPvCustomName
     {
         AttackBasic,
-        DieStay
+        DieStay,
+        BladeFury,
+        SimpleCast,
+        SuperCast,
+        DoNothing = 99999
     }
     
     public class PvCustomAnimationNamesList : IAnimationIndexAddon

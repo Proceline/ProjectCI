@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -19,32 +19,40 @@ namespace IndAssets.Scripts.Passives.Relics
         
         [Inject] private static readonly IUnitGeneralCombatingEvent OnCombatingListCreatedEvent;
         
-        protected override void InstallPassiveInternally(GridPawnUnit unit)
+        protected override void InstallPassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.RegisterCallback(ReorderCombatingList);
         }
 
-        protected override void DisposePassiveInternally(GridPawnUnit unit)
+        protected override void DisposePassiveGenerally(PvMnBattleGeneralUnit unit)
         {
             OnCombatingListCreatedEvent.UnregisterCallback(ReorderCombatingList);
         }
 
-        protected virtual void ReorderCombatingList(IEventOwner raiser, UnitCombatingEventParam combatingParam)
+        protected override void InstallPassivePersonally(PvMnBattleGeneralUnit unit)
         {
-            var list = combatingParam.CombatingList;
-            var caster = combatingParam.unit;
-            var victim = combatingParam.target;
-            if (!IsResponsiveOwner(caster, victim))
+            // Empty
+        }
+
+        protected override void DisposePassivePersonally(PvMnBattleGeneralUnit unit)
+        {
+            // Empty
+        }
+
+        protected virtual void ReorderCombatingList(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget,
+            List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> queryItems)
+        {
+            if (!IsResponsiveOwner(inUnit, inTarget))
             {
                 return;
             }
 
-            var casterSpeed = caster.RuntimeAttributes.GetAttributeValue(targetAttributeType);
-            var victimSpeed = victim.RuntimeAttributes.GetAttributeValue(targetAttributeType);
+            var casterSpeed = inUnit.RuntimeAttributes.GetAttributeValue(targetAttributeType);
+            var victimSpeed = inTarget.RuntimeAttributes.GetAttributeValue(targetAttributeType);
 
             if (IsAttributeCheckPassed(casterSpeed, victimSpeed))
             {
-                AdjustQueryList(list);
+                AdjustQueryList(queryItems);
             }
         }
 
@@ -59,18 +67,21 @@ namespace IndAssets.Scripts.Passives.Relics
             return delta >= triggerDeltaValue;
         }
 
-        protected virtual void AdjustQueryList(List<CombatingQueryContext> contextQueryList)
+        private void AdjustQueryList(List<PvAbilityQueryItem<PvMnBattleGeneralUnit>> queryItems)
         {
-            var index = contextQueryList.FindIndex(query =>
-                query is { IsCounter: true, QueryType: CombatingQueryType.FirstAttempt });
-            if (index <= 0)
+            var index = queryItems.FindIndex(query =>
+            {
+                return query.queryOrderForm.HasFlag(PvEnDamageForm.Counter);
+            });
+
+            if (index <= 0 || !queryItems[index].enabled)
             {
                 return;
             }
 
-            var firstCounterQuery = contextQueryList[index];
-            contextQueryList.RemoveAt(index);
-            contextQueryList.Insert(0, firstCounterQuery);
+            var firstCounterQuery = queryItems[index];
+            queryItems.RemoveAt(index);
+            queryItems.Insert(0, firstCounterQuery);
         }
     }
 }

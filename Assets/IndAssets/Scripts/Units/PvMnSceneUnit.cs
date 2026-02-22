@@ -1,12 +1,12 @@
-using UnityEngine;
-using ProjectCI.CoreSystem.Runtime.Units.Interfaces;
-using System;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using System.Collections.Generic;
+using IndAssets.Scripts.Managers;
 using IndAssets.Scripts.Weapons;
-using ProjectCI_Animation.Runtime;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.CoreSystem.Runtime.Units.Interfaces;
+using ProjectCI_Animation.Runtime;
+using System;
+using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -20,19 +20,35 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public bool IsFriendly { get => isFriendly; set => isFriendly = value; }
 
         [SerializeField]
-        protected SoUnitData unitData;
+        protected PvSoBattleUnitData unitData;
 
         [SerializeField]
-        protected List<PvSoUnitAbility> unitAbilities;
+        private PvSoUnitAbility weaponAttackAbility;
 
-        public SoUnitData UnitData { get => unitData; set => unitData = value; }
-        public List<PvSoUnitAbility> UnitAbilities => unitAbilities;
+        [SerializeField]
+        private PvSoUnitAbility weaponFollowUpAbility;
+
+        [SerializeField]
+        private PvSoUnitAbility weaponCounterAbility;
+
+        [SerializeField]
+        private PvSoWeaponAndRelicCollection weaponRelicCollection;
+
+        public PvSoBattleUnitData UnitData { get => unitData; set => unitData = value; }
+        public PvSoUnitAbility WeaponAttackAbility 
+            => weaponAttackAbility? weaponAttackAbility : weaponRelicCollection.emptyHandsAbilities[0];
+
+        public PvSoUnitAbility WeaponFollowUpAbility 
+            => weaponFollowUpAbility? weaponFollowUpAbility : weaponRelicCollection.emptyHandsAbilities[1];
+
+        public PvSoUnitAbility WeaponCounterAbility 
+            => weaponCounterAbility? weaponCounterAbility : weaponRelicCollection.emptyHandsAbilities[2];
 
         [SerializeField]
         private AttributeValuePair[] extraAttributes;
 
         [SerializeField]
-        private PvSoWeaponData[] ownedWeapons;
+        private PvSoWeaponData ownedWeapon;
 
         /// <summary>
         /// Gets the unique identifier of the object
@@ -63,27 +79,31 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public void Initialize()
         {
-            Initialize(new List<PvSoWeaponData>(ownedWeapons));
+            Initialize(ownedWeapon);
         }
 
-        public void Initialize(List<PvSoWeaponData> weapons)
+        public void Initialize(PvSoWeaponData weaponData)
         {
-            AnimationPlayableSupportBase animator = null;
-            PvSoUnitAbility defaultAbility = null;
-            
-            for (var i = 0; i <= 1; i++)
+            if (!weaponData)
             {
-                if (i >= weapons.Count)
-                {
-                    break;
-                }
+                return;
+            }
 
-                var weaponData = weapons[i];
-                var weaponRoot = FindChild(transform, i == 0? "weapon_r" : "weapon_l");
-                RefreshWeapon(weaponRoot, weaponData);
+            if (!ownedWeapon)
+            {
+                ownedWeapon = weaponData;
+            }
 
-                animator = weaponData.Animator;
-                defaultAbility = weaponData.DefaultAttackAbility;
+            var animator = weaponData.Animator;
+
+            weaponAttackAbility = weaponData.DefaultAttackAbility;
+            weaponFollowUpAbility = weaponData.DefaultFollowUpAbility;
+            weaponCounterAbility = weaponData.DefaultCounterAbility;
+
+            RefreshWeapon(FindChild(transform, "weapon_r"), weaponData.weaponInfos[0]);
+            if (weaponData.weaponInfos.Length > 1)
+            {
+                RefreshWeapon(FindChild(transform, "weapon_l"), weaponData.weaponInfos[1]);
             }
             
             if (animator)
@@ -91,25 +111,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 var animatorController = GetComponentInChildren<UnitAnimationManager>();
                 animatorController.SetupAnimationGraphDetails(animator, false);
             }
-
-            if (defaultAbility)
-            {
-                unitAbilities.Insert(0, defaultAbility);
-            }
         }
 
-        public void RefreshWeapon(Transform weaponRoot, PvSoWeaponData weaponData)
+        private void RefreshWeapon(Transform weaponRoot, FPvWeaponInfo weaponInfo)
         {
             if (weaponRoot.childCount > 0)
             {
                 Destroy(weaponRoot.GetChild(0).gameObject);
                 weaponRoot.DetachChildren();
             }
-            var prefab = weaponData.weaponPrefab;
-            var weaponInstance = Instantiate(prefab, weaponRoot);
-            weaponInstance.transform.localPosition = weaponData.prefabLocalPosition;
-            weaponInstance.transform.localRotation = weaponData.prefabLocalRotation;
-            weaponInstance.transform.localScale = weaponData.prefabLocalScale;
+
+            var weaponInstance = Instantiate(weaponInfo.weaponPrefab, weaponRoot);
+            weaponInstance.transform.localPosition = weaponInfo.prefabLocalPosition;
+            weaponInstance.transform.localRotation = weaponInfo.prefabLocalRotation;
+            weaponInstance.transform.localScale = weaponInfo.prefabLocalScale;
         }
 
         public void PostInitialize()
@@ -135,12 +150,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 attributeContainer.SetGeneralAttribute(attribute.m_AttributeType, attribute.m_Value);
             }
 
-            foreach (var weapon in ownedWeapons)
+            if (!ownedWeapon)
             {
-                foreach (var attributePair in weapon.attributes)
-                {
-                    attributeContainer.SetGeneralAttribute(attributePair.type, attributePair.value);
-                }
+                return;
+            }
+
+            foreach (var attributePair in ownedWeapon.attributes)
+            {
+                attributeContainer.SetGeneralAttribute(attributePair.type, attributePair.value);
             }
         }
 

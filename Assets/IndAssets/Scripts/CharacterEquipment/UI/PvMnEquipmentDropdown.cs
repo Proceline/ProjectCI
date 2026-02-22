@@ -1,11 +1,12 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using TMPro;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using System;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 
 namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 {
@@ -17,19 +18,25 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         [SerializeField] private TMP_Dropdown dropdown;
         
         private const string EMPTY_OPTION_TEXT = "(Empty)";
-        
-        // Store instanceIds for each option (index 0 is empty, so instanceIds[0] is empty string)
-        private List<string> _instanceIds = new List<string>();
+
+        // Store reference to instanceIds
+        private List<string> _instanceIds;
         // Store display names for dropdown
-        private List<string> _displayNames = new List<string>();
+        private List<string> _displayNames = new();
+
+        private readonly Dictionary<string, string> _usedInstancesWithHolders = new();
+
         private string _currentCharacterId; // Current character ID for this dropdown
         private int _slotIndex = -1; // Slot index for this dropdown (0, 1 for weapons; 0, 1, 2 for relics)
         [NonSerialized] private bool _isDropdownOpen = false; // Track if dropdown is currently open
         [NonSerialized] private int _closedChildrenCount;
 
+        [SerializeField] private UnityEvent onInitialized;
         [SerializeField] private UnityEvent<string, string, int> onEquipmentEquipped;
-        [SerializeField] private UnityEvent<string> onSlotHovered;
+        [SerializeField] private UnityEvent<string, string, bool> onSlotHovered;
         [SerializeField] private PvSoEquipDataUpdateEvent onEquipDataUpdateEvent;
+
+        [NonSerialized] private bool _isRegistered;
 
         private void Awake()
         {
@@ -42,12 +49,19 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
 
         void OnEnable()
         {
-            onEquipDataUpdateEvent.RegisterCallback(RefreshWithEquippedStatus);
+            if (!_isRegistered)
+            {
+                onEquipDataUpdateEvent.RegisterCallback(RefreshWithEquippedStatus);
+                _isRegistered = true;
+            }
         }
 
         void OnDisable()
         {
+            if (!_isRegistered)
+                return;
             onEquipDataUpdateEvent.UnregisterCallback(RefreshWithEquippedStatus);
+            _isRegistered = false;
         }
         
         private void OnDestroy()
@@ -61,30 +75,17 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <summary>
         /// Initialize dropdown with instanceIds and display names
         /// </summary>
-        public void Initialize(List<string> instanceIds, List<string> displayNames, string currentCharacterId, int slotIndex = -1)
+        public void Initialize(string currentCharacterId, int slotIndex = -1)
         {
-            _instanceIds = instanceIds ?? new List<string>();
-            _displayNames = displayNames ?? new List<string>();
+            if (!_isRegistered)
+            {
+                onEquipDataUpdateEvent.RegisterCallback(RefreshWithEquippedStatus);
+                _isRegistered = true;
+            }
+
             _currentCharacterId = currentCharacterId;
             _slotIndex = slotIndex;
-            
-            // Ensure both lists have the same count
-            if (_instanceIds.Count != _displayNames.Count)
-            {
-                Debug.LogWarning($"InstanceIds count ({_instanceIds.Count}) doesn't match DisplayNames count ({_displayNames.Count})");
-                int minCount = Mathf.Min(_instanceIds.Count, _displayNames.Count);
-                if (_instanceIds.Count > minCount) _instanceIds.RemoveRange(minCount, _instanceIds.Count - minCount);
-                if (_displayNames.Count > minCount) _displayNames.RemoveRange(minCount, _displayNames.Count - minCount);
-            }
-            
-            if (dropdown != null)
-            {
-                dropdown.ClearOptions();
-                // Add empty option at the beginning (index 0)
-                dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
-                // Add available equipment options with display names
-                dropdown.AddOptions(_displayNames);
-            }
+            onInitialized.Invoke();
         }
         
         /// <summary>
@@ -150,22 +151,40 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
                 dropdown.interactable = interactable;
             }
         }
-        
+
         private void OnDropdownValueChanged(int index)
         {
-            if (index == 0)
-            {
-                Debug.LogWarning("Equipment unequipped");
-                return;
-            }
-
             if (string.IsNullOrEmpty(_currentCharacterId))
             {
                 Debug.LogError("Character ID is null or empty");
                 return;
             }
 
-            onEquipmentEquipped?.Invoke(_instanceIds[index - 1], _currentCharacterId, _slotIndex);
+            // TODO: do unequipment
+            if (index == 0)
+            {
+                Debug.LogWarning("Equipment unequipped");
+                return;
+            }
+
+            var selectedInstance = _instanceIds[index - 1];
+            if (_usedInstancesWithHolders.ContainsKey(selectedInstance))
+            {
+                dropdown.SetValueWithoutNotify(0);
+
+                foreach (var instancePair in _usedInstancesWithHolders)
+                {
+                    var characterId = instancePair.Value;
+                    if (characterId == _currentCharacterId)
+                    {
+                        SetValueWithoutNotify(instancePair.Key);
+                    }
+                }
+            }
+            else
+            {
+                onEquipmentEquipped?.Invoke(_instanceIds[index - 1], _currentCharacterId, _slotIndex);
+            }
         }
         
         public void OnPointerEnter(PointerEventData eventData)
@@ -175,12 +194,13 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             string instanceId = GetValue();
             if (string.IsNullOrEmpty(instanceId)) return;
 
-            onSlotHovered?.Invoke(instanceId);
+            var characterId = _usedInstancesWithHolders.ContainsKey(instanceId) ? _usedInstancesWithHolders[instanceId] : string.Empty;
+            onSlotHovered?.Invoke(instanceId, characterId, true);
         }
         
         public void OnPointerExit(PointerEventData eventData)
         {
-            // Empty
+            onSlotHovered?.Invoke(string.Empty, string.Empty, false);
         }
         
         /// <summary>
@@ -198,8 +218,9 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
             int instanceIndex = dropdownItemIndex - 1;
             if (instanceIndex >= 0 && instanceIndex < _instanceIds.Count)
             {
-                string instanceId = _instanceIds[instanceIndex];
-                onSlotHovered?.Invoke(instanceId);
+                string instanceId = _instanceIds[instanceIndex]; 
+                var characterId = _usedInstancesWithHolders.ContainsKey(instanceId) ? _usedInstancesWithHolders[instanceId] : string.Empty;
+                onSlotHovered?.Invoke(instanceId, characterId, true);
             }
         }
         
@@ -234,58 +255,56 @@ namespace ProjectCI.CoreSystem.Runtime.CharacterEquipment.UI
         /// <param name="equippedInstanceIds">Dictionary of instance IDs that are currently equipped and the character they are equipped to</param>
         private void RefreshWithEquippedStatus(List<string> instanceIds, List<string> displayNames, Dictionary<string, string> equippedInstanceIds)
         {
-            if (!dropdown) return;
-            
-            // Save current selected value before refresh
-            string currentSelectedInstanceId = GetValue();
-            
-            // Ensure both lists have the same count
-            if (instanceIds.Count != displayNames.Count)
-            {
-                Debug.LogError($"InstanceIds count ({instanceIds.Count}) doesn't match DisplayNames count ({displayNames.Count})");
-                return;
-            }
-            
             // Update internal lists
             _instanceIds = instanceIds;
-            _displayNames = displayNames;
-            
+            _displayNames.Clear();
+            _displayNames = new List<string>(displayNames);
+            _usedInstancesWithHolders.Clear();
+
+            for (int i = 0; i < _displayNames.Count; i++)
+            {
+                string instanceId = _instanceIds[i];
+                if (!string.IsNullOrEmpty(instanceId) && equippedInstanceIds.TryGetValue(instanceId, out string equippedToCharacterId))
+                {
+                    _usedInstancesWithHolders.Add(instanceId, equippedToCharacterId);
+                }
+            }
+
+            RefreshWithEquippedStatus();
+        }
+
+        private void RefreshWithEquippedStatus()
+        {
+            if (!dropdown) return;
+
+            // Save current selected value before refresh
+            string currentSelectedInstanceId = GetValue();
+
             // Update dropdown options
             dropdown.ClearOptions();
             // Add empty option at the beginning (index 0)
             dropdown.AddOptions(new List<string> { EMPTY_OPTION_TEXT });
             // Add available equipment options with updated display names
-            dropdown.AddOptions(displayNames);
+            dropdown.AddOptions(_displayNames);
 
             // Update display names to show equipped status
-            for (int i = 0; i < displayNames.Count; i++)
+            for (int i = 0; i < _displayNames.Count; i++)
             {
                 string instanceId = _instanceIds[i];
-                if (!string.IsNullOrEmpty(instanceId) && equippedInstanceIds.TryGetValue(instanceId, out string equippedToCharacterId))
-                {
-                    // Check if equipped to current character or other character
-                    bool isEquippedToCurrentCharacter = equippedToCharacterId == _currentCharacterId;
-                    
-                    var targetDropdownItem = dropdown.options[i + 1];
-                    // Add equipped status marker to display name
-                    if (isEquippedToCurrentCharacter)
-                    {
-                        targetDropdownItem.text = $"{displayNames[i]} [已装备]";
-                    }
-                    else
-                    {
-                        targetDropdownItem.text = $"{displayNames[i]} [已被装备]";
-                    }
-                }
+                var outputString = _usedInstancesWithHolders.TryGetValue(instanceId, out var characterId) && characterId != _currentCharacterId ?
+                    $"<color=red>{_displayNames[i]}</color>" : _displayNames[i];
+                var targetDropdownItem = dropdown.options[i + 1];
+
+                targetDropdownItem.text = outputString;
             }
-            
+
             // Restore previous selection
             if (!string.IsNullOrEmpty(currentSelectedInstanceId))
             {
                 SetValueWithoutNotify(currentSelectedInstanceId);
             }
         }
-        
+
         /// <summary>
         /// Setup hover events for dropdown items
         /// </summary>

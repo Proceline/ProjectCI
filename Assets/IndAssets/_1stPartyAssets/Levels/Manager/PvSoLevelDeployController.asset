@@ -12,7 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bb8c44ac0dcd9647975eb4ee5bc61e3, type: 3}
   m_Name: PvSoLevelDeployController
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Deployment.PvSoDeploymentController
+  onDeployCellFocus: {fileID: 2551749035362828777, guid: fed0c82dd8e135f44811c4b37e9d79fe, type: 3}
   levelData: {fileID: 11400000, guid: 949b1e469e307cc408561ba8d2f0ba62, type: 2}
-  sceneUnitPrefab: {fileID: 3356841814951682856, guid: dfdd06b7100942341afb9af43a189030, type: 3}
-  deployedUnits: []
-  unitToSlotMapping: 

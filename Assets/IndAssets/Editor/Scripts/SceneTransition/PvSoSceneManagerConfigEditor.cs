@@ -3,7 +3,7 @@ using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.SceneTransition;
 using System.Collections.Generic;
 
-namespace ProjectCI.CoreSystem.Editor.SceneTransition
+namespace ProjectCI.CoreSystem.IEditor.SceneTransition
 {
     /// <summary>
     /// Custom editor for PvSoSceneManagerConfig
@@ -12,13 +12,13 @@ namespace ProjectCI.CoreSystem.Editor.SceneTransition
     [CustomEditor(typeof(PvSoSceneManagerConfig))]
     public class PvSoSceneManagerConfigEditor : UnityEditor.Editor
     {
-        private SerializedProperty _loadingSceneAssetProperty;
+        private SerializedProperty _loadingSceneNameProperty;
         private SerializedProperty _sceneConfigsProperty;
         private Vector2 _scrollPosition;
 
         private void OnEnable()
         {
-            _loadingSceneAssetProperty = serializedObject.FindProperty("loadingSceneAsset");
+            _loadingSceneNameProperty = serializedObject.FindProperty("loadingSceneName");
             _sceneConfigsProperty = serializedObject.FindProperty("sceneConfigs");
         }
 
@@ -31,21 +31,7 @@ namespace ProjectCI.CoreSystem.Editor.SceneTransition
             EditorGUILayout.Space();
 
             // Loading Scene Asset
-            EditorGUILayout.PropertyField(_loadingSceneAssetProperty, new GUIContent("Loading Scene Asset", "The loading scene that will be shown during scene transitions"));
-
-            // Display loading scene name (read-only)
-            PvSoSceneManagerConfig config = (PvSoSceneManagerConfig)target;
-            if (config.LoadingSceneAsset != null)
-            {
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Loading Scene Name:", GUILayout.Width(150));
-                EditorGUILayout.LabelField(config.LoadingSceneName, EditorStyles.helpBox);
-                EditorGUILayout.EndHorizontal();
-            }
-            else
-            {
-                EditorGUILayout.HelpBox("Please assign a Loading Scene Asset", MessageType.Warning);
-            }
+            EditorGUILayout.PropertyField(_loadingSceneNameProperty, new GUIContent("Loading Scene Asset", "The loading scene that will be shown during scene transitions"));
 
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

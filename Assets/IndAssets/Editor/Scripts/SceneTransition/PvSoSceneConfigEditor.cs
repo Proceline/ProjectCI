@@ -22,6 +22,8 @@ namespace ProjectCI.CoreSystem.Editor.SceneTransition
 
         public override void OnInspectorGUI()
         {
+            var sceneNameProperty = serializedObject.FindProperty("sceneName");
+
             serializedObject.Update();
 
             EditorGUILayout.Space();
@@ -37,7 +39,7 @@ namespace ProjectCI.CoreSystem.Editor.SceneTransition
             {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Scene Name:", GUILayout.Width(100));
-                EditorGUILayout.LabelField(config.SceneName, EditorStyles.helpBox);
+                EditorGUILayout.LabelField(sceneNameProperty.stringValue, EditorStyles.helpBox);
                 EditorGUILayout.EndHorizontal();
             }
             else
@@ -52,6 +54,12 @@ namespace ProjectCI.CoreSystem.Editor.SceneTransition
             // Prefabs to instantiate
             EditorGUILayout.LabelField($"Prefabs to Instantiate ({_prefabsToInstantiateProperty.arraySize})", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(_prefabsToInstantiateProperty, new GUIContent("Prefabs", "List of prefabs to instantiate when this scene is loaded"), true);
+
+            if (_sceneAssetProperty.objectReferenceValue && 
+                _sceneAssetProperty.objectReferenceValue.name != sceneNameProperty.stringValue)
+            {
+                sceneNameProperty.stringValue = _sceneAssetProperty.objectReferenceValue.name;
+            }
 
             serializedObject.ApplyModifiedProperties();
         }

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4c0719d78ecf44c9e9f72ee58fd233, type: 3}
+  m_Name: SoChar_003_INTP_Logician
+  m_EditorClassIdentifier: 
+  m_UnitName: DONG_XU
+  m_UnitClass: ROLE_INTP_CLASS
+  originalAttributes: []
+  m_TravelSound: {fileID: 0}
+  m_DamagedSound: {fileID: 0}
+  m_HealSound: {fileID: 0}
+  m_DeathSound: {fileID: 0}
+  m_bLookAtTargets: 1
+  m_bIsFlying: 0
+  m_HeightOffset: 0
+  m_MovementShape: {fileID: 11400000, guid: 299b955a5f8258f44a7f87dc6b2a1c18, type: 2}
+  m_SpawnOnHeal: []
+  m_AbilityPoints: 5
+  unitIdentifier: PlayerChar03
+  icon: {fileID: 21300000, guid: 256f6c715fdf7c845b8d33fb1c6afa9e, type: 3}
+  personalPassives:
+  - {fileID: 11400000, guid: 0abaab6e3b0ea9a47b367fbbadeb2076, type: 2}
+  meshes:
+  - {fileID: 8001354749718593143, guid: 7801d5fa27574414082ecc70b56cc6c9, type: 3}
+  - {fileID: 2568446364417295610, guid: cb2498b8c4c8bc14dbdb0fde482833a5, type: 3}
+  talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
+  personality:
+    energyLevel: 4
+    informationLevel: -3
+    decisionLevel: 5
+    styleLevel: -4
+    identityLevel: -3

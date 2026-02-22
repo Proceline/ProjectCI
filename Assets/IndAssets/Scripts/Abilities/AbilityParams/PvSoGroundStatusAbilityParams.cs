@@ -23,12 +23,17 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var groundStatusCommand = new PvGroundStatusCommand
             {
                 ResultId = resultId,
-                AbilityId = ability.ID,
                 OwnerId = fromUnit.ID,
                 TargetCellIndex = targetCell.GetIndex(),
                 RelatedGroundStatus = relatedGroundStatus
             };
             results.Enqueue(groundStatusCommand);
+        }
+
+        public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)
+        {
+            // Empty;
+            return 0;
         }
     }
 }
