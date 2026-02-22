@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FlatKitOutline
   m_EditorClassIdentifier: 
   m_Active: 1
-  settings: {fileID: 11400000, guid: ff3dfd77429d64938a26bd54c27dacd8, type: 2}
+  settings: {fileID: 11400000, guid: 9c9e29d63ae58c242b2c7670b74798d9, type: 2}
 --- !u!114 &-1344586528338988631
 MonoBehaviour:
   m_ObjectHideFlags: 0
