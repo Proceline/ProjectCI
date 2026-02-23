@@ -67,5 +67,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public string EntryId => unitIdentifier;
         public Sprite GetIcon => icon;
+
+        public int GetPersonalityLevel(EPvPersonalityName personalityElement)
+        {
+            return personality.GetBasicLevel(personalityElement);
+        }
     }
 } 
