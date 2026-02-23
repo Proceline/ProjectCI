@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace IndAssets.Scripts.Info
 {
@@ -17,6 +16,9 @@ namespace IndAssets.Scripts.Info
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI classText;
         [SerializeField] private Slider[] sliders = new Slider[4];
+
+        [SerializeField] private TextMeshProUGUI passiveNameText;
+        [SerializeField] private TextMeshProUGUI passiveDescText;
 
         private Button _button;
         private readonly List<TextMeshProUGUI[]> _personalitySideSymbols = new();
@@ -70,6 +72,9 @@ namespace IndAssets.Scripts.Info
                 UpdateSlider(sliders[1], 1, unitData.GetPersonalityLevel(EPvPersonalityName.Information));
                 UpdateSlider(sliders[2], 2, unitData.GetPersonalityLevel(EPvPersonalityName.Decisions));
                 UpdateSlider(sliders[3], 3, unitData.GetPersonalityLevel(EPvPersonalityName.Style));
+
+                passiveNameText.text = unitData.GetPersonalitySpecialDescription(out var desc);
+                passiveDescText.text = desc;
             }
         }
 

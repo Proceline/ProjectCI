@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: M_Defender_ISFJ_DeductOnOtherReceived
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Passives.PvSoOnOthersDamageModifier
   passiveTiming: 1
-  passiveName: '[Sacrifice]'
-  description: 
+  passiveName: "\u727A\u7272\u5B88\u62A4"
+  description: "\u5F53\u79CB\u8015\u7AD9\u5728\u53CB\u519B\u90BB\u8FD1\u4E14\u8840\u91CF\u4E3A\u6EE1\u65F6\uFF0C\u5C06\u4E3A\u53CB\u519B\u5438\u6536\u5927\u90E8\u5206\u4F24\u5BB3"
   onNotifyDamageBeforeRevEvent: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}
   raiserSimpleDamageApplyEvent: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
   finalDamageValue: 1
   damageParams: {fileID: 11400000, guid: da9be5c5bbfd5a245a34b616c033d3c1, type: 2}
   pureDamageAbility: {fileID: 11400000, guid: 038a281b57c08074c883202e93d0b51c, type: 2}
+  damageType: 0

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Passives.PvSoPassiveFollowAlterAction
   passiveTiming: 1
   passiveName: '[WeaknessPierce]'
-  description: 
+  description: "\u51AC\u7D6E\u7684\u6280\u80FD\uFF0C\u5F85\u5B9A"
   physicAbility: {fileID: 11400000, guid: 204f53a3171e774439ab66aebd526cd8, type: 2}
   magicAbility: {fileID: 11400000, guid: 1e0918ad16dfaf346b0b990b0df7f388, type: 2}
   physResistAttribute:

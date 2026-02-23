@@ -2,10 +2,10 @@ using IndAssets.Scripts.Units;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
-using UnityEngine;
 using ProjectCI.CoreSystem.Runtime.Services;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
+using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -71,6 +71,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public int GetPersonalityLevel(EPvPersonalityName personalityElement)
         {
             return personality.GetBasicLevel(personalityElement);
+        }
+
+        public string GetPersonalitySpecialDescription(out string desc)
+        {
+            var personalityPassive = personalPassives.Length > 0 ? personalPassives[0] : null;
+            
+            if (personalityPassive)
+            {
+                desc = personalityPassive.description;
+                return personalityPassive.PassiveName;
+            }
+
+            desc = string.Empty;
+            return string.Empty;
         }
     }
 } 

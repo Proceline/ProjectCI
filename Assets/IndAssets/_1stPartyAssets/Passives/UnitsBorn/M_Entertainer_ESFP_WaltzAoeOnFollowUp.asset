@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: M_Entertainer_ESFP_WaltzAoeOnFollowUp
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Passives.PvSoPassiveFollowAoe
   passiveTiming: 1
-  passiveName: '[WaltzAttack]'
-  description: 
+  passiveName: "\u5706\u821E\u66F2"
+  description: "\u5F53\u590F\u7B1B\u5141\u8BB8\u8FFD\u51FB\u65F6\uFF0C\u5468\u56F4\u6709\u4E24\u4E2A\u53CB\u519B\u5219\u4F1A\u8FDB\u884C\u4E00\u6B21\u8868\u6F14\u6027\u8D28\u7684\u5706\u821E\u66F2\u8FFD\u51FB"
   followUpAbility: {fileID: 11400000, guid: caf29f875bb54304997efacc76d82843, type: 2}
   targetToSelf: 1

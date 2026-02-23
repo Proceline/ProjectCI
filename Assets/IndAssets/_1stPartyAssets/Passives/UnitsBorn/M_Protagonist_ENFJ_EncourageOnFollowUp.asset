@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: M_Protagonist_ENFJ_EncourageOnFollowUp
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Passives.PvSoPassiveFollowEncourage
   passiveTiming: 1
-  passiveName: '[Encourage]'
-  description: 
+  passiveName: "\u52C7\u8005\u7684\u9F13\u821E"
+  description: "\u5F53\u6625\u96E8\u901F\u5EA6\u5927\u4E8E\u654C\u5BF9\u76EE\u6807\u4E00\u5B9A\u7A0B\u5EA6\u5219\u4F1A\u81EA\u52A8\u5BF9\u90BB\u8FD1\u53CB\u519B\u91CA\u653E\u4E00\u6B21\u8F85\u52A9\u6280\u80FD"

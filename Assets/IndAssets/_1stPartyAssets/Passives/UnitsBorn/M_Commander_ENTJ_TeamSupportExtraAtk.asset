@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13793ccf55c15c499f7bf3f51e1d6df, type: 3}
   m_Name: M_Commander_ENTJ_TeamSupportExtraAtk
   m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Passives.PvSoPassiveTeammateHit
-  passiveTiming: 0
-  passiveName: 
-  description: 
-  followUpNormalAttack: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  passiveTiming: 1
+  passiveName: "\u6218\u573A\u6307\u6325\u5B98"
+  description: "\u5F53\u51AC\u6E90\u5141\u8BB8\u8FFD\u51FB\u4E14\u76EE\u6807\u5468\u56F4\u6709\u53CB\u519B\u65F6\uFF0C\u8FFD\u51FB\u5C06\u88AB\u66FF\u6362\u6210\u53CB\u519B\u7684\u8FFD\u51FB"
