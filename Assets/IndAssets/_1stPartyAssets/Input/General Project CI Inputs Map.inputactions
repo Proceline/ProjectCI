@@ -498,6 +498,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Conversation",
+            "id": "06dcf2d3-1cc3-4e89-8ac5-059ab0448372",
+            "actions": [
+                {
+                    "name": "Advance",
+                    "type": "Button",
+                    "id": "b4da1ba5-cf5e-4ed9-9490-da8f25ce873b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AutoPlay",
+                    "type": "Button",
+                    "id": "2eaa6343-d9fe-44a0-b9e8-1eda81edaf65",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1972b2fc-3b1e-46fe-bf4c-4d58bbb826f5",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Advance",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d8e7c05-270f-47de-bb8c-468056566d40",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AutoPlay",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34c2aa394d79d9045b1d79bd2b18df74, type: 3}
+  m_Name: DialogueTextEntry 01
+  m_EditorClassIdentifier: Assembly-CSharp::IndAssets.Scripts.Dialogue.Data.PvSoUnitDialogueEntry
+  dialogueText: "\u8FD8\u6709\u5F88\u8FDC\uFF0C\u6CA1\u60F3\u5230\u9009\u6C11\u4EEC\u4E5F\u80FD\u8DD1\u5230\u8FD9\u513F"
+  portraitSide: 1
+  autoAdvanceDelay: 2
+  talkingUnit: {fileID: 11400000, guid: 3dbde1d4cae63d94d83c471b0c0e20cb, type: 2}
