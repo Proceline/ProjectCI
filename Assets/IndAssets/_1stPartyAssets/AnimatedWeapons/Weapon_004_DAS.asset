@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
+  m_Name: Weapon_004_DAS
+  m_EditorClassIdentifier: 
+  animator: {fileID: 11400000, guid: a01be1e33f594fd488107e6ce6c9e1f0, type: 2}
+  bindingAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  followUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  counterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  weaponInfos:
+  - weaponPrefab: {fileID: 6866762610448092830, guid: 745913cc4a0492141aaff934f0fa28c4, type: 3}
+    prefabLocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
+    prefabLocalPosition: {x: 0, y: 0, z: 0}
+    prefabLocalScale: {x: 1, y: 1, z: 1}
+  - weaponPrefab: {fileID: 6866762610448092830, guid: 745913cc4a0492141aaff934f0fa28c4, type: 3}
+    prefabLocalRotation: {x: 0.70710677, y: -0.00000003090862, z: -0.70710677, w: 0.00000003090862}
+    prefabLocalPosition: {x: 0, y: 0, z: 0}
+    prefabLocalScale: {x: 1, y: 1, z: 1}
+  weaponName: '[DualKnife]'
+  description: Hammer0Description
+  attributes:
+  - type:
+      value: 15
+    value: 0
+  - type:
+      value: 16
+    value: 2
+  - type:
+      value: 18
+    value: 0
+  - type:
+      value: 19
+    value: 0
+  - type:
+      value: 20
+    value: 0
