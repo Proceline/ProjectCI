@@ -69,7 +69,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
                         if (delta >= 0)
                         {
-                            var criticalAttribute = fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
+                            var criticalAttribute = 100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
                             if (caughtSeedValue > 1 && caughtSeedValue >= criticalAttribute)
                             {
                                 delta = 100;

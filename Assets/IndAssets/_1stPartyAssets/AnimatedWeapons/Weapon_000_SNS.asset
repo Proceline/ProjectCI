@@ -30,10 +30,10 @@ MonoBehaviour:
   attributes:
   - type:
       value: 15
-    value: 10
+    value: 12
   - type:
       value: 16
-    value: 1
+    value: 6
   - type:
       value: 18
     value: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
     value: 0
   - type:
       value: 23
-    value: 0
+    value: 5
   - type:
       value: 30
     value: 0

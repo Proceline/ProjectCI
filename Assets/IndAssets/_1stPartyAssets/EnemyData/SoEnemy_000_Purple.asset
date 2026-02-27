@@ -14,7 +14,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UnitName: ENEMY_PAWN_0
   m_UnitClass: ROLE_NT_CLASS
-  originalAttributes: []
+  originalAttributes:
+  - m_AttributeType:
+      value: 1
+    m_Value: 11
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 2
+    m_Value: 9
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 3
+    m_Value: 10
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 4
+    m_Value: 11
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 5
+    m_Value: 8
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 6
+    m_Value: 12
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 7
+    m_Value: 14
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 8
+    m_Value: 5
+    m_GainValue: 0
+  - m_AttributeType:
+      value: 0
+    m_Value: 0
+    m_GainValue: 0
   m_TravelSound: {fileID: 0}
   m_DamagedSound: {fileID: 0}
   m_HealSound: {fileID: 0}
@@ -32,9 +68,3 @@ MonoBehaviour:
   meshes: []
   talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
   talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}
-  personality:
-    energyLevel: 0
-    informationLevel: 0
-    decisionLevel: 0
-    styleLevel: 0
-    identityLevel: 0

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
@@ -8,25 +7,17 @@ using UnityEngine;
 
 namespace ProjectCI.TacticTool.Formula.Concrete
 {
-    // Inherit all attribute logic from UnitAttributeContainer
+    [StaticInjectableTarget]
     public class FormulaAttributeContainer : UnitAttributeContainer
     {
-        private readonly FormulaAttributeDictionary _formulaAttributeDictionary;
         private readonly Dictionary<AttributeType, FormulaDefinition> _attributesFormulaMap = new();
         private readonly IEventOwner _eventOwner;
         
-        [Inject, NonSerialized]
-        private PvSoModifiersManager _modifiersManager;
-
-        public FormulaAttributeContainer()
-        {
-            
-        }
+        [Inject]
+        private static PvSoModifiersManager _modifiersManager;
         
         public FormulaAttributeContainer(FormulaCollection formulaCollection, IEventOwner eventOwner)
         {
-            DIConfiguration.InjectFromConfiguration(this);
-            _formulaAttributeDictionary = new FormulaAttributeDictionary(this);
             if (formulaCollection != null)
             {
                 foreach (var formulaDefinition in formulaCollection.Formulas)
@@ -52,11 +43,17 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         
         private int GetAdvancedAttributeValue(AttributeType type)
         {
+            if (GeneralAttributes.TryGetValue(type, out var basicValue))
+            {
+                return GetAttributeValue(type);
+            }
+
             if (_attributesFormulaMap.TryGetValue(type, out var formulaDefinition))
             {
-                float formulaBasicValue = FormulaCalculator.CalculateFormula(formulaDefinition, _formulaAttributeDictionary);
+                float formulaBasicValue = FormulaCalculator.CalculateFormula(formulaDefinition, GetAttributeValue);
                 return _modifiersManager.GetModifiedValue(_eventOwner, type, formulaBasicValue);
             }
+
             return 0;
         }
 

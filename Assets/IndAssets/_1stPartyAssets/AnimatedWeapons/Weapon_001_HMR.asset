@@ -16,10 +16,6 @@ MonoBehaviour:
   bindingAbility: {fileID: 11400000, guid: 15f4a455953cd2142ad1458d7c19bf34, type: 2}
   followUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   counterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
-  weaponPrefab: {fileID: 1508111972039902, guid: 89b90286461bbc54c8a7071998f61d6a, type: 3}
-  prefabLocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
-  prefabLocalPosition: {x: 0, y: 0, z: 0}
-  prefabLocalScale: {x: 1.5, y: 1.5, z: 1.5}
   weaponInfos:
   - weaponPrefab: {fileID: 1508111972039902, guid: 89b90286461bbc54c8a7071998f61d6a, type: 3}
     prefabLocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
@@ -30,10 +26,10 @@ MonoBehaviour:
   attributes:
   - type:
       value: 15
-    value: 0
+    value: 18
   - type:
       value: 16
-    value: 3
+    value: 10
   - type:
       value: 18
     value: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AttributeTypeDefinitionManager
   m_EditorClassIdentifier: 
   attributeTypeNames:
-  - Health
+  - Steps
   - Extraversion
   - Introversion
   - Sense

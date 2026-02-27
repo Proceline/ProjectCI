@@ -59,6 +59,52 @@ namespace ProjectCI.TacticTool
             return stack.Pop();
         }
 
+        public static float CalculateFormula(FormulaDefinition formula, Func<AttributeType, int> getAttributeValue)
+        {
+            if (formula.FormulaNodes.Count == 0)
+                return 0f;
+
+            var nodes = formula.FormulaNodes;
+            var stack = new Stack<float>();
+
+            foreach (var node in nodes)
+            {
+                switch (node.Type)
+                {
+                    case FormulaNode.NodeType.Attribute:
+                        var value = getAttributeValue.Invoke(node.AttributeType);
+                        stack.Push(value);
+                        break;
+
+                    case FormulaNode.NodeType.Constant:
+                        stack.Push(node.ConstantValue);
+                        break;
+
+                    case FormulaNode.NodeType.Operator:
+                        if (stack.Count < 2)
+                            throw new InvalidOperationException("Invalid formula: not enough operands for operator");
+
+                        float b = stack.Pop();
+                        float a = stack.Pop();
+                        float result = CalculateOperation(a, b, node.OperatorSymbol);
+
+                        // If preventNegativeSubResult is enabled, ensure the result is not negative
+                        if (formula.PreventNegativeSubResult)
+                        {
+                            result = Mathf.Max(0, result);
+                        }
+
+                        stack.Push(formula.PreventFloatDuringCalculation ? result : Mathf.Floor(result));
+                        break;
+                }
+            }
+
+            if (stack.Count != 1)
+                throw new InvalidOperationException("Invalid formula: incorrect number of operands");
+
+            return stack.Pop();
+        }
+
         private static float CalculateOperation(float a, float b, string operatorSymbol)
         {
             return operatorSymbol switch

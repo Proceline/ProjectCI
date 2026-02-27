@@ -68,17 +68,21 @@ namespace IndAssets.Scripts.Info
             {
                 nameText.text = selfNameText.text;
                 classText.text = unitData.GetClassName();
-                UpdateSlider(sliders[0], 0, unitData.GetPersonalityLevel(EPvPersonalityName.Energy));
-                UpdateSlider(sliders[1], 1, unitData.GetPersonalityLevel(EPvPersonalityName.Information));
-                UpdateSlider(sliders[2], 2, unitData.GetPersonalityLevel(EPvPersonalityName.Decisions));
-                UpdateSlider(sliders[3], 3, unitData.GetPersonalityLevel(EPvPersonalityName.Style));
+                var energyOutput = unitData.GetPersonalityLevel(EPvPersonalityName.Energy, out var energyDetails);
+                var infoOutput = unitData.GetPersonalityLevel(EPvPersonalityName.Information, out var infoDetails);
+                var decisionOutput = unitData.GetPersonalityLevel(EPvPersonalityName.Decisions, out var decisionDetails);
+                var styleOutput = unitData.GetPersonalityLevel(EPvPersonalityName.Style, out var styleDetails);
+                UpdateSlider(sliders[0], 0, energyOutput, energyDetails);
+                UpdateSlider(sliders[1], 1, infoOutput, infoDetails);
+                UpdateSlider(sliders[2], 2, decisionOutput, decisionDetails);
+                UpdateSlider(sliders[3], 3, styleOutput, styleDetails);
 
                 passiveNameText.text = unitData.GetPersonalitySpecialDescription(out var desc);
                 passiveDescText.text = desc;
             }
         }
 
-        private void UpdateSlider(Slider slider, int index, int value)
+        private void UpdateSlider(Slider slider, int index, int value, (int, int) details)
         {
             var symbols = _personalitySideSymbols[index];
             if (symbols.Length > 1)
@@ -98,6 +102,12 @@ namespace IndAssets.Scripts.Info
                     symbols[0].alpha = 1;
                     symbols[1].alpha = FadeValue;
                 }
+            }
+
+            if (symbols.Length > 3)
+            {
+                symbols[2].text = details.Item1.ToString();
+                symbols[3].text = details.Item2.ToString();
             }
 
             slider.value = value;

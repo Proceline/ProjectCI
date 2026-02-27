@@ -1,10 +1,12 @@
 using IndAssets.Scripts.Units;
 using ProjectCI.CoreSystem.Runtime.Abilities;
+using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Saving.Interfaces;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
@@ -12,6 +14,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "NewUnitData", menuName = "ProjectCI Tools/Create PvSoUnitData", order = 1)]
     public class PvSoBattleUnitData : SoUnitData, IPvSaveEntry
     {
+        private readonly Dictionary<AttributeType, int> _runtimeOriginalAttributes = new();
+
         [SerializeField] private string unitIdentifier;
         [SerializeField] private Sprite icon;
         
@@ -33,8 +37,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public PvSoUnitAbility TalentedSupportAbility => talentedSupportAbility;
         public PvSoUnitAbility TalentedUltimateAbility => talentedUltimateAbility;
 
-        [SerializeField] private PvPersonalitiesCombination personality;
-
         private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
         private static FormulaCollection FormulaColInstance => FormulaService.Service;
 
@@ -44,19 +46,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 pawnUnit.RuntimeAttributes.SetGeneralAttribute(attrItem.m_AttributeType, attrItem.m_Value);
             }
-
-            var energyLevel = personality.GetBasicLevel(EPvPersonalityName.Energy);
-            var informationLevel = personality.GetBasicLevel(EPvPersonalityName.Information);
-            var decisionLevel = personality.GetBasicLevel(EPvPersonalityName.Decisions);
-            var styleLevel = personality.GetBasicLevel(EPvPersonalityName.Style);
-            var energyAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Energy);
-            var informationAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Information);
-            var decisionAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Decisions);
-            var styleAttribute = FormulaColInstance.GetPersonalityAttribute(EPvPersonalityName.Style);
-            pawnUnit.RuntimeAttributes.SetGeneralAttribute(energyAttribute, energyLevel);
-            pawnUnit.RuntimeAttributes.SetGeneralAttribute(informationAttribute, informationLevel);
-            pawnUnit.RuntimeAttributes.SetGeneralAttribute(decisionAttribute, decisionLevel);
-            pawnUnit.RuntimeAttributes.SetGeneralAttribute(styleAttribute, styleLevel);
 
             if (pawnUnit is PvMnBattleGeneralUnit battleUnit)
             {
@@ -73,9 +62,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public string EntryId => unitIdentifier;
         public Sprite GetIcon => icon;
 
-        public int GetPersonalityLevel(EPvPersonalityName personalityElement)
+        /// <summary>
+        /// Should only be used in UI sessions
+        /// </summary>
+        /// <param name="personalityElement"></param>
+        /// <returns></returns>
+        public int GetPersonalityLevel(EPvPersonalityName personalityElement, out (int, int) details)
         {
-            return personality.GetBasicLevel(personalityElement);
+            details = (0, 0);
+            return FormulaColInstance.GetPersonalityDifference(personalityElement, GetOriginalAttributeValue, out details);
+        }
+
+        private int GetOriginalAttributeValue(AttributeType attributeType)
+        {
+            if (_runtimeOriginalAttributes.Count == 0)
+            {
+                foreach (var item in originalAttributes)
+                {
+                    _runtimeOriginalAttributes.Add(item.m_AttributeType, item.m_Value);
+                }
+            }
+
+            if (_runtimeOriginalAttributes.TryGetValue(attributeType, out var value))
+            {
+                return value;
+            }
+            return 0;
         }
 
         public string GetPersonalitySpecialDescription(out string desc)
