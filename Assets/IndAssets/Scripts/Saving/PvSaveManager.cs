@@ -27,6 +27,9 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         [Header("Save System Configuration")]
         [SerializeField] private bool useCloudSave = false; // Toggle between local and cloud storage
         [SerializeField] private bool enableSaveEncryption = true; // Enable encryption for save files
+
+        [Header("Save Data Template for Test-only")]
+        [SerializeField] private PvSoSaveEntryTemplate usingTemplate;
         
         private IPvSaveSystem _saveSystem;
         private PvSaveData _currentSaveData;
@@ -143,6 +146,13 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
         /// </summary>
         public async Task<bool> LoadGameByGuidAsync(PvSaveDetails saveDetails)
         {
+            if (usingTemplate)
+            {
+                Debug.LogWarning("Currently using Template!");
+                _currentSaveData = usingTemplate.TranslateToSaveData();
+                return true;
+            }
+
             if (!_isInitialized || _saveSystem == null)
             {
                 Debug.LogError("Save system not initialized");
@@ -334,6 +344,12 @@ namespace ProjectCI.CoreSystem.Runtime.Saving
             return _currentSaveData.GetAvailableRelicInstances();
         }
 
+        /// <summary>
+        /// Binded in CharInfoCanvasManager prefab, WeaponDropdownMain, PvMnEquipmentDropdown.cs
+        /// </summary>
+        /// <param name="weaponInstanceId"></param>
+        /// <param name="characterId"></param>
+        /// <param name="index"></param>
         public static void EquipWeaponToCharacter(string weaponInstanceId, string characterId, int index)
             => EquipWeaponToCharacter(weaponInstanceId, characterId);
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197f0955a174a8b4492572d999055404, type: 3}
   m_Name: Weapon_001_HMR
   m_EditorClassIdentifier: 
-  animator: {fileID: 11400000, guid: ac20ea71bb454824681b3f92b3f78572, type: 2}
+  animator: {fileID: 11400000, guid: a7e509107054d4d47b101e016ae9dbd6, type: 2}
   bindingAbility: {fileID: 11400000, guid: 15f4a455953cd2142ad1458d7c19bf34, type: 2}
   followUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   counterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}

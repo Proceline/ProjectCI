@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f4f2e7f8398dfd43a3cfd1083eb61d2, type: 3}
+  m_Name: _template_MockSaveDataChar 04
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Saving.Data.PvSoSaveCharacterTemplate
+  unitData: {fileID: 11400000, guid: aa3c59ec7a3e07f4b8c22898e520b057, type: 2}
+  holdingWeapon: {fileID: 11400000, guid: de8614ffa5419ed4f87da7632bb4a29d, type: 2}
+  holdingWeaponInstId: _HAMMER_000

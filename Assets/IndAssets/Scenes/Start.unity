@@ -4961,6 +4961,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SaveManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6380136987885106805, guid: 0998b7e5d65d56f48ae1b3f9f4265a0b, type: 3}
+      propertyPath: usingTemplate
+      value: 
+      objectReference: {fileID: 11400000, guid: 6745175ae6ce98949bee082836c0a9d9, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

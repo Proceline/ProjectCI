@@ -31,7 +31,12 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             set => characterId = value;
         }
         
-        public string WeaponInstanceId => weaponInstanceId;
+        public string WeaponInstanceId
+        {
+            get => weaponInstanceId;
+            internal set => weaponInstanceId = value;
+        }
+
         public List<string> RelicInstanceIds => relicInstanceIds;
         
         /// <summary>

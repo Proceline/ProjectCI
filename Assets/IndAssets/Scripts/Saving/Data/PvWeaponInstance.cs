@@ -28,9 +28,17 @@ namespace ProjectCI.CoreSystem.Runtime.Saving.Data
             set => weaponDataId = value;
         }
         
-        public bool IsEquipped => isEquipped;
+        public bool IsEquipped
+        {
+            get => isEquipped; 
+            internal set => isEquipped = value; 
+        }
         
-        public string EquippedToCharacterId => equippedToCharacterId;
+        public string EquippedToCharacterId
+        {
+            get => equippedToCharacterId;
+            internal set => equippedToCharacterId = value;
+        }
         
         /// <summary>
         /// Default constructor
