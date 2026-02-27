@@ -74,15 +74,16 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var isCritical = false;
             if (isCriticalEnabledByDefault && passValue == 100)
             {
-                var criticalAmountAdjustor = fromContainer.GetAttributeValue(criticalAmountAttribute);
-                criticalAmountAdjustor += 100;
-                if (criticalAmountAdjustor > 100)
+                var suggestedCritAmount = fromContainer.GetAttributeValue(criticalAmountAttribute);
+                if (suggestedCritAmount > damage)
                 {
-                    criticalAmountAdjustor = 100;
+                    damage += suggestedCritAmount;
                 }
-                
-                var extraDamage = damage * criticalAmountAdjustor / 100;
-                damage += extraDamage;
+                else
+                {
+                    damage *= 2;
+                }
+
                 isCritical = true;
             }
 

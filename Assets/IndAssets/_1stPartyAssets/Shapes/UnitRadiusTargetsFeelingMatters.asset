@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0629e68afae480943af2f9a49e8d19aa, type: 3}
-  m_Name: UnitRadiusTargetsDecisionMatters
+  m_Name: UnitRadiusTargetsFeelingMatters
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Abilities.Concrete.PvSoRadiusShapeWithAttribute
   onlyIncludedTargets: 1
   allowStopOnBlock: 0
   boostAttribute:
-    value: 3
-  threshold: 0.5
+    value: 21
+  threshold: 1
   sumOrDifference: 0

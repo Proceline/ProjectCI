@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PvSoDirectDamageParams_Heal
   m_EditorClassIdentifier: 
   attackerAttribute:
-    value: 28
+    value: 31
   defenderAttribute:
     value: 31
   damageType: 7

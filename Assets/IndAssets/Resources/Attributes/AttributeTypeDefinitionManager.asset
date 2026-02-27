@@ -14,28 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attributeTypeNames:
   - Health
-  - Energy
-  - Information
-  - Decisions
-  - Style
-  - Identity
-  - Defense
-  - Resistance
-  - UnitType
+  - Extraversion
+  - Introversion
+  - Sense
+  - Intuition
+  - Thinking
+  - Feeling
+  - Judgement
+  - Perception
   - CRTical
   - ACCuracy
   - AVOid
   - PATtack
-  - MATtack
+  - MRAnge
   - ATSpeed
   - _weaponMight
   - _weaponWeight
-  - Build
+  - WEIght
   - _weaponHit
   - _weaponCritical
   - _weaponDodge
-  - CHAccuracy
-  - CAVoid
+  - SRAnge
+  - LRAnge
   - _weaponResilience
   - _skillCharm
   - _range

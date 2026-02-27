@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_Defense_v1
+  m_Name: FormulaDefinition_SpeedOnAttack
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 27
+    value: 14
   formulaNodes:
   - type: 2
     attributeType:
       value: 0
     operatorSymbol: 
-    constantValue: 5
+    constantValue: 10
   - type: 0
     attributeType:
-      value: 30
+      value: 8
     operatorSymbol: 
     constantValue: 0
   - type: 1
@@ -32,13 +32,13 @@ MonoBehaviour:
     constantValue: 0
   - type: 0
     attributeType:
-      value: 4
+      value: 17
     operatorSymbol: +
     constantValue: 0
   - type: 1
     attributeType:
       value: 0
-    operatorSymbol: +
+    operatorSymbol: '-'
     constantValue: 0
   preventNegativeSubResult: 1
   preventFloatDuringCalculation: 0

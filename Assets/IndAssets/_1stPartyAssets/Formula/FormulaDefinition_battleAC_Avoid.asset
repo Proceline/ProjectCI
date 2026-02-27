@@ -10,35 +10,65 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6342120630b519b4c80ed236883ddbc1, type: 3}
-  m_Name: FormulaDefinition_AttackSpeed_v2
+  m_Name: FormulaDefinition_battleAC_Avoid
   m_EditorClassIdentifier: 
   targetAttribute:
-    value: 14
+    value: 11
   formulaNodes:
   - type: 2
     attributeType:
-      value: 0
-    operatorSymbol: 
-    constantValue: 20
+      value: 4
+    operatorSymbol: +
+    constantValue: 60
   - type: 0
     attributeType:
-      value: 1
-    operatorSymbol: 
+      value: 4
+    operatorSymbol: +
+    constantValue: 60
+  - type: 2
+    attributeType:
+      value: 4
+    operatorSymbol: +
+    constantValue: 2
+  - type: 1
+    attributeType:
+      value: 4
+    operatorSymbol: '*'
     constantValue: 0
   - type: 1
     attributeType:
-      value: 0
+      value: 4
     operatorSymbol: +
     constantValue: 0
   - type: 0
     attributeType:
-      value: 16
+      value: 7
+    operatorSymbol: +
+    constantValue: 0
+  - type: 2
+    attributeType:
+      value: 4
+    operatorSymbol: +
+    constantValue: 4
+  - type: 1
+    attributeType:
+      value: 4
+    operatorSymbol: '*'
+    constantValue: 0
+  - type: 1
+    attributeType:
+      value: 4
+    operatorSymbol: +
+    constantValue: 0
+  - type: 0
+    attributeType:
+      value: 20
     operatorSymbol: +
     constantValue: 0
   - type: 1
     attributeType:
-      value: 0
-    operatorSymbol: '-'
+      value: 20
+    operatorSymbol: +
     constantValue: 0
   preventNegativeSubResult: 0
   preventFloatDuringCalculation: 0

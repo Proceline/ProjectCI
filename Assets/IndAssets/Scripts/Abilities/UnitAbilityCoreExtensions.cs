@@ -64,15 +64,16 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
                     if (cellUnit && !cellUnit.IsDead())
                     {
-                        var criticalAttribute = 100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
-                        if (caughtSeedValue >= criticalAttribute)
+                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
+                        delta = dcFinal - acFinal;
+
+                        if (delta >= 0)
                         {
-                            delta = 100;
-                        }
-                        else 
-                        {
-                            var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
-                            delta = dcFinal - acFinal;
+                            var criticalAttribute = fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
+                            if (caughtSeedValue > 1 && caughtSeedValue >= criticalAttribute)
+                            {
+                                delta = 100;
+                            }
                         }
                     }
 

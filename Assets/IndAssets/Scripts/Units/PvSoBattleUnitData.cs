@@ -40,6 +40,11 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public override void InitializeUnitDataToGridUnit(GridPawnUnit pawnUnit)
         {
+            foreach (var attrItem in originalAttributes)
+            {
+                pawnUnit.RuntimeAttributes.SetGeneralAttribute(attrItem.m_AttributeType, attrItem.m_Value);
+            }
+
             var energyLevel = personality.GetBasicLevel(EPvPersonalityName.Energy);
             var informationLevel = personality.GetBasicLevel(EPvPersonalityName.Information);
             var decisionLevel = personality.GetBasicLevel(EPvPersonalityName.Decisions);

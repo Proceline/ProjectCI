@@ -13,15 +13,12 @@ MonoBehaviour:
   m_Name: PvSoDirectDamageParams_MagLite
   m_EditorClassIdentifier: 
   attackerAttribute:
-    value: 13
+    value: 31
   defenderAttribute:
     value: 31
   damageType: 3
   criticalAmountAttribute:
-    value: 31
-  useDynamicAddon: 0
-  dynamicAmountDependency:
-    value: 3
+    value: 4
   damageForm: 9
   basicAddon: 10
   isCriticalEnabledByDefault: 0
