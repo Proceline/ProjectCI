@@ -1,11 +1,9 @@
 using IndAssets.Scripts.Abilities;
-using IndAssets.Scripts.Random;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
-using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
@@ -46,8 +44,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         [Inject]
         private static IFinalReceiveDamageModifier _receiveDamageModifier;
-
-        private static readonly ServiceLocator<PvSoRandomSeedCentre> RandomSeedProvider = new();
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
             GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
