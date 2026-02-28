@@ -47,11 +47,23 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
             var fromContainer = caster.RuntimeAttributes;
             var caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
-            var dcFinal = fromContainer.GetAttributeValue(ability.DcAttribute) + caughtSeedValue;
+            var dcFinal = GetAccurateResult(caughtSeedValue);
+
+            // Function to get final accuracy
+            int GetAccurateResult(int randomResult)
+            {
+                return fromContainer.GetAttributeValue(ability.DcAttribute) + randomResult;
+            }
 
             List<LevelCellBase> effectedCells = ability.GetEffectedCells(caster, mainTarget.GetCell());
             foreach (AbilityParamBase param in ability.GetParameters())
             {
+                if (param is PvSoBreakPointParams)
+                {
+                    caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
+                    dcFinal = GetAccurateResult(caughtSeedValue);
+                }
+
                 foreach (var cell in effectedCells)
                 {
                     if (!ability.IsAppliedOnSelf && cell == caster.GetCell())

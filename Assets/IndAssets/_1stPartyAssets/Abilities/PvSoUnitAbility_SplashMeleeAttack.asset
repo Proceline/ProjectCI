@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: PvSoUnitAbility_SplashMeleeAttack
   m_EditorClassIdentifier: 
   m_AbilityName: AttackSample_Splash
-  m_Icon: {fileID: 0}
   m_Radius: 1
-  m_ActionPointCost: 1
   m_bAllowBlocked: 1
   m_EffectedTeam: 2
   m_EffectedType: 0
@@ -27,9 +25,17 @@ MonoBehaviour:
   - {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
   m_Params:
   - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
-  m_Ailments: []
+  abilityParams:
+  - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
   isCounterAllowed: 1
   isFollowUpAllowed: 1
   isAbilityWeapon: 1
+  isAppliedOnSelf: 0
+  isSupportAbility: 0
+  iconSprite: {fileID: 0}
+  dcAttribute:
+    value: 10
+  acAttribute:
+    value: 11
   projectilePrefab: {fileID: 0}
-  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
+  abilityAnimationName: 0

@@ -5,6 +5,7 @@ using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Commands;
+using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -90,15 +91,25 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             await UnitAbilityCoreExtensions.WaitUntilLockReleased(casterUnit);
 
             var animationName = ability.AnimationName;
-            var executedTime = await WaitUntilProjectileFinished(animationName, casterUnit, target, ability.ProjectilePrefab);
+            var animBreakTime = await WaitAnimBreakFinished(animationName, casterUnit, target);
+            var executedTime = animBreakTime;
+            if (ability.ProjectilePrefab)
+            {
+                executedTime += await WaitProjectileFinished(casterUnit, target, ability.ProjectilePrefab);
+            }
 
             // TODO: Handle Audio
-            // AudioPlayData audioData = new AudioPlayData(audioOnExecute);
-            // AudioHandler.PlayAudio(audioData, casterUnit.gameObject.transform.position);
 
             while (commands.TryDequeue(out var toDoCommand))
             {
-                toDoCommand.ApplyResultOnVisual(ability, _unitIdToBattleUnitHash);
+                if (toDoCommand is PvBreakPointCommand)
+                {
+                    await Awaitable.WaitForSecondsAsync(animBreakTime);
+                }
+                else
+                {
+                    toDoCommand.ApplyResultOnVisual(ability, _unitIdToBattleUnitHash);
+                }
             }
 
             // If there is no ability, just wait for a while to make sure the visual result is applied after the logic result
@@ -120,8 +131,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        private async Awaitable<float> WaitUntilProjectileFinished(AnimationPvCustomName animName, GridPawnUnit casterUnit,
-            LevelCellBase target, PvMnProjectile projectilePrefab)
+        /// <summary>
+        /// Wait first break point, including projectile duration
+        /// </summary>
+        /// <param name="animName"></param>
+        /// <param name="casterUnit"></param>
+        /// <param name="target"></param>
+        /// <param name="projectilePrefab"></param>
+        /// <returns></returns>
+        private async Awaitable<float> WaitAnimBreakFinished(AnimationPvCustomName animName, GridPawnUnit casterUnit, LevelCellBase target)
         {
             if (animName == AnimationPvCustomName.DoNothing)
             {
@@ -134,17 +152,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             var firstExecuteTime = GetPresetAnimationBreakPointFunc.Raise(casterUnit.transform, animName.ToString());
 
             await Awaitable.WaitForSecondsAsync(firstExecuteTime);
+            return firstExecuteTime;
+        }
 
-            if (!projectilePrefab)
-            {
-                return firstExecuteTime;
-            }
-
+        private async Awaitable<float> WaitProjectileFinished(GridPawnUnit casterUnit, LevelCellBase target, PvMnProjectile projectilePrefab)
+        {
             var projectile = PvMnProjectilePool.InstantiateProjectile(projectilePrefab);
             await UnitAbilityCoreExtensions.ApplyProjectile(projectile, casterUnit.transform.position, target.transform.position);
-            firstExecuteTime += projectile.ProgressDuration;
-
-            return firstExecuteTime;
+            return projectile.ProgressDuration;
         }
     }
 }

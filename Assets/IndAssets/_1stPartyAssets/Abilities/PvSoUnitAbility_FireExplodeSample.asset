@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: PvSoUnitAbility_FireExplodeSample
   m_EditorClassIdentifier: 
   m_AbilityName: FireExplode
-  m_Icon: {fileID: 0}
   m_Radius: 2
-  m_ActionPointCost: 1
   m_bAllowBlocked: 1
   m_EffectedTeam: 2
   m_EffectedType: 0
@@ -29,21 +27,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a7d55a81f42ad4842bdcd564ffa485c4, type: 2}
   - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   - {fileID: 11400000, guid: 87ad9c8d89a1cc249bffdb59ed18e269, type: 2}
+  abilityParams:
+  - {fileID: 11400000, guid: a7d55a81f42ad4842bdcd564ffa485c4, type: 2}
+  - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
+  - {fileID: 11400000, guid: 87ad9c8d89a1cc249bffdb59ed18e269, type: 2}
   isCounterAllowed: 1
   isFollowUpAllowed: 0
-  isAutoFollowUpAllowed: 0
   isAbilityWeapon: 1
+  isAppliedOnSelf: 0
+  isSupportAbility: 0
+  iconSprite: {fileID: 0}
+  dcAttribute:
+    value: 10
+  acAttribute:
+    value: 11
   projectilePrefab: {fileID: 0}
-  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
-  onUnitEnteredInCombating:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitEnteredInCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombating:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitLeftFromCombatingAsTarget:
-    m_PersistentCalls:
-      m_Calls: []
+  abilityAnimationName: 0

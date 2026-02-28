@@ -13,23 +13,28 @@ MonoBehaviour:
   m_Name: PvSoUnitAbility_FireBoltSample
   m_EditorClassIdentifier: 
   m_AbilityName: AttackSample
-  m_Icon: {fileID: 0}
   m_Radius: 2
-  m_ActionPointCost: 1
   m_bAllowBlocked: 1
   m_EffectedTeam: 2
   m_EffectedType: 0
   m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
-  m_SpawnOnCaster: []
-  m_SpawnOnTarget: []
+  spawnOnCaster: []
+  spawnOnTarget: []
   m_Params:
   - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
-  m_Ailments: []
+  abilityParams:
+  - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   isCounterAllowed: 1
   isFollowUpAllowed: 1
   isAbilityWeapon: 1
+  isAppliedOnSelf: 0
+  isSupportAbility: 0
+  iconSprite: {fileID: 0}
+  dcAttribute:
+    value: 10
+  acAttribute:
+    value: 11
   projectilePrefab: {fileID: 8337765058929653559, guid: 00349f9e556150d4ebfd20f94ba61cc2, type: 3}
-  abilityAnimation: {fileID: 11400000, guid: 301990200792d3d49ae363a2a03e0330, type: 2}
-  hitEffectPrefab: {fileID: 5976799327186537325, guid: 30ea9158161b6df46b80ee9ed9d12216, type: 3}
+  abilityAnimationName: 0

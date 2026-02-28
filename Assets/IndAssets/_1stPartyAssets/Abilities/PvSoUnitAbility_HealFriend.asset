@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: PvSoUnitAbility_HealFriend
   m_EditorClassIdentifier: 
   m_AbilityName: '[Heal]'
-  m_Icon: {fileID: 2800000, guid: 734d32258bac0664a8e515872d58f9b8, type: 3}
   m_Radius: 2
-  m_ActionPointCost: 1
   m_bAllowBlocked: 1
   m_EffectedTeam: 1
   m_EffectedType: 0
@@ -26,6 +24,8 @@ MonoBehaviour:
   spawnOnTarget:
   - {fileID: 4772634663576830964, guid: afd2f82550dd15e4cbfc80a0f21b7648, type: 3}
   m_Params:
+  - {fileID: 11400000, guid: efb7dbd38a66e974aa15793edb14674f, type: 2}
+  abilityParams:
   - {fileID: 11400000, guid: efb7dbd38a66e974aa15793edb14674f, type: 2}
   isCounterAllowed: 0
   isFollowUpAllowed: 0
