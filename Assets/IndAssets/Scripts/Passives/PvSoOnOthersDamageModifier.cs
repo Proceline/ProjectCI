@@ -6,7 +6,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -61,36 +60,6 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 
         private void AdjustAfterFinishedEvent(PvMnBattleGeneralUnit inUnit, PvMnBattleGeneralUnit inTarget, List<QueryItem> queryItems)
         {
-#if UNITY_EDITOR
-            if (damageParams && pureDamageAbility)
-            {
-                if (pureDamageAbility.GetParameters()[0] != damageParams)
-                {
-                    Debug.LogError("The pure damage ability's parameters do not match the specified damage parameters.");
-                    return;
-                }
-            }
-            else
-            {
-                throw new Exception("ERROR: Damage parameters or pure damage ability is not set. Please ensure both are assigned in the inspector.");
-            }
-#else
-            if (damageParams && pureDamageAbility)
-            {
-                var parameters = pureDamageAbility.GetParameters();
-                if (parameters.Count == 0 || !parameters.Contains(damageParams))
-                {
-                    parameters.Clear();
-                    parameters.Add(damageParams);
-                }
-            }
-            else
-            {
-                throw new Exception("ERROR: Damage parameters or pure damage ability is not set. Please ensure both are assigned in the inspector.");
-            }
-
-#endif
-
             foreach (var owner in OwnersList)
             {
                 var queryItem = QueryItem.CreateQueryItemIntoList(queryItems);

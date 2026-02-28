@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 922ce3bfffe938748b9d89c774ab2ddf, type: 3}
-  m_Name: PvSoDynamicDamageParams_Adjustable+0
+  m_Name: _dynamicDamageParams_Adjustable+0
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Abilities.PvSoDynamicDamageAbilityParams
   basicAddon: 0
   damageForm: 0
