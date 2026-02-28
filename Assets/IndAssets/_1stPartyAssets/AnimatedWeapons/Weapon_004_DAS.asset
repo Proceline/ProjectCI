@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Weapon_004_DAS
   m_EditorClassIdentifier: 
   animator: {fileID: 11400000, guid: a01be1e33f594fd488107e6ce6c9e1f0, type: 2}
-  bindingAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
-  followUpAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
-  counterAbility: {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
+  bindingAbility: {fileID: 11400000, guid: bc3df88624173154aa253676af3828b3, type: 2}
+  followUpAbility: {fileID: 11400000, guid: bc3df88624173154aa253676af3828b3, type: 2}
+  counterAbility: {fileID: 11400000, guid: bc3df88624173154aa253676af3828b3, type: 2}
   weaponInfos:
   - weaponPrefab: {fileID: 6866762610448092830, guid: 745913cc4a0492141aaff934f0fa28c4, type: 3}
     prefabLocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
