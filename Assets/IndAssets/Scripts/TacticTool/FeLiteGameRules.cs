@@ -52,6 +52,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Header("On Turn Support"), SerializeField]
         private PvSoTurnViewEndEvent raiserTurnLockerEvent;
 
+        [Header("On Game End"), SerializeField]
+        private PvSoSimpleVoidEvent raiserGamePreEndedEvent;
+
         #region Injected Fields
 
         public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent

@@ -123,7 +123,7 @@ namespace IndAssets.Scripts.Dialogue.Runtime
             _isAutoPlay = false;
 
             if (sequence.LockInputDuringPlay)
-                PvMnGameController.IsControllerLocked = true;
+                PvMnGameController.IsControllerDisabled = true;
 
             screenPanel.Show();
             screenPanel.SetAutoPlayIndicator(false);
@@ -139,7 +139,7 @@ namespace IndAssets.Scripts.Dialogue.Runtime
             StopAutoAdvanceCoroutine();
 
             if (_currentSequence != null && _currentSequence.LockInputDuringPlay)
-                PvMnGameController.IsControllerLocked = false;
+                PvMnGameController.IsControllerDisabled = false;
 
             _isPlaying  = false;
             _isTyping   = false;

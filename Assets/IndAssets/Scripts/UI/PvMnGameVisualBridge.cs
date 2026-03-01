@@ -27,6 +27,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         [SerializeField]
         private Image[] abilityHints = new Image[3];
 
+        [SerializeField]
+        private GameObject onStageClearRoot;
+
         [Header("Global Assets"), SerializeField]
         private PvSoBattleTeamEvent roundSwitchEvent;
 
@@ -38,6 +41,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
         [SerializeField]
         private PvSoBattleState onBattleState;
+
+        [SerializeField]
+        private PvSoSimpleVoidEvent onGamePreEndedEvent;
 
         [Header("Evnets"), SerializeField]
         private UnityEvent<Dictionary<GridPawnUnit, int>, LevelCellBase> onCombatOutPreviewsEvent;
@@ -60,6 +66,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             onHoverCellEventWithoutOwner.RegisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.RegisterCallback(CreatePreviewForTarget);
             onBattleState.RegisterCallbackOnEnter(TogglePreviewOnState);
+            onGamePreEndedEvent.RegisterCallback(EnableStageClear);
         }
 
         private void OnDestroy()
@@ -69,6 +76,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             onHoverCellEventWithoutOwner.UnregisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.UnregisterCallback(CreatePreviewForTarget);
             onBattleState.UnregisterCallbackOnEnter(TogglePreviewOnState);
+            onGamePreEndedEvent.UnregisterCallback(EnableStageClear);
         }
 
         private void OnBattleStateEntered(PvPlayerRoundState state, PvMnBattleGeneralUnit unit)
@@ -194,6 +202,11 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                 abilityHints[1].sprite = battleUnit.FollowUpAbility.GetIconSprite;
                 abilityHints[2].sprite = battleUnit.SupportAbility.GetIconSprite;
             }
+        }
+
+        private void EnableStageClear()
+        {
+            onStageClearRoot.SetActive(true);
         }
     }
 }

@@ -12,19 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 952e45cbb643aad4f82b873786c0b3c8, type: 3}
   m_Name: FelikeRulesModel
   m_EditorClassIdentifier: 
-  allAbilities:
-  - {fileID: 11400000, guid: caf29f875bb54304997efacc76d82843, type: 2}
-  - {fileID: 11400000, guid: 723740be6830b974a86483b5b7ccdf61, type: 2}
-  - {fileID: 11400000, guid: 7e6b92df314062d41907bc2699620556, type: 2}
-  - {fileID: 11400000, guid: 830481975ca9f8f49936f550d79f5f00, type: 2}
-  - {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
-  - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
-  - {fileID: 11400000, guid: 0158f3010c61177409240e90205a20ee, type: 2}
-  - {fileID: 11400000, guid: 900f189504bcc3544a77dde1be45f9ca, type: 2}
-  - {fileID: 11400000, guid: 96e87934a5feed94bafdfa0305e462c4, type: 2}
-  - {fileID: 11400000, guid: 15f4a455953cd2142ad1458d7c19bf34, type: 2}
-  - {fileID: 11400000, guid: 204f53a3171e774439ab66aebd526cd8, type: 2}
-  - {fileID: 11400000, guid: 1e0918ad16dfaf346b0b990b0df7f388, type: 2}
   layerMasksRuleList:
   - serializedVersion: 2
     m_Bits: 64
@@ -94,6 +81,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   raiserTurnLockerEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
+  raiserGamePreEndedEvent: {fileID: 11400000, guid: ddddd59eaaecea145942131358a4ed32, type: 2}
   roundEventEndList:
   - m_PersistentCalls:
       m_Calls:

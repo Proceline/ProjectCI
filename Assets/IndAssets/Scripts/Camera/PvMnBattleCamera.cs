@@ -171,7 +171,7 @@ public class PvMnBattleCamera : MonoBehaviour
 
     private void AssignCameraZoomIn(InputAction.CallbackContext context)
     {
-        if (PvMnGameController.IsControllerLocked)
+        if (PvMnGameController.IsControllerDisabled)
         {
             return;
         }
@@ -186,7 +186,7 @@ public class PvMnBattleCamera : MonoBehaviour
 
     private void AssignCameraZoomOut(InputAction.CallbackContext context)
     {
-        if (PvMnGameController.IsControllerLocked)
+        if (PvMnGameController.IsControllerDisabled)
         {
             return;
         }
@@ -201,7 +201,7 @@ public class PvMnBattleCamera : MonoBehaviour
 
     private void UpdateCameraHorizontalAxisForRotation(InputAction inputAction)
     {
-        if (PvMnGameController.IsControllerLocked)
+        if (PvMnGameController.IsControllerDisabled)
         {
             return;
         }

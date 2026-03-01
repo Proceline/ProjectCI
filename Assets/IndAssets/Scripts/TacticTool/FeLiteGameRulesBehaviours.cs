@@ -2,6 +2,7 @@
 using IndAssets.Scripts.Managers;
 using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
+using ProjectCI.CoreSystem.Runtime.Deployment;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
@@ -108,6 +109,20 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             gameBattleState.PushState(PvPlayerRoundState.Applying, triggerUnit);
             yield return ApplyAbility(triggerUnit, selectedCell, ability);
             FinishUnitAction(triggerUnit, false);
+
+            _ = CheckStageClearStatus();
+        }
+
+        public bool CheckStageClearStatus()
+        {
+            if (PvSoLevelData.LoadingLevel &&
+                PvSoLevelData.LoadingLevel.CheckIfLevelCompleted(_unitIdToBattleUnitHash) == PvTargetCompleteCondition.Completed)
+            {
+                raiserGamePreEndedEvent?.Raise();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

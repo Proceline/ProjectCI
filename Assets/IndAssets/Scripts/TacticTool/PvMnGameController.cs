@@ -69,7 +69,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private bool IsTeamInputLocked { get; set; }
 
-        public static bool IsControllerLocked { get; set; }
+        private bool IsFriendlyLockerEnabled { get; set; }
+
+        public static bool IsControllerDisabled { get; set; }
 
         private void Start()
         {
@@ -131,6 +133,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void Update()
         {
+            if (IsControllerDisabled || IsTeamInputLocked || IsFriendlyLockerEnabled)
+            {
+                ClearHitBufferCell();
+                return;
+            }
+
             var ray = cursorCamera.ScreenPointToRay(_cursorPositionAction.ReadValue<Vector2>());
             if (Physics.Raycast(ray, out var hit, 1000f, cellUsingLayer))
             {
@@ -147,7 +155,15 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     onCellRayMissed.Invoke(HitBufferedCell);
                 }
             }
-            else if (HitBufferedCell)
+            else
+            {
+                ClearHitBufferCell();
+            }
+        }
+
+        private void ClearHitBufferCell()
+        {
+            if (HitBufferedCell)
             {
                 onCellRayMissed.Invoke(HitBufferedCell);
                 HitBufferedCell = null;
@@ -156,7 +172,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnBattleActionConfirmed(InputAction.CallbackContext context)
         {
-            if (IsControllerLocked)
+            if (IsControllerDisabled || IsFriendlyLockerEnabled)
             {
                 return;
             }
@@ -168,7 +184,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnBattleActionCanceled(InputAction.CallbackContext context)
         {
-            if (IsControllerLocked)
+            if (IsControllerDisabled)
             {
                 return;
             }
@@ -198,7 +214,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnAggroHintEnabled(InputAction.CallbackContext context)
         {
-            if (IsControllerLocked)
+            if (IsControllerDisabled)
             {
                 return;
             }
@@ -218,7 +234,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnAggroHintToggling(InputAction.CallbackContext context)
         {
-            if (IsControllerLocked)
+            if (IsControllerDisabled)
             {
                 return;
             }
@@ -237,10 +253,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnRaiserLockerApplied(bool isLocked)
         {
+            IsFriendlyLockerEnabled = isLocked;
             if (isLocked)
             {
                 onAggroHintDisabled?.Invoke();
                 DisableBasicBattleActionsOnly();
+
+                ClearHitBufferCell();
             }
             else if (!IsTeamInputLocked)
             {

@@ -306,6 +306,11 @@ namespace IndAssets.Scripts.AI
                     await Awaitable.WaitForSecondsAsync(0.25f);
                 }
 
+                if (gameModel.CheckStageClearStatus())
+                {
+                    onAllThoughtsFinished?.Invoke();
+                    return;
+                }
             }
 
             while (_runtimeToRemoveThoughts.TryDequeue(out var thought))
