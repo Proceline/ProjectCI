@@ -10,7 +10,7 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
     {
         [Inject] private static readonly IOnStatusApplyEvent RaiserStatusViewApplyEvent;
         
-        public PvSoPassiveStatus StatusType { get; set; }
+        public string StatusType { get; set; }
         
         public override void ApplyCommand(GridPawnUnit fromUnit, GridPawnUnit toUnit)
         {

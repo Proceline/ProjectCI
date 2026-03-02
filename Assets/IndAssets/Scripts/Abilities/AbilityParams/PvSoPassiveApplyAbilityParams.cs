@@ -1,22 +1,22 @@
 using System.Collections.Generic;
-using IndAssets.Scripts.Passives.Status;
-using ProjectCI.CoreSystem.Runtime.Attributes;
+using ProjectCI.CoreSystem.Runtime.Passives;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using UnityEngine;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 
 namespace ProjectCI.CoreSystem.Runtime.Abilities
 {
-    [CreateAssetMenu(fileName = "PvSoPassiveStatusAbilityParams", menuName = "ProjectCI Tools/Ability/Parameters/PvSoPassiveStatusAbilityParams")]
-    public class PvSoPassiveStatusAbilityParams : AbilityParamBase
+    [CreateAssetMenu(fileName = "PvSoPassiveApplyAbilityParams", menuName = "ProjectCI Tools/Ability/Parameters/PvSoPassiveApplyAbilityParams")]
+    public class PvSoPassiveApplyAbilityParams : AbilityParamBase
     {
-        [SerializeField] private PvSoPassiveStatus relatedStatus;
+        [SerializeField] private PvSoPassiveBase applyPassive;
 
         [Header("Accuracy")] 
-        [SerializeField] 
+        [SerializeField]
         private bool isAlwaysHitByDefault;
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
@@ -31,16 +31,20 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             var isReallyHit = isAlwaysHitByDefault || passValue > 0;
             if (!isReallyHit) return;
-            relatedStatus.InstallStatus(targetUnit);
-            var statusCommand = new PvStatusApplyCommand
-            {
-                ResultId = resultId,
-                OwnerId = fromUnit.ID,
-                TargetCellIndex = targetUnit.GetCell().GetIndex(),
-                StatusType = relatedStatus
-            };
 
-            results.Enqueue(statusCommand);
+            if (targetUnit is PvMnBattleGeneralUnit battleUnit)
+            {
+                applyPassive.InstallPassive(battleUnit);
+                var statusCommand = new PvStatusApplyCommand
+                {
+                    ResultId = resultId,
+                    OwnerId = fromUnit.ID,
+                    TargetCellIndex = targetUnit.GetCell().GetIndex(),
+                    StatusType = applyPassive.name
+                };
+
+                results.Enqueue(statusCommand);
+            }
         }
 
         public override int MockValue(GridPawnUnit fromUnit, GridPawnUnit targetUnit, uint damageForm)

@@ -11,8 +11,8 @@ namespace IndAssets.Scripts.Passives.Status
     [CreateAssetMenu(fileName = "New Fire Ground Status", menuName = "ProjectCI GroundStatus/FireWall", order = 1)]
     public class PvSoGroundStatusFire : PvSoGroundStatus
     {
-        [SerializeField] private PvSoPassiveStatusFire relatedDeBuff;
-        [SerializeField] private PvSoStatusApplyEvent raiserStatusApplyEvent;
+        //[SerializeField] private PvSoPassiveStatusFire relatedDeBuff;
+        //[SerializeField] private PvSoStatusApplyEvent raiserStatusApplyEvent;
 
         private readonly Dictionary<IEventOwner , Action> _pendingActionsCollection = new(); 
         
@@ -33,8 +33,8 @@ namespace IndAssets.Scripts.Passives.Status
 
         protected override void ApplyGroundStatusOnUnit(PvMnBattleGeneralUnit unit)
         {
-            relatedDeBuff.AccumulateStatus(unit, 1);
-            raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
+            //relatedDeBuff.AccumulateStatus(unit, 1);
+            //raiserStatusApplyEvent.Raise(unit, relatedDeBuff);
         }
 
         //public void DetermineProcessOnStateChanged(IEventOwner owner, UnitStateEventParam stateEventParam)

@@ -6,7 +6,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using System;
 using ProjectCI.CoreSystem.DependencyInjection;
-using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
 using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
@@ -75,6 +74,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] private static readonly PvSoSimpleDamageApplyEvent RaiserSimpleDamageApplyEvent;
         [Inject] private static readonly IUnitPrepareEvent RaiserManualFinishOrRestPrepareEvent;
 
+        [Inject] private static readonly ITeamRoundStartEvent RaiserTeamRoundStartEvent;
         [Inject] private static readonly ITeamRoundEndEvent RaiserTeamRoundEndEvent;
         [SerializeField] private List<UnityEvent<BattleTeam, List<float>>> roundEventEndList;
         private readonly List<float> _teamRoundEndDelayList = new();
@@ -143,6 +143,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             gameBattleState.Clear();
 
+            // Clear out-round buff first
+            RaiserTeamRoundStartEvent?.Raise(inTeam);
+
+            // Player determine on self-buff
             SetupTeam(inTeam);
 
             if (inTeam == BattleTeam.Hostile)

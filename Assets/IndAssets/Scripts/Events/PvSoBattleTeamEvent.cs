@@ -15,11 +15,16 @@ namespace ProjectCI.Utilities.Runtime.Events
 
     public interface ITeamRoundEndEvent : ITeamRelatedEvent
     {
-        
+        // Empty
+    }
+
+    public interface ITeamRoundStartEvent : ITeamRelatedEvent
+    {
+        // Empty
     }
     
     [CreateAssetMenu(fileName = "Battle Team Event", menuName = "ProjectCI Utilities/Events/Team Event")]
-    public class PvSoBattleTeamEvent : SoUnityEventBase, ITeamRoundEndEvent
+    public class PvSoBattleTeamEvent : SoUnityEventBase, ITeamRoundEndEvent, ITeamRoundStartEvent
     {
         [FormerlySerializedAs("onRuntimePostExtraEvents"), SerializeField]
         private UnityEvent<BattleTeam> onRuntimePreInstalledEvents;

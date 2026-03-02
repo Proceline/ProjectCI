@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd7821446b9415a4b9db1728c5be6d61, type: 3}
-  m_Name: EnhanceAttribute_Critical_Protagonist
+  m_Name: '[Logged, Registered] EnhanceAttribute_CriticalBoost'
   m_EditorClassIdentifier: 
-  passiveTiming: 0
+  duration: 1
+  passiveName: 
+  description: 
   targetAttribute:
     value: 9
-  radius: 1
   attributeModifier:
-    flatValue: 100
+    flatValue: 15
     percentAddValue: 0
-  teamCondition: 1

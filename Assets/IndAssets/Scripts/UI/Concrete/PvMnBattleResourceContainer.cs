@@ -3,11 +3,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
-using IndAssets.Scripts.Passives.Status;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
@@ -22,8 +20,6 @@ namespace ProjectCI.Runtime.GUI.Battle
         private GridObject _followingTarget;
 
         [Inject] private static ITargetUnitDeathEvent _onUnitDyingEvent;
-        [Inject] private static IOnStatusApplyEvent _onStatusVisualApplyEvent;
-        [Inject] private static ITargetUnitUpdateStatusEvent _onStatusVisualRefreshEvent;
 
         private static readonly Dictionary<string, Sprite> PreloadedTextures = new();
 
@@ -45,10 +41,20 @@ namespace ProjectCI.Runtime.GUI.Battle
             
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(UpdateHealthViewInfo);
             _onUnitDyingEvent.RegisterCallback(OnObjectMarkedAsDead);
-            _onStatusVisualApplyEvent.RegisterCallback(UpdateStatusList);
-            _onStatusVisualRefreshEvent.RegisterCallback(UpdateStatusList);
             
             _initialized = true;
+        }
+
+        private void OnDestroy()
+        {
+            if (_healthBarInstance != null)
+            {
+                Destroy(_healthBarInstance);
+            }
+            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(UpdateHealthViewInfo);
+            _onUnitDyingEvent.UnregisterCallback(OnObjectMarkedAsDead);
+
+            _initialized = false;
         }
 
         private void OnObjectMarkedAsDead(PvMnBattleGeneralUnit deadUnit)
@@ -63,46 +69,46 @@ namespace ProjectCI.Runtime.GUI.Battle
             SetHealth(damageParams.AfterValue);
         }
 
-        private void UpdateStatusList(GridPawnUnit statusOwner, PvSoPassiveStatus statusType)
-        {
-            if (statusOwner != _followingTarget) return;
+        //private void UpdateStatusList(GridPawnUnit statusOwner, PvSoPassiveStatus statusType)
+        //{
+        //    if (statusOwner != _followingTarget) return;
 
-            var currentStatusKey = statusType.GetType().Name;
-            if (!PreloadedTextures.ContainsKey(currentStatusKey))
-            {
-                PreloadedTextures.Add(currentStatusKey, statusType.StatusIcon);
-            }
+        //    var currentStatusKey = statusType.GetType().Name;
+        //    if (!PreloadedTextures.ContainsKey(currentStatusKey))
+        //    {
+        //        PreloadedTextures.Add(currentStatusKey, statusType.StatusIcon);
+        //    }
             
-            UpdateStatusListInternally(statusOwner);
-        }
+        //    UpdateStatusListInternally(statusOwner);
+        //}
         
-        private void UpdateStatusList(PvMnBattleGeneralUnit statusOwner)
-        {
-            if (statusOwner != _followingTarget) return;
-            UpdateStatusListInternally(statusOwner);
-        }
+        //private void UpdateStatusList(PvMnBattleGeneralUnit statusOwner)
+        //{
+        //    if (statusOwner != _followingTarget) return;
+        //    UpdateStatusListInternally(statusOwner);
+        //}
         
-        private void UpdateStatusListInternally(GridPawnUnit statusOwner)
-        {
-            var statusList = statusOwner.GetStatusEffectContainer().GetStatusList();
-            var prefab = _onStatusVisualApplyEvent.StatusViewPrefab;
+        //private void UpdateStatusListInternally(GridPawnUnit statusOwner)
+        //{
+        //    var statusList = statusOwner.GetStatusEffectContainer().GetStatusList();
+        //    var prefab = _onStatusVisualApplyEvent.StatusViewPrefab;
 
-            int index;
-            for (var i = _statusLayoutGroup.transform.childCount - 1; i >= 0; i--)
-            {
-                Destroy(_statusLayoutGroup.transform.GetChild(i).gameObject);
-            }
-            _statusLayoutGroup.transform.DetachChildren();
+        //    int index;
+        //    for (var i = _statusLayoutGroup.transform.childCount - 1; i >= 0; i--)
+        //    {
+        //        Destroy(_statusLayoutGroup.transform.GetChild(i).gameObject);
+        //    }
+        //    _statusLayoutGroup.transform.DetachChildren();
             
-            for (index = 0; index < statusList.Count; index++)
-            {
-                var image = Instantiate(prefab, _statusLayoutGroup.transform);
-                if (PreloadedTextures.TryGetValue(statusList[index].StatusTag, out var statusIcon))
-                {
-                    image.sprite = statusIcon;
-                }
-            }
-        }
+        //    for (index = 0; index < statusList.Count; index++)
+        //    {
+        //        var image = Instantiate(prefab, _statusLayoutGroup.transform);
+        //        if (PreloadedTextures.TryGetValue(statusList[index].StatusTag, out var statusIcon))
+        //        {
+        //            image.sprite = statusIcon;
+        //        }
+        //    }
+        //}
 
         private void LateUpdate()
         {
@@ -130,21 +136,6 @@ namespace ProjectCI.Runtime.GUI.Battle
         public override void SetMaxHealth(int maxHp)
         {
             _healthSlider.maxValue = maxHp;
-        }
-
-        private void OnDestroy()
-        {
-            if (_healthBarInstance != null)
-            {
-                Destroy(_healthBarInstance);
-            }
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(UpdateHealthViewInfo);
-            _onUnitDyingEvent.UnregisterCallback(OnObjectMarkedAsDead);
-            
-            _onStatusVisualApplyEvent.UnregisterCallback(UpdateStatusList);
-            _onStatusVisualRefreshEvent.UnregisterCallback(UpdateStatusList);
-            
-            _initialized = false;
         }
     }
 } 

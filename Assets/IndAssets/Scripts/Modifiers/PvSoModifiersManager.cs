@@ -48,6 +48,13 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
             }
         }
         
+        /// <summary>
+        /// Not in used, delete the comment if in used
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="attributeType"></param>
+        /// <param name="inputValue"></param>
+        /// <returns></returns>
         public float GetModifiedValuePrecisely(IEventOwner owner, AttributeType attributeType, float inputValue)
         {
             if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))

@@ -18,6 +18,9 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
         }
     }
     
+    /// <summary>
+    /// Modifier Container normally be a ScriptableObject
+    /// </summary>
     public interface IAttributeModifierContainer
     {
         void AddModifier(AttributeModifier modifier);

@@ -16,53 +16,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit, List<LevelCellBase>> onPathDeterminedSupport;
 
-        [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit, IBattleStatus> onUnitStatusCalculatedGlobally;
-
-        [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit> onUnitStatusUpdated;
-
-        [SerializeField]
-        private UnityEvent<PvMnBattleGeneralUnit> onRoundEndedForEachUnit;
-
-        public void CalculateAllUnitsStatusOnRoundEnded(BattleTeam team)
-        {
-            foreach (var unitPair in _unitIdToBattleUnitHash)
-            {
-                var unit = unitPair.Value;
-                var statusContainer = unit.GetStatusEffectContainer();
-                var statusDataCollection = statusContainer.GetStatusList();
-                var toRemoveIndexList = new Stack<int>();
-                for (var i = 0; i < statusDataCollection.Count; i++)
-                {
-                    var statusData = statusDataCollection[i];
-                    if (statusData.StatusTag == nameof(PvSoPassiveStatusFire))
-                    {
-                        onUnitStatusCalculatedGlobally.Invoke(unit, statusData);
-                    }
-
-                    if (statusData.IsBeingDisposed())
-                    {
-                        toRemoveIndexList.Push(i);
-                    }
-                }
-
-                while (toRemoveIndexList.TryPop(out var index))
-                {
-                    statusContainer.RemoveStatusByIndex(index);
-                }
-            }
-        }
-
         public void OnTeamRoundEndResponse(BattleTeam team)
         {
             var allUnitsInBattle = _unitIdToBattleUnitHash.Values;
             foreach (var unit in allUnitsInBattle)
             {
                 if (unit.IsDead()) continue;
-
-                onRoundEndedForEachUnit.Invoke(unit);
-                onUnitStatusUpdated.Invoke(unit);
             }
 
             CurrentTeam = team == BattleTeam.Friendly ? BattleTeam.Hostile : BattleTeam.Friendly;
