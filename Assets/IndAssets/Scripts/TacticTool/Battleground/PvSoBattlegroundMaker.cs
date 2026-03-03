@@ -133,7 +133,8 @@ namespace ProjectCI.CoreSystem.Runtime.Battleground
                         1,
                         cellDetectLayerMask
                     );
-                    
+
+                    unit.onUnitHighlight += sceneUnit.UpdateRendererHighlight;
                     unit.GenerateNewID();
                     sceneUnit.UnitData.InitializeUnitDataToGridUnit(unit);
                     

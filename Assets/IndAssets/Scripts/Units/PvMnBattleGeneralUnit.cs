@@ -57,6 +57,13 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private readonly List<PvSoPassiveBase> _installedPassives = new();
 
+        public event Action<bool> onUnitHighlight;
+
+        public void HighlighUnit(bool highlight)
+        {
+            onUnitHighlight.Invoke(highlight);
+        }
+
         private void SetFormulaCollection()
         {
             RuntimeAttributes = new FormulaAttributeContainer(FormulaCollection, this);
@@ -183,6 +190,12 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void SwitchForm(bool isUltimate)
         {
             _ultimateForm = isUltimate;
+        }
+
+        public bool SwitchForm()
+        {
+            _ultimateForm = !_ultimateForm;
+            return _ultimateForm;
         }
 
         public override IStatusEffectContainer GetStatusEffectContainer()

@@ -6,12 +6,20 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.Units.Interfaces;
 using ProjectCI_Animation.Runtime;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
     public class PvMnSceneUnit : MonoBehaviour, ISceneUnit
     {
+        private static readonly int RimLightAlignID = Shader.PropertyToID("_FlatRimLightAlign");
+        private static readonly int RimSizeID = Shader.PropertyToID("_FlatRimSize");
+        private static readonly int RimEdgeSmoothnessID = Shader.PropertyToID("_FlatRimEdgeSmoothness");
+
+        private readonly List<Renderer> _renderers = new();
+        private MaterialPropertyBlock _materialPropertyBlock;
+
         [SerializeField]
         private bool isSceneMode;
 
@@ -110,6 +118,28 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             {
                 var animatorController = GetComponentInChildren<UnitAnimationManager>();
                 animatorController.SetupAnimationGraphDetails(animator, false);
+            }
+        }
+
+        public void SetupRenderer(Renderer inRenderer)
+        {
+            if (_materialPropertyBlock == null)
+            {
+                _materialPropertyBlock = new MaterialPropertyBlock();
+            }
+
+            _renderers.Add(inRenderer);
+        }
+
+        public void UpdateRendererHighlight(bool highlight)
+        {
+            foreach (var rendererItem in _renderers)
+            {
+                rendererItem.GetPropertyBlock(_materialPropertyBlock);
+                _materialPropertyBlock.SetFloat(RimLightAlignID, highlight? 1f : 0f);
+                _materialPropertyBlock.SetFloat(RimSizeID, highlight ? 1f : 0f);
+                _materialPropertyBlock.SetFloat(RimEdgeSmoothnessID, highlight ? 1f : 0f);
+                rendererItem.SetPropertyBlock(_materialPropertyBlock);
             }
         }
 

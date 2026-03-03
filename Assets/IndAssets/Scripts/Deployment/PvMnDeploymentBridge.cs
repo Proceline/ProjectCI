@@ -146,15 +146,31 @@ namespace ProjectCI.CoreSystem.Runtime.Deployment
                 var bodyMesh = Instantiate(bodyMeshPrefab, sceneUnit.transform).GetComponent<PvMnMeshPartController>();
                 if (!bodyMesh)
                 {
-                    throw new System.Exception($"ERROR: This Mesh doesn't have {nameof(PvMnMeshPartController)}");
+                    throw new Exception($"ERROR: This Mesh doesn't have {nameof(PvMnMeshPartController)}");
                 }
 
                 bodyMesh.transform.localPosition = Vector3.zero;
                 bodyMesh.transform.localRotation = Quaternion.identity;
                 bodyMesh.transform.localScale = new Vector3(1.75f, 1.75f, 1.75f);
 
+                var bodyRenderers = bodyMesh.GetComponentsInChildren<Renderer>();
+
                 var headPrefab = unitData.HeadMeshPrefab;
-                bodyMesh.InstantiatePartPrefab("head", headPrefab);
+                var headMesh = bodyMesh.InstantiatePartPrefab("head", headPrefab);
+                var headRenderers = headMesh.GetComponentsInChildren<Renderer>();
+
+                int FlatSpecularEdgeSmoothnessID = Shader.PropertyToID("_FlatSpecularEdgeSmoothness");
+                int FlatSpecularSizeID = Shader.PropertyToID("_FlatSpecularSize");
+
+                foreach (var renderer in bodyRenderers)
+                {
+                    sceneUnit.SetupRenderer(renderer);
+                }
+
+                foreach (var renderer in headRenderers)
+                {
+                    sceneUnit.SetupRenderer(renderer);
+                }
             }
 
             var characterData = PvSaveManager.Instance.GetCharacterEquipmentData(unitData.EntryId);

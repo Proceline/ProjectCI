@@ -2,6 +2,7 @@
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Utilities.Runtime.Events;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -73,6 +74,27 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public static bool IsControllerDisabled { get; set; }
 
+
+        private static readonly HashSet<string> _visualBlockRecords = new();
+        public static bool IsVisualLayerBlocked => _visualBlockRecords.Count > 0;
+
+        /// <summary>
+        /// Default Should be able to used in InScene assets
+        /// </summary>
+        /// <param name="toBlock"></param>
+        /// <param name="blockType"></param>
+        public static void SetVisualBlock(bool toBlock, string blockType = "default")
+        {
+            if (toBlock)
+            {
+                _visualBlockRecords.Add(blockType);
+            }
+            else
+            {
+                _visualBlockRecords.Remove(blockType);
+            }
+        }
+
         private void Start()
         {
             onCursorPositionTracked.action.Enable();
@@ -133,7 +155,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void Update()
         {
-            if (IsControllerDisabled || IsTeamInputLocked || IsFriendlyLockerEnabled)
+            if (IsVisualLayerBlocked || IsControllerDisabled || IsTeamInputLocked || IsFriendlyLockerEnabled)
             {
                 ClearHitBufferCell();
                 return;
@@ -172,7 +194,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void OnBattleActionConfirmed(InputAction.CallbackContext context)
         {
-            if (IsControllerDisabled || IsFriendlyLockerEnabled)
+            if (IsVisualLayerBlocked || IsControllerDisabled || IsFriendlyLockerEnabled)
             {
                 return;
             }

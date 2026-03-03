@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace ProjectCI.CoreSystem.Runtime.UI
@@ -144,11 +145,28 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
             if (_bufferedUltableUnits.Count != _ultSymbols.Count)
             {
-                for (var i = _ultSymbols.Count; i < _bufferedUltableUnits.Count; i++)
+                for (var i = 0; i < _bufferedUltableUnits.Count; i++)
                 {
-                    var container = Instantiate(existedUltSymbolsContainer, ultSymbolsParent);
-                    var images = container.GetComponentsInChildren<Image>();
-                    _ultSymbols.Add((images[1], images[2]));
+                    if (i >= _ultSymbols.Count)
+                    {
+                        var container = Instantiate(existedUltSymbolsContainer, ultSymbolsParent);
+                        var images = container.GetComponentsInChildren<Image>();
+                        _ultSymbols.Add((images[1], images[2]));
+                    }
+
+                    var visualButton = _ultSymbols[i].Item1.transform.parent.GetComponent<PvMnUltVisualButton>();
+
+                    if (visualButton)
+                    {
+                        var targetUnit = _bufferedUltableUnits[i];
+                        visualButton.OnPointerClickDelegate += () =>
+                        {
+                            var result = targetUnit.SwitchForm();
+                            visualButton.OnUltStatusChanged(result);
+                        };
+
+                        visualButton.OnPointerEnterDelegate += targetUnit.HighlighUnit;
+                    }
                 }
             }
 
