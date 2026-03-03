@@ -75,6 +75,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         [Header("Evnets"), SerializeField]
         private UnityEvent<Dictionary<GridPawnUnit, int>, LevelCellBase> onCombatOutPreviewsEvent;
 
+        [SerializeField]
+        private UnityEvent<PvMnBattleGeneralUnit> onUltUnitVisualHovered;
+
         private readonly PvUIHoverPawnInfo[] _pawnPreviews = new PvUIHoverPawnInfo[2];
         private readonly GridPawnUnit[] _pawnsInView = new GridPawnUnit[2];
 
@@ -166,6 +169,13 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                         };
 
                         visualButton.OnPointerEnterDelegate += targetUnit.HighlighUnit;
+                        visualButton.OnPointerEnterDelegate += highlight =>
+                        {
+                            if (highlight)
+                            {
+                                onUltUnitVisualHovered?.Invoke(targetUnit);
+                            }
+                        };
                     }
                 }
             }

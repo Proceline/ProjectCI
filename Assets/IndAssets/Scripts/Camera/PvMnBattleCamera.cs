@@ -108,6 +108,20 @@ public class PvMnBattleCamera : MonoBehaviour
     }
 
     /// <summary>
+    /// Binded into VisualBridge to make sure highlight ult's unit's position
+    /// </summary>
+    /// <param name="targetUnit"></param>
+    public void FollowSmoothlyOnUnit(PvMnBattleGeneralUnit targetUnit)
+    {
+        if (_movingCoroutine != null)
+        {
+            StopCoroutine(_movingCoroutine);
+        }
+        _movingCoroutine = StartCoroutine(TranslateCameraToPosition(translateTarget.position,
+            targetUnit.transform.position, 0.25f, null));
+    }
+
+    /// <summary>
     /// Binded into AI Manager so when all thoughts finished
     /// </summary>
     public void UnfollowTransform()
@@ -162,7 +176,7 @@ public class PvMnBattleCamera : MonoBehaviour
             yield return null;
         }
 
-        onFinished.Invoke();
+        onFinished?.Invoke();
         _movingCoroutine = null;
     }
 
