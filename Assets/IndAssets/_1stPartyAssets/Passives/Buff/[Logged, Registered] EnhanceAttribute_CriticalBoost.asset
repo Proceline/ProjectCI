@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 1
   passiveName: 
+  icon: {fileID: 572087526, guid: 840efa29d87b2bf49b2858495e2f8f97, type: 3}
   description: 
   targetAttribute:
     value: 9

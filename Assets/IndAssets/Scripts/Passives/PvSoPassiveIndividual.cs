@@ -1,14 +1,19 @@
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
+using ProjectCI.Utilities.Runtime.Events;
 using System.Collections.Generic;
 
 namespace ProjectCI.CoreSystem.Runtime.Passives
 {
+    [StaticInjectableTarget]
     public abstract class PvSoPassiveIndividual : PvSoPassiveBase
     {
         protected readonly List<PvMnBattleGeneralUnit> OwnersList = new();
         private readonly HashSet<string> _ownersIdSet = new();
         protected int OwnerCount => OwnersList.Count;
+
+        [Inject] protected static readonly IOnStatusApplyEvent RaiserPassiveApplyEvent;
 
         public override void InstallPassive(PvMnBattleGeneralUnit unit)
         {
@@ -87,6 +92,7 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
                     (unit.GetTeam() == battleTeam && Duration == PvPassiveDuration.EndInFriendly))
                 {
                     DisposePassive(unit);
+                    RaiserPassiveApplyEvent.Dispose(unit, name);
 #if UNITY_EDITOR
                     UnityEngine.Debug.Log($"Passive[{name}] on Unit[{unit.name}] has been Disposed!");
 #endif

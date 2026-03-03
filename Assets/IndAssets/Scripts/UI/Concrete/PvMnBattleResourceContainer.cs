@@ -2,11 +2,12 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Collections.Generic;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.CoreSystem.Runtime.Passives;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
@@ -20,8 +21,10 @@ namespace ProjectCI.Runtime.GUI.Battle
         private GridObject _followingTarget;
 
         [Inject] private static ITargetUnitDeathEvent _onUnitDyingEvent;
+        [Inject] private static IOnStatusApplyEvent _onStatusApplyEvent;
 
-        private static readonly Dictionary<string, Sprite> PreloadedTextures = new();
+        [NonSerialized] private Image[] _holdingPassiveList;
+        [NonSerialized] private string[] _holdingPassiveNamesList;
 
         public void Initialize(GridObject owner, Camera inCamera, PvMnBattleCamera cameraController, GameObject healthBarPrefab)
         {
@@ -31,6 +34,7 @@ namespace ProjectCI.Runtime.GUI.Battle
             // Get UI components
             _healthSlider = _healthBarInstance.GetComponentInChildren<Slider>();
             _statusLayoutGroup = _healthBarInstance.GetComponentInChildren<GridLayoutGroup>();
+            _holdingPassiveList = _statusLayoutGroup.GetComponentsInChildren<Image>();
             Canvas canvas = _healthBarInstance.GetComponentInChildren<Canvas>();
             canvas.worldCamera = inCamera;
 
@@ -43,6 +47,15 @@ namespace ProjectCI.Runtime.GUI.Battle
             _onUnitDyingEvent.RegisterCallback(OnObjectMarkedAsDead);
             
             _initialized = true;
+
+            _holdingPassiveNamesList = new string[_holdingPassiveList.Length];
+            foreach (var passiveImage in _holdingPassiveList)
+            {
+                passiveImage.gameObject.SetActive(false);
+            }
+
+            _onStatusApplyEvent.RegisterVisualCallback(OnStatusApplied);
+            _onStatusApplyEvent.RegisterUnsetVisualCallback(OnStatusDisposed);
         }
 
         private void OnDestroy()
@@ -54,6 +67,8 @@ namespace ProjectCI.Runtime.GUI.Battle
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(UpdateHealthViewInfo);
             _onUnitDyingEvent.UnregisterCallback(OnObjectMarkedAsDead);
 
+            _onStatusApplyEvent.UnregisterVisualCallback(OnStatusApplied);
+            _onStatusApplyEvent.UnregisterUnsetVisualCallback(OnStatusDisposed);
             _initialized = false;
         }
 
@@ -69,46 +84,37 @@ namespace ProjectCI.Runtime.GUI.Battle
             SetHealth(damageParams.AfterValue);
         }
 
-        //private void UpdateStatusList(GridPawnUnit statusOwner, PvSoPassiveStatus statusType)
-        //{
-        //    if (statusOwner != _followingTarget) return;
+        private void OnStatusApplied(GridPawnUnit statusOwner, PvSoPassiveBase passive)
+        {
+            if (statusOwner != _followingTarget) return;
 
-        //    var currentStatusKey = statusType.GetType().Name;
-        //    if (!PreloadedTextures.ContainsKey(currentStatusKey))
-        //    {
-        //        PreloadedTextures.Add(currentStatusKey, statusType.StatusIcon);
-        //    }
-            
-        //    UpdateStatusListInternally(statusOwner);
-        //}
-        
-        //private void UpdateStatusList(PvMnBattleGeneralUnit statusOwner)
-        //{
-        //    if (statusOwner != _followingTarget) return;
-        //    UpdateStatusListInternally(statusOwner);
-        //}
-        
-        //private void UpdateStatusListInternally(GridPawnUnit statusOwner)
-        //{
-        //    var statusList = statusOwner.GetStatusEffectContainer().GetStatusList();
-        //    var prefab = _onStatusVisualApplyEvent.StatusViewPrefab;
+            for (int i = 0; i < _holdingPassiveList.Length; i++)
+            {
+                var passiveImage = _holdingPassiveList[i];
+                if (!passiveImage.gameObject.activeSelf)
+                {
+                    passiveImage.gameObject.SetActive(true);
+                    passiveImage.sprite = passive.Icon;
+                    _holdingPassiveNamesList[i] = passive.name;
+                    return;
+                }
+            }
+        }
 
-        //    int index;
-        //    for (var i = _statusLayoutGroup.transform.childCount - 1; i >= 0; i--)
-        //    {
-        //        Destroy(_statusLayoutGroup.transform.GetChild(i).gameObject);
-        //    }
-        //    _statusLayoutGroup.transform.DetachChildren();
-            
-        //    for (index = 0; index < statusList.Count; index++)
-        //    {
-        //        var image = Instantiate(prefab, _statusLayoutGroup.transform);
-        //        if (PreloadedTextures.TryGetValue(statusList[index].StatusTag, out var statusIcon))
-        //        {
-        //            image.sprite = statusIcon;
-        //        }
-        //    }
-        //}
+        private void OnStatusDisposed(GridPawnUnit statusOwner, PvSoPassiveBase passive)
+        {
+            if (statusOwner != _followingTarget) return;
+
+            for (int i = 0; i < _holdingPassiveNamesList.Length; i++)
+            {
+                if (_holdingPassiveNamesList[i] == passive.name)
+                {
+                    var passiveImage = _holdingPassiveList[i];
+                    passiveImage.gameObject.SetActive(false);
+                    return;
+                }
+            }
+        }
 
         private void LateUpdate()
         {

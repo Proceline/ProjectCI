@@ -15,8 +15,11 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
     {
         [SerializeField] private PvPassiveDuration duration;
         [SerializeField] private string passiveName;
+        [SerializeField] private Sprite icon;
 
         protected PvPassiveDuration Duration => duration;
+        public Sprite Icon => icon;
+
         public string PassiveName => passiveName;
         public string description;
 
