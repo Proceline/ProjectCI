@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 952e45cbb643aad4f82b873786c0b3c8, type: 3}
   m_Name: FelikeRulesModel
   m_EditorClassIdentifier: 
+  unitIdsToBattleUnitHash: {fileID: 11400000, guid: a3925a911c47f944a9f1711d10c507c9, type: 2}
   layerMasksRuleList:
   - serializedVersion: 2
     m_Bits: 64

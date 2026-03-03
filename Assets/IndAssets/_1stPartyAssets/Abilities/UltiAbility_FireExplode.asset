@@ -23,8 +23,6 @@ MonoBehaviour:
   spawnOnCaster: []
   spawnOnTarget:
   - {fileID: 5976799327186537325, guid: 30ea9158161b6df46b80ee9ed9d12216, type: 3}
-  m_Params:
-  - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   abilityParams:
   - {fileID: 11400000, guid: 8ec80b8484aa6134583e8ce88c1ae962, type: 2}
   isCounterAllowed: 0
@@ -32,7 +30,7 @@ MonoBehaviour:
   isAbilityWeapon: 0
   isAppliedOnSelf: 0
   isSupportAbility: 0
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 1813024148, guid: 1538c5afb130f444784879ec5163389d, type: 3}
   dcAttribute:
     value: 10
   acAttribute:

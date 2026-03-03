@@ -1,15 +1,16 @@
-using System.Collections.Generic;
-using UnityEngine;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using IndAssets.Scripts.Managers;
+using IndAssets.Scripts.TacticTool;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
-using System;
-using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData.LevelGrids;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
-using IndAssets.Scripts.Managers;
 
 namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 {
@@ -17,7 +18,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "NewGameRules", menuName = "ProjectCI Tools/GameRules/Create FeLiteGameRules", order = 1)]
     public partial class FeLiteGameRules : BattleGameRules
     {
-        private readonly Dictionary<string, PvMnBattleGeneralUnit> _unitIdToBattleUnitHash = new();
+        [SerializeField]
+        private PvSoUnitsDictionary unitIdsToBattleUnitHash;
 
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
 
@@ -95,14 +97,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _finishedPlayableUnits.Clear();
             _ultPreparedUnits.Clear();
 
-            _unitIdToBattleUnitHash.Clear();
+            unitIdsToBattleUnitHash.Clear();
 
             CurrentTeam = BattleTeam.Friendly;
 
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
-                _unitIdToBattleUnitHash.TryAdd(unit.ID, unit);
+                unitIdsToBattleUnitHash.TryAdd(unit.ID, unit);
             }
 
             TacticBattleManager.HandleGameStarted();
@@ -191,7 +193,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             deadUnit.SetCurrentCell(null);
 
-            _unitIdToBattleUnitHash.Remove(deadUnit.ID);
+            unitIdsToBattleUnitHash.Remove(deadUnit.ID);
             deadUnit.DoActionOnInstalledPassives(passive => passive.DisposePassive(deadUnit));
             deadUnit.CleanUpPassives();
         }

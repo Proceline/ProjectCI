@@ -1,8 +1,10 @@
 using IndAssets.Scripts.Managers;
+using IndAssets.Scripts.TacticTool;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.Utilities.Runtime.Events;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -28,10 +30,27 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private Image[] abilityHints = new Image[3];
 
         [SerializeField]
+        private Image[] existedUltSymbols = new Image[2];
+
+        [SerializeField]
+        private GameObject existedUltSymbolsContainer;
+
+        [SerializeField]
+        private Transform ultSymbolsParent;
+
+        private readonly List<(Image, Image)> _ultSymbols = new();
+
+        [NonSerialized]
+        private bool _ultPanelInitialized = false;
+
+        [SerializeField]
         private GameObject onStageClearRoot;
 
         [Header("Global Assets"), SerializeField]
         private PvSoBattleTeamEvent roundSwitchEvent;
+
+        [SerializeField]
+        private PvSoBattleTeamEvent roundStartEvent;
 
         [SerializeField]
         private PvSoLevelCellEvent onHoverCellEventWithoutOwner;
@@ -45,6 +64,13 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         [SerializeField]
         private PvSoSimpleVoidEvent onGamePreEndedEvent;
 
+        [SerializeField]
+        private PvSoUnitsDictionary unitIdsToBattleUnitHash;
+        private readonly List<PvMnBattleGeneralUnit> _bufferedUltableUnits = new();
+
+        private ITeamRoundEndEvent OnRoundEndedEvent => roundSwitchEvent;
+        private ITeamRoundStartEvent OnRoundStartedEvent => roundStartEvent;
+
         [Header("Evnets"), SerializeField]
         private UnityEvent<Dictionary<GridPawnUnit, int>, LevelCellBase> onCombatOutPreviewsEvent;
 
@@ -57,12 +83,15 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         {
             roundEndButton.gameObject.SetActive(false);
             abilitiesPanel.SetActive(false);
+            _ultSymbols.Add((existedUltSymbols[0], existedUltSymbols[1]));
         }
 
         private void Start()
         {
             onBattleState.RegisterCallbackOnEnter(OnBattleStateEntered);
-            roundSwitchEvent.RegisterCallback(OnRoundSwitchResponse);
+            OnRoundEndedEvent.RegisterCallback(OnRoundSwitchResponse);
+            OnRoundStartedEvent.RegisterCallback(OnRoundStartedResponse);
+
             onHoverCellEventWithoutOwner.RegisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.RegisterCallback(CreatePreviewForTarget);
             onBattleState.RegisterCallbackOnEnter(TogglePreviewOnState);
@@ -72,7 +101,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private void OnDestroy()
         {
             onBattleState.UnregisterCallbackOnEnter(OnBattleStateEntered);
-            roundSwitchEvent.UnregisterCallback(OnRoundSwitchResponse);
+            OnRoundEndedEvent.UnregisterCallback(OnRoundSwitchResponse);
+            OnRoundStartedEvent.UnregisterCallback(OnRoundStartedResponse);
+
             onHoverCellEventWithoutOwner.UnregisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.UnregisterCallback(CreatePreviewForTarget);
             onBattleState.UnregisterCallbackOnEnter(TogglePreviewOnState);
@@ -81,12 +112,54 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
         private void OnBattleStateEntered(PvPlayerRoundState state, PvMnBattleGeneralUnit unit)
         {
-            roundEndButton.gameObject.SetActive(state == PvPlayerRoundState.None);
+            var atNoneState = state == PvPlayerRoundState.None;
+            roundEndButton.gameObject.SetActive(atNoneState); 
+            ultSymbolsParent.gameObject.SetActive(atNoneState);
         }
 
         private void OnRoundSwitchResponse(BattleTeam endingTeam)
         {
             roundEndButton.gameObject.gameObject.SetActive(endingTeam != BattleTeam.Friendly);
+        }
+
+        private void OnRoundStartedResponse(BattleTeam endingTeam)
+        {
+            ultSymbolsParent.gameObject.SetActive(endingTeam == BattleTeam.Friendly);
+
+            if (!_ultPanelInitialized)
+            {
+                _bufferedUltableUnits.Clear();
+
+                foreach (var itemPair in unitIdsToBattleUnitHash)
+                {
+                    var value = itemPair.Value;
+
+                    if (value.GetTeam() == BattleTeam.Friendly)
+                    {
+                        _bufferedUltableUnits.Add(value);
+                    }
+                }
+                _ultPanelInitialized = true;
+            }
+
+            if (_bufferedUltableUnits.Count != _ultSymbols.Count)
+            {
+                for (var i = _ultSymbols.Count; i < _bufferedUltableUnits.Count; i++)
+                {
+                    var container = Instantiate(existedUltSymbolsContainer, ultSymbolsParent);
+                    var images = container.GetComponentsInChildren<Image>();
+                    _ultSymbols.Add((images[1], images[2]));
+                }
+            }
+
+            for (var i = 0; i < _bufferedUltableUnits.Count; i++)
+            {
+                _ultSymbols[i].Item1.transform.parent.gameObject.SetActive(!_bufferedUltableUnits[i].IsDead());
+
+                var sprite = _bufferedUltableUnits[i].UltimateAbility.GetIconSprite;
+                _ultSymbols[i].Item1.sprite = sprite;
+                _ultSymbols[i].Item2.sprite = sprite;
+            }
         }
 
         private void CreatePreviewForUnit(LevelCellBase cell)
