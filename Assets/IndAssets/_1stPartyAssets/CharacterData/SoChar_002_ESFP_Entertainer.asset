@@ -68,5 +68,5 @@ MonoBehaviour:
   meshes:
   - {fileID: 8001354749718593143, guid: 488d02ffca8e8554aaa914e07cb3be7b, type: 3}
   - {fileID: 2568446364417295610, guid: 3da6fe667f4cf16409c45cb61a35ed25, type: 3}
-  talentedSupportAbility: {fileID: 11400000, guid: cf044d48a2bf05946b9c1c958f8b10fd, type: 2}
+  talentedSupportAbility: {fileID: 11400000, guid: d9b63f779a8a7854a80fefb0decc8eb5, type: 2}
   talentedUltimateAbility: {fileID: 11400000, guid: 957cc995eb0a19e49adb26962d840595, type: 2}

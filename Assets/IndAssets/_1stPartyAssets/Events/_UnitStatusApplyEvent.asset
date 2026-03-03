@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allRegisteredPassives:
   - {fileID: 11400000, guid: 3b063152081af37438052cf8d900a05b, type: 2}
+  - {fileID: 11400000, guid: 7548d9ae201a4f342af1de4175646a71, type: 2}
   onRuntimePreInstalledEvents:
     m_PersistentCalls:
       m_Calls: []

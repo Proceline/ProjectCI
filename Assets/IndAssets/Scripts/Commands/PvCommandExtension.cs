@@ -23,6 +23,15 @@ namespace IndAssets.Scripts.Commands
             var targetCell = TacticBattleManager.GetGrid()[commandResult.TargetCellIndex];
             var targetUnit = targetCell.GetUnitOnCell();
 
+            void ShowParticles()
+            {
+                foreach (var effectPrefab in usingAbility.GetTargetParticles())
+                {
+                    var hitEffect = MnObjectPool.Instance.Get(effectPrefab);
+                    hitEffect.transform.position = targetUnit.transform.position + Vector3.up * 2;
+                }
+            }
+
             switch (commandResult)
             {
                 case PvSimpleDamageCommand:
@@ -33,11 +42,7 @@ namespace IndAssets.Scripts.Commands
 
                     if (commandResult.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && usingAbility)
                     {
-                        foreach (var effectPrefab in usingAbility.GetTargetParticles())
-                        {
-                            var hitEffect = MnObjectPool.Instance.Get(effectPrefab);
-                            hitEffect.transform.position = targetUnit.transform.position + Vector3.up * 2;
-                        }
+                        ShowParticles();
                     }
 
                     commandResult.ApplyCommand(caster, targetUnit);
@@ -48,6 +53,7 @@ namespace IndAssets.Scripts.Commands
                 case PvStatusApplyCommand:
                     if (targetUnit)
                     {
+                        ShowParticles();
                         commandResult.ApplyCommand(caster, targetUnit);
                     }
 
