@@ -1,20 +1,24 @@
 using IndAssets.Scripts.Managers;
 using IndAssets.Scripts.TacticTool;
+using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
+using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace ProjectCI.CoreSystem.Runtime.UI
 {
     public class PvMnGameVisualBridge : MonoBehaviour
     {
+        [SerializeField]
+        private AttributeType ultEnergyType;
+
         [Header("In Scene Assets"), SerializeField]
         private Button roundEndButton;
 
@@ -180,11 +184,20 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
             for (var i = 0; i < _bufferedUltableUnits.Count; i++)
             {
-                _ultSymbols[i].Item1.transform.parent.gameObject.SetActive(!_bufferedUltableUnits[i].IsDead());
+                var targetUnit = _bufferedUltableUnits[i];
+                _ultSymbols[i].Item1.transform.parent.gameObject.SetActive(!targetUnit.IsDead());
 
-                var sprite = _bufferedUltableUnits[i].UltimateAbility.GetIconSprite;
+                var sprite = targetUnit.UltimateAbility.GetIconSprite;
+                var fillImage = _ultSymbols[i].Item2;
                 _ultSymbols[i].Item1.sprite = sprite;
-                _ultSymbols[i].Item2.sprite = sprite;
+                fillImage.sprite = sprite;
+
+                var currentEnergyLevel = targetUnit.RuntimeAttributes.GetAttributeValue(ultEnergyType);
+                fillImage.fillAmount = (float)currentEnergyLevel / FormulaAttributeContainer.MAX_ENERGY_VALUE;
+                if (currentEnergyLevel != FormulaAttributeContainer.MAX_ENERGY_VALUE)
+                {
+                    fillImage.GetComponentInParent<CanvasGroup>().blocksRaycasts = false;
+                }
             }
         }
 

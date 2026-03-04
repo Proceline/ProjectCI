@@ -37,8 +37,8 @@ MonoBehaviour:
   - SRAnge
   - LRAnge
   - _weaponResilience
-  - _skillCharm
-  - _range
+  - ENErgy
+  - '[deprecated]'
   - MOVement
   - DEFense
   - SPIrit

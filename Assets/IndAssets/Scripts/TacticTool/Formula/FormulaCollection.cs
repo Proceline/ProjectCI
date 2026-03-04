@@ -14,6 +14,9 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         private AttributeType hitPointAttribute;
 
         [SerializeField]
+        private AttributeType ultEnergyAttribute;
+
+        [SerializeField]
         private AttributeType m_MovementAttributeType;
 
         [SerializeField]
@@ -52,7 +55,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         /// </summary>
         /// <param name="personalityName"></param>
         /// <returns></returns>
-        /// <exception cref="System.Exception"></exception>
+        /// <exception cref="Exception"></exception>
         public (AttributeType, AttributeType) GetPersonalityAttributes(EPvPersonalityName personalityName)
         {
             if (PersonalityRedirectionDic.TryGetValue(personalityName, out var attributePair))
@@ -60,7 +63,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
                 return attributePair;
             }
 
-            throw new System.Exception("No such Personality Attribute existed!");
+            throw new Exception("No such Personality Attribute existed!");
         }
 
         /// <summary>
@@ -85,6 +88,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         public FormulaDefinition[] Formulas => m_Formulas;
 
         public AttributeType HealthAttributeType => hitPointAttribute;
+        public AttributeType UltimateEnergyType => ultEnergyAttribute;
         public AttributeType MovementAttributeType => m_MovementAttributeType;
         public AttributeType CriticalAttributeType => criticalAttributeType;
         public AttributeType AttackSpeedType => attackSpeedType;
