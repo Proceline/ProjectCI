@@ -28,8 +28,10 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
         }
 
         public static void AdjustAndEnqueueEnergy(string resultId, string ownerId, UnitAttributeContainer targetContainer, 
-            int deltaValue, AttributeType energyType, Queue<CommandResult> results)
+            int deltaValue, Queue<CommandResult> results)
         {
+            var energyType = FormulaCollection.UltEnergyType;
+
             var currentEnergy = targetContainer.GetAttributeValue(energyType);
             var maxEnergy = FormulaAttributeContainer.MAX_ENERGY_VALUE;
             var calculatedEnergy = currentEnergy + deltaValue;

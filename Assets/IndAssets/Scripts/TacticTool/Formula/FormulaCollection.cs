@@ -10,6 +10,9 @@ namespace ProjectCI.TacticTool.Formula.Concrete
     [CreateAssetMenu(fileName = "FormulaCollection", menuName = "ProjectCI/Attributes/Create FormulaCollection")]
     public class FormulaCollection : ScriptableObject, IService
     {
+        private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
+        private static FormulaCollection Instance => FormulaService.Service;
+
         [SerializeField]
         private AttributeType hitPointAttribute;
 
@@ -17,7 +20,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         private AttributeType ultEnergyAttribute;
 
         [SerializeField]
-        private AttributeType m_MovementAttributeType;
+        private AttributeType movementAttributeType;
 
         [SerializeField]
         private AttributeType criticalAttributeType;
@@ -88,12 +91,13 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         public FormulaDefinition[] Formulas => m_Formulas;
 
         public AttributeType HealthAttributeType => hitPointAttribute;
-        public AttributeType UltimateEnergyType => ultEnergyAttribute;
-        public AttributeType MovementAttributeType => m_MovementAttributeType;
         public AttributeType CriticalAttributeType => criticalAttributeType;
         public AttributeType AttackSpeedType => attackSpeedType;
         public AttributeType UnitTypeAttribute => unitTypeAttribute;
         public int AttackSpeedDifference => attackSpeedDifference;
+
+        public static AttributeType UltEnergyType => Instance.ultEnergyAttribute;
+        public static AttributeType MoveValueType => Instance.movementAttributeType;
 
         public void Initialize()
         {

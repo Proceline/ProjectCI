@@ -1,6 +1,5 @@
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.Services;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using System.Collections.Generic;
@@ -13,9 +12,6 @@ namespace ProjectCI.TacticTool.Formula.Concrete
     {
         private readonly Dictionary<AttributeType, FormulaDefinition> _attributesFormulaMap = new();
         private readonly IEventOwner _eventOwner;
-
-        private static readonly ServiceLocator<FormulaCollection> FormulaService = new();
-        private static FormulaCollection FormulaColInstance => FormulaService.Service;
 
         private int _currentEnergy;
         public const int MAX_ENERGY_VALUE = 100;
@@ -71,7 +67,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
 
         public override int GetAttributeValue(AttributeType type)
         {
-            var ultEnergyType = FormulaColInstance.UltimateEnergyType;
+            var ultEnergyType = FormulaCollection.UltEnergyType;
 
             if (ultEnergyType == type)
             {
@@ -95,7 +91,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
 
         public override void SetGeneralAttribute(AttributeType type, int value)
         {
-            if (FormulaColInstance.UltimateEnergyType == type)
+            if (FormulaCollection.UltEnergyType == type)
             {
                 _currentEnergy = value;
                 if (_currentEnergy < 0)

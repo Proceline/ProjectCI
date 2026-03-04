@@ -150,7 +150,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public void CleanUpPassives() => _installedPassives.Clear();
 
         public override int GetCurrentMovementPoints() => _currentMovementPoints;
-        public int GetMovementPoints() => RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
+        public int GetMovementPoints() => RuntimeAttributes.GetAttributeValue(FormulaCollection.MoveValueType);
 
         private void PlayIdleAnimation()
         {
@@ -194,7 +194,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return false;
             }
 
-            var currentType = RuntimeAttributes.GetAttributeValue(FormulaCollection.UltimateEnergyType);
+            var currentType = RuntimeAttributes.GetAttributeValue(FormulaCollection.UltEnergyType);
             return currentType >= FormulaAttributeContainer.MAX_ENERGY_VALUE;
         }
 
@@ -212,7 +212,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public override void HandleTurnStarted()
         {
             _currentMovementPoints = 
-                RuntimeAttributes.GetAttributeValue(FormulaCollection.MovementAttributeType);
+                RuntimeAttributes.GetAttributeValue(FormulaCollection.MoveValueType);
             SetCurrentActionPoints(1);
         }
 

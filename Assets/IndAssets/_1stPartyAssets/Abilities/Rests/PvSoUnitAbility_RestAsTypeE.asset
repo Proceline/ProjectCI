@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
+  m_Name: PvSoUnitAbility_RestAsTypeE
+  m_EditorClassIdentifier: 
+  m_AbilityName: '[RestE]'
+  m_Radius: 0
+  m_bAllowBlocked: 0
+  m_EffectedTeam: 1
+  m_EffectedType: 0
+  m_AbilityShape: {fileID: 11400000, guid: 5a0d6e2a70a56b5488d25ed7fe20c3e1, type: 2}
+  m_EffectShape: {fileID: 0}
+  m_EffectRadius: 0
+  spawnOnCaster: []
+  spawnOnTarget: []
+  abilityParams:
+  - {fileID: 11400000, guid: 2543494fd9f0cf04db8ed6e7114e748b, type: 2}
+  isCounterAllowed: 0
+  isFollowUpAllowed: 0
+  isAbilityWeapon: 0
+  isAppliedOnSelf: 1
+  isSupportAbility: 0
+  iconSprite: {fileID: 0}
+  dcAttribute:
+    value: 31
+  acAttribute:
+    value: 31
+  projectilePrefab: {fileID: 0}
+  abilityAnimationName: 99999

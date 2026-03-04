@@ -16,7 +16,7 @@ MonoBehaviour:
     value: 29
   ultEnergyAttribute:
     value: 24
-  m_MovementAttributeType:
+  movementAttributeType:
     value: 26
   criticalAttributeType:
     value: 9

@@ -27,9 +27,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private AttributeType criticalAmountAttribute;
 
         [SerializeField]
-        private AttributeType energyTypeAttribute;
-
-        [SerializeField]
         private PvEnDamageForm damageForm;
 
         [SerializeField] private int basicAddon;
@@ -139,7 +136,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             results.Enqueue(savingCommand);
 
-            PvEnergyObtainCommand.AdjustAndEnqueueEnergy(resultId, fromUnit.ID, fromContainer, 20, energyTypeAttribute, results);
+            PvEnergyObtainCommand.AdjustAndEnqueueEnergy(resultId, fromUnit.ID, fromContainer, 20, results);
 
             // Add Die Command if Health is 0
             if (!targetUnit.IsDead())
