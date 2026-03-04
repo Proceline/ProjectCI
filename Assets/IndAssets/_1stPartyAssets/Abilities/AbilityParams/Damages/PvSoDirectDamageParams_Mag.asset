@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4290c076828f27045a3305d91868b179, type: 3}
-  m_Name: PvSoDirectDamageParams_MagLite
+  m_Name: PvSoDirectDamageParams_Mag
   m_EditorClassIdentifier: 
   attackerAttribute:
     value: 31
@@ -19,6 +19,8 @@ MonoBehaviour:
   damageType: 3
   criticalAmountAttribute:
     value: 4
+  energyTypeAttribute:
+    value: 24
   damageForm: 9
   basicAddon: 10
   isCriticalEnabledByDefault: 0

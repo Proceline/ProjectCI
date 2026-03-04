@@ -84531,6 +84531,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec552155d37f2f46a9d42a178c4d872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.UI.PvMnGameVisualBridge
+  ultEnergyType:
+    value: 0
   roundEndButton: {fileID: 2492829182030408156}
   pawnPreviewPanelPrefab: {fileID: 3915974871867013004, guid: ec5ac12032ccd2047ac75cfcd38fef9d, type: 3}
   pawnPreviewParents:
@@ -84551,6 +84553,7 @@ MonoBehaviour:
   roundStartEvent: {fileID: 11400000, guid: d14b3c03fd0a8c4449d36f0cfc508b44, type: 2}
   onHoverCellEventWithoutOwner: {fileID: 11400000, guid: 96c11a14d92eb7d458f264d8366c5957, type: 2}
   onHoverCellEventWithOwner: {fileID: 11400000, guid: cde261346966da0418456c40b2c593e7, type: 2}
+  onEnergyUpdateSimpleEvent: {fileID: 11400000, guid: ebb05e26f98fb844f88f15d4ece7f790, type: 2}
   onBattleState: {fileID: 11400000, guid: 7e5cc1875f941bb44a7923a523de734f, type: 2}
   onGamePreEndedEvent: {fileID: 11400000, guid: ddddd59eaaecea145942131358a4ed32, type: 2}
   unitIdsToBattleUnitHash: {fileID: 11400000, guid: a3925a911c47f944a9f1711d10c507c9, type: 2}

@@ -12,15 +12,21 @@ namespace IndAssets.Scripts.Commands
 {
     public static class PvCommandExtension
     {
-        public static void ApplyResultOnVisual(this CommandResult commandResult, PvSoUnitAbility usingAbility,
+        public static void ApplyResultOnVisual(this CommandResult command, PvSoUnitAbility usingAbility,
             IDictionary<string, PvMnBattleGeneralUnit> unitIdCollection)
         {
-            if (!unitIdCollection.TryGetValue(commandResult.OwnerId, out var caster))
+            if (!unitIdCollection.TryGetValue(command.OwnerId, out var caster))
             {
                 return;
             }
 
-            var targetCell = TacticBattleManager.GetGrid()[commandResult.TargetCellIndex];
+            if (command is PvEnergyObtainCommand)
+            {
+                command.ApplyCommand(null, caster);
+                return;
+            }
+
+            var targetCell = TacticBattleManager.GetGrid()[command.TargetCellIndex];
             var targetUnit = targetCell.GetUnitOnCell();
 
             void ShowParticles()
@@ -32,7 +38,7 @@ namespace IndAssets.Scripts.Commands
                 }
             }
 
-            switch (commandResult)
+            switch (command)
             {
                 case PvSimpleDamageCommand:
                     if (targetUnit)
@@ -40,21 +46,21 @@ namespace IndAssets.Scripts.Commands
                         targetUnit.LookAtCell(caster.GetCell());
                     }
 
-                    if (commandResult.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && usingAbility)
+                    if (command.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && usingAbility)
                     {
                         ShowParticles();
                     }
 
-                    commandResult.ApplyCommand(caster, targetUnit);
+                    command.ApplyCommand(caster, targetUnit);
                     break;
                 case PvPushCommand:
-                    commandResult.ApplyCommand(caster, targetCell);
+                    command.ApplyCommand(caster, targetCell);
                     break;
                 case PvStatusApplyCommand:
                     if (targetUnit)
                     {
                         ShowParticles();
-                        commandResult.ApplyCommand(caster, targetUnit);
+                        command.ApplyCommand(caster, targetUnit);
                     }
 
                     break;
@@ -62,7 +68,7 @@ namespace IndAssets.Scripts.Commands
                     PvDieCommand.GetRaiserUnitDyingEvent.Raise(caster);
                     break;
                 case PvGroundStatusCommand:
-                    commandResult.ApplyCommand(caster, targetCell);
+                    command.ApplyCommand(caster, targetCell);
                     break;
             }
         }

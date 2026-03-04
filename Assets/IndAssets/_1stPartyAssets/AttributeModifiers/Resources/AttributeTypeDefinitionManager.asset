@@ -37,7 +37,7 @@ MonoBehaviour:
   - SRAnge
   - LRAnge
   - _weaponResilience
-  - ENErgy
+  - ENErgy_mark_only
   - '[deprecated]'
   - MOVement
   - DEFense

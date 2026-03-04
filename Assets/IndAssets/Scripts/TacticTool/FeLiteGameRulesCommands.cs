@@ -32,38 +32,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
         }
 
-        private readonly Dictionary<Type, Stack<CommandResult>> _commandsPool = new();
-
-        public T GetCommand<T>() where T : CommandResult, new()
-        {
-            var type = typeof(T);
-            if (!_commandsPool.ContainsKey(type))
-            {
-                _commandsPool[type] = new Stack<CommandResult>();
-            }
-
-            if (_commandsPool[type].Count > 0)
-            {
-                return _commandsPool[type].Pop() as T;
-            }
-            else
-            {
-                return new T();
-            }
-        }
-
-        public void Release<T>(T command) where T : CommandResult
-        {
-            var type = typeof(T);
-            if (!_commandsPool.ContainsKey(type))
-            {
-                _commandsPool[type] = new Stack<CommandResult>();
-            }
-
-            command.ClearCommand();
-            _commandsPool[type].Push(command);
-        }
-
         /// <summary>
         /// This function applied after you get all results from logic level
         /// </summary>

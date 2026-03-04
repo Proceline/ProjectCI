@@ -44,6 +44,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private Transform ultSymbolsParent;
 
         private readonly List<(Image, Image)> _ultSymbols = new();
+        private readonly List<CanvasGroup> _ultSymbolsContainer = new();
 
         [NonSerialized]
         private bool _ultPanelInitialized = false;
@@ -64,6 +65,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
         private PvSoLevelCellEvent onHoverCellEventWithOwner;
 
         [SerializeField]
+        private PvSoSimpleIntsEvent onEnergyUpdateSimpleEvent;
+
+        [SerializeField]
         private PvSoBattleState onBattleState;
 
         [SerializeField]
@@ -75,6 +79,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
         private ITeamRoundEndEvent OnRoundEndedEvent => roundSwitchEvent;
         private ITeamRoundStartEvent OnRoundStartedEvent => roundStartEvent;
+        private IEnergyUpdateEvent OnEnergyUpdateSimpleEvent => onEnergyUpdateSimpleEvent;
 
         [Header("Evnets"), SerializeField]
         private UnityEvent<Dictionary<GridPawnUnit, int>, LevelCellBase> onCombatOutPreviewsEvent;
@@ -92,6 +97,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             roundEndButton.gameObject.SetActive(false);
             abilitiesPanel.SetActive(false);
             _ultSymbols.Add((existedUltSymbols[0], existedUltSymbols[1]));
+            _ultSymbolsContainer.Add(existedUltSymbolsContainer.GetComponent<CanvasGroup>());
         }
 
         private void Start()
@@ -99,6 +105,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             onBattleState.RegisterCallbackOnEnter(OnBattleStateEntered);
             OnRoundEndedEvent.RegisterCallback(OnRoundSwitchResponse);
             OnRoundStartedEvent.RegisterCallback(OnRoundStartedResponse);
+            OnEnergyUpdateSimpleEvent.RegisterCallbackVisually(UpdateEnergyForDeterminedUnit);
 
             onHoverCellEventWithoutOwner.RegisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.RegisterCallback(CreatePreviewForTarget);
@@ -111,6 +118,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             onBattleState.UnregisterCallbackOnEnter(OnBattleStateEntered);
             OnRoundEndedEvent.UnregisterCallback(OnRoundSwitchResponse);
             OnRoundStartedEvent.UnregisterCallback(OnRoundStartedResponse);
+            OnEnergyUpdateSimpleEvent.UnregisterCallbackVisually(UpdateEnergyForDeterminedUnit);
 
             onHoverCellEventWithoutOwner.UnregisterCallback(CreatePreviewForUnit);
             onHoverCellEventWithOwner.UnregisterCallback(CreatePreviewForTarget);
@@ -155,6 +163,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                         var container = Instantiate(existedUltSymbolsContainer, ultSymbolsParent);
                         var images = container.GetComponentsInChildren<Image>();
                         _ultSymbols.Add((images[1], images[2]));
+                        _ultSymbolsContainer.Add(container.GetComponent<CanvasGroup>());
                     }
 
                     var visualButton = _ultSymbols[i].Item1.transform.parent.GetComponent<PvMnUltVisualButton>();
@@ -196,8 +205,21 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                 fillImage.fillAmount = (float)currentEnergyLevel / FormulaAttributeContainer.MAX_ENERGY_VALUE;
                 if (currentEnergyLevel != FormulaAttributeContainer.MAX_ENERGY_VALUE)
                 {
-                    fillImage.GetComponentInParent<CanvasGroup>().blocksRaycasts = false;
+                    _ultSymbolsContainer[i].blocksRaycasts = false;
                 }
+            }
+        }
+
+        private void UpdateEnergyForDeterminedUnit(string unitId, int[] energyValues)
+        {
+            var resultIndex = _bufferedUltableUnits.FindIndex(unit => unit.ID == unitId);
+            if (resultIndex >= 0)
+            {
+                var fillImage = _ultSymbols[resultIndex].Item2;
+                fillImage.fillAmount = (float)energyValues[1] / FormulaAttributeContainer.MAX_ENERGY_VALUE;
+
+                _ultSymbolsContainer[resultIndex].blocksRaycasts = 
+                    _bufferedUltableUnits[resultIndex].CheckIfUltAllowed();
             }
         }
 

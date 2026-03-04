@@ -92,5 +92,21 @@ namespace ProjectCI.TacticTool.Formula.Concrete
                 return GetAdvancedAttributeValue(type);
             }
         }
+
+        public override void SetGeneralAttribute(AttributeType type, int value)
+        {
+            if (FormulaColInstance.UltimateEnergyType == type)
+            {
+                _currentEnergy = value;
+                if (_currentEnergy < 0)
+                {
+                    _currentEnergy = 0;
+                }
+            }
+            else
+            {
+                base.SetGeneralAttribute(type, value);
+            }
+        }
     }
 } 

@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4290c076828f27045a3305d91868b179, type: 3}
-  m_Name: PvSoDirectDamageParams_Phy
+  m_Name: PvSoDirectDamageParams_MagLite
   m_EditorClassIdentifier: 
   attackerAttribute:
-    value: 12
+    value: 31
   defenderAttribute:
-    value: 27
-  damageType: 0
+    value: 31
+  damageType: 3
   criticalAmountAttribute:
     value: 4
-  damageForm: 5
-  basicAddon: 0
-  isCriticalEnabledByDefault: 1
+  energyTypeAttribute:
+    value: 24
+  damageForm: 9
+  basicAddon: 10
+  isCriticalEnabledByDefault: 0
   isAlwaysHitByDefault: 0
   raiserNotifyDamageBeforeRev: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}

@@ -187,6 +187,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _ultimateAbility = ability;
         }
 
+        public bool CheckIfUltAllowed()
+        {
+            if (!_ultimateAbility)
+            {
+                return false;
+            }
+
+            var currentType = RuntimeAttributes.GetAttributeValue(FormulaCollection.UltimateEnergyType);
+            return currentType >= FormulaAttributeContainer.MAX_ENERGY_VALUE;
+        }
+
         public bool SwitchForm()
         {
             _ultimateForm = !_ultimateForm;

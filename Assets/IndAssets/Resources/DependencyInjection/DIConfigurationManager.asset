@@ -58,6 +58,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITargetUnitDeathEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 62ad0769594cfb3488db02c3f169cf81, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IEnergyUpdateEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: ebb05e26f98fb844f88f15d4ece7f790, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -68,6 +71,8 @@ MonoBehaviour:
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.PvMnCharacterEquipmentManager,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvStatusApplyCommand, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvEnergyObtainCommand, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvDieCommand, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
