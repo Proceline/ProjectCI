@@ -119,7 +119,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 return;
             }
 ;
-            if (animationName != Animation.AnimationPvCustomName.DoNothing)
+            if (animationName != AnimationPvCustomName.DoNothing)
             {
                 var timeRemaining = GetPresetAnimationLengthFunc.Raise(casterUnit.transform, animationName.ToString())
                     - executedTime;
