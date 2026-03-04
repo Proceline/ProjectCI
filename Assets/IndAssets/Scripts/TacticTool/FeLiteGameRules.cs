@@ -95,8 +95,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             gameBattleState.Clear();
 
             _finishedPlayableUnits.Clear();
-            _ultPreparedUnits.Clear();
-
             unitIdsToBattleUnitHash.Clear();
 
             CurrentTeam = BattleTeam.Friendly;

@@ -21,7 +21,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [NonSerialized] private LevelCellBase _selectedUnitLastCell;
 
         private readonly HashSet<PvMnBattleGeneralUnit> _finishedPlayableUnits = new();
-        private readonly HashSet<PvMnBattleGeneralUnit> _ultPreparedUnits = new();
 
         private void ApplyCellUnitToSelectedUnit(LevelCellBase cell)
         {
@@ -54,8 +53,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _selectedUnitLastCell = null;
 
             SelectUnit(playableUnit);
-            gameBattleState.PushState(playableUnit.IsInUltimateForm ? 
-                PvPlayerRoundState.Prepare : PvPlayerRoundState.Selected, playableUnit);
+            gameBattleState.PushState(PvPlayerRoundState.Selected, playableUnit);
         }
 
         private void ApplyMovementToCellForSelectedUnit(LevelCellBase targetCell)
@@ -108,7 +106,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             gameBattleState.PushState(PvPlayerRoundState.Applying, triggerUnit);
             yield return ApplyAbility(triggerUnit, selectedCell, ability);
-            FinishUnitAction(triggerUnit, false);
+            FinishUnitAction(triggerUnit);
 
             _ = CheckStageClearStatus();
         }
@@ -133,24 +131,17 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         {
             var lastUnit = _selectedUnit;
             RaiserManualFinishOrRestPrepareEvent.Raise(lastUnit);
-            FinishUnitAction(lastUnit, true);
+            FinishUnitAction(lastUnit);
         }
 
-        private void FinishUnitAction(PvMnBattleGeneralUnit finishedUnit, bool ultimate)
+        private void FinishUnitAction(PvMnBattleGeneralUnit finishedUnit)
         {
             gameBattleState.PushState(PvPlayerRoundState.None, null);
 
             if (finishedUnit)
             {
                 DeselectUnit(finishedUnit);
-                if (ultimate)
-                {
-                    _ultPreparedUnits.Add(finishedUnit);
-                }
-                else
-                {
-                    _finishedPlayableUnits.Add(finishedUnit);
-                }
+                _finishedPlayableUnits.Add(finishedUnit);
             }
 
             CheckRestUnits();
@@ -158,11 +149,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void SelectUnit(PvMnBattleGeneralUnit selectingUnit)
         {
-            if (_ultPreparedUnits.Contains(selectingUnit))
-            {
-                selectingUnit.SwitchForm(true);
-            }
-
             _selectedUnit = selectingUnit;
             onTurnOwnerSelectedPreview?.Invoke(selectingUnit);
             raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Select);
@@ -170,11 +156,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void DeselectUnit(PvMnBattleGeneralUnit selectingUnit)
         {
-            if (_ultPreparedUnits.Contains(selectingUnit))
-            {
-                selectingUnit.SwitchForm(false);
-            }
-
             onTurnOwnerDeSelectedPreview?.Invoke(selectingUnit);
             raiserOwnerSelectedViewEvent.Raise(selectingUnit, UnitSelectBehaviour.Deselect);
             _selectedUnit = null;
@@ -190,11 +171,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             switch (stateToBeCancelled)
             {
                 case PvPlayerRoundState.Prepare:
-                    if (playingUnit.IsInUltimateForm)
-                    {
-                        DeselectUnit(playingUnit);
-                    }
-                    else if (_selectedUnitLastCell && playingUnit.GetCell() != _selectedUnitLastCell)
+                    if (_selectedUnitLastCell && playingUnit.GetCell() != _selectedUnitLastCell)
                     {
                         // TODO: Clean up movement buff
                         playingUnit.ForceMoveToCellImmediately(_selectedUnitLastCell);
@@ -505,12 +482,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             }
 
             _finishedPlayableUnits.Clear();
-
-            foreach (var ultUnit in _ultPreparedUnits)
-            {
-                ultUnit.SwitchForm(false);
-            }
-            _ultPreparedUnits.Clear();
 
             var index = 0;
             foreach (var roundEndUnityEvent in roundEventEndList)

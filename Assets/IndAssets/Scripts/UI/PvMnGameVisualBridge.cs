@@ -143,11 +143,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                         _bufferedUltableUnits.Add(value);
                     }
                 }
-                _ultPanelInitialized = true;
-            }
 
-            if (_bufferedUltableUnits.Count != _ultSymbols.Count)
-            {
                 for (var i = 0; i < _bufferedUltableUnits.Count; i++)
                 {
                     if (i >= _ultSymbols.Count)
@@ -178,6 +174,8 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                         };
                     }
                 }
+
+                _ultPanelInitialized = true;
             }
 
             for (var i = 0; i < _bufferedUltableUnits.Count; i++)

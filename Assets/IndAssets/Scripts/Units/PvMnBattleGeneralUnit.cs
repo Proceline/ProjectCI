@@ -187,11 +187,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             _ultimateAbility = ability;
         }
 
-        public void SwitchForm(bool isUltimate)
-        {
-            _ultimateForm = isUltimate;
-        }
-
         public bool SwitchForm()
         {
             _ultimateForm = !_ultimateForm;
