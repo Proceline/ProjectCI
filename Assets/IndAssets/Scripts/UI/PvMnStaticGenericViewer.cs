@@ -30,7 +30,10 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [SerializeField] private PvSoUnitsDictionary unitsDictionary;
         [SerializeField] private PvSoSimpleIntsEvent intsEventForEnergy;
-        private IEnergyUpdateEvent EnergyUpdateEvent => intsEventForEnergy;
+        [SerializeField] private PvSoTargetUnitEvent unitPreRestEvent, unitPostRestEvent;
+        private IEnergyUpdateEvent OnEnergyUpdateEvent => intsEventForEnergy;
+        private ITargetUnitPreRestEvent OnUnitPreRestEvent => unitPreRestEvent;
+        private ITargetUnitPostRestEvent OnUnitPostRestEvent => unitPostRestEvent;
 
         public float smallTextSize = 8f;
         public float normalTextSize = 10f;
@@ -41,7 +44,9 @@ namespace ProjectCI.Runtime.GUI.Battle
             _availableTexts.Enqueue(defaultText);
             defaultText.gameObject.SetActive(false);
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(ShowDamageValueText);
-            EnergyUpdateEvent.RegisterCallbackVisually(ShowEnergyText);
+            OnUnitPreRestEvent.RegisterCallback(EnableEnergyHint);
+            OnUnitPostRestEvent.RegisterCallback(DisableEnergyHint);
+
             onInitializedRoot?.Invoke();
 
             for (int i = 0; i < damageTypeColors.Length; i++)
@@ -52,8 +57,9 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         private void OnDestroy()
         {
+            OnUnitPreRestEvent.UnregisterCallback(EnableEnergyHint);
+            OnUnitPostRestEvent.UnregisterCallback(DisableEnergyHint);
             FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(ShowDamageValueText);
-            EnergyUpdateEvent.UnregisterCallbackVisually(ShowEnergyText);
         }
 
         private TextMeshPro GetAvailableDamageText()
@@ -100,6 +106,16 @@ namespace ProjectCI.Runtime.GUI.Battle
 
             textMesh.SetText(finalText);
             AnimateText(textMesh, 0.5f, targetPosition);
+        }
+
+        private void EnableEnergyHint(PvMnBattleGeneralUnit battleUnit)
+        {
+            OnEnergyUpdateEvent.RegisterCallbackVisually(ShowEnergyText);
+        }
+
+        private void DisableEnergyHint(PvMnBattleGeneralUnit battleUnit)
+        {
+            OnEnergyUpdateEvent.UnregisterCallbackVisually(ShowEnergyText);
         }
 
         private void ShowEnergyText(string ownerId, int[] energyAdjustment)

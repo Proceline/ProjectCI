@@ -129,8 +129,10 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// <exception cref="Exception"></exception>
         private IEnumerator TakeRestForCurrentPlayer(PvMnBattleGeneralUnit lastUnit)
         {
+            RaiserTargetUnitPreRestEvent.Raise(lastUnit);
             var cell = lastUnit.GetCell();
             var nearbyFriendsCount = 0;
+
             cell.GetAllAdjacentCells().ForEach(cell =>
             {
                 var standUnit = cell.GetUnitOnCell();
@@ -152,8 +154,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                     yield return ApplyAbility(lastUnit, lastUnit.GetCell(), extroTypeRest);
                 }
             }
-            
-            RaiserManualFinishOrRestPrepareEvent.Raise(lastUnit);
+
+            RaiserTargetUnitPostRestEvent.Raise(lastUnit);
             FinishUnitAction(lastUnit);
         }
 

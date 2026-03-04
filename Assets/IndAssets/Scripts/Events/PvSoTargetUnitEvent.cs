@@ -15,9 +15,19 @@ namespace ProjectCI.Utilities.Runtime.Events
     {
         // Empty
     }
+
+    public interface ITargetUnitPreRestEvent : ITargetUnitEvent
+    {
+        // Empty
+    }
+
+    public interface ITargetUnitPostRestEvent : ITargetUnitEvent
+    {
+        // Empty
+    }
     
     [CreateAssetMenu(fileName = "Status Refresh Event", menuName = "ProjectCI Utilities/Events/Status Refresh Event")]
-    public class PvSoTargetUnitEvent : SoUnityEventBase, ITargetUnitDeathEvent
+    public class PvSoTargetUnitEvent : SoUnityEventBase, ITargetUnitDeathEvent, ITargetUnitPreRestEvent, ITargetUnitPostRestEvent
     {
         [SerializeField]
         private UnityEvent<PvMnBattleGeneralUnit> onRuntimePreInstalledEvents;

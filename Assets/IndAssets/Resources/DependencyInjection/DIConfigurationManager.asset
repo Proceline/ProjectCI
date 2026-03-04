@@ -25,9 +25,6 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Functions.PvSoOutBooleanFunction,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 72e6c06c4ca2c8d43b3db24d3c500b05, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IUnitPrepareEvent, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: f7f445ba1f0c5a54ea343ea1c1435c1f, type: 2}
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITeamRoundEndEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 98cba3e32e440fa4798279f8b64a26ab, type: 2}
@@ -61,6 +58,12 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IEnergyUpdateEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: ebb05e26f98fb844f88f15d4ece7f790, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITargetUnitPreRestEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 9b73603859d5d354aafae919cd54ae35, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITargetUnitPostRestEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 9ba17681181fec5499506fa5fb916e02, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
