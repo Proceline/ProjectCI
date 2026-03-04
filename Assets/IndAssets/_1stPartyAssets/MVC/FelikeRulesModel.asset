@@ -83,6 +83,8 @@ MonoBehaviour:
         m_CallState: 2
   raiserTurnLockerEvent: {fileID: 11400000, guid: f5c680ffb8c5ce943a0eb0ff48e725e2, type: 2}
   raiserGamePreEndedEvent: {fileID: 11400000, guid: ddddd59eaaecea145942131358a4ed32, type: 2}
+  extroTypeRest: {fileID: 11400000, guid: 844ee2b6c4f279e498bf3f9671399b0c, type: 2}
+  introTypeRest: {fileID: 11400000, guid: 36884819cf33591448788973f4903fab, type: 2}
   roundEventEndList:
   - m_PersistentCalls:
       m_Calls:

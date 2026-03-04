@@ -15542,6 +15542,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  unitsDictionary: {fileID: 11400000, guid: a3925a911c47f944a9f1711d10c507c9, type: 2}
+  intsEventForEnergy: {fileID: 11400000, guid: ebb05e26f98fb844f88f15d4ece7f790, type: 2}
   normalTextSize: 10
   criticalTextSize: 12
 --- !u!1001 &410070214

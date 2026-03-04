@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PvSoEnergyAddOnRestParams_I
   m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.CoreSystem.Runtime.Abilities.PvSoEnergyAdjustAbilityParams
   energyValueDependency:
-    value: 1
+    value: 2
   typeOnReceiver: 1
-  threshold: 1
+  threshold: 2

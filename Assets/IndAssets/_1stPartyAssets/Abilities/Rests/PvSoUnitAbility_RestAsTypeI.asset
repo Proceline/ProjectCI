@@ -31,8 +31,8 @@ MonoBehaviour:
   isSupportAbility: 0
   iconSprite: {fileID: 0}
   dcAttribute:
-    value: 10
+    value: 31
   acAttribute:
-    value: 11
+    value: 31
   projectilePrefab: {fileID: 0}
   abilityAnimationName: 99999

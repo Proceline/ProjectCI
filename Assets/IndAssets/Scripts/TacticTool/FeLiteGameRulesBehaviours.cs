@@ -89,7 +89,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             if (selectedCell == playingUnit.GetCell())
             {
-                TakeRestForCurrentPlayer();
+                playingUnit.StartCoroutine(TakeRestForCurrentPlayer(playingUnit));
                 return;
             }
 
@@ -127,9 +127,32 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         /// Take Rest
         /// </summary>
         /// <exception cref="Exception"></exception>
-        private void TakeRestForCurrentPlayer()
+        private IEnumerator TakeRestForCurrentPlayer(PvMnBattleGeneralUnit lastUnit)
         {
-            var lastUnit = _selectedUnit;
+            var cell = lastUnit.GetCell();
+            var nearbyFriendsCount = 0;
+            cell.GetAllAdjacentCells().ForEach(cell =>
+            {
+                var standUnit = cell.GetUnitOnCell();
+                // The team needs to be exactly same
+                if (standUnit && standUnit.GetTeam() == lastUnit.GetTeam())
+                {
+                    nearbyFriendsCount++;
+                }
+            });
+
+            if (nearbyFriendsCount == 0)
+            {
+                yield return ApplyAbility(lastUnit, lastUnit.GetCell(), introTypeRest);
+            }
+            else
+            {
+                for (var i = 0; i < nearbyFriendsCount; i++)
+                {
+                    yield return ApplyAbility(lastUnit, lastUnit.GetCell(), extroTypeRest);
+                }
+            }
+            
             RaiserManualFinishOrRestPrepareEvent.Raise(lastUnit);
             FinishUnitAction(lastUnit);
         }

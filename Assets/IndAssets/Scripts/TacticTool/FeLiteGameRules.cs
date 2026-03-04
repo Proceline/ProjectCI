@@ -1,6 +1,7 @@
 using IndAssets.Scripts.Managers;
 using IndAssets.Scripts.TacticTool;
 using ProjectCI.CoreSystem.DependencyInjection;
+using ProjectCI.CoreSystem.Runtime.Abilities;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay.GameRules;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -55,6 +56,9 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         [Header("On Game End"), SerializeField]
         private PvSoSimpleVoidEvent raiserGamePreEndedEvent;
+
+        [Header("On Turn Rest"), SerializeField]
+        private PvSoUnitAbility extroTypeRest, introTypeRest;
 
         #region Injected Fields
 
