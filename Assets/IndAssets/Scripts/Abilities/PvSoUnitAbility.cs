@@ -1,7 +1,6 @@
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
 using ProjectCI.CoreSystem.Runtime.Animation;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using UnityEngine;
 

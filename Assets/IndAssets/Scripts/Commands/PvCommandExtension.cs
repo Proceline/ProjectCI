@@ -29,15 +29,6 @@ namespace IndAssets.Scripts.Commands
             var targetCell = TacticBattleManager.GetGrid()[command.TargetCellIndex];
             var targetUnit = targetCell.GetUnitOnCell();
 
-            void ShowParticles()
-            {
-                foreach (var effectPrefab in usingAbility.GetTargetParticles())
-                {
-                    var hitEffect = MnObjectPool.Instance.Get(effectPrefab);
-                    hitEffect.transform.position = targetUnit.transform.position + Vector3.up * 2;
-                }
-            }
-
             switch (command)
             {
                 case PvSimpleDamageCommand:
@@ -45,12 +36,6 @@ namespace IndAssets.Scripts.Commands
                     {
                         targetUnit.LookAtCell(caster.GetCell());
                     }
-
-                    if (command.ExtraInfo != UnitAbilityCoreExtensions.MissExtraInfoHint && usingAbility)
-                    {
-                        ShowParticles();
-                    }
-
                     command.ApplyCommand(caster, targetUnit);
                     break;
                 case PvPushCommand:
@@ -59,10 +44,8 @@ namespace IndAssets.Scripts.Commands
                 case PvStatusApplyCommand:
                     if (targetUnit)
                     {
-                        ShowParticles();
                         command.ApplyCommand(caster, targetUnit);
                     }
-
                     break;
                 case PvDieCommand:
                     PvDieCommand.GetRaiserUnitDyingEvent.Raise(caster);
@@ -70,6 +53,17 @@ namespace IndAssets.Scripts.Commands
                 case PvGroundStatusCommand:
                     command.ApplyCommand(caster, targetCell);
                     break;
+            }
+
+            if (!targetUnit)
+            {
+                return;
+            }
+
+            foreach (var effectPrefab in usingAbility.GetTargetParticles())
+            {
+                var hitEffect = MnObjectPool.Instance.Get(effectPrefab);
+                hitEffect.transform.position = targetUnit.transform.position + Vector3.up * 2;
             }
         }
     }

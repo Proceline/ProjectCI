@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d168d098fd971714389fe2c43b605d61, type: 3}
-  m_Name: _SimpleDamageRespondEvent
-  m_EditorClassIdentifier: 
-  internalEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  m_Script: {fileID: 11500000, guid: a3cc6eea711be194ebdf4a9bc6631b90, type: 3}
+  m_Name: _OnDamageLikeValueUpdateEvent
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectCI.Utilities.Runtime.Events.PvSoDamageLikeApplyEvent

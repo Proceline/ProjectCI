@@ -20,9 +20,6 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
         private PvSoNotifyDamageBeforeRevEvent onNotifyDamageBeforeRevEvent;
 
         [SerializeField]
-        private PvSoSimpleDamageApplyEvent raiserSimpleDamageApplyEvent;
-
-        [SerializeField]
         private int finalDamageValue;
 
         private readonly Dictionary<string, string> _ownersQueryIds = new();

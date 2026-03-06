@@ -15543,9 +15543,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   unitsDictionary: {fileID: 11400000, guid: a3925a911c47f944a9f1711d10c507c9, type: 2}
-  intsEventForEnergy: {fileID: 11400000, guid: ebb05e26f98fb844f88f15d4ece7f790, type: 2}
-  unitPreRestEvent: {fileID: 11400000, guid: 9b73603859d5d354aafae919cd54ae35, type: 2}
-  unitPostRestEvent: {fileID: 11400000, guid: 9ba17681181fec5499506fa5fb916e02, type: 2}
+  normalHitEffectPrefab: {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
+  blockHitEffectPrefab: {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
   smallTextSize: 8
   normalTextSize: 10
   criticalTextSize: 12

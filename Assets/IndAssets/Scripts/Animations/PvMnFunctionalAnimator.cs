@@ -9,6 +9,7 @@ using ProjectCI.Utilities.Runtime.Functions;
 using System;
 using System.Collections;
 using UnityEngine;
+using IndAssets.Scripts.Abilities;
 
 namespace ProjectCI_Animation.Runtime.Concrete
 {
@@ -20,6 +21,9 @@ namespace ProjectCI_Animation.Runtime.Concrete
         [Inject] private static IAnimationOutBreakPointFunc _onGetPresetAnimationBreakPointFunc;
         [Inject] private static PvSoAnimationTriggerEvent _onAnimationPlayEvent;
 
+        [Inject] private static IPvDamageLikeApplyEvent _onDamageApplyEvent;
+        [Inject] private static ITargetUnitDeathEvent _onIsDyingEvent;
+
         [SerializeField] 
         private float generalAdjustOnTransition = 0.15f;
         
@@ -28,8 +32,6 @@ namespace ProjectCI_Animation.Runtime.Concrete
 
         [NonSerialized] private bool _isLockableAnimating;
         private Coroutine _lockingRoutine;
-
-        [Inject] private static ITargetUnitDeathEvent _onIsDyingEvent;
 
         public Action<string> OnForcePlayAnimation;
 
@@ -41,7 +43,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
                 return;
             }
 
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(RespondToDamageParams);
+            _onDamageApplyEvent.RegisterCallbackVisually(RespondAnimationToDamageVisually);
             _onIsDyingEvent.RegisterCallback(RespondToDie);
             
             _onIsAnimatingProgressFunc.RegisterDelegate(gridObject, IsLockableAnimating);
@@ -63,7 +65,7 @@ namespace ProjectCI_Animation.Runtime.Concrete
 
             if (_initialized)
             {
-                FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(RespondToDamageParams);
+                _onDamageApplyEvent.UnregisterCallbackVisually(RespondAnimationToDamageVisually);
                 _onIsDyingEvent.UnregisterCallback(RespondToDie);
                 
                 _initialized = false;
@@ -96,9 +98,10 @@ namespace ProjectCI_Animation.Runtime.Concrete
             return checkingOwner == _animatorOwner && _isLockableAnimating;
         }
 
-        private void RespondToDamageParams(IEventOwner owner, DamageDescriptionParam damageParams)
+        private void RespondAnimationToDamageVisually(PvEventDamageSourceInfo sourceInfo, PvEventDamageValueInfo valueInfo, PvEventDamageTypeInfo typeInfo)
         {
-            if (_animatorOwner.EventIdentifier != damageParams.Victim.ID)
+            var victimId = sourceInfo.ToId;
+            if (_animatorOwner.EventIdentifier != victimId)
             {
                 return;
             }
@@ -109,14 +112,19 @@ namespace ProjectCI_Animation.Runtime.Concrete
                 _isLockableAnimating = false;
             }
 
-            if (damageParams.ContainsTag(UnitAbilityCoreExtensions.MissExtraInfoHint) ||
-                damageParams.ContainsTag(UnitAbilityCoreExtensions.HealExtraInfoHint))
+            var damageReaction = typeInfo.Reaction;
+
+            if (damageReaction == PvEnDamageReact.MissHit || damageReaction.HasFlag(PvEnDamageReact.IgnoreHit))
             {
                 return;
             }
 
-            var showingValue = damageParams.FinalDamageBeforeAdjusted;
-            var animationIndex = showingValue <= 0 ? AnimationIndexName.Defend : AnimationIndexName.Hit;
+            var animationIndex = AnimationIndexName.Hit;
+            if (damageReaction.HasFlag(PvEnDamageReact.Blocked))
+            {
+                animationIndex = AnimationIndexName.Defend;
+            }
+
             ForcePlayAnimation(animationIndex);
             var actingTime = GetPresetAnimationDuration(animationIndex) - generalAdjustOnTransition;
             _lockingRoutine = StartCoroutine(EnablePresetTimeLock(actingTime));

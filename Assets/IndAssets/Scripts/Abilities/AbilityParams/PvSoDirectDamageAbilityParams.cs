@@ -9,7 +9,6 @@ using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit.AbilityParams;
 using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,6 +29,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private PvEnDamageForm damageForm;
 
         [SerializeField] private int basicAddon;
+
+        [SerializeField]
+        private bool isReactionRequired = true;
 
         [Header("Critical")]
         [SerializeField]
@@ -62,7 +64,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 return;
             }
 
-            var beforeHealth = toContainer.Health.CurrentValue;
             var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
 
             var isReallyHit = isAlwaysHitByDefault || passValue > 0;
@@ -92,112 +93,24 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
             }
 
+            var victimReaction = PvEnDamageReact.MissHit;
             if (isReallyHit)
             {
+                victimReaction |= isReactionRequired ? PvEnDamageReact.ActualHit : PvEnDamageReact.IgnoreHit;
+                if (isCritical)
+                {
+                    victimReaction |= PvEnDamageReact.Critical;
+                }
+
                 var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
-
-                if (!damageForm.HasFlag(PvEnDamageForm.Support))
-                {
-                    toContainer.Health.ModifyValue(-adjustedFinalDeltaDmg);
-                }
-                else
-                {
-                    toContainer.Health.ModifyValue(adjustedFinalDeltaDmg);
-                }
-
                 finalDeltaDamage = adjustedFinalDeltaDmg;
             }
 
-            var afterHealth = toContainer.Health.CurrentValue;
-
-            var savingCommand = new PvSimpleDamageCommand
-            {
-                ResultId = resultId,
-                OwnerId = fromUnit.ID,
-                TargetCellIndex = targetUnit.GetCell().GetIndex(),
-                BeforeValue = beforeHealth,
-                AfterValue = afterHealth,
-                Value = finalDeltaDamage,
-                DamageType = damageType
-            };
-
-            if (damageForm.HasFlag(PvEnDamageForm.Support))
-            {
-                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
-            }
-            else if (!isReallyHit)
-            {
-                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.MissExtraInfoHint;
-            }
-            else if (isCritical && finalDeltaDamage > 0)
-            {
-                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.CriticalExtraInfoHint;
-            }
-
-            results.Enqueue(savingCommand);
+            PvSimpleDamageCommand.AddDamageLikeCommandToHealth(resultId, 
+                fromUnit, currentTargetCell, toContainer, 
+                finalDeltaDamage, damageForm, damageType, victimReaction, results);
 
             PvEnergyObtainCommand.AdjustAndEnqueueEnergy(resultId, fromUnit.ID, fromContainer, 20, results);
-
-            // Add Die Command if Health is 0
-            if (!targetUnit.IsDead())
-            {
-                return;
-            }
-
-            Debug.Log($"<color=red>{targetUnit.name} is Dead!</color>");
-
-            var dieCommand = new PvDieCommand
-            {
-                ResultId = resultId,
-                OwnerId = targetUnit.ID,
-                TargetCellIndex = targetUnit.GetCell().GetIndex()
-            };
-
-            results.Enqueue(dieCommand);
-
-        }
-
-        public static void Execute(GridPawnUnit fromUnit, GridPawnUnit targetUnit, Queue<CommandResult> results, 
-            int executeValue, bool isHeal, PvEnDamageType damageType)
-        {
-            var resultId = Guid.NewGuid().ToString();
-
-            var toContainer = targetUnit.RuntimeAttributes;
-            var fromContainer = fromUnit.RuntimeAttributes;
-
-            if (targetUnit.IsDead())
-            {
-                return;
-            }
-
-            var beforeHealth = toContainer.Health.CurrentValue;
-            if (!isHeal)
-            {
-                toContainer.Health.ModifyValue(-executeValue);
-            }
-            else
-            {
-                toContainer.Health.ModifyValue(executeValue);
-            }
-            var afterHealth = toContainer.Health.CurrentValue;
-
-            var savingCommand = new PvSimpleDamageCommand
-            {
-                ResultId = resultId,
-                OwnerId = fromUnit.ID,
-                TargetCellIndex = targetUnit.GetCell().GetIndex(),
-                BeforeValue = beforeHealth,
-                AfterValue = afterHealth,
-                Value = executeValue,
-                DamageType = damageType
-            };
-
-            if (isHeal)
-            {
-                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
-            }
-
-            results.Enqueue(savingCommand);
 
             // Add Die Command if Health is 0
             if (!targetUnit.IsDead())

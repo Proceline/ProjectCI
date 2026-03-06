@@ -61,24 +61,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         private PvSoUnitAbility extroTypeRest, introTypeRest;
 
         #region Injected Fields
-
-        public static PvSoSimpleDamageApplyEvent XRaiserSimpleDamageApplyEvent
-        {
-            get
-            {
-                try
-                {
-                    return RaiserSimpleDamageApplyEvent;
-                }
-                catch
-                {
-                    throw new NullReferenceException("ERROR: FeLiteGameRules didn't involved injection!");
-                }
-            }
-        }
-
-        [Inject] private static readonly PvSoSimpleDamageApplyEvent RaiserSimpleDamageApplyEvent;
-
         [Inject] private static readonly ITeamRoundStartEvent RaiserTeamRoundStartEvent;
         [Inject] private static readonly ITeamRoundEndEvent RaiserTeamRoundEndEvent;
         [Inject] private static readonly ITargetUnitPreRestEvent RaiserTargetUnitPreRestEvent;

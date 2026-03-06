@@ -55,46 +55,17 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             }
 
             var toContainer = targetUnit.RuntimeAttributes;
-            var fromContainer = fromUnit.RuntimeAttributes;
-            var beforeHealth = toContainer.Health.CurrentValue;
-
             var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
-
-            if (!damageForm.HasFlag(PvEnDamageForm.Support))
-            {
-                toContainer.Health.ModifyValue(-adjustedFinalDeltaDmg);
-            }
-            else
-            {
-                toContainer.Health.ModifyValue(adjustedFinalDeltaDmg);
-            }
-
             finalDeltaDamage = adjustedFinalDeltaDmg;
-
-            var afterHealth = toContainer.Health.CurrentValue;
 
             if (!_recordedDamageTypes.TryGetValue(resultId, out var damageType))
             {
                 damageType = PvEnDamageType.None;
             }
 
-            var savingCommand = new PvSimpleDamageCommand
-            {
-                ResultId = resultId,
-                OwnerId = fromUnit.ID,
-                TargetCellIndex = targetUnit.GetCell().GetIndex(),
-                BeforeValue = beforeHealth,
-                AfterValue = afterHealth,
-                Value = finalDeltaDamage,
-                DamageType = damageType
-            };
-
-            if (damageForm.HasFlag(PvEnDamageForm.Support))
-            {
-                savingCommand.ExtraInfo = UnitAbilityCoreExtensions.HealExtraInfoHint;
-            }
-
-            results.Enqueue(savingCommand);
+            PvSimpleDamageCommand.AddDamageLikeCommandToHealth(resultId,
+                fromUnit, currentTargetCell, toContainer,
+                finalDeltaDamage, damageForm, damageType, PvEnDamageReact.ActualHit, results);
 
             // Add Die Command if Health is 0
             if (!targetUnit.IsDead())

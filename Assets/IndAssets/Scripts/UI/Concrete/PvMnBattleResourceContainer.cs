@@ -22,6 +22,7 @@ namespace ProjectCI.Runtime.GUI.Battle
 
         [Inject] private static ITargetUnitDeathEvent _onUnitDyingEvent;
         [Inject] private static IOnStatusApplyEvent _onStatusApplyEvent;
+        [Inject] private static IPvDamageLikeApplyEvent _onDamageApplyEvent;
 
         [NonSerialized] private Image[] _holdingPassiveList;
         [NonSerialized] private string[] _holdingPassiveNamesList;
@@ -42,8 +43,8 @@ namespace ProjectCI.Runtime.GUI.Battle
             cameraController.RegisterOnCameraRotationChanged(RotateHealthBarByCamera);
 
             _followingTarget = owner;
-            
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(UpdateHealthViewInfo);
+
+            _onDamageApplyEvent.RegisterCallbackVisually(UpdateHealthViewInfo);
             _onUnitDyingEvent.RegisterCallback(OnObjectMarkedAsDead);
             
             _initialized = true;
@@ -64,7 +65,7 @@ namespace ProjectCI.Runtime.GUI.Battle
             {
                 Destroy(_healthBarInstance);
             }
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(UpdateHealthViewInfo);
+            _onDamageApplyEvent.UnregisterCallbackVisually(UpdateHealthViewInfo);
             _onUnitDyingEvent.UnregisterCallback(OnObjectMarkedAsDead);
 
             _onStatusApplyEvent.UnregisterVisualCallback(OnStatusApplied);
@@ -78,10 +79,10 @@ namespace ProjectCI.Runtime.GUI.Battle
             _healthBarInstance.SetActive(false);
         }
 
-        private void UpdateHealthViewInfo(IEventOwner owner, DamageDescriptionParam damageParams)
+        private void UpdateHealthViewInfo(PvEventDamageSourceInfo sourceInfo, PvEventDamageValueInfo valueInfo, PvEventDamageTypeInfo typeInfo)
         {
-            if (_followingTarget != damageParams.Victim) return;
-            SetHealth(damageParams.AfterValue);
+            if (!string.Equals(_followingTarget.ID, sourceInfo.ToId)) return;
+            SetHealth(valueInfo.AfterValue);
         }
 
         private void OnStatusApplied(GridPawnUnit statusOwner, PvSoPassiveBase passive)

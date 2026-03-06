@@ -17,12 +17,6 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
     [StaticInjectableTarget]
     public static class UnitAbilityCoreExtensions
     {
-        public const string CriticalExtraInfoHint = "Critical";
-        public const string MissExtraInfoHint = "Miss";
-        public const string HealExtraInfoHint = "Heal";
-
-        public const string AlwaysHitCondition = "AlwaysHit";
-        
         [Inject] private static PvSoOutBooleanFunction _raiserIsAnimatingProgressFunc;
         private static readonly ServiceLocator<PvSoRandomSeedCentre> RandomSeedProvider = new();
         private static readonly ServiceLocator<FormulaCollection> FormulaCollection = new();

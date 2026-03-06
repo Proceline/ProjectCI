@@ -1,16 +1,20 @@
-using System;
-using System.Collections.Generic;
 using IndAssets.Scripts.Abilities;
 using IndAssets.Scripts.TacticTool;
+using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.Utilities.Runtime.Pools;
+using ProjectCI_Animation.Runtime;
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace ProjectCI.Runtime.GUI.Battle
 {
+    [StaticInjectableTarget]
     public class PvMnStaticGenericViewer : MonoBehaviour
     {
         [Serializable]
@@ -27,13 +31,14 @@ namespace ProjectCI.Runtime.GUI.Battle
         private readonly Dictionary<PvEnDamageType, Color> _damageTypeColorsDic = new();
 
         [SerializeField] private UnityEvent onInitializedRoot;
-
         [SerializeField] private PvSoUnitsDictionary unitsDictionary;
-        [SerializeField] private PvSoSimpleIntsEvent intsEventForEnergy;
-        [SerializeField] private PvSoTargetUnitEvent unitPreRestEvent, unitPostRestEvent;
-        private IEnergyUpdateEvent OnEnergyUpdateEvent => intsEventForEnergy;
-        private ITargetUnitPreRestEvent OnUnitPreRestEvent => unitPreRestEvent;
-        private ITargetUnitPostRestEvent OnUnitPostRestEvent => unitPostRestEvent;
+
+        [Inject] private static readonly IEnergyUpdateEvent OnEnergyUpdateEvent;
+        [Inject] private static readonly ITargetUnitPreRestEvent OnUnitPreRestEvent;
+        [Inject] private static readonly ITargetUnitPostRestEvent OnUnitPostRestEvent;
+        [Inject] private static readonly IPvDamageLikeApplyEvent OnDamageApplyEvent;
+
+        [SerializeField] private GameObject normalHitEffectPrefab, blockHitEffectPrefab;
 
         public float smallTextSize = 8f;
         public float normalTextSize = 10f;
@@ -43,7 +48,7 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             _availableTexts.Enqueue(defaultText);
             defaultText.gameObject.SetActive(false);
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.RegisterCallback(ShowDamageValueText);
+            OnDamageApplyEvent.RegisterCallbackVisually(ShowDamageValueVisually);
             OnUnitPreRestEvent.RegisterCallback(EnableEnergyHint);
             OnUnitPostRestEvent.RegisterCallback(DisableEnergyHint);
 
@@ -59,7 +64,7 @@ namespace ProjectCI.Runtime.GUI.Battle
         {
             OnUnitPreRestEvent.UnregisterCallback(EnableEnergyHint);
             OnUnitPostRestEvent.UnregisterCallback(DisableEnergyHint);
-            FeLiteGameRules.XRaiserSimpleDamageApplyEvent.UnregisterCallback(ShowDamageValueText);
+            OnDamageApplyEvent.UnregisterCallbackVisually(ShowDamageValueVisually);
         }
 
         private TextMeshPro GetAvailableDamageText()
@@ -76,34 +81,59 @@ namespace ProjectCI.Runtime.GUI.Battle
             return newText;
         }
 
-        private void ShowDamageValueText(IEventOwner owner, DamageDescriptionParam damageParams)
+        /// <summary>
+        /// Including hit effects
+        /// </summary>
+        /// <param name="sourceInfo"></param>
+        /// <param name="valueInfo"></param>
+        /// <param name="typeInfo"></param>
+        private void ShowDamageValueVisually(PvEventDamageSourceInfo sourceInfo, PvEventDamageValueInfo valueInfo, PvEventDamageTypeInfo typeInfo)
         {
-            var targetPosition = damageParams.Victim.transform.position + new Vector3(0, 3, 0);
-            var showingValue = damageParams.FinalDamageBeforeAdjusted;
+            if (!unitsDictionary.TryGetValue(sourceInfo.ToId, out var victim))
+            {
+                return;
+            }
+
+            var targetPosition = victim.transform.position + new Vector3(0, 3, 0);
+            var effectPosition = victim.transform.position + Vector3.up * 2;
+            var showingValue = valueInfo.DeltaValue;
             var textMesh = GetAvailableDamageText();
             textMesh.transform.position = targetPosition;
-            var damageType = (PvEnDamageType)damageParams.DamageType;
-            if (_damageTypeColorsDic.TryGetValue(damageType, out var color))
+
+            if (_damageTypeColorsDic.TryGetValue(typeInfo.Type, out var color))
             {
                 textMesh.color = color;
             }
 
             var finalText = showingValue.ToString();
-            if (damageParams.ContainsTag(UnitAbilityCoreExtensions.CriticalExtraInfoHint))
-            {
-                finalText += "!";
-                textMesh.fontSize = criticalTextSize;
-            }
-            else if (damageParams.ContainsTag(UnitAbilityCoreExtensions.MissExtraInfoHint))
+
+            var damageReaction = typeInfo.Reaction;
+            if (damageReaction == PvEnDamageReact.MissHit)
             {
                 finalText = "Miss";
                 textMesh.fontSize = normalTextSize;
+            }
+            else if (damageReaction.HasFlag(PvEnDamageReact.Critical))
+            {
+                finalText += "!";
+                textMesh.fontSize = criticalTextSize;
             }
             else
             {
                 textMesh.fontSize = normalTextSize;
             }
 
+            if (damageReaction.HasFlag(PvEnDamageReact.ActualHit))
+            {
+                var hitEffect = MnObjectPool.Instance.Get(normalHitEffectPrefab);
+                hitEffect.transform.position = effectPosition;
+            }
+            else if (damageReaction.HasFlag(PvEnDamageReact.Blocked))
+            {
+                var hitEffect = MnObjectPool.Instance.Get(blockHitEffectPrefab);
+                hitEffect.transform.position = effectPosition;
+            }
+            
             textMesh.SetText(finalText);
             AnimateText(textMesh, 0.5f, targetPosition);
         }

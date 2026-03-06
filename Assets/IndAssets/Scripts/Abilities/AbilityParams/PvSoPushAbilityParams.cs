@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;

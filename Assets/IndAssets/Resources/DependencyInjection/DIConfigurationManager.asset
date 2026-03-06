@@ -19,9 +19,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Modifiers.IFinalReceiveDamageModifier,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 62ec9bd4f320c9f4eb581a026e1cb274, type: 2}
-  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.PvSoSimpleDamageApplyEvent,
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IPvDamageLikeApplyEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    objectInstance: {fileID: 11400000, guid: bb6967f4d26afc84886a9a9f226ab4f6, type: 2}
+    objectInstance: {fileID: 11400000, guid: 7f327ed5ca4c7234790e2c9eec361ecc, type: 2}
   - serviceTypeName: ProjectCI.Utilities.Runtime.Functions.PvSoOutBooleanFunction,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 72e6c06c4ca2c8d43b3db24d3c500b05, type: 2}
@@ -64,6 +64,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.ITargetUnitPostRestEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 9ba17681181fec5499506fa5fb916e02, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IPvDamageLikeApplyEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 7f327ed5ca4c7234790e2c9eec361ecc, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -74,6 +77,8 @@ MonoBehaviour:
   - ProjectCI.CoreSystem.Runtime.CharacterEquipment.PvMnCharacterEquipmentManager,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvStatusApplyCommand, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvSimpleDamageCommand, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.CoreSystem.Runtime.Commands.Concrete.PvEnergyObtainCommand, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -89,6 +94,8 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - ProjectCI.TacticTool.Formula.Concrete.FormulaAttributeContainer, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - ProjectCI.Runtime.GUI.Battle.PvMnStaticGenericViewer, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   - ProjectCI.Runtime.GUI.Battle.PvMnBattleResourceContainer, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Modifiers.PvSoModifierSupportObject, Assembly-CSharp, Version=0.0.0.0,

@@ -21,10 +21,7 @@ MonoBehaviour:
   m_EffectShape: {fileID: 0}
   m_EffectRadius: 0
   spawnOnCaster: []
-  spawnOnTarget:
-  - {fileID: 6059165420160514031, guid: e24a89a3ca3551f44b4f5457ec46214e, type: 3}
-  m_Params:
-  - {fileID: 11400000, guid: da9be5c5bbfd5a245a34b616c033d3c1, type: 2}
+  spawnOnTarget: []
   abilityParams:
   - {fileID: 11400000, guid: da9be5c5bbfd5a245a34b616c033d3c1, type: 2}
   isCounterAllowed: 0

@@ -30,4 +30,14 @@ namespace IndAssets.Scripts.Abilities
         Counter = 1 << 7,
         Additional = 1 << 8
     }
+
+    [Flags]
+    public enum PvEnDamageReact : uint
+    {
+        MissHit = 0,
+        ActualHit = 1 << 0,
+        IgnoreHit = 1 << 1,
+        Blocked = 1 << 2,
+        Critical = 1 << 3
+    }
 }
