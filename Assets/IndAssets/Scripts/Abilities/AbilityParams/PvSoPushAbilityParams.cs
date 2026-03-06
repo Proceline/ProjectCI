@@ -14,7 +14,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField] private int pushDistance;
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit toUnit, LevelCellBase currentTarget, Queue<CommandResult> results, int passValue)
+            GridPawnUnit toUnit, LevelCellBase currentTarget, Queue<CommandResult> results, int passValue, params uint[] extraInfos)
         {
             if (currentTarget != toUnit.GetCell())
             {

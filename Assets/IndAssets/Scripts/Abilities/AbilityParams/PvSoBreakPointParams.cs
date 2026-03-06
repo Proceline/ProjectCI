@@ -12,7 +12,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
     public class PvSoBreakPointParams : AbilityParamBase
     {
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
+            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue, params uint[] unusedParams)
         {
             var targetUnit = currentTargetCell.GetUnitOnCell();
             if (targetUnit.IsDead() || fromUnit.IsDead())

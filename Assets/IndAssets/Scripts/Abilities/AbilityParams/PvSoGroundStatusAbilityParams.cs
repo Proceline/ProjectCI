@@ -16,7 +16,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField] private PvSoGroundStatus relatedGroundStatus;
         
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit mainTarget, LevelCellBase targetCell, Queue<CommandResult> results, int passValue)
+            GridPawnUnit mainTarget, LevelCellBase targetCell, Queue<CommandResult> results, int passValue, params uint[] extraInfos)
         {
             // ground status should always be hit
             relatedGroundStatus.AddGroundStatus(targetCell);

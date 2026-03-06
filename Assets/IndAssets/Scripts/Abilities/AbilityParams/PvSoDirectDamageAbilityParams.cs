@@ -1,6 +1,5 @@
 using IndAssets.Scripts.Abilities;
 using ProjectCI.CoreSystem.DependencyInjection;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
@@ -48,7 +47,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private static IFinalReceiveDamageModifier _receiveDamageModifier;
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
+            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue, params uint[] damageInfos)
         {
             var targetUnit = currentTargetCell.GetUnitOnCell();
             if (!targetUnit || !targetUnit.gameObject.activeSelf)
@@ -64,6 +63,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 return;
             }
 
+            var combinedDamageForm = (uint)damageForm | damageInfos[0];
             var damage = fromContainer.GetAttributeValue(attackerAttribute) + basicAddon;
 
             var isReallyHit = isAlwaysHitByDefault || passValue > 0;
@@ -102,13 +102,13 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                     victimReaction |= PvEnDamageReact.Critical;
                 }
 
-                var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+                var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, combinedDamageForm);
                 finalDeltaDamage = adjustedFinalDeltaDmg;
             }
 
             PvSimpleDamageCommand.AddDamageLikeCommandToHealth(resultId, 
                 fromUnit, currentTargetCell, toContainer, 
-                finalDeltaDamage, damageForm, damageType, victimReaction, results);
+                finalDeltaDamage, (PvEnDamageForm)combinedDamageForm, damageType, victimReaction, results);
 
             PvEnergyObtainCommand.AdjustAndEnqueueEnergy(resultId, fromUnit.ID, fromContainer, 20, results);
 
@@ -145,8 +145,10 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
             }
 
-            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
-            var deltaValue = damageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
+            var combinedDamageForm = (PvEnDamageForm)extraDamageForm | damageForm;
+
+            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)combinedDamageForm);
+            var deltaValue = combinedDamageForm.HasFlag(PvEnDamageForm.Support) ? adjustedFinalDeltaDmg : -adjustedFinalDeltaDmg;
 
             return deltaValue;
         }

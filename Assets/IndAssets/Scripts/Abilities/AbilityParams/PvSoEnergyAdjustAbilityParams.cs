@@ -22,7 +22,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         private float threshold = 1f;
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
+            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue, params uint[] extraInfos)
         {
             var targetUnit = currentTargetCell.GetUnitOnCell();
             if (targetUnit.IsDead() || fromUnit.IsDead())

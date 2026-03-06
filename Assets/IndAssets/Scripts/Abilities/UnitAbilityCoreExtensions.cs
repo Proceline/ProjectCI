@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IndAssets.Scripts.Abilities;
 using IndAssets.Scripts.Random;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Abilities.Projectiles;
@@ -32,7 +33,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
         }
 
         public static void HandleAbilityParam(this PvSoUnitAbility ability, string resultUniqueId,
-            GridPawnUnit caster, GridPawnUnit mainTarget, Queue<CommandResult> results)
+            GridPawnUnit caster, GridPawnUnit mainTarget, Queue<CommandResult> results, PvEnDamageForm basicForm)
         {
             if (caster.IsDead())
             {
@@ -83,7 +84,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                         }
                     }
 
-                    param.Execute(resultUniqueId, ability, caster, mainTarget, cell, results, delta);
+                    param.Execute(resultUniqueId, ability, caster, mainTarget, cell, results, delta, (uint)basicForm);
                 }
             }
         }

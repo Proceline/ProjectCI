@@ -1,5 +1,4 @@
 using IndAssets.Scripts.Abilities;
-using ProjectCI.CoreSystem.Runtime.Abilities.Extensions;
 using ProjectCI.CoreSystem.Runtime.Commands;
 using ProjectCI.CoreSystem.Runtime.Commands.Concrete;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
@@ -34,7 +33,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         }
 
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
-            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue)
+            GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue, params uint[] damageForms)
         {
             if (!_recordedDamage.TryGetValue(resultId, out var recordedDamage))
             {
@@ -54,8 +53,10 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 return;
             }
 
+            var finalDamageForm = (uint)damageForm | damageForms[0]; 
+
             var toContainer = targetUnit.RuntimeAttributes;
-            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, (uint)damageForm);
+            var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, finalDamageForm);
             finalDeltaDamage = adjustedFinalDeltaDmg;
 
             if (!_recordedDamageTypes.TryGetValue(resultId, out var damageType))
@@ -65,7 +66,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
             PvSimpleDamageCommand.AddDamageLikeCommandToHealth(resultId,
                 fromUnit, currentTargetCell, toContainer,
-                finalDeltaDamage, damageForm, damageType, PvEnDamageReact.ActualHit, results);
+                finalDeltaDamage, (PvEnDamageForm)finalDamageForm, damageType, PvEnDamageReact.ActualHit, results);
 
             // Add Die Command if Health is 0
             if (!targetUnit.IsDead())

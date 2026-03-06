@@ -291,7 +291,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
 
                 queryItem.Ability.HandleAbilityParam(queryItem.UniqueId, 
-                    queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands);
+                    queryItem.holdingOwner, queryItem.targetUnit, queryItem.Commands, queryItem.queryOrderForm);
             }
 
             // Apply visual results of commands
