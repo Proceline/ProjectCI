@@ -21,6 +21,8 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
     public interface IAttributeOwner
     {
         string ID { get; }
+        int GetCurrentHitPoint();
+        int GetMaximumHitPoint();
         int GetAttributeValue(int attributeTypeValue);
     }
 

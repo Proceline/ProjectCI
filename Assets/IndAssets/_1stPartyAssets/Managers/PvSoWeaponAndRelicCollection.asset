@@ -25,15 +25,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0f9f97948d9951c40bd2e3ddf8c614b3, type: 2}
   - {fileID: 11400000, guid: 7f15ccf7b8d68ec419cf8e5158fafd1f, type: 2}
   relics:
-  - {fileID: 11400000, guid: edd86ea4848c4ee449cc60bc45bf2f97, type: 2}
-  - {fileID: 11400000, guid: 63d72026f58792d438fef65021522a69, type: 2}
-  - {fileID: 11400000, guid: d3217b9726d277b4696a2466e6ce00dc, type: 2}
   - {fileID: 11400000, guid: 53d00a9e5397bf241a66b7e629fa7015, type: 2}
   - {fileID: 11400000, guid: d34946831522f4b4bbba100a539eeccf, type: 2}
   - {fileID: 11400000, guid: 5376f942a569b2d40ab41a2ff1b6968d, type: 2}
-  - {fileID: 11400000, guid: 76a30a010ac528a43855312d4c864e6d, type: 2}
-  - {fileID: 11400000, guid: e056745e590394c4e9b0a1c897aab693, type: 2}
-  - {fileID: 11400000, guid: 8a599316c80d7a940b6fabc5b928cb37, type: 2}
   emptyHandsAbilities:
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
   - {fileID: 11400000, guid: 0db98a07b6b2eeb499ba0dff2f05e64b, type: 2}
