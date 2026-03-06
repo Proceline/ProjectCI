@@ -75,7 +75,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
                 }
                 else
                 {
-                    toDoCommand.ApplyResultOnVisual(ability, unitIdsToBattleUnitHash);
+                    toDoCommand.ApplyResultOnVisual(ability, _unitIdsToBattleUnitHash);
                 }
             }
 

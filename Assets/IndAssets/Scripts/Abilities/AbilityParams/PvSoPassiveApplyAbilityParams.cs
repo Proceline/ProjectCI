@@ -19,11 +19,23 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
         [SerializeField]
         private bool isAlwaysHitByDefault;
 
+        [SerializeField]
+        private bool additionallyOnSelf;
+
         public override void Execute(string resultId, UnitAbilityCore ability, GridPawnUnit fromUnit,
             GridPawnUnit mainTarget, LevelCellBase currentTargetCell, Queue<CommandResult> results, int passValue, params uint[] extraInfos)
         {
-            // ground status should always be hit
             var targetUnit = currentTargetCell.GetUnitOnCell();
+            if (additionallyOnSelf)
+            {
+                if (mainTarget != targetUnit)
+                {
+                    return;
+                }
+
+                targetUnit = fromUnit;
+            }
+
             if (!targetUnit || targetUnit.IsDead())
             {
                 return;

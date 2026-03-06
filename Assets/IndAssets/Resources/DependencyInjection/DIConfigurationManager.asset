@@ -67,6 +67,9 @@ MonoBehaviour:
   - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IPvDamageLikeApplyEvent,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: 7f327ed5ca4c7234790e2c9eec361ecc, type: 2}
+  - serviceTypeName: IndAssets.Scripts.TacticTool.PvSoUnitsDictionary, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: a3925a911c47f944a9f1711d10c507c9, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -100,6 +103,8 @@ MonoBehaviour:
     Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Modifiers.PvSoModifierSupportObject, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
+  - IndAssets.Scripts.Passives.Imprints.PvSoPassiveImprintBoostAttribute, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.Relics.PvSoPassiveRelicHurryCounter, Assembly-CSharp,
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   - IndAssets.Scripts.Passives.PvSoPassiveFollowEncourage, Assembly-CSharp, Version=0.0.0.0,

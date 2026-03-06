@@ -114,7 +114,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         public bool CheckStageClearStatus()
         {
             if (PvSoLevelData.LoadingLevel &&
-                PvSoLevelData.LoadingLevel.CheckIfLevelCompleted(unitIdsToBattleUnitHash) == PvTargetCompleteCondition.Completed)
+                PvSoLevelData.LoadingLevel.CheckIfLevelCompleted(_unitIdsToBattleUnitHash) == PvTargetCompleteCondition.Completed)
             {
                 raiserGamePreEndedEvent?.Raise();
                 return true;
@@ -482,7 +482,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         private void CheckRestUnits()
         {
-            var allUnitsInBattle = unitIdsToBattleUnitHash.Values;
+            var allUnitsInBattle = _unitIdsToBattleUnitHash.Values;
             var requiredCount = 0;
 
             foreach (var unit in allUnitsInBattle)

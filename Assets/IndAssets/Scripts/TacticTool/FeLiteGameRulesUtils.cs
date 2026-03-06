@@ -18,7 +18,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
         public void OnTeamRoundEndResponse(BattleTeam team)
         {
-            var allUnitsInBattle = unitIdsToBattleUnitHash.Values;
+            var allUnitsInBattle = _unitIdsToBattleUnitHash.Values;
             foreach (var unit in allUnitsInBattle)
             {
                 if (unit.IsDead()) continue;

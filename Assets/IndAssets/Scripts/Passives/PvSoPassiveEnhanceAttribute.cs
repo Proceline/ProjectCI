@@ -1,8 +1,6 @@
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
-using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using UnityEngine;
@@ -51,9 +49,9 @@ namespace ProjectCI.CoreSystem.Runtime.Passives
 #endif
         }
 
-        private void ModifyAttribute(IEventOwner attributeOwner, IAttributeModifierContainer container)
+        private void ModifyAttribute(IAttributeOwner attributeOwner, IAttributeModifierContainer container)
         {
-            if (IsOwner(attributeOwner.EventIdentifier))
+            if (IsOwner(attributeOwner.ID))
             {
                 container.AddModifier(attributeModifier);
             }

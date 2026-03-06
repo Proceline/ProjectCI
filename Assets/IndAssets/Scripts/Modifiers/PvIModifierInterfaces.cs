@@ -1,4 +1,3 @@
-using ProjectCI.Utilities.Runtime.Events;
 using UnityEngine.Events;
 
 namespace ProjectCI.Utilities.Runtime.Modifiers
@@ -7,13 +6,13 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
     {
         public void AddModifier(AttributeModifier modifier);
 
-        public void RegisterModifier(UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction);
+        public void RegisterModifier(UnityAction<IAttributeOwner, IAttributeModifierContainer> modifierAction);
 
-        public void UnregisterModifier(UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction);
+        public void UnregisterModifier(UnityAction<IAttributeOwner, IAttributeModifierContainer> modifierAction);
 
         public void UnregisterAll();
         
-        public int CalculateResult(IEventOwner owner, float inputValue);
+        public int CalculateResult(IAttributeOwner owner, float inputValue);
     }
 
     public interface IFinalReceiveDamageModifier : IDependencyInjectionSupportedModifier

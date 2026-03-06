@@ -18,6 +18,12 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
         }
     }
     
+    public interface IAttributeOwner
+    {
+        string ID { get; }
+        int GetAttributeValue(int attributeTypeValue);
+    }
+
     /// <summary>
     /// Modifier Container normally be a ScriptableObject
     /// </summary>
@@ -38,7 +44,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
         private AttributeModifier _internalModifier;
 
         [SerializeField] 
-        private UnityEvent<IEventOwner, IAttributeModifierContainer> collectedModifiers = new();
+        private UnityEvent<IAttributeOwner, IAttributeModifierContainer> collectedModifiers = new();
         
         public void AddModifier(AttributeModifier modifier)
         {
@@ -51,12 +57,12 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
             _internalModifier.Reset();
         }
 
-        public void RegisterModifier(UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
+        public void RegisterModifier(UnityAction<IAttributeOwner, IAttributeModifierContainer> modifierAction)
         {
             collectedModifiers.AddListener(modifierAction);
         }
 
-        public void UnregisterModifier(UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
+        public void UnregisterModifier(UnityAction<IAttributeOwner, IAttributeModifierContainer> modifierAction)
         {
             collectedModifiers.RemoveListener(modifierAction);
         }
@@ -66,7 +72,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
             collectedModifiers.RemoveAllListeners();
         }
 
-        public float CalculatePreciseResult(IEventOwner owner, float inputValue)
+        public float CalculatePreciseResult(IAttributeOwner owner, float inputValue)
         {
             Reset();
             collectedModifiers.Invoke(owner, this);
@@ -78,7 +84,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers
             return finalValue;
         }
 
-        public int CalculateResult(IEventOwner owner, float inputValue) =>
+        public int CalculateResult(IAttributeOwner owner, float inputValue) =>
             Mathf.FloorToInt(CalculatePreciseResult(owner, inputValue));
     }
 }

@@ -19,9 +19,6 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
     [CreateAssetMenu(fileName = "NewGameRules", menuName = "ProjectCI Tools/GameRules/Create FeLiteGameRules", order = 1)]
     public partial class FeLiteGameRules : BattleGameRules
     {
-        [SerializeField]
-        private PvSoUnitsDictionary unitIdsToBattleUnitHash;
-
         [NonSerialized] private PvMnBattleGeneralUnit _selectedUnit;
 
         [SerializeField]
@@ -76,6 +73,8 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
         [Inject] private static readonly IAnimationOutBreakPointFunc GetPresetAnimationBreakPointFunc;
         [Inject] private static readonly PvSoAnimationTriggerEvent RaiserAnimationPlayEvent;
 
+        [Inject] private static PvSoUnitsDictionary _unitIdsToBattleUnitHash;
+
         #endregion
 
         protected override void StartGame()
@@ -83,14 +82,14 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
             gameBattleState.Clear();
 
             _finishedPlayableUnits.Clear();
-            unitIdsToBattleUnitHash.Clear();
+            _unitIdsToBattleUnitHash.Clear();
 
             CurrentTeam = BattleTeam.Friendly;
 
             var units = FindObjectsByType<PvMnBattleGeneralUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
-                unitIdsToBattleUnitHash.TryAdd(unit.ID, unit);
+                _unitIdsToBattleUnitHash.TryAdd(unit.ID, unit);
             }
 
             TacticBattleManager.HandleGameStarted();
@@ -179,7 +178,7 @@ namespace ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete
 
             deadUnit.SetCurrentCell(null);
 
-            unitIdsToBattleUnitHash.Remove(deadUnit.ID);
+            _unitIdsToBattleUnitHash.Remove(deadUnit.ID);
             deadUnit.DoActionOnInstalledPassives(passive => passive.DisposePassive(deadUnit));
             deadUnit.CleanUpPassives();
         }

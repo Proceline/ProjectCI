@@ -1,6 +1,6 @@
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
-using ProjectCI.Utilities.Runtime.Events;
+using ProjectCI.Utilities.Runtime.Modifiers;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +11,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
     public class FormulaAttributeContainer : UnitAttributeContainer
     {
         private readonly Dictionary<AttributeType, FormulaDefinition> _attributesFormulaMap = new();
-        private readonly IEventOwner _eventOwner;
+        private readonly IAttributeOwner _eventOwner;
 
         private int _currentEnergy;
         public const int MAX_ENERGY_VALUE = 100;
@@ -19,7 +19,7 @@ namespace ProjectCI.TacticTool.Formula.Concrete
         [Inject]
         private static PvSoModifiersManager _modifiersManager;
         
-        public FormulaAttributeContainer(FormulaCollection formulaCollection, IEventOwner eventOwner)
+        public FormulaAttributeContainer(FormulaCollection formulaCollection, IAttributeOwner eventOwner)
         {
             if (formulaCollection != null)
             {

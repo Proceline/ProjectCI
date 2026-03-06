@@ -2,7 +2,6 @@
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
-using ProjectCI.Utilities.Runtime.Events;
 using ProjectCI.Utilities.Runtime.Modifiers;
 using ProjectCI.Utilities.Runtime.Modifiers.Concrete;
 using UnityEngine;
@@ -44,9 +43,9 @@ namespace IndAssets.Scripts.Modifiers
             }
         }
     
-        private void ModifyAttribute(IEventOwner attributeOwner, IAttributeModifierContainer container)
+        private void ModifyAttribute(IAttributeOwner attributeOwner, IAttributeModifierContainer container)
         {
-            var key = attributeOwner.EventIdentifier;
+            var key = attributeOwner.ID;
             if (_registeredUnitContainers.TryGetValue(key, out var unitContainer))
             {
                 container.AddModifier(GetDetail(unitContainer));

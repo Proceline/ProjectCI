@@ -23,7 +23,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
             new Dictionary<AttributeType, SoNumericModifier>();
 
         public void RegisterModifier(AttributeType attributeType,
-            UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
+            UnityAction<IAttributeOwner, IAttributeModifierContainer> modifierAction)
         {
             if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))
             {
@@ -36,7 +36,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
         }
 
         public void UnregisterModifier(AttributeType attributeType,
-            UnityAction<IEventOwner, IAttributeModifierContainer> modifierAction)
+            UnityAction<IAttributeOwner, IAttributeModifierContainer> modifierAction)
         {
             if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))
             {
@@ -55,7 +55,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
         /// <param name="attributeType"></param>
         /// <param name="inputValue"></param>
         /// <returns></returns>
-        public float GetModifiedValuePrecisely(IEventOwner owner, AttributeType attributeType, float inputValue)
+        public float GetModifiedValuePrecisely(IAttributeOwner owner, AttributeType attributeType, float inputValue)
         {
             if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))
             {
@@ -65,7 +65,7 @@ namespace ProjectCI.Utilities.Runtime.Modifiers.Concrete
             return inputValue;
         }
 
-        public int GetModifiedValue(IEventOwner owner, AttributeType attributeType, float inputValue)
+        public int GetModifiedValue(IAttributeOwner owner, AttributeType attributeType, float inputValue)
         {
             if (_modifiersDic.TryGetValue(attributeType, out SoNumericModifier modifier))
             {

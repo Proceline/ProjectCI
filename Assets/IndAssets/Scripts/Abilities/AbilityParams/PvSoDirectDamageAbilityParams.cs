@@ -1,4 +1,5 @@
 using IndAssets.Scripts.Abilities;
+using IndAssets.Scripts.TacticTool;
 using ProjectCI.CoreSystem.DependencyInjection;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.Commands;
@@ -42,6 +43,9 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
 
         [SerializeField]
         private PvSoNotifyDamageBeforeRevEvent raiserNotifyDamageBeforeRev;
+
+        [Inject]
+        private static PvSoUnitsDictionary _unitsDictionary;
 
         [Inject]
         private static IFinalReceiveDamageModifier _receiveDamageModifier;
@@ -88,7 +92,8 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 isReallyHit ? Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0) : 0;
 
             var finalDeltaDamage = deltaDamage;
-            if (targetUnit is IEventOwner damageReceiver)
+
+            if (_unitsDictionary.TryGetValue(targetUnit.ID, out var damageReceiver))
             {
                 finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
             }
@@ -140,7 +145,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var deltaDamage = Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0);
 
             var finalDeltaDamage = deltaDamage;
-            if (targetUnit is IEventOwner damageReceiver)
+            if (_unitsDictionary.TryGetValue(targetUnit.ID, out var damageReceiver))
             {
                 finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
             }
