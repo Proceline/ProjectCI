@@ -32,14 +32,12 @@ namespace IndAssets.Scripts.Commands
             switch (command)
             {
                 case PvSimpleDamageCommand:
+                case PvPushCommand:
                     if (targetUnit)
                     {
                         targetUnit.LookAtCell(caster.GetCell());
                     }
                     command.ApplyCommand(caster, targetUnit);
-                    break;
-                case PvPushCommand:
-                    command.ApplyCommand(caster, targetCell);
                     break;
                 case PvStatusApplyCommand:
                     if (targetUnit)

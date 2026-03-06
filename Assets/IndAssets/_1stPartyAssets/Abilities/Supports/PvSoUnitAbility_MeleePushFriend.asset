@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6470885d82814be6b98497561c26affc, type: 3}
-  m_Name: PvSoUnitPostAbility_MeleePushAttack
+  m_Script: {fileID: 11500000, guid: 097647351677578409aaa2922b23e591, type: 3}
+  m_Name: PvSoUnitAbility_MeleePushFriend
   m_EditorClassIdentifier: 
-  m_AbilityName: '[PostPushAttack]'
+  m_AbilityName: '[Push]'
   m_Radius: 1
   m_bAllowBlocked: 1
-  m_EffectedTeam: 2
+  m_EffectedTeam: 1
   m_EffectedType: 0
   m_AbilityShape: {fileID: 11400000, guid: c3c602669806cea41b342192ce034d65, type: 2}
   m_EffectShape: {fileID: 0}
@@ -23,18 +23,16 @@ MonoBehaviour:
   spawnOnCaster: []
   spawnOnTarget: []
   abilityParams:
-  - {fileID: 11400000, guid: c9d77f1bf7ffbd84d8c6b39686e87e29, type: 2}
-  - {fileID: 11400000, guid: 5ddaa9fe28a65ca4584b7243c02da1fe, type: 2}
-  isCounterAllowed: 1
+  - {fileID: 11400000, guid: b279dbd47aff7384387d6f4200bad56f, type: 2}
+  isCounterAllowed: 0
   isFollowUpAllowed: 0
-  isAbilityWeapon: 1
+  isAbilityWeapon: 0
   isAppliedOnSelf: 0
-  isSupportAbility: 0
-  iconSprite: {fileID: 0}
+  isSupportAbility: 1
+  iconSprite: {fileID: 1408770283, guid: b04d2f8964af7d34e948770eac4ffad9, type: 3}
   dcAttribute:
     value: 10
   acAttribute:
     value: 11
   projectilePrefab: {fileID: 0}
   abilityAnimationName: 0
-  isFullPost: 1

@@ -35,6 +35,7 @@ namespace ProjectCI.CoreSystem.Runtime.Commands.Concrete
         {
             // Empty
         }
+
         private static PvSimpleDamageCommand GetCommand()
         {
             if (!_commandsPool.TryDequeue(out var command))
