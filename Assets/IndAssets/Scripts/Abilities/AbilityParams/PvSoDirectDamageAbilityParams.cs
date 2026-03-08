@@ -88,31 +88,35 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
                 isCritical = true;
             }
 
-            var deltaDamage =
-                isReallyHit ? Mathf.Max(damage - toContainer.GetAttributeValue(defenderAttribute), 0) : 0;
-
-            var finalDeltaDamage = deltaDamage;
-
-            if (_unitsDictionary.TryGetValue(targetUnit.ID, out var damageReceiver))
-            {
-                finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, deltaDamage);
-            }
+            var finalDeltaDamage = damage;
 
             var victimReaction = PvEnDamageReact.MissHit;
             if (isReallyHit)
             {
+                if (_unitsDictionary.TryGetValue(targetUnit.ID, out var damageReceiver))
+                {
+                    finalDeltaDamage = _receiveDamageModifier.CalculateResult(damageReceiver, damage);
+                }
+
                 victimReaction |= isReactionRequired ? PvEnDamageReact.ActualHit : PvEnDamageReact.IgnoreHit;
                 if (isCritical)
                 {
                     victimReaction |= PvEnDamageReact.Critical;
                 }
 
+
+                finalDeltaDamage = Mathf.Max(finalDeltaDamage - toContainer.GetAttributeValue(defenderAttribute), 0);
+
                 var adjustedFinalDeltaDmg = raiserNotifyDamageBeforeRev.Raise(finalDeltaDamage, targetUnit, fromUnit, combinedDamageForm);
                 finalDeltaDamage = adjustedFinalDeltaDmg;
             }
+            else
+            {
+                finalDeltaDamage = 0;
+            }
 
-            PvSimpleDamageCommand.AddDamageLikeCommandToHealth(resultId, 
-                fromUnit, currentTargetCell, toContainer, 
+            PvSimpleDamageCommand.AddDamageLikeCommandToHealth(resultId,
+                fromUnit, currentTargetCell, toContainer,
                 finalDeltaDamage, (PvEnDamageForm)combinedDamageForm, damageType, victimReaction, results);
 
             PvEnergyObtainCommand.AdjustAndEnqueueEnergy(resultId, fromUnit.ID, fromContainer, 20, results);
