@@ -10,7 +10,8 @@ namespace IndAssets.Scripts.Random
     {
         public int GetNextRandomNumber(int fromValueIncl, int toValueIncl)
         {
-            return Random.Range(0, 100000) % (toValueIncl - fromValueIncl) + fromValueIncl;
+            var randomResult = Random.Range(0, 100000) % (toValueIncl - fromValueIncl) + fromValueIncl;
+            return randomResult;
         }
 
         public int GetUnrelatedRandomNumber(int fromValueIncl, int toValueIncl)

@@ -15,14 +15,13 @@ MonoBehaviour:
   attackerAttribute:
     value: 31
   defenderAttribute:
-    value: 31
+    value: 25
   damageType: 3
   criticalAmountAttribute:
     value: 4
-  energyTypeAttribute:
-    value: 24
   damageForm: 9
   basicAddon: 10
+  isReactionRequired: 1
   isCriticalEnabledByDefault: 0
   isAlwaysHitByDefault: 0
   raiserNotifyDamageBeforeRev: {fileID: 11400000, guid: 0a37107d953cbb54dafe85c2c9414066, type: 2}

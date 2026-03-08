@@ -55,6 +55,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             {
                 if (param is PvSoBreakPointParams)
                 {
+                    // when break, recalculate seed random
                     caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
                     dcFinal = GetAccurateResult(caughtSeedValue);
                 }

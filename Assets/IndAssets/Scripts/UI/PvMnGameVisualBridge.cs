@@ -8,6 +8,7 @@ using ProjectCI.TacticTool.Formula.Concrete;
 using ProjectCI.Utilities.Runtime.Events;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -16,9 +17,6 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 {
     public class PvMnGameVisualBridge : MonoBehaviour
     {
-        [SerializeField]
-        private AttributeType ultEnergyType;
-
         [Header("In Scene Assets"), SerializeField]
         private Button roundEndButton;
 
@@ -42,6 +40,12 @@ namespace ProjectCI.CoreSystem.Runtime.UI
 
         [SerializeField]
         private Transform ultSymbolsParent;
+
+        [SerializeField]
+        private TextMeshProUGUI[] accuratePreviewTexts = new TextMeshProUGUI[2];
+
+        [SerializeField] private AttributeType physAccurateAttribute;
+        [SerializeField] private AttributeType physDodgeAttribute;
 
         private readonly List<(Image, Image)> _ultSymbols = new();
         private readonly List<CanvasGroup> _ultSymbolsContainer = new();
@@ -98,6 +102,9 @@ namespace ProjectCI.CoreSystem.Runtime.UI
             abilitiesPanel.SetActive(false);
             _ultSymbols.Add((existedUltSymbols[0], existedUltSymbols[1]));
             _ultSymbolsContainer.Add(existedUltSymbolsContainer.GetComponent<CanvasGroup>());
+
+            accuratePreviewTexts[0].gameObject.SetActive(false);
+            accuratePreviewTexts[1].gameObject.SetActive(false);
         }
 
         private void Start()
@@ -201,7 +208,7 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                 _ultSymbols[i].Item1.sprite = sprite;
                 fillImage.sprite = sprite;
 
-                var currentEnergyLevel = targetUnit.RuntimeAttributes.GetAttributeValue(ultEnergyType);
+                var currentEnergyLevel = targetUnit.RuntimeAttributes.GetAttributeValue(FormulaCollection.UltEnergyType);
                 fillImage.fillAmount = (float)currentEnergyLevel / FormulaAttributeContainer.MAX_ENERGY_VALUE;
                 if (currentEnergyLevel != FormulaAttributeContainer.MAX_ENERGY_VALUE)
                 {
@@ -263,6 +270,18 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                     {
                         _pawnPreviews[1].Setup(_pawnsInView[1], 0);
                     }
+
+                    accuratePreviewTexts[0].gameObject.SetActive(true);
+                    accuratePreviewTexts[1].gameObject.SetActive(true);
+
+                    var fromUnit = _pawnsInView[0];
+                    var toUnit = _pawnsInView[1];
+                    var fromAccurateRate = 100 - toUnit.RuntimeAttributes.GetAttributeValue(physDodgeAttribute) 
+                        + fromUnit.RuntimeAttributes.GetAttributeValue(physAccurateAttribute);
+                    var toAccurateRate = 100 - fromUnit.RuntimeAttributes.GetAttributeValue(physDodgeAttribute)
+                        + toUnit.RuntimeAttributes.GetAttributeValue(physAccurateAttribute);
+                    accuratePreviewTexts[0].text = fromAccurateRate.ToString() + "%";
+                    accuratePreviewTexts[1].text = toAccurateRate.ToString() + "%";
                 }
             }
             else if (_pawnPreviews[1] && _pawnPreviews[1].gameObject.activeSelf)
@@ -270,6 +289,8 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                 _pawnPreviews[0].Setup(_pawnsInView[0], 0);
                 _pawnsInView[1] = null;
                 _pawnPreviews[1].gameObject.SetActive(false);
+                accuratePreviewTexts[0].gameObject.SetActive(false);
+                accuratePreviewTexts[1].gameObject.SetActive(false);
             }
         }
 
