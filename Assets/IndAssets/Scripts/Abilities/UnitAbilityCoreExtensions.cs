@@ -41,7 +41,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
             }
 
             var fromContainer = caster.RuntimeAttributes;
-            var caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
+            var caughtSeedValue = ability.IsAlwaysHit? 100 : RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
             var dcFinal = GetAccurateResult(caughtSeedValue);
 
             // Function to get final accuracy
@@ -56,7 +56,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
                 if (param is PvSoBreakPointParams)
                 {
                     // when break, recalculate seed random
-                    caughtSeedValue = RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
+                    caughtSeedValue = ability.IsAlwaysHit ? 100 : RandomSeedProvider.Service.GetNextRandomNumber(0, 100);
                     dcFinal = GetAccurateResult(caughtSeedValue);
                 }
 
@@ -72,15 +72,22 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities.Extensions
 
                     if (cellUnit && !cellUnit.IsDead())
                     {
-                        var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
-                        delta = dcFinal - acFinal;
+                        if (ability.IsAlwaysHit)
+                        {
+                            delta = 100;
+                        }
+                        else
+                        {
+                            var acFinal = cellUnit.RuntimeAttributes.GetAttributeValue(ability.AcAttribute);
+                            delta = dcFinal - acFinal;
+                        }
 
                         if (delta >= 0)
                         {
                             var criticalAttribute = 100 - fromContainer.GetAttributeValue(FormulaCollection.Service.CriticalAttributeType);
                             if (caughtSeedValue > 1 && caughtSeedValue >= criticalAttribute)
                             {
-                                delta = 100;
+                                delta = 999;
                             }
                         }
                     }

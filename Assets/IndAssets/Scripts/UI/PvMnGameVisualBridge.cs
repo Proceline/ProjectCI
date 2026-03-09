@@ -2,6 +2,7 @@ using IndAssets.Scripts.Managers;
 using IndAssets.Scripts.TacticTool;
 using ProjectCI.CoreSystem.Runtime.Attributes;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Concrete;
+using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Gameplay;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.GridData;
 using ProjectCI.CoreSystem.Runtime.TacticRpgTool.Unit;
 using ProjectCI.TacticTool.Formula.Concrete;
@@ -271,11 +272,16 @@ namespace ProjectCI.CoreSystem.Runtime.UI
                         _pawnPreviews[1].Setup(_pawnsInView[1], 0);
                     }
 
+                    var fromUnit = _pawnsInView[0];
+                    var toUnit = _pawnsInView[1];
+                    if (TacticBattleManager.GetTeamAffinity(fromUnit.GetTeam(), toUnit.GetTeam()) == BattleTeam.Friendly)
+                    {
+                        return;
+                    }
+
                     accuratePreviewTexts[0].gameObject.SetActive(true);
                     accuratePreviewTexts[1].gameObject.SetActive(true);
 
-                    var fromUnit = _pawnsInView[0];
-                    var toUnit = _pawnsInView[1];
                     var fromAccurateRate = 100 - toUnit.RuntimeAttributes.GetAttributeValue(physDodgeAttribute) 
                         + fromUnit.RuntimeAttributes.GetAttributeValue(physAccurateAttribute);
                     var toAccurateRate = 100 - fromUnit.RuntimeAttributes.GetAttributeValue(physDodgeAttribute)

@@ -73,7 +73,7 @@ namespace ProjectCI.CoreSystem.Runtime.Abilities
             var isReallyHit = isAlwaysHitByDefault || passValue > 0;
 
             var isCritical = false;
-            if (isCriticalEnabledByDefault && passValue == 100)
+            if (isCriticalEnabledByDefault && passValue > 100)
             {
                 var suggestedCritAmount = fromContainer.GetAttributeValue(criticalAmountAttribute);
                 if (suggestedCritAmount > damage)

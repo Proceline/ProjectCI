@@ -28,8 +28,9 @@ MonoBehaviour:
   isFollowUpAllowed: 0
   isAbilityWeapon: 0
   isAppliedOnSelf: 1
-  isSupportAbility: 0
+  isSupportAbility: 1
   iconSprite: {fileID: 0}
+  alwaysHit: 0
   dcAttribute:
     value: 31
   acAttribute:

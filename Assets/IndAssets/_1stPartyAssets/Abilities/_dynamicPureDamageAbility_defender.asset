@@ -30,6 +30,7 @@ MonoBehaviour:
   isAppliedOnSelf: 1
   isSupportAbility: 0
   iconSprite: {fileID: 0}
+  alwaysHit: 1
   dcAttribute:
     value: 10
   acAttribute:

@@ -70,6 +70,9 @@ MonoBehaviour:
   - serviceTypeName: IndAssets.Scripts.TacticTool.PvSoUnitsDictionary, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     objectInstance: {fileID: 11400000, guid: a3925a911c47f944a9f1711d10c507c9, type: 2}
+  - serviceTypeName: ProjectCI.Utilities.Runtime.Events.IAttributeOwnerOnLogicallyKillEvent,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    objectInstance: {fileID: 11400000, guid: 5f7b99816d90ef649b517390c1bd6ac1, type: 2}
   staticInjectTargets:
   - ProjectCI.CoreSystem.Runtime.Abilities.Extensions.UnitAbilityCoreExtensions,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
